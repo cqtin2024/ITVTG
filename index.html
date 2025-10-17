@@ -66,7 +66,7 @@
       <section class="swipe-section" id="players">
         <h2 class='text-2xl font-bold text-red-700 mb-3 text-center'>Players — Team List</h2>
         <div class='bg-white p-4 rounded-xl shadow'>
-          <p class='text-sm text-gray-600'>Team list data is not available in the <code>state.json</code> source. This section needs the <code>teamList</code> property in the JSON file to display content.</p>
+          <p class='text-sm text-gray-600'>Loading team list...</p>
         </div>
       </section>
     </div>
@@ -75,12 +75,22 @@
   <button id="refresh-btn" title="Reload Data" onclick="manualRefresh()">⟳</button>
 
   <script>
-    // Đã đồng bộ sử dụng duy nhất một nguồn dữ liệu
     const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state.json';
     const REFRESH_INTERVAL = 30000;
 
     const carousel = document.getElementById('content-carousel');
     let currentIndex = 0;
+
+    // --- HELPER FUNCTION: Get last two words of a name ---
+    function getLastTwoWords(name) {
+      if (!name || typeof name !== 'string') return '';
+      const parts = name.trim().split(/\s+/).filter(Boolean); // Tách tên thành các từ
+      if (parts.length >= 2) {
+        return parts.slice(-2).join(' '); // Lấy 2 từ cuối
+      }
+      return name; // Trả về toàn bộ tên nếu ít hơn 2 từ
+    }
+    // ----------------------------------------------------
 
     function goToSection(index) {
       currentIndex = Math.max(0, Math.min(3, index));
@@ -94,19 +104,17 @@
       document.querySelectorAll('.tab-btn').forEach((btn, i) => {
         btn.classList.remove('active-primary', 'active-accent', 'bg-green-50', 'bg-red-50', 'text-white', 'text-green-700', 'text-red-700');
         
-        // Apply default colors (Green for game stages, Red for Players)
-        if (i === 3) { // Players tab
+        if (i === 3) { 
           btn.classList.add('bg-red-50', 'text-red-700');
-        } else { // Group Stage, Quarterfinals, Knock-out
+        } else { 
           btn.classList.add('bg-green-50', 'text-green-700');
         }
 
-        // Apply active state colors
         if (i === currentIndex) {
           if (i === 3) {
-            btn.classList.add('active-accent'); // Red active
+            btn.classList.add('active-accent');
           } else {
-            btn.classList.add('active-primary'); // Green active
+            btn.classList.add('active-primary');
           }
         }
       });
@@ -123,6 +131,10 @@
         renderData(data);
       } catch (err) {
         msg.textContent = '⚠️ Data loading error: ' + err.message;
+        renderRounds({}); 
+        renderQuarterfinals([]);
+        renderKnockout([], {});
+        renderPlayers([]);
       }
     }
 
@@ -137,28 +149,32 @@
       renderRounds(data);
       renderQuarterfinals(data.quarterfinals);
       renderKnockout(data.semifinals, data.final);
-      // Giả định teamList là một thuộc tính trong state.json
       renderPlayers(data.teamList); 
     }
 
     function renderRounds(data) {
       const c = document.getElementById('rounds');
-      if (!data) {
+      if (!data || (Object.keys(data).length === 0 && data.constructor === Object)) {
         c.innerHTML = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Group Stage</h2>
-          <div class='bg-white p-4 rounded-xl shadow'><p class='text-sm text-gray-600'>No group stage data found in state.json</p></div>`;
+          <div class='bg-white p-4 rounded-xl shadow'><p class='text-sm text-gray-600'>No group stage data found in <code>state.json</code>.</p></div>`;
         return;
       }
       let html = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Group Stage</h2>`;
       if (data.tableA) html += renderTable(data.tableA, 'Group A Standings');
       if (data.tableB) html += renderTable(data.tableB, 'Group B Standings');
+      if (data.tableC) html += renderTable(data.tableC, 'Group C Standings');
+      if (data.tableD) html += renderTable(data.tableD, 'Group D Standings');
+
       if (data.matchesA) html += renderMatchList(data.matchesA, 'Group A Results');
       if (data.matchesB) html += renderMatchList(data.matchesB, 'Group B Results');
+      if (data.matchesC) html += renderMatchList(data.matchesC, 'Group C Results');
+      if (data.matchesD) html += renderMatchList(data.matchesD, 'Group D Results');
+      
       c.innerHTML = html;
     }
     
-    // (Các hàm renderTable, renderMatchList, renderQuarterfinals, renderKnockout giữ nguyên logic hiển thị từ JSON)
     function renderTable(table, title) {
-      if (!table) return '';
+      if (!table || table.length === 0) return '';
       const headersMap = {
           'Đội': 'Team', 'Thắng': 'W', 'Thua': 'L', 'Hiệu số': 'PD', 'Điểm': 'Pts'
       };
@@ -177,7 +193,7 @@
     }
 
     function renderMatchList(matches, title) {
-      if (!matches) return '';
+      if (!matches || matches.length === 0) return '';
       let html = `<div class='bg-white p-4 mt-4 rounded-xl shadow'><h3 class='text-lg font-semibold text-green-800 mb-2 text-center'>${title}</h3>`;
       html += `<div class='overflow-x-auto'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Time</th><th>Court</th><th>Team A</th><th>Score</th><th>Team B</th></tr></thead><tbody>`;
       matches.forEach(m => {
@@ -209,10 +225,17 @@
     function renderKnockout(semis, final) {
       const c = document.getElementById('knockout');
       let html = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Knock-out Stage</h2>`;
-      if (semis) html += renderMatchList(semis, 'Semifinals');
-      if (final) html += `<div class='winner-box bg-white p-4 mt-4 rounded-xl shadow text-center'><h3 class='text-lg font-semibold text-green-800 mb-2'>Finals</h3><p><strong>${final.teamA}</strong> (${final.scoreA}) vs (${final.scoreB}) <strong>${final.teamB}</strong></p><p class='mt-2 text-green-600 font-semibold'>🏆 Champion: ${final.winner}</p><p class='text-gray-700'>Runner-up: ${final.runnerUp}</p></div>`;
       
-      if (!semis && !final) {
+      const noData = (!semis || semis.length === 0) && (!final || final.winner === "TBD");
+
+      if (semis) html += renderMatchList(semis, 'Semifinals');
+      if (final && final.winner !== "TBD") {
+           html += `<div class='winner-box bg-white p-4 mt-4 rounded-xl shadow text-center'><h3 class='text-lg font-semibold text-green-800 mb-2'>Finals</h3><p><strong>${final.teamA}</strong> (${final.scoreA}) vs (${final.scoreB}) <strong>${final.teamB}</strong></p><p class='mt-2 text-green-600 font-semibold'>🏆 Champion: ${final.winner}</p><p class='text-gray-700'>Runner-up: ${final.runnerUp}</p></div>`;
+      } else if (final && final.winner === "TBD" && semis && semis.length > 0) {
+           html += `<div class='winner-box bg-white p-4 mt-4 rounded-xl shadow text-center'><h3 class='text-lg font-semibold text-green-800 mb-2'>Finals</h3><p class='text-gray-600'>Finals teams and results are not yet available.</p></div>`;
+      }
+      
+      if (noData) {
         html += `<div class='bg-white p-4 rounded-xl shadow text-gray-600 text-sm'>Knock-out stage data is not yet available in <code>state.json</code>.</div>`;
       }
 
@@ -231,11 +254,35 @@
             return;
         }
         
-        // Logic hiển thị danh sách đội từ teamList (nếu có) sẽ được viết ở đây.
-        // Giả sử có dữ liệu, ta sẽ hiển thị một thông báo thành công:
-        html += `<div class='bg-white p-4 rounded-xl shadow'>
-                    <p class='text-sm text-gray-600 font-bold text-green-700'>Team list data was successfully loaded from <code>state.json</code> and will be rendered here.</p> 
-                 </div>`;
+        // Group teams by group name
+        const teamsByGroup = teamList.reduce((acc, team) => {
+            (acc[team.group] = acc[team.group] || []).push(team);
+            return acc;
+        }, {});
+
+        // Render each group
+        for (const group in teamsByGroup) {
+            html += `<div class='bg-white p-4 rounded-xl shadow mt-4'>
+                        <h3 class='text-lg font-bold text-green-700 mb-3 text-center'>GROUP ${group}</h3>
+                        <div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>`;
+            
+            teamsByGroup[group].forEach(team => {
+                const p1LastTwo = getLastTwoWords(team.p1);
+                const p2LastTwo = getLastTwoWords(team.p2);
+                // Tạo tên đội mới: (2 từ cuối P1) & (2 từ cuối P2)
+                const combinedName = `${p1LastTwo} & ${p2LastTwo}`; 
+
+                html += `<div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
+                            <div class='text-sm font-semibold text-red-700'>${combinedName}</div>
+                            <div class='text-xs text-gray-500'>ID: ${team.teamName} | Group: ${team.group}</div>
+                            <div class='text-xs mt-2 text-gray-700'>1. ${team.p1}</div>
+                            <div class='text-xs text-gray-700'>2. ${team.p2}</div>
+                         </div>`;
+            });
+
+            html += `</div></div>`;
+        }
+
         c.innerHTML = html;
     }
 
