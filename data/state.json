@@ -1,0 +1,536 @@
+{
+  "tableA": [
+    {
+      "Đội": "Team 9",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 3",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 11",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 5",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    }
+  ],
+  "tableB": [
+    {
+      "Đội": "Team 4",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 7",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 12",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 1",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    }
+  ],
+  "tableC": [
+    {
+      "Đội": "Team 16",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 10",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 14",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 6",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    }
+  ],
+  "tableD": [
+    {
+      "Đội": "Team 13",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 2",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 15",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    },
+    {
+      "Đội": "Team 8",
+      "Thắng": 0,
+      "Thua": 0,
+      "Hiệu số": "0",
+      "Điểm": 0
+    }
+  ],
+  "matchesA": [
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 9",
+      "teamB": "Team 3",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 9",
+      "teamB": "Team 11",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 9",
+      "teamB": "Team 5",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 3",
+      "teamB": "Team 11",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 3",
+      "teamB": "Team 5",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 11",
+      "teamB": "Team 5",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    }
+  ],
+  "matchesB": [
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 4",
+      "teamB": "Team 7",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 4",
+      "teamB": "Team 12",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 4",
+      "teamB": "Team 1",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 7",
+      "teamB": "Team 12",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 7",
+      "teamB": "Team 1",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 12",
+      "teamB": "Team 1",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    }
+  ],
+  "matchesC": [
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 16",
+      "teamB": "Team 10",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 16",
+      "teamB": "Team 14",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 16",
+      "teamB": "Team 6",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 10",
+      "teamB": "Team 14",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 10",
+      "teamB": "Team 6",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 14",
+      "teamB": "Team 6",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    }
+  ],
+  "matchesD": [
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 13",
+      "teamB": "Team 2",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 13",
+      "teamB": "Team 15",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 13",
+      "teamB": "Team 8",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 2",
+      "teamB": "Team 15",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 2",
+      "teamB": "Team 8",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "time": "",
+      "court": "",
+      "teamA": "Team 15",
+      "teamB": "Team 8",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    }
+  ],
+  "quarterfinals": [
+    {
+      "teamA": "",
+      "teamB": "",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "teamA": "",
+      "teamB": "",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "teamA": "",
+      "teamB": "",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "teamA": "",
+      "teamB": "",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    }
+  ],
+  "semifinals": [
+    {
+      "teamA": "",
+      "teamB": "",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    },
+    {
+      "teamA": "",
+      "teamB": "",
+      "scoreA": "",
+      "scoreB": "",
+      "winner": ""
+    }
+  ],
+  "thirdPlace": {
+    "teamA": "",
+    "teamB": "",
+    "scoreA": "",
+    "scoreB": "",
+    "winner": ""
+  },
+  "final": {
+    "teamA": "",
+    "teamB": "",
+    "scoreA": "",
+    "scoreB": "",
+    "winner": ""
+  },
+  "players": [
+    {
+      "group": "A",
+      "team": "Team 9",
+      "players": [
+        "Từ Duy Hưng",
+        "Trần Nguyễn Minh Tú"
+      ]
+    },
+    {
+      "group": "A",
+      "team": "Team 3",
+      "players": [
+        "Võ Dương Quốc Thịnh",
+        "Lê Minh Phương"
+      ]
+    },
+    {
+      "group": "A",
+      "team": "Team 11",
+      "players": [
+        "Minh Chang",
+        "Lê Minh Châu"
+      ]
+    },
+    {
+      "group": "A",
+      "team": "Team 5",
+      "players": [
+        "Mai Quốc Khánh",
+        "Nguyễn Bá Linh Vũ"
+      ]
+    },
+    {
+      "group": "B",
+      "team": "Team 4",
+      "players": [
+        "Trần Quí Tuấn",
+        "Hoàng Mạnh Hùng"
+      ]
+    },
+    {
+      "group": "B",
+      "team": "Team 7",
+      "players": [
+        "Nguyễn Quốc Hùng",
+        "Phạm Đức Duy"
+      ]
+    },
+    {
+      "group": "B",
+      "team": "Team 12",
+      "players": [
+        "Đinh Hoàng Thanh Sơn",
+        "Trần Đỗ Khoa Tiến"
+      ]
+    },
+    {
+      "group": "B",
+      "team": "Team 1",
+      "players": [
+        "Bùi Quang Tiến",
+        "Mai Tất Thành"
+      ]
+    },
+    {
+      "group": "C",
+      "team": "Team 16",
+      "players": [
+        "Nguyễn Hoàng Thanh",
+        "Trần Công Phương"
+      ]
+    },
+    {
+      "group": "C",
+      "team": "Team 10",
+      "players": [
+        "Lê Duy",
+        "Hồ Thanh Vương"
+      ]
+    },
+    {
+      "group": "C",
+      "team": "Team 14",
+      "players": [
+        "Nguyễn Văn Cường",
+        "Đoàn Văn Dũng"
+      ]
+    },
+    {
+      "group": "C",
+      "team": "Team 6",
+      "players": [
+        "Trần Ngọc Đông Chu",
+        "Nguyễn Ngọc Hùng"
+      ]
+    },
+    {
+      "group": "D",
+      "team": "Team 13",
+      "players": [
+        "Lê Bá Châu",
+        "Ngô Hiền Phong"
+      ]
+    },
+    {
+      "group": "D",
+      "team": "Team 2",
+      "players": [
+        "Trần Viết Tuấn",
+        "Huỳnh Lê Quang Dũng"
+      ]
+    },
+    {
+      "group": "D",
+      "team": "Team 15",
+      "players": [
+        "Huỳnh Minh Thiện",
+        "Nguyễn Duy Minh"
+      ]
+    },
+    {
+      "group": "D",
+      "team": "Team 8",
+      "players": [
+        "Lại Tiến Mạnh",
+        "Cao Quang Tín"
+      ]
+    }
+  ]
+}
