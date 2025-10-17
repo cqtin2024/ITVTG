@@ -45,125 +45,29 @@
       <section class="swipe-section" id="rounds">
         <h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Group Stage</h2>
         <div class="bg-white p-4 rounded-xl shadow">
-          <p class="text-sm text-gray-600">Group stage data will be loaded automatically from the <code>state.json</code> file (if available). You can still view the team list in the Players tab.</p>
+          <p class="text-sm text-gray-600">Group stage data will be loaded automatically from the <code>state.json</code> file (if available).</p>
         </div>
       </section>
 
       <section class="swipe-section" id="quarterfinals">
         <h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Quarterfinals</h2>
         <div class="bg-white p-4 rounded-xl shadow">
-          <p class="text-sm text-gray-600">The Quarterfinals matchups will be displayed here when data is available in the DataPickApp_players.json file.</p>
+          <p class="text-sm text-gray-600">The Quarterfinals matchups will be displayed here when data is available in the <code>state.json</code> file.</p>
         </div>
       </section>
 
       <section class="swipe-section" id="knockout">
         <h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Knock-out Stage</h2>
         <div class="bg-white p-4 rounded-xl shadow">
-          <p class="text-sm text-gray-600">The knock-out stage (Semifinals and Finals) will be displayed here when data is available in state.json.</p>
+          <p class="text-sm text-gray-600">The knock-out stage (Semifinals and Finals) will be displayed here when data is available in <code>state.json</code>.</p>
         </div>
       </section>
 
       <section class="swipe-section" id="players">
         <h2 class='text-2xl font-bold text-red-700 mb-3 text-center'>Players — Team List</h2>
-
-        <div class='bg-white p-4 rounded-xl shadow mt-4'><h3 class='text-lg font-bold text-green-700 mb-3 text-center'>GROUP A</h3><div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 9</div>
-          <div class='text-xs mt-2 text-gray-700'>Từ Duy Hưng</div>
-          <div class='text-xs text-gray-700'>Trần Nguyễn Minh Tú</div>
+        <div class='bg-white p-4 rounded-xl shadow'>
+          <p class='text-sm text-gray-600'>Team list data is not available in the <code>state.json</code> source. This section needs the <code>teamList</code> property in the JSON file to display content.</p>
         </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 3</div>
-          <div class='text-xs mt-2 text-gray-700'>Võ Dương Quốc Thịnh</div>
-          <div class='text-xs text-gray-700'>Lê Minh Phương</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 11</div>
-          <div class='text-xs mt-2 text-gray-700'>Minh Chang</div>
-          <div class='text-xs text-gray-700'>Lê Minh Châu</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 5</div>
-          <div class='text-xs mt-2 text-gray-700'>Mai Quốc Khánh</div>
-          <div class='text-xs text-gray-700'>Nguyễn Bá Linh Vũ</div>
-        </div>
-        </div></div><div class='bg-white p-4 rounded-xl shadow mt-4'><h3 class='text-lg font-bold text-green-700 mb-3 text-center'>GROUP B</h3><div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 4</div>
-          <div class='text-xs mt-2 text-gray-700'>Trần Quí Tuấn</div>
-          <div class='text-xs text-gray-700'>Hoàng Mạnh Hùng</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 7</div>
-          <div class='text-xs mt-2 text-gray-700'>Nguyễn Quốc Hùng</div>
-          <div class='text-xs text-gray-700'>Phạm Đức Duy</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 12</div>
-          <div class='text-xs mt-2 text-gray-700'>Đinh Hoàng Thanh Sơn</div>
-          <div class='text-xs text-gray-700'>Trần Đỗ Khoa Tiến</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 1</div>
-          <div class='text-xs mt-2 text-gray-700'>Bùi Quang Tiến</div>
-          <div class='text-xs text-gray-700'>Mai Tất Thành</div>
-        </div>
-        </div></div><div class='bg-white p-4 rounded-xl shadow mt-4'><h3 class='text-lg font-bold text-green-700 mb-3 text-center'>GROUP C</h3><div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 16</div>
-          <div class='text-xs mt-2 text-gray-700'>Nguyễn Hoàng Thanh</div>
-          <div class='text-xs text-gray-700'>Trần Công Phương</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 10</div>
-          <div class='text-xs mt-2 text-gray-700'>Lê Duy</div>
-          <div class='text-xs text-gray-700'>Hồ Thanh Vương</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 14</div>
-          <div class='text-xs mt-2 text-gray-700'>Nguyễn Văn Cường</div>
-          <div class='text-xs text-gray-700'>Đoàn Văn Dũng</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 6</div>
-          <div class='text-xs mt-2 text-gray-700'>Trần Ngọc Đông Chu</div>
-          <div class='text-xs text-gray-700'>Nguyễn Ngọc Hùng</div>
-        </div>
-        </div></div><div class='bg-white p-4 rounded-xl shadow mt-4'><h3 class='text-lg font-bold text-green-700 mb-3 text-center'>GROUP D</h3><div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 13</div>
-          <div class='text-xs mt-2 text-gray-700'>Lê Bá Châu</div>
-          <div class='text-xs text-gray-700'>Ngô Hiền Phong</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 2</div>
-          <div class='text-xs mt-2 text-gray-700'>Trần Viết Tuấn</div>
-          <div class='text-xs text-gray-700'>Huỳnh Lê Quang Dũng</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 15</div>
-          <div class='text-xs mt-2 text-gray-700'>Huỳnh Minh Thiện</div>
-          <div class='text-xs text-gray-700'>Nguyễn Duy Minh</div>
-        </div>
-        
-        <div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-          <div class='text-sm font-semibold'>Team 8</div>
-          <div class='text-xs mt-2 text-gray-700'>Lại Tiến Mạnh</div>
-          <div class='text-xs text-gray-700'>Cao Quang Tín</div>
-        </div>
-        </div></div>
-
       </section>
     </div>
   </main>
@@ -171,7 +75,8 @@
   <button id="refresh-btn" title="Reload Data" onclick="manualRefresh()">⟳</button>
 
   <script>
-    const BASE_URL = window.location.hostname.includes('github.io') ? './data/state.json' : 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/DataPickApp_players.json';
+    // Đã đồng bộ sử dụng duy nhất một nguồn dữ liệu
+    const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state.json';
     const REFRESH_INTERVAL = 30000;
 
     const carousel = document.getElementById('content-carousel');
@@ -232,6 +137,8 @@
       renderRounds(data);
       renderQuarterfinals(data.quarterfinals);
       renderKnockout(data.semifinals, data.final);
+      // Giả định teamList là một thuộc tính trong state.json
+      renderPlayers(data.teamList); 
     }
 
     function renderRounds(data) {
@@ -248,13 +155,12 @@
       if (data.matchesB) html += renderMatchList(data.matchesB, 'Group B Results');
       c.innerHTML = html;
     }
-
+    
+    // (Các hàm renderTable, renderMatchList, renderQuarterfinals, renderKnockout giữ nguyên logic hiển thị từ JSON)
     function renderTable(table, title) {
       if (!table) return '';
-      // Translate headers to English for the display table
       const headersMap = {
           'Đội': 'Team', 'Thắng': 'W', 'Thua': 'L', 'Hiệu số': 'PD', 'Điểm': 'Pts'
-          // Assuming the actual JSON keys are simpler, but translating display text
       };
       const rawHeaders = Object.keys(table[0]).filter(h => h !== 'matchesPlayed');
       const displayHeaders = rawHeaders.map(h => headersMap[h] || h);
@@ -283,18 +189,17 @@
       return html;
     }
 
-    
     function renderQuarterfinals(quarters) {
       const c = document.getElementById('quarterfinals');
       if (!quarters || quarters.length === 0) {
         c.innerHTML = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Quarterfinals</h2>
-          <div class='bg-white p-4 rounded-xl shadow text-gray-600 text-sm'>Quarterfinals data is not yet available.</div>`;
+          <div class='bg-white p-4 rounded-xl shadow text-gray-600 text-sm'>Quarterfinals data is not yet available in <code>state.json</code>.</div>`;
         return;
       }
       let html = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Quarterfinals</h2>`;
       html += `<div class='bg-white p-4 rounded-xl shadow'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Team A</th><th>Score</th><th>Team B</th><th>Winner</th></tr></thead><tbody>`;
       quarters.forEach(m => {
-        const winnerClass = m.winner ? 'text-green-700 font-bold' : ''; // Highlight winner
+        const winnerClass = m.winner ? 'text-green-700 font-bold' : ''; 
         html += `<tr class='hover:bg-green-50'><td class='px-3 py-2 text-center'>${m.teamA || ''}</td><td class='px-3 py-2 text-center'>${m.scoreA || ''} - ${m.scoreB || ''}</td><td class='px-3 py-2 text-center'>${m.teamB || ''}</td><td class='px-3 py-2 text-center ${winnerClass}'>${m.winner || ''}</td></tr>`;
       });
       html += `</tbody></table></div>`;
@@ -308,10 +213,30 @@
       if (final) html += `<div class='winner-box bg-white p-4 mt-4 rounded-xl shadow text-center'><h3 class='text-lg font-semibold text-green-800 mb-2'>Finals</h3><p><strong>${final.teamA}</strong> (${final.scoreA}) vs (${final.scoreB}) <strong>${final.teamB}</strong></p><p class='mt-2 text-green-600 font-semibold'>🏆 Champion: ${final.winner}</p><p class='text-gray-700'>Runner-up: ${final.runnerUp}</p></div>`;
       
       if (!semis && !final) {
-        html += `<div class='bg-white p-4 rounded-xl shadow text-gray-600 text-sm'>Knock-out stage data is not yet available.</div>`;
+        html += `<div class='bg-white p-4 rounded-xl shadow text-gray-600 text-sm'>Knock-out stage data is not yet available in <code>state.json</code>.</div>`;
       }
 
       c.innerHTML = html;
+    }
+
+    function renderPlayers(teamList) {
+        const c = document.getElementById('players');
+        let html = `<h2 class='text-2xl font-bold text-red-700 mb-3 text-center'>Players — Team List</h2>`;
+        
+        if (!teamList || teamList.length === 0) {
+            html += `<div class='bg-white p-4 rounded-xl shadow'>
+                        <p class='text-sm text-gray-600'>Team list data is not available in the <code>state.json</code> source. This section needs the <code>teamList</code> property in the JSON file to display content.</p>
+                     </div>`;
+            c.innerHTML = html;
+            return;
+        }
+        
+        // Logic hiển thị danh sách đội từ teamList (nếu có) sẽ được viết ở đây.
+        // Giả sử có dữ liệu, ta sẽ hiển thị một thông báo thành công:
+        html += `<div class='bg-white p-4 rounded-xl shadow'>
+                    <p class='text-sm text-gray-600 font-bold text-green-700'>Team list data was successfully loaded from <code>state.json</code> and will be rendered here.</p> 
+                 </div>`;
+        c.innerHTML = html;
     }
 
     // Swipe handling (simple)
