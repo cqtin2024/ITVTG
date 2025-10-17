@@ -1,0 +1,106 @@
+{
+  "A": [
+    {
+      "Group": "A",
+      "Team": "Team 9",
+      "Player1": "Từ Duy Hưng",
+      " Player2": "Trần Nguyễn Minh Tú"
+    },
+    {
+      "Group": "A",
+      "Team": "Team 3",
+      "Player1": "Võ Dương Quốc Thịnh",
+      " Player2": "Lê Minh Phương"
+    },
+    {
+      "Group": "A",
+      "Team": "Team 11",
+      "Player1": "Minh Chang",
+      " Player2": "Lê Minh Châu"
+    },
+    {
+      "Group": "A",
+      "Team": "Team 5",
+      "Player1": "Mai Quốc Khánh",
+      " Player2": "Nguyễn Bá Linh Vũ"
+    }
+  ],
+  "B": [
+    {
+      "Group": "B",
+      "Team": "Team 4",
+      "Player1": "Trần Quí Tuấn",
+      " Player2": "Hoàng Mạnh Hùng"
+    },
+    {
+      "Group": "B",
+      "Team": "Team 7",
+      "Player1": "Nguyễn Quốc Hùng",
+      " Player2": "Phạm Đức Duy"
+    },
+    {
+      "Group": "B",
+      "Team": "Team 12",
+      "Player1": "Đinh Hoàng Thanh Sơn",
+      " Player2": "Trần Đỗ Khoa Tiến"
+    },
+    {
+      "Group": "B",
+      "Team": "Team 1",
+      "Player1": "Bùi Quang Tiến",
+      " Player2": "Mai Tất Thành"
+    }
+  ],
+  "C": [
+    {
+      "Group": "C",
+      "Team": "Team 16",
+      "Player1": "Nguyễn Hoàng Thanh",
+      " Player2": "Trần Công Phương"
+    },
+    {
+      "Group": "C",
+      "Team": "Team 10",
+      "Player1": "Lê Duy",
+      " Player2": "Hồ Thanh Vương"
+    },
+    {
+      "Group": "C",
+      "Team": "Team 14",
+      "Player1": "Nguyễn Văn Cường",
+      " Player2": "Đoàn Văn Dũng"
+    },
+    {
+      "Group": "C",
+      "Team": "Team 6",
+      "Player1": "Trần Ngọc Đông Chu",
+      " Player2": "Nguyễn Ngọc Hùng"
+    }
+  ],
+  "D": [
+    {
+      "Group": "D",
+      "Team": "Team 13",
+      "Player1": "Lê Bá Châu",
+      " Player2": "Ngô Hiền Phong"
+    },
+    {
+      "Group": "D",
+      "Team": "Team 2",
+      "Player1": "Trần Viết Tuấn",
+      " Player2": "Huỳnh Lê Quang Dũng"
+    },
+    {
+      "Group": "D",
+      "Team": "Team 15",
+      "Player1": "Huỳnh Minh Thiện",
+      " Player2": "Nguyễn Duy Minh"
+    },
+    {
+      "Group": "D",
+      "Team": "Team 8",
+      "Player1": "Lại Tiến Mạnh",
+      " Player2": "Cao Quang Tín"
+    }
+  ]
+}
