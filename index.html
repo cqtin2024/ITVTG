@@ -32,7 +32,7 @@
     #content-carousel { display: flex; width: 400vw; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1); }
     .swipe-section { 
         width: 100vw; flex-shrink: 0; padding: 1rem; 
-        min-height: calc(100vh - 140px); /* Điều chỉnh chiều cao tối thiểu */
+        min-height: calc(100vh - 140px); 
         overflow-y: auto; 
     }
     
@@ -40,42 +40,49 @@
     /* HEADER STYLES (Tối)                         */
     /* -------------------------------------------------------------------------- */
     header { 
-        border-bottom: 4px solid var(--primary); /* Đường viền xanh ngọc */
+        border-bottom: 4px solid var(--primary); 
         background-color: var(--header-bg); 
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5); /* Đổ bóng sâu hơn */
-        padding-top: 1rem;
-        padding-bottom: 0.5rem; /* Giảm chiều cao Header */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
+        padding: 0.8rem 1rem 0.5rem 1rem; /* Giảm chiều cao Header */
     }
     
     /* Tiêu đề chính */
     .header-title { 
-        font-size: 1.6rem; /* Nhỏ hơn 2xl một chút */
+        font-size: 1.6rem; 
         font-weight: 800;
-        color: var(--primary); /* Màu chữ xanh ngọc nổi bật */
+        color: var(--primary); 
     }
     /* Chữ phụ */
     .header-subtitle {
-        color: #B0BEC5; /* Xám sáng trên nền Navy */
+        color: #B0BEC5; 
     }
 
     /* -------------------------------------------------------------------------- */
-    /* TAB STYLES                                 */
+    /* TAB STYLES (Di chuyển vào nội dung)        */
     /* -------------------------------------------------------------------------- */
-    .tab-btn { background: var(--tab-inactive); color: #CFD8DC; transition: all 0.2s ease; font-size: 0.85rem; } 
-    .tab-btn:hover { background: #37474F; }
+    .tab-btn { 
+        background-color: var(--content-bg); /* Nền nút tab màu sáng */
+        color: var(--text-muted); 
+        transition: all 0.2s ease; 
+        font-size: 0.85rem; 
+        border: 1px solid #E0E0E0;
+    } 
+    .tab-btn:hover { background: #EFEFEF; }
     .tab-btn.active-primary { 
       background: linear-gradient(90deg, var(--primary), #26A69A); 
-      color: var(--text-dark); 
+      color: var(--content-bg); /* Chữ màu sáng trên nền nút active */
       font-weight: bold; 
+      border-color: var(--primary);
       box-shadow: 0 4px 12px rgba(77, 182, 172, 0.4); 
     } 
     .tab-btn.active-accent { 
       background: linear-gradient(90deg, var(--accent), #E57373); 
-      color: var(--text-dark); 
+      color: var(--content-bg); 
       font-weight: bold; 
+      border-color: var(--accent);
       box-shadow: 0 4px 12px rgba(239, 83, 80, 0.4); 
     }
-    
+
     /* -------------------------------------------------------------------------- */
     /* CONTENT STYLES (Sáng)                       */
     /* -------------------------------------------------------------------------- */
@@ -86,7 +93,7 @@
     .text-gray-600, .text-gray-700 { 
         color: var(--text-muted) !important; 
     }
-    .bg-green-50 { background-color: #EEEEEE !important; } /* Nền xen kẽ rất nhạt */
+    .bg-green-50 { background-color: #EEEEEE !important; } 
     
     .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
     .team-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
@@ -101,8 +108,8 @@
     #refresh-btn { 
         position: fixed; bottom: 20px; right: 20px; z-index: 50; 
         background: var(--primary); 
-        color: var(--text-dark); 
-        font-weight: bold; padding: 14px; border-radius: 50%; /* Hình tròn */
+        color: var(--content-bg); 
+        font-weight: bold; padding: 14px; border-radius: 50%; 
         box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
     }
 
@@ -110,6 +117,11 @@
     h2.section-title {
         font-size: 1.7rem;
         margin-bottom: 0.8rem;
+    }
+
+    /* Điều chỉnh khoảng cách cho Header mới */
+    #main-content-wrapper {
+        padding-top: 130px; /* Giảm khoảng cách cho Header gọn hơn */
     }
     
   </style>
@@ -123,17 +135,17 @@
         <p class="text-sm font-semibold header-subtitle">Date: <strong>26/10/2025</strong></p>
       </div>
     </div>
-
-    <div id="tab-controls" class="flex justify-around mt-3 mb-2 max-w-3xl mx-auto">
-      <button onclick="goToSection(0)" class="tab-btn active-primary px-4 py-2 font-semibold rounded-full">Group Stage</button>
-      <button onclick="goToSection(1)" class="tab-btn px-4 py-2 font-semibold rounded-full">Quarterfinals</button>
-      <button onclick="goToSection(2)" class="tab-btn px-4 py-2 font-semibold rounded-full">Final</button>
-      <button onclick="goToSection(3)" class="tab-btn px-4 py-2 font-semibold rounded-full">Team List</button>
-    </div>
     <div id="statusMessage" class="text-center text-sm font-medium header-subtitle pt-1 pb-2">Loading data...</div>
   </header>
 
-  <main id="main-content-wrapper" class="pt-[190px] md:pt-[160px] overflow-hidden">
+  <main id="main-content-wrapper" class="pt-[130px] overflow-hidden">
+    <div id="tab-controls" class="flex justify-around mt-3 mb-4 max-w-4xl mx-auto px-4">
+      <button onclick="goToSection(0)" class="tab-btn active-primary flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">Group Stage</button>
+      <button onclick="goToSection(1)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">Quarterfinals</button>
+      <button onclick="goToSection(2)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">Final</button>
+      <button onclick="goToSection(3)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">Team List</button>
+    </div>
+    
     <div id="content-carousel">
       <section class="swipe-section" id="rounds">
         <h2 class='section-title font-bold text-green-700 text-center'>Group Stage</h2>
