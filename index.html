@@ -17,7 +17,7 @@
       --content-bg: #FFFFFF;     /* Trắng Sạch - Nền Card Nội dung */
       --text-dark: #333333;      /* Đen Xám - Màu chữ chính trên nền sáng */
       --text-muted: #666666;     /* Xám đậm - Màu chữ phụ trên nền sáng */
-      --tab-inactive: #2c3e50;   /* Xanh Navy giữa - Nền nút tab không active */
+      --tab-inactive: #e0e0e0;   /* Xám nhạt - Nền nút tab không active */
     }
     
     /* -------------------------------------------------------------------------- */
@@ -43,7 +43,7 @@
         border-bottom: 4px solid var(--primary); 
         background-color: var(--header-bg); 
         box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
-        padding: 0.8rem 1rem 0.5rem 1rem; /* Giảm chiều cao Header */
+        padding: 0.8rem 1rem 0.5rem 1rem; 
     }
     
     /* Tiêu đề chính */
@@ -58,10 +58,10 @@
     }
 
     /* -------------------------------------------------------------------------- */
-    /* TAB STYLES (Di chuyển vào nội dung)        */
+    /* TAB STYLES (Nằm trong vùng sáng)           */
     /* -------------------------------------------------------------------------- */
     .tab-btn { 
-        background-color: var(--content-bg); /* Nền nút tab màu sáng */
+        background-color: var(--content-bg); 
         color: var(--text-muted); 
         transition: all 0.2s ease; 
         font-size: 0.85rem; 
@@ -70,7 +70,7 @@
     .tab-btn:hover { background: #EFEFEF; }
     .tab-btn.active-primary { 
       background: linear-gradient(90deg, var(--primary), #26A69A); 
-      color: var(--content-bg); /* Chữ màu sáng trên nền nút active */
+      color: var(--content-bg); 
       font-weight: bold; 
       border-color: var(--primary);
       box-shadow: 0 4px 12px rgba(77, 182, 172, 0.4); 
@@ -121,7 +121,7 @@
 
     /* Điều chỉnh khoảng cách cho Header mới */
     #main-content-wrapper {
-        padding-top: 130px; /* Giảm khoảng cách cho Header gọn hơn */
+        padding-top: 130px; 
     }
     
   </style>
@@ -140,10 +140,10 @@
 
   <main id="main-content-wrapper" class="pt-[130px] overflow-hidden">
     <div id="tab-controls" class="flex justify-around mt-3 mb-4 max-w-4xl mx-auto px-4">
-      <button onclick="goToSection(0)" class="tab-btn active-primary flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">Group Stage</button>
-      <button onclick="goToSection(1)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">Quarterfinals</button>
-      <button onclick="goToSection(2)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">Final</button>
-      <button onclick="goToSection(3)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">Team List</button>
+      <button onclick="goToSection(0)" class="tab-btn active-primary flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">GROUP</button>
+      <button onclick="goToSection(1)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">QUARTER</button>
+      <button onclick="goToSection(2)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">FINAL</button>
+      <button onclick="goToSection(3)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">TEAM</button>
     </div>
     
     <div id="content-carousel">
