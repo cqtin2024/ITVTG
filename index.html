@@ -1,8 +1,227 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-m.groupA}`]) html += renderTable(data[`table${m.groupA}`], `Group ${m.groupA}`);
-        if (data[`matches${m.groupA}`]) html += renderMatchList(data[`matches${m.groupA}`], `Results Group ${m.groupA}`);
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ITVTG PICKLEBALL TOURNAMENT 2025</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary: #4DB6AC;    /* Xanh ngọc - Giữ nguyên */
+      --accent: #EF5350;     /* Đỏ - Giữ nguyên */
+      --dark-card: #1F2959;  /* Xanh Navy Sáng - Nền Header/Nút Tab (Giữ nguyên) */
+      --darker-bg: #F7F9FA;  /* Xám Nhạt/Trắng Off-white - Nền Body (Đã chỉnh sáng) */
+      --text-dark: #333333;  /* Đen Xám - Màu chữ chính trên nền sáng */
+      --text-light-gray: #666666; /* Xám đậm - Màu chữ phụ trên nền sáng */
+    }
+    body { 
+      background-color: var(--darker-bg); 
+      color: var(--text-dark); /* Chữ tối trên nền sáng */
+      overflow-x: hidden; 
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; 
+    }
+    #content-carousel { display: flex; width: 400vw; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1); }
+    .swipe-section { width: 100vw; flex-shrink: 0; padding: 1rem; min-height: calc(100vh - 160px); overflow-y: auto; }
+    
+    /* HEADER VÀ TIÊU ĐỀ: ĐẢM BẢO MÀU NAVY ĐẬM */
+    header { 
+        border-bottom: 4px solid rgba(77, 182, 172, 0.2); 
+        background-color: var(--dark-card); /* Giữ màu Navy cho Header */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .tab-btn { background: #37474F; color: #B0BEC5; transition: all 0.2s ease; } 
+    .tab-btn:hover { background: #455A64; }
+    .tab-btn.active-primary { 
+      background: linear-gradient(90deg, var(--primary), #26A69A); 
+      color: var(--text-dark); /* Màu chữ tối trên nền nút nhấn */
+      font-weight: bold; 
+      box-shadow: 0 6px 18px rgba(77, 182, 172, 0.3); 
+    } 
+    .tab-btn.active-accent { 
+      background: linear-gradient(90deg, var(--accent), #E57373); 
+      color: var(--text-dark); 
+      font-weight: bold; 
+      box-shadow: 0 6px 18px rgba(239, 83, 80, 0.3); 
+    }
+    .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
+    .team-card:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+    #refresh-btn { 
+        position: fixed; bottom: 20px; right: 20px; z-index: 50; 
+        background: var(--primary); 
+        color: var(--text-dark); /* Màu chữ tối trên nút refresh */
+        font-weight: bold; padding: 12px; border-radius: 12px; 
+        box-shadow: 0 6px 14px rgba(0,0,0,0.3); 
+    }
+    
+    /* NỘI DUNG TAB: ĐẢM BẢO MÀU SÁNG VÀ DỄ ĐỌC */
+    /* 1. Nền Card/Nội dung (bg-white) - Chuyển sang Trắng và chữ Tối */
+    .bg-white { 
+        background-color: #FFFFFF !important; 
+        color: var(--text-dark) !important; 
+    }
+    /* 2. Màu chữ phụ (text-gray-600, text-gray-700) - Xám đậm trên nền sáng (Đã sửa lỗi tương phản) */
+    .text-gray-600 { color: var(--text-light-gray) !important; } 
+    .text-gray-700 { color: var(--text-light-gray) !important; }
+    
+    /* 3. Màu nền xen kẽ (bg-green-50) - Chuyển sang xám nhạt */
+    .bg-green-50 { background-color: #EEEEEE !important; } 
+    
+    /* 4. Màu Primary và Accent (giữ nguyên) */
+    .text-green-700 { color: var(--primary) !important; } 
+    .text-green-800 { color: var(--primary) !important; }
+    .text-red-700 { color: var(--accent) !important; }
+    .border-green-500 { border-color: var(--primary) !important; }
+    
+    .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); } /* Giảm độ đậm bóng đổ */
+  </style>
+</head>
+<body class="font-sans">
+  <header class="fixed top-0 left-0 right-0 z-30 shadow-md p-4">
+    <div class="flex items-center justify-center gap-4 mb-2">
+      <img src="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/LogoITGVT.png" alt="Logo ITVTG" class="h-20 w-auto" />
+      <div class="text-center">
+        <h1 class="text-2xl font-extrabold text-white">ITVTG PICKLEBALL TOURNAMENT 2025</h1>
+        <p class="text-sm font-semibold text-gray-400">Date: <strong>26/10/2025</strong></p>
+      </div>
+    </div>
+
+    <div id="tab-controls" class="flex justify-around mt-3 mb-2 max-w-3xl mx-auto">
+      <button onclick="goToSection(0)" class="tab-btn active-primary px-4 py-2 text-sm font-semibold rounded-full">Group Stage</button>
+      <button onclick="goToSection(1)" class="tab-btn px-4 py-2 text-sm font-semibold rounded-full">Quarterfinals</button>
+      <button onclick="goToSection(2)" class="tab-btn px-4 py-2 text-sm font-semibold rounded-full">Final</button>
+      <button onclick="goToSection(3)" class="tab-btn px-4 py-2 text-sm font-semibold rounded-full">Team List</button>
+    </div>
+    <div id="statusMessage" class="text-center text-sm font-medium text-gray-600">Loading data...</div>
+  </header>
+
+  <main id="main-content-wrapper" class="pt-[190px] md:pt-[160px] overflow-hidden">
+    <div id="content-carousel">
+      <section class="swipe-section" id="rounds">
+        <h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Group Stage</h2>
+        <div class="bg-white p-4 rounded-xl shadow">
+          <p class="text-sm text-gray-600">Group stage data will be loaded automatically from the JSON file.</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="quarterfinals">
+        <h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Quarterfinals</h2>
+        <div class="bg-white p-4 rounded-xl shadow">
+          <p class="text-sm text-gray-600">Quarterfinal matches will be shown here when data is available.</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="knockout">
+        <h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Final</h2>
+        <div class="bg-white p-4 rounded-xl shadow">
+          <p class="text-sm text-gray-600">Semifinals and Finals will be shown here when data is available.</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="players">
+        <h2 class='text-2xl font-bold text-red-700 mb-3 text-center'>Team List</h2>
+        <div class='bg-white p-4 rounded-xl shadow'>
+          <p class='text-sm text-gray-600'>Loading team list...</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <button id="refresh-btn" title="Reload data" onclick="manualRefresh()">⟳</button>
+
+  <script>
+    const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state.json'; 
+    const REFRESH_INTERVAL = 30000;
+
+    const carousel = document.getElementById('content-carousel');
+    let currentIndex = 0;
+    let cachedTeamList = []; 
+
+    function getLastTwoWords(name) {
+      if (!name || typeof name !== 'string') return '';
+      const parts = name.trim().split(/\s+/).filter(Boolean);
+      return parts.length >= 2 ? parts.slice(-2).join(' ') : name;
+    }
+    
+    function getCombinedName(teamId) {
+        if (!teamId || teamId.includes('.') || teamId === 'TBD') return teamId; 
+
+        const team = cachedTeamList.find(t => t.T === teamId);
+        
+        if (team && team.P && team.P.length >= 2) {
+            const p1LastTwo = getLastTwoWords(team.P[0]);
+            const p2LastTwo = getLastTwoWords(team.P[1]);
+            return `${p1LastTwo} & ${p2LastTwo}`;
+        }
+        return teamId; 
+    }
+
+
+    function goToSection(index) {
+      currentIndex = Math.max(0, Math.min(3, index));
+      carousel.style.transition = 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)';
+      carousel.style.transform = `translateX(${currentIndex * -100}vw)`;
+      updateTabs();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateTabs() {
+      document.querySelectorAll('#tab-controls button').forEach((btn, i) => {
+        btn.classList.remove('active-primary', 'active-accent');
+        if (i === currentIndex) {
+          btn.classList.add(i === 3 ? 'active-accent' : 'active-primary');
+        }
+      });
+    }
+
+    async function fetchData() {
+      const msg = document.getElementById('statusMessage');
+      msg.textContent = 'Loading data...';
+      try {
+        const res = await fetch(BASE_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP Error ${res.status}. Could not connect.`);
+        
+        const data = await res.json();
+        msg.textContent = `Load successful (${new Date().toLocaleTimeString('vi-VN')})`;
+        
+        cachedTeamList = data.tL || [];
+        
+        renderData(data);
+      } catch (err) {
+        let errorMsg = err.message;
+        if (window.location.protocol === 'file:') {
+             errorMsg += " (Possibly CORS error. Please run on a web server).";
+        }
+        msg.textContent = '⚠️ Data load error: ' + errorMsg;
+        renderData({});
+      }
+    }
+
+    function manualRefresh() {
+      const btn = document.getElementById('refresh-btn');
+      btn.disabled = true;
+      btn.classList.add('opacity-70');
+      fetchData().finally(() => setTimeout(() => { btn.disabled = false; btn.classList.remove('opacity-70'); }, 800));
+    }
+
+    function renderData(data) {
+      renderRounds(data);
+      renderQuarterfinals(data.quarterfinals);
+      renderKnockout(data.semifinals, data.final);
+      renderPlayers(data.tL); 
+    }
+
+    function renderRounds(data) {
+      const c = document.getElementById('rounds');
+      if (!data || !data.tableA) {
+        c.innerHTML = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Group Stage</h2><div class='bg-white p-4 rounded-xl shadow'><p class='text-sm text-gray-600'>No group stage data available.</p></div>`;
+        return;
+      }
+      let html = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Group Stage</h2>`;
+      
+      const tableNames = ['A', 'B', 'C', 'D'];
+      tableNames.forEach(name => {
+        if (data[`table${name}`]) html += renderTable(data[`table${name}`], `Group ${name}`);
+        if (data[`matches${name}`]) html += renderMatchList(data[`matches${name}`], `Results Group ${name}`);
       });
       
       c.innerHTML = html;
@@ -118,7 +337,7 @@
 
                 html += `<div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
                             <div class='text-sm font-semibold text-red-700'>${combinedName}</div>
-                            <div class='text-xs text-gray-500'>ID: ${team.T} | Group: ${team.g}</div>
+                            <div class='text-xs text-gray-600'>ID: ${team.T} | Group: ${team.g}</div>
                             <div class='text-xs mt-2 text-gray-700'>1. ${p1Name}</div>
                             <div class='text-xs text-gray-700'>2. ${p2Name}</div>
                          </div>`;
