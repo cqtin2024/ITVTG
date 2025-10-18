@@ -9,8 +9,8 @@
     :root {
       --primary: #4DB6AC;    /* Xanh ngọc - Giữ nguyên */
       --accent: #EF5350;     /* Đỏ - Giữ nguyên */
-      --dark-card: #1F2959;  /* Xanh Navy Sáng - Nền Header/Nút Tab (Giữ nguyên) */
-      --darker-bg: #F7F9FA;  /* Xám Nhạt/Trắng Off-white - Nền Body (Đã chỉnh sáng) */
+      --dark-card: #1F2959;  /* Xanh Navy Sáng - Nền Header/Nút Tab (Màu đối lập) */
+      --darker-bg: #F7F9FA;  /* Xám Nhạt/Trắng Off-white - Nền Body (Màu tươi sáng) */
       --text-dark: #333333;  /* Đen Xám - Màu chữ chính trên nền sáng */
       --text-light-gray: #666666; /* Xám đậm - Màu chữ phụ trên nền sáng */
     }
@@ -23,7 +23,7 @@
     #content-carousel { display: flex; width: 400vw; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1); }
     .swipe-section { width: 100vw; flex-shrink: 0; padding: 1rem; min-height: calc(100vh - 160px); overflow-y: auto; }
     
-    /* HEADER VÀ TIÊU ĐỀ: ĐẢM BẢO MÀU NAVY ĐẬM */
+    /* HEADER VÀ TIÊU ĐỀ: MÀU ĐỐI LẬP (NAVY) */
     header { 
         border-bottom: 4px solid rgba(77, 182, 172, 0.2); 
         background-color: var(--dark-card); /* Giữ màu Navy cho Header */
@@ -48,31 +48,27 @@
     #refresh-btn { 
         position: fixed; bottom: 20px; right: 20px; z-index: 50; 
         background: var(--primary); 
-        color: var(--text-dark); /* Màu chữ tối trên nút refresh */
+        color: var(--text-dark); 
         font-weight: bold; padding: 12px; border-radius: 12px; 
         box-shadow: 0 6px 14px rgba(0,0,0,0.3); 
     }
     
-    /* NỘI DUNG TAB: ĐẢM BẢO MÀU SÁNG VÀ DỄ ĐỌC */
-    /* 1. Nền Card/Nội dung (bg-white) - Chuyển sang Trắng và chữ Tối */
+    /* NỘI DUNG TAB: MÀU TƯƠI SÁNG */
     .bg-white { 
         background-color: #FFFFFF !important; 
         color: var(--text-dark) !important; 
     }
-    /* 2. Màu chữ phụ (text-gray-600, text-gray-700) - Xám đậm trên nền sáng (Đã sửa lỗi tương phản) */
     .text-gray-600 { color: var(--text-light-gray) !important; } 
     .text-gray-700 { color: var(--text-light-gray) !important; }
+    .bg-green-50 { background-color: #EEEEEE !important; } /* Màu nền xen kẽ (rất nhạt) */
     
-    /* 3. Màu nền xen kẽ (bg-green-50) - Chuyển sang xám nhạt */
-    .bg-green-50 { background-color: #EEEEEE !important; } 
-    
-    /* 4. Màu Primary và Accent (giữ nguyên) */
+    /* MÀU NHẤN (PRIMARY/ACCENT) */
     .text-green-700 { color: var(--primary) !important; } 
     .text-green-800 { color: var(--primary) !important; }
     .text-red-700 { color: var(--accent) !important; }
     .border-green-500 { border-color: var(--primary) !important; }
     
-    .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); } /* Giảm độ đậm bóng đổ */
+    .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); } 
   </style>
 </head>
 <body class="font-sans">
