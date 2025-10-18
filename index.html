@@ -17,7 +17,8 @@
       --content-bg: #FFFFFF;     /* Trắng Sạch - Nền Card Nội dung */
       --text-dark: #333333;      /* Đen Xám - Màu chữ chính trên nền sáng */
       --text-muted: #666666;     /* Xám đậm - Màu chữ phụ trên nền sáng */
-      --tab-inactive: #e0e0e0;   /* Xám nhạt - Nền nút tab không active */
+      --tab-inactive-bg: #FFFFFF; 
+      --tab-inactive-color: #15203D; 
     }
     
     /* -------------------------------------------------------------------------- */
@@ -46,11 +47,11 @@
         padding: 0.8rem 1rem 0.5rem 1rem; 
     }
     
-    /* Tiêu đề chính */
+    /* Tiêu đề chính - ĐÃ CHUYỂN SANG MÀU TRẮNG */
     .header-title { 
         font-size: 1.6rem; 
         font-weight: 800;
-        color: var(--primary); 
+        color: var(--content-bg); /* MÀU TRẮNG */
     }
     /* Chữ phụ */
     .header-subtitle {
@@ -58,14 +59,15 @@
     }
 
     /* -------------------------------------------------------------------------- */
-    /* TAB STYLES (Nằm trong vùng sáng)           */
+    /* TAB STYLES (Cải thiện độ tương phản)       */
     /* -------------------------------------------------------------------------- */
     .tab-btn { 
-        background-color: var(--content-bg); 
-        color: var(--text-muted); 
+        background-color: var(--tab-inactive-bg); 
+        color: var(--tab-inactive-color); 
         transition: all 0.2s ease; 
         font-size: 0.85rem; 
-        border: 1px solid #E0E0E0;
+        border: 1px solid #B0BEC5; 
+        font-weight: 600; 
     } 
     .tab-btn:hover { background: #EFEFEF; }
     .tab-btn.active-primary { 
@@ -84,45 +86,37 @@
     }
 
     /* -------------------------------------------------------------------------- */
-    /* CONTENT STYLES (Sáng)                       */
+    /* TABLE STYLES (Chỉnh sửa cột Giờ/Sân)        */
     /* -------------------------------------------------------------------------- */
-    .bg-white { 
-        background-color: var(--content-bg) !important; 
-        color: var(--text-dark) !important; 
+    .match-time-court {
+        /* Đảm bảo nội dung nằm trên 2 dòng */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
     }
-    .text-gray-600, .text-gray-700 { 
-        color: var(--text-muted) !important; 
-    }
+    .match-time { font-weight: 600; font-size: 0.85rem; color: var(--text-dark); }
+    .match-court { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* -------------------------------------------------------------------------- */
+    /* CONTENT STYLES (Khác)                      */
+    /* -------------------------------------------------------------------------- */
+    .bg-white { background-color: var(--content-bg) !important; color: var(--text-dark) !important; }
+    .text-gray-600, .text-gray-700 { color: var(--text-muted) !important; }
     .bg-green-50 { background-color: #EEEEEE !important; } 
-    
     .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
     .team-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
-    
-    /* MÀU NHẤN */
     .text-green-700 { color: var(--primary) !important; } 
     .text-green-800 { color: var(--primary) !important; }
     .text-red-700 { color: var(--accent) !important; }
     .border-green-500 { border-color: var(--primary) !important; }
-    
-    /* Nút refresh */
     #refresh-btn { 
         position: fixed; bottom: 20px; right: 20px; z-index: 50; 
-        background: var(--primary); 
-        color: var(--content-bg); 
-        font-weight: bold; padding: 14px; border-radius: 50%; 
+        background: var(--primary); color: var(--content-bg); font-weight: bold; padding: 14px; border-radius: 50%; 
         box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
     }
-
-    /* Tiêu đề section */
-    h2.section-title {
-        font-size: 1.7rem;
-        margin-bottom: 0.8rem;
-    }
-
-    /* Điều chỉnh khoảng cách cho Header mới */
-    #main-content-wrapper {
-        padding-top: 130px; 
-    }
+    #main-content-wrapper { padding-top: 130px; }
     
   </style>
 </head>
@@ -132,7 +126,7 @@
       <img src="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/LogoITGVT.png" alt="Logo ITVTG" class="h-16 w-auto" />
       <div class="text-center">
         <h1 class="header-title">ITVTG PICKLEBALL TOURNAMENT 2025</h1>
-        <p class="text-sm font-semibold header-subtitle">Date: <strong>26/10/2025 (V2)</strong></p>
+        <p class="text-sm font-semibold header-subtitle">Date: <strong>26/10/2025</strong></p>
       </div>
     </div>
     <div id="statusMessage" class="text-center text-sm font-medium header-subtitle pt-1 pb-2">Loading data...</div>
@@ -140,36 +134,32 @@
 
   <main id="main-content-wrapper" class="pt-[130px] overflow-hidden">
     <div id="tab-controls" class="flex justify-around mt-3 mb-4 max-w-4xl mx-auto px-4">
-      <button onclick="goToSection(0)" class="tab-btn active-primary flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">GROUP</button>
-      <button onclick="goToSection(1)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">QUARTER</button>
-      <button onclick="goToSection(2)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">FINAL</button>
-      <button onclick="goToSection(3)" class="tab-btn flex-1 mx-1 px-3 py-2 font-semibold rounded-full shadow-md">TEAM</button>
+      <button onclick="goToSection(0)" class="tab-btn active-primary flex-1 mx-1 px-3 py-2 rounded-full shadow-md">GROUP</button>
+      <button onclick="goToSection(1)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">QUARTER</button>
+      <button onclick="goToSection(2)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">FINAL</button>
+      <button onclick="goToSection(3)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">TEAM</button>
     </div>
     
     <div id="content-carousel">
       <section class="swipe-section" id="rounds">
-        <h2 class='section-title font-bold text-green-700 text-center'>Group Stage</h2>
         <div class="bg-white p-4 rounded-xl shadow-md">
           <p class="text-sm text-gray-600">Group stage data will be loaded automatically from the JSON file.</p>
         </div>
       </section>
 
       <section class="swipe-section" id="quarterfinals">
-        <h2 class='section-title font-bold text-green-700 text-center'>Quarterfinals</h2>
         <div class="bg-white p-4 rounded-xl shadow-md">
           <p class="text-sm text-gray-600">Quarterfinal matches will be shown here when data is available.</p>
         </div>
       </section>
 
       <section class="swipe-section" id="knockout">
-        <h2 class='section-title font-bold text-green-700 text-center'>Final</h2>
         <div class="bg-white p-4 rounded-xl shadow-md">
           <p class="text-sm text-gray-600">Semifinals and Finals will be shown here when data is available.</p>
         </div>
       </section>
 
       <section class="swipe-section" id="players">
-        <h2 class='section-title font-bold text-red-700 text-center'>Team List</h2>
         <div class='bg-white p-4 rounded-xl shadow-md'>
           <p class='text-sm text-gray-600'>Loading team list...</p>
         </div>
@@ -264,11 +254,11 @@
     function renderRounds(data) {
       const c = document.getElementById('rounds');
       if (!data || !data.tableA) {
-        c.innerHTML = `<h2 class='section-title font-bold text-green-700 text-center'>Group Stage</h2><div class='bg-white p-4 rounded-xl shadow-md'><p class='text-sm text-gray-600'>No group stage data available.</p></div>`;
+        c.innerHTML = `<div class='bg-white p-4 rounded-xl shadow-md'><p class='text-sm text-gray-600'>No group stage data available.</p></div>`;
         return;
       }
-      let html = `<h2 class='section-title font-bold text-green-700 text-center'>Group Stage</h2>`;
-      
+      let html = ``; 
+
       const tableNames = ['A', 'B', 'C', 'D'];
       tableNames.forEach(name => {
         if (data[`table${name}`]) html += renderTable(data[`table${name}`], `Group ${name}`);
@@ -280,7 +270,7 @@
     
     function renderTable(table, title) {
       if (!table || table.length === 0) return '';
-      const headersMap = {'D': 'Team', 'W': 'W', 'L': 'L', 'HS': 'PD', 'Pts': 'Pts'};
+      const headersMap = {'D': 'Team', 'W': 'W', 'L': 'L', 'HS': 'PD', 'Pts': 'Pts'}; 
       const rawHeaders = Object.keys(table[0]).filter(h => h !== 'mP');
       const displayHeaders = rawHeaders.map(h => headersMap[h] || h);
 
@@ -299,10 +289,12 @@
       return html;
     }
 
+    /* ĐÃ TỐI ƯU renderMatchList */
     function renderMatchList(matches, title) {
       if (!matches || matches.length === 0) return '';
       let html = `<div class='bg-white p-4 mt-4 rounded-xl shadow-md'><h3 class='text-lg font-semibold text-green-800 mb-2 text-center'>${title}</h3>`;
-      html += `<div class='overflow-x-auto'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Time</th><th>Court</th><th>Team A</th><th>Score</th><th>Team B</th></tr></thead><tbody>`;
+      // Chỉ còn 4 cột hiển thị: Giờ/Sân, Team A, Score, Team B
+      html += `<div class='overflow-x-auto'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Time / Court</th><th>Team A</th><th>Score</th><th>Team B</th></tr></thead><tbody>`;
       matches.forEach(m => {
         const teamA = getCombinedName(m.A); 
         const teamB = getCombinedName(m.B); 
@@ -310,26 +302,54 @@
         const aClass = m.Wn === m.A ? 'text-green-700 font-bold' : '';
         const bClass = m.Wn === m.B ? 'text-green-700 font-bold' : '';
         
-        html += `<tr class='hover:bg-green-50'><td class='px-3 py-2 text-center'>${m.t || ''}</td><td class='px-3 py-2 text-center'>${m.c || ''}</td><td class='${aClass}'>${teamA}</td><td class='text-center'>${m.sA} - ${m.sB}</td><td class='${bClass}'>${teamB}</td></tr>`;
+        // Chuẩn hóa tên sân (bỏ số nếu có, ví dụ A1, A2 thành Sân A)
+        const courtName = m.c ? 'Sân ' + m.c.replace(/[0-9]/g, '') : '';
+
+        html += `<tr class='hover:bg-green-50'>
+                  <td class='px-3 py-2 text-center'>
+                    <div class='match-time-court'>
+                      <span class='match-time'>${m.t || ''}</span>
+                      <span class='match-court'>${courtName}</span>
+                    </div>
+                  </td>
+                  <td class='${aClass} text-center'>${teamA}</td>
+                  <td class='text-center font-bold'>${m.sA} - ${m.sB}</td>
+                  <td class='${bClass} text-center'>${teamB}</td>
+                 </tr>`;
       });
       html += `</tbody></table></div></div>`;
       return html;
     }
 
+    /* ĐÃ TỐI ƯU renderQuarterfinals */
     function renderQuarterfinals(quarters) {
       const c = document.getElementById('quarterfinals');
       if (!quarters || quarters.length === 0) {
-        c.innerHTML = `<h2 class='section-title font-bold text-green-700 text-center'>Quarterfinals</h2><div class='bg-white p-4 rounded-xl shadow-md text-gray-600 text-sm'>No quarterfinal data available.</div>`;
+        c.innerHTML = `<div class='bg-white p-4 rounded-xl shadow-md text-gray-600 text-sm'>No quarterfinal data available.</div>`;
         return;
       }
-      let html = `<h2 class='section-title font-bold text-green-700 text-center'>Quarterfinals</h2>`;
-      html += `<div class='bg-white p-4 rounded-xl shadow-md'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Team A</th><th>Score</th><th>Team B</th><th>Winner</th></tr></thead><tbody>`;
+      let html = ``; 
+      // Thêm cột Winner vào bảng Tứ kết
+      html += `<div class='bg-white p-4 rounded-xl shadow-md'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Time / Court</th><th>Team A</th><th>Score</th><th>Team B</th><th>Winner</th></tr></thead><tbody>`;
       quarters.forEach(m => {
         const teamA = m.A;
         const teamB = m.B;
         const winner = m.Wn;
+        const courtName = m.c ? 'Sân ' + m.c.replace(/[0-9]/g, '') : '';
 
-        html += `<tr class='hover:bg-green-50'><td class='px-3 py-2 text-center'>${teamA || ''}</td><td class='px-3 py-2 text-center'>${m.sA || ''} - ${m.sB || ''}</td><td class='px-3 py-2 text-center'>${teamB || ''}</td><td class='px-3 py-2 text-center text-green-700 font-semibold'>${winner || ''}</td></tr>`;
+
+        html += `<tr class='hover:bg-green-50'>
+                   <td class='px-3 py-2 text-center'>
+                     <div class='match-time-court'>
+                      <span class='match-time'>${m.t || ''}</span>
+                      <span class='match-court'>${courtName}</span>
+                    </div>
+                   </td>
+                   <td class='px-3 py-2 text-center'>${teamA || ''}</td>
+                   <td class='px-3 py-2 text-center font-bold'>${m.sA || ''} - ${m.sB || ''}</td>
+                   <td class='px-3 py-2 text-center'>${teamB || ''}</td>
+                   <td class='px-3 py-2 text-center text-green-700 font-semibold'>${winner || ''}</td>
+                 </tr>`;
       });
       html += `</tbody></table></div>`;
       c.innerHTML = html;
@@ -337,7 +357,7 @@
 
     function renderKnockout(semis, final) {
       const c = document.getElementById('knockout');
-      let html = `<h2 class='section-title font-bold text-green-700 text-center'>Final</h2>`;
+      let html = ``; 
       const noData = (!semis || semis.length === 0) && (!final || final.Wn === "TBD");
 
       if (semis && semis.length > 0) html += renderMatchList(semis, 'Semifinals');
@@ -363,7 +383,7 @@
 
     function renderPlayers(teamList) {
         const c = document.getElementById('players');
-        let html = `<h2 class='section-title font-bold text-red-700 text-center'>Team List</h2>`;
+        let html = ``; 
         
         if (!teamList || teamList.length === 0) {
             html += `<div class='bg-white p-4 rounded-xl shadow-md'><p class='text-sm text-gray-600'>Team list is not available (requires 'tL' key).</p></div>`;
