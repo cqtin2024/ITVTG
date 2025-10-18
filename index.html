@@ -6,58 +6,65 @@
   <title>ITVTG PICKLEBALL TOURNAMENT 2025</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* 🎨 Cập nhật Màu Sắc Tươi Sáng Hơn */
     :root {
-      --primary: #4DB6AC; 
-      --accent: #EF5350;   
-      --dark-card: #1F2959; 
-      --darker-bg: #121A42; 
-      --text-light: #E0E0E0;
+      --primary: #00BCD4;   /* Cyan sáng, nổi bật */
+      --accent: #FF5722;    /* Cam đậm, ấm áp */
+      --light-card: #FFFFFF; /* Thẻ màu trắng tinh khiết */
+      --lighter-bg: #F5F5F5; /* Nền xám nhạt, gần trắng */
+      --text-dark: #212121;  /* Chữ tối rõ ràng */
+      --text-secondary: #757575; /* Chữ phụ màu xám trung tính */
     }
     body { 
-      background-color: var(--darker-bg); 
-      color: var(--text-light); 
+      background-color: var(--lighter-bg); 
+      color: var(--text-dark); 
       overflow-x: hidden; 
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; 
     }
     #content-carousel { display: flex; width: 400vw; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1); }
     .swipe-section { width: 100vw; flex-shrink: 0; padding: 1rem; min-height: calc(100vh - 160px); overflow-y: auto; }
     header { 
-        border-bottom: 4px solid rgba(77, 182, 172, 0.2); 
-        background-color: var(--dark-card); 
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        /* Viền và nền sáng hơn */
+        border-bottom: 4px solid rgba(0, 188, 212, 0.3); 
+        background-color: var(--light-card); 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .tab-btn { background: #37474F; color: #B0BEC5; transition: all 0.2s ease; } 
-    .tab-btn:hover { background: #455A64; }
+    .tab-btn { background: #E0E0E0; color: var(--text-dark); transition: all 0.2s ease; } 
+    .tab-btn:hover { background: #BDBDBD; }
     .tab-btn.active-primary { 
-      background: linear-gradient(90deg, var(--primary), #26A69A); 
-      color: var(--darker-bg); 
+      background: linear-gradient(90deg, var(--primary), #4DD0E1); 
+      color: var(--light-card); /* Chữ trắng trên nền màu */
       font-weight: bold; 
-      box-shadow: 0 6px 18px rgba(77, 182, 172, 0.3); 
+      box-shadow: 0 6px 18px rgba(0, 188, 212, 0.4); 
     } 
     .tab-btn.active-accent { 
-      background: linear-gradient(90deg, var(--accent), #E57373); 
-      color: var(--darker-bg); 
+      background: linear-gradient(90deg, var(--accent), #FF8A65); 
+      color: var(--light-card); 
       font-weight: bold; 
-      box-shadow: 0 6px 18px rgba(239, 83, 80, 0.3); 
+      box-shadow: 0 6px 18px rgba(255, 87, 34, 0.4); 
     }
     .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
-    .team-card:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+    .team-card:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
     #refresh-btn { 
         position: fixed; bottom: 20px; right: 20px; z-index: 50; 
-        background: var(--primary); 
-        color: var(--darker-bg); 
+        background: var(--accent); /* Màu tươi sáng, nổi bật */
+        color: var(--light-card); 
         font-weight: bold; padding: 12px; border-radius: 12px; 
-        box-shadow: 0 6px 14px rgba(0,0,0,0.3); 
+        box-shadow: 0 6px 14px rgba(255, 87, 34, 0.4); 
     }
-    .bg-white { background-color: var(--dark-card) !important; color: var(--text-light) !important; }
+    /* Thay đổi các lớp Tailwind mặc định để phù hợp với theme sáng */
+    .bg-white { background-color: var(--light-card) !important; color: var(--text-dark) !important; }
     .text-green-700 { color: var(--primary) !important; }
     .text-green-800 { color: var(--primary) !important; }
     .text-red-700 { color: var(--accent) !important; }
-    .text-gray-600 { color: #B0BEC5 !important; }
-    .text-gray-700 { color: #B0BEC5 !important; }
-    .bg-green-50 { background-color: #263238 !important; } 
+    .text-gray-600 { color: var(--text-secondary) !important; }
+    .text-gray-700 { color: var(--text-dark) !important; }
+    .bg-green-50 { background-color: #E0F7FA !important; } /* Nền nhóm/hàng sáng, tươi */ 
     .border-green-500 { border-color: var(--primary) !important; }
-    .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3); }
+    .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); }
+    /* Màu table header */
+    .divide-y.divide-gray-200 > * { border-color: #E0E0E0 !important; }
+    .bg-green-700 { background-color: var(--primary) !important; } /* Header table dùng Primary Color */
   </style>
 </head>
 <body class="font-sans">
