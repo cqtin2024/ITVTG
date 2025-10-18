@@ -119,6 +119,7 @@
 
     const carousel = document.getElementById('content-carousel');
     let currentIndex = 0;
+    let cachedTeamList = []; // Cache team list
 
     function getLastTwoWords(name) {
       if (!name || typeof name !== 'string') return '';
@@ -126,11 +127,18 @@
       return parts.length >= 2 ? parts.slice(-2).join(' ') : name;
     }
     
-    // Function to find Team Name from team ID (e.g., "Team 9")
-    function getTeamName(teamId, teamList) {
-        if (!teamList) return teamId;
-        const team = teamList.find(t => t.T === teamId);
-        return team ? team.T : teamId; // Since the team name is currently the same as the ID (e.g., "Team 9"), we return T.
+    // Updated function to get Combined Name (Last Two Words of players) from Team ID
+    function getCombinedName(teamId) {
+        if (!teamId || teamId.includes('.') || teamId === 'TBD') return teamId; // Skip play-off references or TBD
+
+        const team = cachedTeamList.find(t => t.T === teamId);
+        
+        if (team && team.P && team.P.length >= 2) {
+            const p1LastTwo = getLastTwoWords(team.P[0]);
+            const p2LastTwo = getLastTwoWords(team.P[1]);
+            return `${p1LastTwo} & ${p2LastTwo}`;
+        }
+        return teamId; // Fallback to Team ID if not found or incomplete
     }
 
 
@@ -160,6 +168,10 @@
         
         const data = await res.json();
         msg.textContent = `Load successful (${new Date().toLocaleTimeString('vi-VN')})`;
+        
+        // Update cache
+        cachedTeamList = data.tL || [];
+        
         renderData(data);
       } catch (err) {
         let errorMsg = err.message;
@@ -179,11 +191,10 @@
     }
 
     function renderData(data) {
-      const teamList = data.tL;
       renderRounds(data);
-      renderQuarterfinals(data.quarterfinals, teamList);
-      renderKnockout(data.semifinals, data.final, teamList);
-      renderPlayers(teamList); 
+      renderQuarterfinals(data.quarterfinals);
+      renderKnockout(data.semifinals, data.final);
+      renderPlayers(data.tL); 
     }
 
     function renderRounds(data) {
@@ -214,7 +225,11 @@
         displayHeaders.map(h => `<th class='px-3 py-2'>${h}</th>`).join('') + `</tr></thead><tbody class='bg-white divide-y divide-gray-100'>`;
       table.forEach((row, i) => {
         let rowClass = i === 0 ? 'bg-green-50 font-semibold' : i === 1 ? 'bg-green-50' : '';
-        html += `<tr class='hover:bg-green-50 ${rowClass}'>` + rawHeaders.map(h => `<td class='px-3 py-2 text-center'>${row[h]}</td>`).join('') + `</tr>`;
+        const teamName = row.D === 'Team' ? 'Team' : getCombinedName(row.D); // Convert Team ID to Combined Name
+        html += `<tr class='hover:bg-green-50 ${rowClass}'>` + rawHeaders.map(h => {
+            if (h === 'D') return `<td class='px-3 py-2 text-left font-semibold'>${teamName}</td>`;
+            return `<td class='px-3 py-2 text-center'>${row[h]}</td>`;
+        }).join('') + `</tr>`;
       });
       html += `</tbody></table></div></div>`;
       return html;
@@ -225,15 +240,19 @@
       let html = `<div class='bg-white p-4 mt-4 rounded-xl shadow'><h3 class='text-lg font-semibold text-green-800 mb-2 text-center'>${title}</h3>`;
       html += `<div class='overflow-x-auto'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Time</th><th>Court</th><th>Team A</th><th>Score</th><th>Team B</th></tr></thead><tbody>`;
       matches.forEach(m => {
+        const teamA = getCombinedName(m.A); // Convert Team ID to Combined Name
+        const teamB = getCombinedName(m.B); // Convert Team ID to Combined Name
+        
         const aClass = m.Wn === m.A ? 'text-green-700 font-bold' : '';
         const bClass = m.Wn === m.B ? 'text-green-700 font-bold' : '';
-        html += `<tr class='hover:bg-green-50'><td class='px-3 py-2 text-center'>${m.t || ''}</td><td class='px-3 py-2 text-center'>${m.c || ''}</td><td class='${aClass}'>${m.A}</td><td class='text-center'>${m.sA} - ${m.sB}</td><td class='${bClass}'>${m.B}</td></tr>`;
+        
+        html += `<tr class='hover:bg-green-50'><td class='px-3 py-2 text-center'>${m.t || ''}</td><td class='px-3 py-2 text-center'>${m.c || ''}</td><td class='${aClass}'>${teamA}</td><td class='text-center'>${m.sA} - ${m.sB}</td><td class='${bClass}'>${teamB}</td></tr>`;
       });
       html += `</tbody></table></div></div>`;
       return html;
     }
 
-    function renderQuarterfinals(quarters, teamList) {
+    function renderQuarterfinals(quarters) {
       const c = document.getElementById('quarterfinals');
       if (!quarters || quarters.length === 0) {
         c.innerHTML = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Quarterfinals</h2><div class='bg-white p-4 rounded-xl shadow text-gray-600 text-sm'>No quarterfinal data available.</div>`;
@@ -242,10 +261,10 @@
       let html = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Quarterfinals</h2>`;
       html += `<div class='bg-white p-4 rounded-xl shadow'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Team A</th><th>Score</th><th>Team B</th><th>Winner</th></tr></thead><tbody>`;
       quarters.forEach(m => {
-        // Use getTeamName for display, but currently the names are IDs
-        const teamA = getTeamName(m.A, teamList);
-        const teamB = getTeamName(m.B, teamList);
-        const winner = getTeamName(m.Wn, teamList);
+        // Keep Play-off references (W.A, R.B, etc.) in Knock-out stages
+        const teamA = m.A;
+        const teamB = m.B;
+        const winner = m.Wn;
 
         html += `<tr class='hover:bg-green-50'><td class='px-3 py-2 text-center'>${teamA || ''}</td><td class='px-3 py-2 text-center'>${m.sA || ''} - ${m.sB || ''}</td><td class='px-3 py-2 text-center'>${teamB || ''}</td><td class='px-3 py-2 text-center text-green-700 font-semibold'>${winner || ''}</td></tr>`;
       });
@@ -253,17 +272,18 @@
       c.innerHTML = html;
     }
 
-    function renderKnockout(semis, final, teamList) {
+    function renderKnockout(semis, final) {
       const c = document.getElementById('knockout');
       let html = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Final</h2>`;
       const noData = (!semis || semis.length === 0) && (!final || final.Wn === "TBD");
 
       if (semis && semis.length > 0) html += renderMatchList(semis, 'Semifinals');
       if (final && final.A) {
-           const finalA = getTeamName(final.A, teamList);
-           const finalB = getTeamName(final.B, teamList);
-           const finalWinner = getTeamName(final.Wn, teamList);
-           const runnerUp = getTeamName(final.rU, teamList);
+           // Keep Play-off references (W.SF1, TBD, etc.) in Knock-out stages
+           const finalA = final.A;
+           const finalB = final.B;
+           const finalWinner = final.Wn;
+           const runnerUp = final.rU;
 
            html += `<div class='winner-box bg-white p-4 mt-4 rounded-xl shadow text-center'><h3 class='text-lg font-semibold text-green-800 mb-2'>Final Match</h3><p><strong>${finalA || 'TBD'}</strong> (${final.sA || ''}) vs (${final.sB || ''}) <strong>${finalB || 'TBD'}</strong></p>`;
            if (final.Wn && final.Wn !== "TBD") {
@@ -302,11 +322,12 @@
             teamsByGroup[group].forEach(team => {
                 const p1Name = team.P[0] || '';
                 const p2Name = team.P[1] || '';
+                // Get the combined name for display in the card
                 const combinedName = `${getLastTwoWords(p1Name)} & ${getLastTwoWords(p2Name)}`; 
 
                 html += `<div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
                             <div class='text-sm font-semibold text-red-700'>${combinedName}</div>
-                            <div class='text-xs text-gray-500'>Team: ${team.T} | Group: ${team.g}</div>
+                            <div class='text-xs text-gray-500'>ID: ${team.T} | Group: ${team.g}</div>
                             <div class='text-xs mt-2 text-gray-700'>1. ${p1Name}</div>
                             <div class='text-xs text-gray-700'>2. ${p2Name}</div>
                          </div>`;
