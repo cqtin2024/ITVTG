@@ -113,9 +113,10 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
     }
 
-    /* Tiêu đề section */
-    h2.section-title {
-        font-size: 1.7rem;
+    /* Tiêu đề section - Giữ nguyên style nhưng không sử dụng */
+    h3.content-title { 
+        font-size: 1.2rem; /* Sử dụng h3 để làm tiêu đề nhỏ hơn trong nội dung nếu cần */
+        font-weight: 600;
         margin-bottom: 0.8rem;
     }
 
@@ -148,28 +149,24 @@
     
     <div id="content-carousel">
       <section class="swipe-section" id="rounds">
-        <h2 class='section-title font-bold text-green-700 text-center'>Group Stage</h2>
         <div class="bg-white p-4 rounded-xl shadow-md">
           <p class="text-sm text-gray-600">Group stage data will be loaded automatically from the JSON file.</p>
         </div>
       </section>
 
       <section class="swipe-section" id="quarterfinals">
-        <h2 class='section-title font-bold text-green-700 text-center'>Quarterfinals</h2>
         <div class="bg-white p-4 rounded-xl shadow-md">
           <p class="text-sm text-gray-600">Quarterfinal matches will be shown here when data is available.</p>
         </div>
       </section>
 
       <section class="swipe-section" id="knockout">
-        <h2 class='section-title font-bold text-green-700 text-center'>Final</h2>
         <div class="bg-white p-4 rounded-xl shadow-md">
           <p class="text-sm text-gray-600">Semifinals and Finals will be shown here when data is available.</p>
         </div>
       </section>
 
       <section class="swipe-section" id="players">
-        <h2 class='section-title font-bold text-red-700 text-center'>Team List</h2>
         <div class='bg-white p-4 rounded-xl shadow-md'>
           <p class='text-sm text-gray-600'>Loading team list...</p>
         </div>
@@ -261,14 +258,15 @@
       renderPlayers(data.tL); 
     }
 
+    /* ĐÃ BỎ TIÊU ĐỀ PHỤ */
     function renderRounds(data) {
       const c = document.getElementById('rounds');
       if (!data || !data.tableA) {
-        c.innerHTML = `<h2 class='section-title font-bold text-green-700 text-center'>Group Stage</h2><div class='bg-white p-4 rounded-xl shadow-md'><p class='text-sm text-gray-600'>No group stage data available.</p></div>`;
+        c.innerHTML = `<div class='bg-white p-4 rounded-xl shadow-md'><p class='text-sm text-gray-600'>No group stage data available.</p></div>`;
         return;
       }
-      let html = `<h2 class='section-title font-bold text-green-700 text-center'>Group Stage</h2>`;
-      
+      let html = ``; // Bỏ h2
+
       const tableNames = ['A', 'B', 'C', 'D'];
       tableNames.forEach(name => {
         if (data[`table${name}`]) html += renderTable(data[`table${name}`], `Group ${name}`);
@@ -316,13 +314,14 @@
       return html;
     }
 
+    /* ĐÃ BỎ TIÊU ĐỀ PHỤ */
     function renderQuarterfinals(quarters) {
       const c = document.getElementById('quarterfinals');
       if (!quarters || quarters.length === 0) {
-        c.innerHTML = `<h2 class='section-title font-bold text-green-700 text-center'>Quarterfinals</h2><div class='bg-white p-4 rounded-xl shadow-md text-gray-600 text-sm'>No quarterfinal data available.</div>`;
+        c.innerHTML = `<div class='bg-white p-4 rounded-xl shadow-md text-gray-600 text-sm'>No quarterfinal data available.</div>`;
         return;
       }
-      let html = `<h2 class='section-title font-bold text-green-700 text-center'>Quarterfinals</h2>`;
+      let html = ``; // Bỏ h2
       html += `<div class='bg-white p-4 rounded-xl shadow-md'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Team A</th><th>Score</th><th>Team B</th><th>Winner</th></tr></thead><tbody>`;
       quarters.forEach(m => {
         const teamA = m.A;
@@ -335,9 +334,10 @@
       c.innerHTML = html;
     }
 
+    /* ĐÃ BỎ TIÊU ĐỀ PHỤ */
     function renderKnockout(semis, final) {
       const c = document.getElementById('knockout');
-      let html = `<h2 class='section-title font-bold text-green-700 text-center'>Final</h2>`;
+      let html = ``; // Bỏ h2
       const noData = (!semis || semis.length === 0) && (!final || final.Wn === "TBD");
 
       if (semis && semis.length > 0) html += renderMatchList(semis, 'Semifinals');
@@ -361,9 +361,10 @@
       c.innerHTML = html;
     }
 
+    /* ĐÃ BỎ TIÊU ĐỀ PHỤ */
     function renderPlayers(teamList) {
         const c = document.getElementById('players');
-        let html = `<h2 class='section-title font-bold text-red-700 text-center'>Team List</h2>`;
+        let html = ``; // Bỏ h2
         
         if (!teamList || teamList.length === 0) {
             html += `<div class='bg-white p-4 rounded-xl shadow-md'><p class='text-sm text-gray-600'>Team list is not available (requires 'tL' key).</p></div>`;
