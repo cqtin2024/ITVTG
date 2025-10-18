@@ -6,12 +6,11 @@
   <title>ITVTG PICKLEBALL TOURNAMENT 2025</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Định nghĩa lại biến màu theo tông tối Navy/Cyan */
     :root {
-      --primary: #4DB6AC;  /* Màu Teal/Cyan sáng */
-      --accent: #EF5350;   /* Màu Đỏ sáng */
-      --dark-card: #1F2959; /* Màu nền Card/Section */
-      --darker-bg: #121A42; /* Màu nền Body */
+      --primary: #4DB6AC; 
+      --accent: #EF5350;   
+      --dark-card: #1F2959; 
+      --darker-bg: #121A42; 
       --text-light: #E0E0E0;
     }
     body { 
@@ -22,33 +21,25 @@
     }
     #content-carousel { display: flex; width: 400vw; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1); }
     .swipe-section { width: 100vw; flex-shrink: 0; padding: 1rem; min-height: calc(100vh - 160px); overflow-y: auto; }
-    
-    /* Style Header */
     header { 
         border-bottom: 4px solid rgba(77, 182, 172, 0.2); 
         background-color: var(--dark-card); 
         box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
-    
-    /* Style Tab Buttons */
     .tab-btn { background: #37474F; color: #B0BEC5; transition: all 0.2s ease; } 
     .tab-btn:hover { background: #455A64; }
-    
-    /* Nút active Primary (Cyan/Teal) */
     .tab-btn.active-primary { 
       background: linear-gradient(90deg, var(--primary), #26A69A); 
       color: var(--darker-bg); 
       font-weight: bold; 
       box-shadow: 0 6px 18px rgba(77, 182, 172, 0.3); 
     } 
-    /* Nút active Accent (Red) */
     .tab-btn.active-accent { 
       background: linear-gradient(90deg, var(--accent), #E57373); 
       color: var(--darker-bg); 
       font-weight: bold; 
       box-shadow: 0 6px 18px rgba(239, 83, 80, 0.3); 
     }
-    
     .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
     .team-card:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
     #refresh-btn { 
@@ -58,8 +49,6 @@
         font-weight: bold; padding: 12px; border-radius: 12px; 
         box-shadow: 0 6px 14px rgba(0,0,0,0.3); 
     }
-    
-    /* Utility class bị ghi đè màu */
     .bg-white { background-color: var(--dark-card) !important; color: var(--text-light) !important; }
     .text-green-700 { color: var(--primary) !important; }
     .text-green-800 { color: var(--primary) !important; }
@@ -125,23 +114,17 @@
   <button id="refresh-btn" title="Tải lại dữ liệu" onclick="manualRefresh()">⟳</button>
 
   <script>
-    // ✅ URL ĐÃ ĐƯỢC ĐỒNG BỘ: Cần thay đổi nếu file JSON nằm ở URL khác
     const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state.json'; 
     const REFRESH_INTERVAL = 30000;
 
     const carousel = document.getElementById('content-carousel');
     let currentIndex = 0;
 
-    // --- Helper Functions ---
     function getLastTwoWords(name) {
       if (!name || typeof name !== 'string') return '';
       const parts = name.trim().split(/\s+/).filter(Boolean);
-      if (parts.length >= 2) {
-        return parts.slice(-2).join(' '); 
-      }
-      return name;
+      return parts.length >= 2 ? parts.slice(-2).join(' ') : name;
     }
-    // -------------------------
 
     function goToSection(index) {
       currentIndex = Math.max(0, Math.min(3, index));
@@ -154,13 +137,8 @@
     function updateTabs() {
       document.querySelectorAll('#tab-controls button').forEach((btn, i) => {
         btn.classList.remove('active-primary', 'active-accent');
-        
         if (i === currentIndex) {
-          if (i === 3) { 
-             btn.classList.add('active-accent');
-          } else { 
-             btn.classList.add('active-primary');
-          }
+          btn.classList.add(i === 3 ? 'active-accent' : 'active-primary');
         }
       });
     }
@@ -170,27 +148,18 @@
       msg.textContent = 'Đang tải dữ liệu...';
       try {
         const res = await fetch(BASE_URL, { cache: 'no-store' });
-        
-        if (!res.ok) {
-           throw new Error(`Lỗi HTTP ${res.status}. Không thể kết nối với file JSON.`);
-        }
+        if (!res.ok) throw new Error(`Lỗi HTTP ${res.status}. Không thể kết nối.`);
         
         const data = await res.json();
-        msg.textContent = 'Đã tải dữ liệu thành công (' + new Date().toLocaleTimeString('vi-VN') + ')';
+        msg.textContent = `Đã tải thành công (${new Date().toLocaleTimeString('vi-VN')})`;
         renderData(data);
       } catch (err) {
         let errorMsg = err.message;
-
         if (window.location.protocol === 'file:') {
-             errorMsg += " (Vấn đề có thể do lỗi CORS. Vui lòng chạy ứng dụng trên máy chủ web, ví dụ: dùng Live Server).";
+             errorMsg += " (Có thể do lỗi CORS. Vui lòng chạy trên máy chủ web).";
         }
-        
         msg.textContent = '⚠️ Lỗi tải dữ liệu: ' + errorMsg;
-        
-        renderRounds({}); 
-        renderQuarterfinals([]);
-        renderKnockout([], {});
-        renderPlayers([]);
+        renderData({});
       }
     }
 
@@ -205,39 +174,29 @@
       renderRounds(data);
       renderQuarterfinals(data.quarterfinals);
       renderKnockout(data.semifinals, data.final);
-      // ✅ SỬ DỤNG KHÓA RÚT GỌN 'tL'
       renderPlayers(data.tL); 
     }
 
     function renderRounds(data) {
       const c = document.getElementById('rounds');
-      if (!data || (Object.keys(data).length === 0 && data.constructor === Object) || (!data.tableA && !data.tableB)) {
-        c.innerHTML = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Vòng Bảng</h2>
-          <div class='bg-white p-4 rounded-xl shadow'><p class='text-sm text-gray-600'>Không có dữ liệu vòng bảng trong file JSON.</p></div>`;
+      if (!data || !data.tableA) {
+        c.innerHTML = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Vòng Bảng</h2><div class='bg-white p-4 rounded-xl shadow'><p class='text-sm text-gray-600'>Không có dữ liệu vòng bảng.</p></div>`;
         return;
       }
       let html = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Vòng Bảng</h2>`;
       
-      if (data.tableA) html += renderTable(data.tableA, 'Bảng A');
-      if (data.tableB) html += renderTable(data.tableB, 'Bảng B');
-      if (data.tableC) html += renderTable(data.tableC, 'Bảng C');
-      if (data.tableD) html += renderTable(data.tableD, 'Bảng D');
-
-      if (data.matchesA) html += renderMatchList(data.matchesA, 'Kết quả Bảng A');
-      if (data.matchesB) html += renderMatchList(data.matchesB, 'Kết quả Bảng B');
-      if (data.matchesC) html += renderMatchList(data.matchesC, 'Kết quả Bảng C');
-      if (data.matchesD) html += renderMatchList(data.matchesD, 'Kết quả Bảng D');
+      const tableNames = ['A', 'B', 'C', 'D'];
+      tableNames.forEach(name => {
+        if (data[`table${name}`]) html += renderTable(data[`table${name}`], `Bảng ${name}`);
+        if (data[`matches${name}`]) html += renderMatchList(data[`matches${name}`], `Kết quả Bảng ${name}`);
+      });
       
       c.innerHTML = html;
     }
     
     function renderTable(table, title) {
       if (!table || table.length === 0) return '';
-      // ✅ ÁNH XẠ KHÓA RÚT GỌN SANG TÊN HIỂN THỊ
-      const headersMap = {
-          'D': 'Đội', 'W': 'Thắng', 'L': 'Thua', 'HS': 'HS', 'Pts': 'Điểm'
-      };
-      // ✅ SỬ DỤNG KHÓA RÚT GỌN 'mP'
+      const headersMap = {'D': 'Đội', 'W': 'Thắng', 'L': 'Thua', 'HS': 'HS', 'Pts': 'Điểm'};
       const rawHeaders = Object.keys(table[0]).filter(h => h !== 'mP');
       const displayHeaders = rawHeaders.map(h => headersMap[h] || h);
 
@@ -257,10 +216,8 @@
       let html = `<div class='bg-white p-4 mt-4 rounded-xl shadow'><h3 class='text-lg font-semibold text-green-800 mb-2 text-center'>${title}</h3>`;
       html += `<div class='overflow-x-auto'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Giờ</th><th>Sân</th><th>Đội A</th><th>Tỉ số</th><th>Đội B</th></tr></thead><tbody>`;
       matches.forEach(m => {
-        // ✅ SỬ DỤNG KHÓA RÚT GỌN 'Wn' và 'A'
         const aClass = m.Wn === m.A ? 'text-green-700 font-bold' : '';
         const bClass = m.Wn === m.B ? 'text-green-700 font-bold' : '';
-        // ✅ SỬ DỤNG KHÓA RÚT GỌN 't', 'c', 'A', 'sA', 'B', 'sB'
         html += `<tr class='hover:bg-green-50'><td class='px-3 py-2 text-center'>${m.t || ''}</td><td class='px-3 py-2 text-center'>${m.c || ''}</td><td class='${aClass}'>${m.A}</td><td class='text-center'>${m.sA} - ${m.sB}</td><td class='${bClass}'>${m.B}</td></tr>`;
       });
       html += `</tbody></table></div></div>`;
@@ -270,14 +227,12 @@
     function renderQuarterfinals(quarters) {
       const c = document.getElementById('quarterfinals');
       if (!quarters || quarters.length === 0) {
-        c.innerHTML = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Vòng Tứ Kết</h2>
-          <div class='bg-white p-4 rounded-xl shadow text-gray-600 text-sm'>Chưa có dữ liệu tứ kết trong file JSON.</div>`;
+        c.innerHTML = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Vòng Tứ Kết</h2><div class='bg-white p-4 rounded-xl shadow text-gray-600 text-sm'>Chưa có dữ liệu tứ kết.</div>`;
         return;
       }
       let html = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Vòng Tứ Kết</h2>`;
       html += `<div class='bg-white p-4 rounded-xl shadow'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Đội A</th><th>Tỉ số</th><th>Đội B</th><th>Thắng</th></tr></thead><tbody>`;
       quarters.forEach(m => {
-        // ✅ SỬ DỤNG KHÓA RÚT GỌN 'A', 'sA', 'B', 'sB', 'Wn'
         html += `<tr class='hover:bg-green-50'><td class='px-3 py-2 text-center'>${m.A || ''}</td><td class='px-3 py-2 text-center'>${m.sA || ''} - ${m.sB || ''}</td><td class='px-3 py-2 text-center'>${m.B || ''}</td><td class='px-3 py-2 text-center text-green-700 font-semibold'>${m.Wn || ''}</td></tr>`;
       });
       html += `</tbody></table></div>`;
@@ -287,15 +242,11 @@
     function renderKnockout(semis, final) {
       const c = document.getElementById('knockout');
       let html = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Knock-out</h2>`;
-      // ✅ SỬ DỤNG KHÓA RÚT GỌN 'Wn'
       const noData = (!semis || semis.length === 0) && (!final || final.Wn === "TBD");
 
       if (semis && semis.length > 0) html += renderMatchList(semis, 'Bán Kết');
-      // ✅ SỬ DỤNG KHÓA RÚT GỌN 'A'
       if (final && final.A) {
-           // ✅ SỬ DỤNG KHÓA RÚT GỌN 'A', 'sA', 'B', 'sB'
            html += `<div class='winner-box bg-white p-4 mt-4 rounded-xl shadow text-center'><h3 class='text-lg font-semibold text-green-800 mb-2'>Chung Kết</h3><p><strong>${final.A || 'TBD'}</strong> (${final.sA || ''}) vs (${final.sB || ''}) <strong>${final.B || 'TBD'}</strong></p>`;
-           // ✅ SỬ DỤNG KHÓA RÚT GỌN 'Wn' và 'rU'
            if (final.Wn && final.Wn !== "TBD") {
                html += `<p class='mt-2 text-green-700 font-semibold'>🏆 Vô địch: ${final.Wn}</p><p class='text-gray-700'>Á quân: ${final.rU || ''}</p></div>`;
            } else {
@@ -304,7 +255,7 @@
       }
       
       if (noData) {
-        html += `<div class='bg-white p-4 rounded-xl shadow text-gray-600 text-sm'>Chưa có dữ liệu Bán kết/Chung kết trong file JSON.</div>`;
+        html += `<div class='bg-white p-4 rounded-xl shadow text-gray-600 text-sm'>Chưa có dữ liệu Bán kết/Chung kết.</div>`;
       }
       c.innerHTML = html;
     }
@@ -314,14 +265,11 @@
         let html = `<h2 class='text-2xl font-bold text-red-700 mb-3 text-center'>Pick thủ — Danh sách đội</h2>`;
         
         if (!teamList || teamList.length === 0) {
-            html += `<div class='bg-white p-4 rounded-xl shadow'>
-                        <p class='text-sm text-gray-600'>Danh sách đội không có sẵn trong file JSON (cần khóa 'tL').</p>
-                     </div>`;
+            html += `<div class='bg-white p-4 rounded-xl shadow'><p class='text-sm text-gray-600'>Danh sách đội không có sẵn (cần khóa 'tL').</p></div>`;
             c.innerHTML = html;
             return;
         }
         
-        // ✅ SỬ DỤNG KHÓA RÚT GỌN 'g'
         const teamsByGroup = teamList.reduce((acc, team) => {
             (acc[team.g] = acc[team.g] || []).push(team);
             return acc;
@@ -333,16 +281,13 @@
                         <div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>`;
             
             teamsByGroup[group].forEach(team => {
-                // ✅ SỬ DỤNG KHÓA RÚT GỌN 'P'
                 const p1Name = team.P[0] || '';
                 const p2Name = team.P[1] || '';
-                const p1LastTwo = getLastTwoWords(p1Name);
-                const p2LastTwo = getLastTwoWords(p2Name);
-                const combinedName = `${p1LastTwo} & ${p2LastTwo}`; 
+                const combinedName = `${getLastTwoWords(p1Name)} & ${getLastTwoWords(p2Name)}`; 
 
                 html += `<div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
                             <div class='text-sm font-semibold text-red-700'>${combinedName}</div>
-                            <div class='text-xs text-gray-500'>ID: ${team.T || team.teamName} | Bảng: ${team.g}</div>
+                            <div class='text-xs text-gray-500'>ID: ${team.T} | Bảng: ${team.g}</div>
                             <div class='text-xs mt-2 text-gray-700'>1. ${p1Name}</div>
                             <div class='text-xs text-gray-700'>2. ${p2Name}</div>
                          </div>`;
@@ -350,14 +295,20 @@
 
             html += `</div></div>`;
         }
-
         c.innerHTML = html;
     }
 
-    // Swipe handling (simple)
+    // Swipe handling
     let startX=0, isDown=false;
     document.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; isDown=true; });
-    document.addEventListener('touchend', e=>{ if(!isDown) return; isDown=false; const endX = e.changedTouches[0].clientX; const diff = endX - startX; if(diff > 60) goToSection(currentIndex-1); if(diff < -60) goToSection(currentIndex+1); });
+    document.addEventListener('touchend', e=>{ 
+        if(!isDown) return; 
+        isDown=false; 
+        const endX = e.changedTouches[0].clientX; 
+        const diff = endX - startX; 
+        if(diff > 60) goToSection(currentIndex-1); 
+        if(diff < -60) goToSection(currentIndex+1); 
+    });
 
     setInterval(fetchData, REFRESH_INTERVAL);
     fetchData();
