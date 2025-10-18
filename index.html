@@ -47,11 +47,11 @@
         padding: 0.8rem 1rem 0.5rem 1rem; 
     }
     
-    /* Tiêu đề chính - ĐÃ CHUYỂN SANG MÀU TRẮNG */
+    /* Tiêu đề chính - MÀU TRẮNG */
     .header-title { 
         font-size: 1.6rem; 
         font-weight: 800;
-        color: var(--content-bg); /* MÀU TRẮNG */
+        color: var(--content-bg); 
     }
     /* Chữ phụ */
     .header-subtitle {
@@ -86,7 +86,7 @@
     }
 
     /* -------------------------------------------------------------------------- */
-    /* TABLE STYLES (Chỉnh sửa cột Giờ/Sân)        */
+    /* TABLE STYLES (Cột Giờ/Sân)                 */
     /* -------------------------------------------------------------------------- */
     .match-time-court {
         /* Đảm bảo nội dung nằm trên 2 dòng */
@@ -289,7 +289,7 @@
       return html;
     }
 
-    /* ĐÃ TỐI ƯU renderMatchList */
+    /* ĐÃ BỎ CHUẨN HÓA TÊN SÂN */
     function renderMatchList(matches, title) {
       if (!matches || matches.length === 0) return '';
       let html = `<div class='bg-white p-4 mt-4 rounded-xl shadow-md'><h3 class='text-lg font-semibold text-green-800 mb-2 text-center'>${title}</h3>`;
@@ -302,8 +302,8 @@
         const aClass = m.Wn === m.A ? 'text-green-700 font-bold' : '';
         const bClass = m.Wn === m.B ? 'text-green-700 font-bold' : '';
         
-        // Chuẩn hóa tên sân (bỏ số nếu có, ví dụ A1, A2 thành Sân A)
-        const courtName = m.c ? 'Sân ' + m.c.replace(/[0-9]/g, '') : '';
+        // GIỮ NGUYÊN m.c (ví dụ: A1) và thêm tiền tố "Sân "
+        const courtName = m.c ? 'Sân ' + m.c : '';
 
         html += `<tr class='hover:bg-green-50'>
                   <td class='px-3 py-2 text-center'>
@@ -321,7 +321,7 @@
       return html;
     }
 
-    /* ĐÃ TỐI ƯU renderQuarterfinals */
+    /* ĐÃ BỎ CHUẨN HÓA TÊN SÂN */
     function renderQuarterfinals(quarters) {
       const c = document.getElementById('quarterfinals');
       if (!quarters || quarters.length === 0) {
@@ -335,7 +335,9 @@
         const teamA = m.A;
         const teamB = m.B;
         const winner = m.Wn;
-        const courtName = m.c ? 'Sân ' + m.c.replace(/[0-9]/g, '') : '';
+        
+        // GIỮ NGUYÊN m.c (ví dụ: A1) và thêm tiền tố "Sân "
+        const courtName = m.c ? 'Sân ' + m.c : '';
 
 
         html += `<tr class='hover:bg-green-50'>
