@@ -6,65 +6,66 @@
   <title>ITVTG PICKLEBALL TOURNAMENT 2025</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* 🎨 Cập nhật Màu Sắc Tươi Sáng Hơn */
     :root {
-      --primary: #00BCD4;   /* Cyan sáng, nổi bật */
-      --accent: #FF5722;    /* Cam đậm, ấm áp */
-      --light-card: #FFFFFF; /* Thẻ màu trắng tinh khiết */
-      --lighter-bg: #F5F5F5; /* Nền xám nhạt, gần trắng */
-      --text-dark: #212121;  /* Chữ tối rõ ràng */
-      --text-secondary: #757575; /* Chữ phụ màu xám trung tính */
+      --primary: #4DB6AC; /* Xanh ngọc - dùng cho nút active, line, winner */
+      --accent: #EF5350;   /* Đỏ - dùng cho nút Team List */
+      --dark-card: #1F2959; /* Xanh Navy Sáng - Nền card, nền header */
+      --darker-bg: #121A42; /* Xanh Navy Đậm - Nền body */
+      --text-light: #E0E0E0; /* Màu chữ sáng */
     }
     body { 
-      background-color: var(--lighter-bg); 
-      color: var(--text-dark); 
+      background-color: var(--darker-bg); 
+      color: var(--text-light); 
       overflow-x: hidden; 
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; 
     }
     #content-carousel { display: flex; width: 400vw; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1); }
     .swipe-section { width: 100vw; flex-shrink: 0; padding: 1rem; min-height: calc(100vh - 160px); overflow-y: auto; }
     header { 
-        /* Viền và nền sáng hơn */
-        border-bottom: 4px solid rgba(0, 188, 212, 0.3); 
-        background-color: var(--light-card); 
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-bottom: 4px solid rgba(77, 182, 172, 0.2); 
+        background-color: var(--dark-card); 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
-    .tab-btn { background: #E0E0E0; color: var(--text-dark); transition: all 0.2s ease; } 
-    .tab-btn:hover { background: #BDBDBD; }
+    .tab-btn { background: #37474F; color: #B0BEC5; transition: all 0.2s ease; } 
+    .tab-btn:hover { background: #455A64; }
     .tab-btn.active-primary { 
-      background: linear-gradient(90deg, var(--primary), #4DD0E1); 
-      color: var(--light-card); /* Chữ trắng trên nền màu */
+      background: linear-gradient(90deg, var(--primary), #26A69A); 
+      color: var(--darker-bg); 
       font-weight: bold; 
-      box-shadow: 0 6px 18px rgba(0, 188, 212, 0.4); 
+      box-shadow: 0 6px 18px rgba(77, 182, 172, 0.3); 
     } 
     .tab-btn.active-accent { 
-      background: linear-gradient(90deg, var(--accent), #FF8A65); 
-      color: var(--light-card); 
+      background: linear-gradient(90deg, var(--accent), #E57373); 
+      color: var(--darker-bg); 
       font-weight: bold; 
-      box-shadow: 0 6px 18px rgba(255, 87, 34, 0.4); 
+      box-shadow: 0 6px 18px rgba(239, 83, 80, 0.3); 
     }
     .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
-    .team-card:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
+    .team-card:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
     #refresh-btn { 
         position: fixed; bottom: 20px; right: 20px; z-index: 50; 
-        background: var(--accent); /* Màu tươi sáng, nổi bật */
-        color: var(--light-card); 
+        background: var(--primary); 
+        color: var(--darker-bg); 
         font-weight: bold; padding: 12px; border-radius: 12px; 
-        box-shadow: 0 6px 14px rgba(255, 87, 34, 0.4); 
+        box-shadow: 0 6px 14px rgba(0,0,0,0.3); 
     }
-    /* Thay đổi các lớp Tailwind mặc định để phù hợp với theme sáng */
-    .bg-white { background-color: var(--light-card) !important; color: var(--text-dark) !important; }
-    .text-green-700 { color: var(--primary) !important; }
+    /* Màu sắc chung cho các thành phần */
+    .bg-white { background-color: var(--dark-card) !important; color: var(--text-light) !important; }
+    
+    /* Điều chỉnh màu xanh lá cây thành màu Primary (xanh ngọc) */
+    .text-green-700 { color: var(--primary) !important; } 
     .text-green-800 { color: var(--primary) !important; }
+    
     .text-red-700 { color: var(--accent) !important; }
-    .text-gray-600 { color: var(--text-secondary) !important; }
-    .text-gray-700 { color: var(--text-dark) !important; }
-    .bg-green-50 { background-color: #E0F7FA !important; } /* Nền nhóm/hàng sáng, tươi */ 
+    .text-gray-600 { color: #B0BEC5 !important; }
+    .text-gray-700 { color: #B0BEC5 !important; }
+    .bg-green-50 { background-color: #263238 !important; } 
     .border-green-500 { border-color: var(--primary) !important; }
-    .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); }
-    /* Màu table header */
-    .divide-y.divide-gray-200 > * { border-color: #E0E0E0 !important; }
-    .bg-green-700 { background-color: var(--primary) !important; } /* Header table dùng Primary Color */
+    .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3); }
+    
+    /* MÀU XANH NAVY CHO TIÊU ĐỀ CHÍNH */
+    .text-navy { color: var(--darker-bg) !important; } /* Sử dụng màu nền đậm nhất */
+    
   </style>
 </head>
 <body class="font-sans">
@@ -72,8 +73,8 @@
     <div class="flex items-center justify-center gap-4 mb-2">
       <img src="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/LogoITGVT.png" alt="Logo ITVTG" class="h-20 w-auto" />
       <div class="text-center">
-        <h1 class="text-2xl font-extrabold text-green-700">ITVTG PICKLEBALL TOURNAMENT 2025</h1>
-        <p class="text-sm text-gray-600">Date: <strong>26/10/2025</strong></p>
+        <h1 class="text-2xl font-extrabold text-white">ITVTG PICKLEBALL TOURNAMENT 2025</h1>
+        <p class="text-sm font-semibold text-gray-400">Date: <strong>26/10/2025</strong></p>
       </div>
     </div>
 
@@ -126,7 +127,7 @@
 
     const carousel = document.getElementById('content-carousel');
     let currentIndex = 0;
-    let cachedTeamList = []; // Cache team list
+    let cachedTeamList = []; 
 
     function getLastTwoWords(name) {
       if (!name || typeof name !== 'string') return '';
@@ -134,9 +135,8 @@
       return parts.length >= 2 ? parts.slice(-2).join(' ') : name;
     }
     
-    // Updated function to get Combined Name (Last Two Words of players) from Team ID
     function getCombinedName(teamId) {
-        if (!teamId || teamId.includes('.') || teamId === 'TBD') return teamId; // Skip play-off references or TBD
+        if (!teamId || teamId.includes('.') || teamId === 'TBD') return teamId; 
 
         const team = cachedTeamList.find(t => t.T === teamId);
         
@@ -145,7 +145,7 @@
             const p2LastTwo = getLastTwoWords(team.P[1]);
             return `${p1LastTwo} & ${p2LastTwo}`;
         }
-        return teamId; // Fallback to Team ID if not found or incomplete
+        return teamId; 
     }
 
 
@@ -176,7 +176,6 @@
         const data = await res.json();
         msg.textContent = `Load successful (${new Date().toLocaleTimeString('vi-VN')})`;
         
-        // Update cache
         cachedTeamList = data.tL || [];
         
         renderData(data);
@@ -232,7 +231,7 @@
         displayHeaders.map(h => `<th class='px-3 py-2'>${h}</th>`).join('') + `</tr></thead><tbody class='bg-white divide-y divide-gray-100'>`;
       table.forEach((row, i) => {
         let rowClass = i === 0 ? 'bg-green-50 font-semibold' : i === 1 ? 'bg-green-50' : '';
-        const teamName = row.D === 'Team' ? 'Team' : getCombinedName(row.D); // Convert Team ID to Combined Name
+        const teamName = row.D === 'Team' ? 'Team' : getCombinedName(row.D); 
         html += `<tr class='hover:bg-green-50 ${rowClass}'>` + rawHeaders.map(h => {
             if (h === 'D') return `<td class='px-3 py-2 text-left font-semibold'>${teamName}</td>`;
             return `<td class='px-3 py-2 text-center'>${row[h]}</td>`;
@@ -247,8 +246,8 @@
       let html = `<div class='bg-white p-4 mt-4 rounded-xl shadow'><h3 class='text-lg font-semibold text-green-800 mb-2 text-center'>${title}</h3>`;
       html += `<div class='overflow-x-auto'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Time</th><th>Court</th><th>Team A</th><th>Score</th><th>Team B</th></tr></thead><tbody>`;
       matches.forEach(m => {
-        const teamA = getCombinedName(m.A); // Convert Team ID to Combined Name
-        const teamB = getCombinedName(m.B); // Convert Team ID to Combined Name
+        const teamA = getCombinedName(m.A); 
+        const teamB = getCombinedName(m.B); 
         
         const aClass = m.Wn === m.A ? 'text-green-700 font-bold' : '';
         const bClass = m.Wn === m.B ? 'text-green-700 font-bold' : '';
@@ -268,7 +267,6 @@
       let html = `<h2 class='text-2xl font-bold text-green-700 mb-3 text-center'>Quarterfinals</h2>`;
       html += `<div class='bg-white p-4 rounded-xl shadow'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Team A</th><th>Score</th><th>Team B</th><th>Winner</th></tr></thead><tbody>`;
       quarters.forEach(m => {
-        // Keep Play-off references (W.A, R.B, etc.) in Knock-out stages
         const teamA = m.A;
         const teamB = m.B;
         const winner = m.Wn;
@@ -286,7 +284,6 @@
 
       if (semis && semis.length > 0) html += renderMatchList(semis, 'Semifinals');
       if (final && final.A) {
-           // Keep Play-off references (W.SF1, TBD, etc.) in Knock-out stages
            const finalA = final.A;
            const finalB = final.B;
            const finalWinner = final.Wn;
@@ -329,7 +326,6 @@
             teamsByGroup[group].forEach(team => {
                 const p1Name = team.P[0] || '';
                 const p2Name = team.P[1] || '';
-                // Get the combined name for display in the card
                 const combinedName = `${getLastTwoWords(p1Name)} & ${getLastTwoWords(p2Name)}`; 
 
                 html += `<div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
