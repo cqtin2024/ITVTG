@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* -------------------------------------------------------------------------- */
-    /* CUSTOM VARIABLES (VER 2.6 - COMPACT HEADER)     */
+    /* CUSTOM VARIABLES (VER 2.7 - COMPACT HEADER)     */
     /* -------------------------------------------------------------------------- */
     :root {
       --primary: #007BFF;        /* Xanh Dương Sáng - Màu nhấn chính */
@@ -20,7 +20,6 @@
       --tab-inactive-bg: #FFFFFF; 
       --tab-inactive-color: #15203D; 
       
-      /* NEW: Chiều cao ước tính đã giảm */
       --H-HEADER: 80px; 
       --H-TABS: 40px;    
     }
@@ -45,7 +44,6 @@
         width: 100vw; 
         flex-shrink: 0; 
         padding: 1rem; 
-        /* Cần điều chỉnh min-height cho phù hợp với chiều cao header/tab mới */
         min-height: calc(100vh - 120px); 
         overflow-y: auto; 
     }
@@ -58,11 +56,9 @@
         border-bottom: 4px solid var(--primary); 
         background-color: var(--header-bg); 
         box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
-        /* NEW: Giảm padding cho header */
         padding: 0.5rem 1rem 0.2rem 1rem; 
         height: var(--H-HEADER); 
         overflow: hidden; 
-        /* NEW: Dùng flex để căn giữa logo/title và đẩy status message xuống dưới cùng */
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -71,29 +67,31 @@
     /* Container chính chứa Logo và Tiêu đề */
     .header-main-content {
         display: flex;
-        align-items: center;
+        /* NEW: Căn giữa Logo theo chiều cao */
+        align-items: center; 
         justify-content: center;
-        gap: 1rem;
-        flex-grow: 1; /* Đảm bảo khối này chiếm hết không gian còn lại */
+        /* NEW: Giảm gap */
+        gap: 0.75rem; 
+        flex-grow: 1; 
     }
 
-    /* NEW: Logo 75% chiều cao của khối nội dung chính */
+    /* Logo 75% chiều cao của khối nội dung chính */
     .header-logo { 
         height: 75%; 
-        max-height: 3.2rem; /* Giới hạn tuyệt đối (~51.2px) */
+        max-height: 3.2rem; 
     }
-    /* NEW: Tiêu đề và Phụ đề */
+    /* Tiêu đề và Phụ đề */
     .header-title { 
-        font-size: 1.4rem !important; /* Giảm cỡ chữ chính trên mobile */
+        font-size: 1.4rem !important; 
         font-weight: 800; 
         color: var(--content-bg); 
-        margin-bottom: 0; /* Thu gọn khoảng cách */
+        margin-bottom: 0; 
     }
     .header-subtitle { 
         color: #B0BEC5; 
-        line-height: 1.2; /* Thu gọn khoảng cách dòng */
+        line-height: 1.2; 
         margin-top: 0;
-        font-size: 0.7rem; /* Giảm cỡ chữ phụ */
+        font-size: 0.7rem; 
     }
     
     /* Container cho Tab Bar */
@@ -105,11 +103,10 @@
         z-index: 25; 
         background-color: var(--body-bg); 
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        /* NEW: Giảm padding cho Tab Bar */
         padding: 0.3rem 0; 
     }
 
-    /* MOBILE: Điều chỉnh Padding Top cho nội dung chính (Tổng offset 80px + 40px = 120px) */
+    /* MOBILE: Điều chỉnh Padding Top cho nội dung chính */
     #main-content-wrapper { 
         padding-top: calc(var(--H-HEADER) + var(--H-TABS)) !important; 
         overflow-x: hidden;
@@ -117,7 +114,7 @@
     
     /* Status message */
     #statusMessage {
-        font-size: 0.7rem !important; /* Rất nhỏ, chỉ là thông báo */
+        font-size: 0.7rem !important; 
         padding-bottom: 0.2rem !important;
         padding-top: 0.1rem !important;
     }
@@ -131,19 +128,20 @@
         header {
             position: static !important;
             height: auto !important;
-            padding-top: 0.4rem !important; /* Thu gọn nhẹ */
+            padding-top: 0.4rem !important; 
             padding-bottom: 0.4rem !important;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         /* Bố cục Header trên Desktop - Căn trái */
         header .header-main-content {
             justify-content: flex-start !important; 
+            align-items: center; /* Đảm bảo căn giữa chiều cao trên desktop */
             flex-grow: 0;
             gap: 1.25rem;
         }
         
         /* Kích thước logo trên Desktop */
-        .header-logo { height: 75%; max-height: 2.2rem; } /* ~35px */
+        .header-logo { height: 75%; max-height: 2.2rem; } 
         /* Kích thước chữ tiêu đề trên Desktop */
         .header-title { font-size: 1.2rem !important; } 
 
@@ -167,6 +165,14 @@
             padding: 1rem 0;
         }
         .bg-white { padding: 1.25rem; }
+        
+        /* Bố cục 2 cột cho Vòng Bảng (Group Stage) */
+        .desktop-group-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 20px; 
+            margin-bottom: 30px;
+        }
     }
 
     /* -------------------------------------------------------------------------- */
@@ -294,12 +300,11 @@
       updateTabs();
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      // NEW: Xử lý giao diện Desktop (tắt Carousel)
+      // Xử lý giao diện Desktop (tắt Carousel)
       const isDesktop = window.innerWidth >= 992;
       const sections = document.querySelectorAll('.swipe-section');
 
       if (isDesktop) {
-        // Trên Desktop: Chỉ hiện section đang active, ẩn các section khác
         sections.forEach((section, i) => {
             section.style.display = (i === currentIndex) ? 'block' : 'none';
         });
@@ -307,7 +312,6 @@
         carousel.style.transition = 'none';
 
       } else { 
-        // Trên Mobile: Kích hoạt Carousel/Swipe
         sections.forEach(section => { section.style.display = 'block'; });
         carousel.style.transition = 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)';
         carousel.style.transform = `translateX(${currentIndex * -100}vw)`;
@@ -358,7 +362,6 @@
       renderQuarterfinals(data.quarterfinals);
       renderKnockout(data.semifinals, data.final);
       renderPlayers(data.tL); 
-      // NEW: Gọi lại goToSection để đảm bảo trạng thái hiển thị đúng trên Desktop
       goToSection(currentIndex); 
     }
     
