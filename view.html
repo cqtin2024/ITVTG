@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* -------------------------------------------------------------------------- */
-    /* CUSTOM VARIABLES (VER 3.2 - LOGO & FINAL HIGHLIGHT)     */
+    /* CUSTOM VARIABLES (VER 3.3 - STATUS ICON)     */
     /* -------------------------------------------------------------------------- */
     :root {
       --primary: #007BFF;        /* Xanh Dương Sáng - Màu nhấn chính */
@@ -20,9 +20,8 @@
       --tab-inactive-bg: #FFFFFF; 
       --tab-inactive-color: #15203D; 
       
-      /* NEW: Tăng chiều cao lên 115px để chứa Logo 100px an toàn */
       --H-HEADER: 115px;          
-      --H-TABS: 40px;            /* Chiều cao Tab Bar */
+      --H-TABS: 40px;            
     }
     
     /* -------------------------------------------------------------------------- */
@@ -76,13 +75,11 @@
         padding-bottom: 0; 
     }
 
-    /* NEW FIX: Logo 90% chiều cao Header (100px) */
     .header-logo { 
         height: 100px; 
         max-height: 100px; 
-        width: auto; /* Giữ tỷ lệ */
+        width: auto; 
     }
-    /* Tiêu đề và Phụ đề */
     .header-title { 
         font-size: 1.4rem !important; 
         font-weight: 800; 
@@ -99,7 +96,6 @@
     /* Container cho Tab Bar */
     #tab-controls-container {
         position: fixed;
-        /* FIX: Tab Bar bắt đầu chính xác ngay sau Header (115px) */
         top: var(--H-HEADER); 
         left: 0; 
         right: 0; 
@@ -110,7 +106,6 @@
     }
 
     /* MOBILE: Điều chỉnh Padding Top cho nội dung chính */
-    /* FIX: Tổng padding là (Header 115px + Tabs 40px) = 155px */
     #main-content-wrapper { 
         padding-top: calc(var(--H-HEADER) + var(--H-TABS)) !important; 
         overflow-x: hidden;
@@ -122,20 +117,49 @@
         padding-bottom: 0.2rem !important;
         padding-top: 0.1rem !important;
         line-height: 1; 
+        color: #B0BEC5; /* Màu chữ mờ */
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* NEW: STATUS ICON STYLES */
+    /* -------------------------------------------------------------------------- */
+    .status-icon {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        background-color: transparent; 
+        margin-left: 5px; 
+        vertical-align: middle;
+    }
+
+    .status-success {
+        background-color: #28a745; /* Green */
+        animation: pulse-green 1.5s infinite alternate;
+    }
+
+    @keyframes pulse-green {
+        from { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.8); }
+        to { box-shadow: 0 0 0 4px rgba(40, 167, 69, 0); }
+    }
+    
+    .status-error {
+        background-color: var(--accent); /* Yellow/Red for error */
+        box-shadow: 0 0 0 2px var(--accent);
     }
     
     /* -------------------------------------------------------------------------- */
-    /* FINAL MATCH HIGHLIGHT STYLES (NEW) */
+    /* FINAL MATCH HIGHLIGHT STYLES */
     /* -------------------------------------------------------------------------- */
     .final-highlight {
-        border: 3px solid var(--accent); /* border highlight */
-        box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); /* glow effect */
+        border: 3px solid var(--accent); 
+        box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); 
     }
     .champion-text {
         font-size: 1.2rem;
         font-weight: 900;
-        color: var(--accent) !important; /* Use accent color (yellow) for champion */
-        animation: pulse 1s infinite alternate; /* Simple animation for emphasis */
+        color: var(--accent) !important; 
+        animation: pulse 1s infinite alternate; 
     }
     @keyframes pulse {
         from { opacity: 1; }
@@ -144,7 +168,7 @@
 
 
     /* -------------------------------------------------------------------------- */
-    /* DESKTOP (>= 992px) - Bố cục gọn gàng hơn */
+    /* DESKTOP (>= 992px) */
     /* -------------------------------------------------------------------------- */
     @media (min-width: 992px) {
         
@@ -163,7 +187,6 @@
             padding-bottom: 0 !important; 
         }
         
-        /* Desktop Logo Size - nhỏ hơn */
         .header-logo { height: 75%; max-height: 2.2rem !important; } 
         .header-title { font-size: 1.2rem !important; } 
 
@@ -195,7 +218,7 @@
     }
 
     /* -------------------------------------------------------------------------- */
-    /* CÁC STYLES CHUNG (Áp dụng màu sắc mới)        */
+    /* CÁC STYLES CHUNG */
     /* -------------------------------------------------------------------------- */
     
     .tab-btn { 
@@ -217,7 +240,7 @@
     .match-court { font-size: 0.75rem; color: var(--text-muted); }
     .bg-white { background-color: var(--content-bg) !important; color: var(--text-dark) !important; }
     .text-gray-600, .text-gray-700 { color: var(--text-muted) !important; }
-    .bg-green-50 { background-color: #E9F4FF !important; } /* Tông xanh nhạt */
+    .bg-green-50 { background-color: #E9F4FF !important; } 
     .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
     .team-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
     .text-green-700, .text-green-800, .border-green-500, .bg-green-700 { 
@@ -241,7 +264,10 @@
       <img src="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/LogoITGVT.png" alt="Logo ITVTG" class="header-logo w-auto" />
       <div class="text-center">
         <h1 class="header-title">ITVTG PICKLEBALL TOURNAMENT 2025</h1>
-        <p class="text-sm font-semibold header-subtitle">Date: <strong>26/10/2025</strong></p>
+        <p class="text-sm font-semibold header-subtitle">
+            Date: <strong>26/10/2025</strong>
+            <span id="dataStatusIcon" class="status-icon"></span> 
+        </p>
       </div>
     </div>
     <div id="statusMessage" class="text-center text-xs font-medium header-subtitle">Loading data...</div>
@@ -319,7 +345,6 @@
       updateTabs();
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      // Xử lý giao diện Desktop (tắt Carousel)
       const isDesktop = window.innerWidth >= 992;
       const sections = document.querySelectorAll('.swipe-section');
 
@@ -348,23 +373,34 @@
 
     async function fetchData() {
       const msg = document.getElementById('statusMessage');
+      const icon = document.getElementById('dataStatusIcon');
+
+      // 1. Reset trạng thái & Bắt đầu Loading
       msg.textContent = 'Loading data...';
+      icon.classList.remove('status-success', 'status-error');
+      
       try {
         const res = await fetch(BASE_URL, { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP Error ${res.status}. Could not connect.`);
         
         const data = await res.json();
-        msg.textContent = `Load successful (${new Date().toLocaleTimeString('vi-VN')})`;
+        
+        // 2. Tải thành công
+        msg.textContent = ''; // Xóa dòng chữ Loading
+        icon.classList.add('status-success'); // Hiển thị icon xanh nhấp nháy
         
         cachedTeamList = data.tL || [];
         
         renderData(data);
       } catch (err) {
+        // 3. Xảy ra lỗi
         let errorMsg = err.message;
         if (window.location.protocol === 'file:') {
              errorMsg += " (Possibly CORS error. Please run on a web server).";
         }
         msg.textContent = '⚠️ Data load error: ' + errorMsg;
+        icon.classList.remove('status-success');
+        icon.classList.add('status-error'); // Hiển thị icon lỗi
         renderData({});
       }
     }
@@ -588,7 +624,6 @@
         isDown=false; 
         const endX = e.changedTouches[0].clientX; 
         const diff = endX - startX; 
-        // Chỉ xử lý swipe trên mobile
         if(window.innerWidth < 992) {
             if(diff > 60) goToSection(currentIndex-1); 
             if(diff < -60) goToSection(currentIndex+1); 
