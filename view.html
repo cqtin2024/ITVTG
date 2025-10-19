@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* -------------------------------------------------------------------------- */
-    /* CUSTOM VARIABLES (VER 2.5 - BLUE TONE)          */
+    /* CUSTOM VARIABLES (VER 2.6 - COMPACT HEADER)     */
     /* -------------------------------------------------------------------------- */
     :root {
       --primary: #007BFF;        /* Xanh Dương Sáng - Màu nhấn chính */
@@ -20,8 +20,9 @@
       --tab-inactive-bg: #FFFFFF; 
       --tab-inactive-color: #15203D; 
       
-      --H-HEADER: 100px; /* NEW: Giảm nhẹ chiều cao ước tính */
-      --H-TABS: 50px;    
+      /* NEW: Chiều cao ước tính đã giảm */
+      --H-HEADER: 80px; 
+      --H-TABS: 40px;    
     }
     
     /* -------------------------------------------------------------------------- */
@@ -44,29 +45,58 @@
         width: 100vw; 
         flex-shrink: 0; 
         padding: 1rem; 
-        min-height: calc(100vh - 140px);
+        /* Cần điều chỉnh min-height cho phù hợp với chiều cao header/tab mới */
+        min-height: calc(100vh - 120px); 
         overflow-y: auto; 
     }
     
     /* -------------------------------------------------------------------------- */
-    /* MOBILE: HEADER & FIXED TAB BAR */
+    /* MOBILE: HEADER & FIXED TAB BAR (Thu gọn) */
     /* -------------------------------------------------------------------------- */
     header { 
         position: fixed; top: 0; left: 0; right: 0; z-index: 30; 
         border-bottom: 4px solid var(--primary); 
         background-color: var(--header-bg); 
         box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
-        padding: 0.8rem 1rem 0.5rem 1rem; 
+        /* NEW: Giảm padding cho header */
+        padding: 0.5rem 1rem 0.2rem 1rem; 
         height: var(--H-HEADER); 
         overflow: hidden; 
+        /* NEW: Dùng flex để căn giữa logo/title và đẩy status message xuống dưới cùng */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
     
-    /* NEW: Kích thước logo trên Mobile */
-    .header-logo { height: 3.5rem; } /* h-14 */
-    /* NEW: Kích thước chữ tiêu đề trên Mobile */
-    .header-title { font-size: 1.5rem; font-weight: 800; color: var(--content-bg); }
+    /* Container chính chứa Logo và Tiêu đề */
+    .header-main-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        flex-grow: 1; /* Đảm bảo khối này chiếm hết không gian còn lại */
+    }
+
+    /* NEW: Logo 75% chiều cao của khối nội dung chính */
+    .header-logo { 
+        height: 75%; 
+        max-height: 3.2rem; /* Giới hạn tuyệt đối (~51.2px) */
+    }
+    /* NEW: Tiêu đề và Phụ đề */
+    .header-title { 
+        font-size: 1.4rem !important; /* Giảm cỡ chữ chính trên mobile */
+        font-weight: 800; 
+        color: var(--content-bg); 
+        margin-bottom: 0; /* Thu gọn khoảng cách */
+    }
+    .header-subtitle { 
+        color: #B0BEC5; 
+        line-height: 1.2; /* Thu gọn khoảng cách dòng */
+        margin-top: 0;
+        font-size: 0.7rem; /* Giảm cỡ chữ phụ */
+    }
     
-    /* Container cho Tab Bar, nằm ngay dưới Header */
+    /* Container cho Tab Bar */
     #tab-controls-container {
         position: fixed;
         top: var(--H-HEADER); 
@@ -75,15 +105,23 @@
         z-index: 25; 
         background-color: var(--body-bg); 
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        padding: 0.5rem 0;
+        /* NEW: Giảm padding cho Tab Bar */
+        padding: 0.3rem 0; 
     }
 
-    /* MOBILE: Điều chỉnh Padding Top cho nội dung chính */
+    /* MOBILE: Điều chỉnh Padding Top cho nội dung chính (Tổng offset 80px + 40px = 120px) */
     #main-content-wrapper { 
         padding-top: calc(var(--H-HEADER) + var(--H-TABS)) !important; 
         overflow-x: hidden;
     }
     
+    /* Status message */
+    #statusMessage {
+        font-size: 0.7rem !important; /* Rất nhỏ, chỉ là thông báo */
+        padding-bottom: 0.2rem !important;
+        padding-top: 0.1rem !important;
+    }
+
     /* -------------------------------------------------------------------------- */
     /* DESKTOP (>= 992px) - Bố cục gọn gàng hơn */
     /* -------------------------------------------------------------------------- */
@@ -93,53 +131,29 @@
         header {
             position: static !important;
             height: auto !important;
-            padding-top: 0.5rem !important; 
-            padding-bottom: 0.5rem !important;
+            padding-top: 0.4rem !important; /* Thu gọn nhẹ */
+            padding-bottom: 0.4rem !important;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        /* NEW: Bố cục Header trên Desktop - Logo bên trái, chữ bên phải */
-        header .flex {
-            justify-content: flex-start !important; /* Căn trái */
+        /* Bố cục Header trên Desktop - Căn trái */
+        header .header-main-content {
+            justify-content: flex-start !important; 
+            flex-grow: 0;
+            gap: 1.25rem;
         }
         
-        /* NEW: Kích thước logo trên Desktop */
-        .header-logo { height: 2.5rem; } /* h-10 */
-        /* NEW: Kích thước chữ tiêu đề trên Desktop */
-        .header-title { font-size: 1.25rem !important; } /* Giảm cỡ chữ */
-
+        /* Kích thước logo trên Desktop */
+        .header-logo { height: 75%; max-height: 2.2rem; } /* ~35px */
+        /* Kích thước chữ tiêu đề trên Desktop */
+        .header-title { font-size: 1.2rem !important; } 
 
         /* Bỏ Cố định và Thu gọn Tab Bar */
         #tab-controls-container {
             position: static !important;
-            top: auto !important;
-            padding-top: 0.5rem !important;
-            padding-bottom: 0.5rem !important;
-            border-bottom: 1px solid #E0E0E0;
-            background-color: var(--content-bg) !important; 
+            padding-top: 0.4rem !important;
+            padding-bottom: 0.4rem !important;
         }
 
-        /* Căn giữa và Giới hạn Nội dung */
-        header, #tab-controls-container, #main-content-wrapper {
-            margin-left: auto !important;
-            margin-right: auto !important;
-            max-width: 1200px; 
-        }
-        
-        /* Điều chỉnh Main Content */
-        #main-content-wrapper {
-            padding-top: 20px !important; 
-            padding-left: 20px;
-            padding-right: 20px;
-        }
-
-        /* Bố cục 2 cột cho Vòng Bảng (Group Stage) */
-        .desktop-group-layout {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 20px; 
-            margin-bottom: 30px;
-        }
-        
         /* TẮT CAROUSEL VÀ SWIPE */
         #content-carousel {
             width: auto !important;
@@ -158,7 +172,7 @@
     /* -------------------------------------------------------------------------- */
     /* CÁC STYLES CHUNG (Áp dụng màu sắc mới)        */
     /* -------------------------------------------------------------------------- */
-    .header-subtitle { color: #B0BEC5; }
+    
     .tab-btn { 
         background-color: var(--tab-inactive-bg); color: var(--tab-inactive-color); 
         transition: all 0.2s ease; font-size: 0.85rem; border: 1px solid #B0BEC5; font-weight: 600; 
@@ -173,24 +187,19 @@
         color: var(--header-bg) !important; 
         border-color: var(--accent) !important;
     }
-
     .match-time-court { display: flex; flex-direction: column; align-items: center; padding-top: 0.3rem; padding-bottom: 0.3rem; }
     .match-time { font-weight: 600; font-size: 0.85rem; color: var(--text-dark); }
     .match-court { font-size: 0.75rem; color: var(--text-muted); }
     .bg-white { background-color: var(--content-bg) !important; color: var(--text-dark) !important; }
     .text-gray-600, .text-gray-700 { color: var(--text-muted) !important; }
-    
     .bg-green-50 { background-color: #E9F4FF !important; } /* Tông xanh nhạt */
-    
     .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
     .team-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
-    
     .text-green-700, .text-green-800, .border-green-500, .bg-green-700 { 
       color: var(--primary) !important; 
       border-color: var(--primary) !important;
     }
     .bg-green-700 { background-color: var(--primary) !important; color: var(--content-bg) !important; }
-
     .text-red-700 { color: var(--accent) !important; }
 
     #refresh-btn { 
@@ -203,14 +212,14 @@
 <body class="font-sans">
   
   <header class="shadow-lg">
-    <div class="flex items-center justify-center gap-4"> 
+    <div class="header-main-content"> 
       <img src="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/LogoITGVT.png" alt="Logo ITVTG" class="header-logo w-auto" />
       <div class="text-center">
         <h1 class="header-title">ITVTG PICKLEBALL TOURNAMENT 2025</h1>
         <p class="text-sm font-semibold header-subtitle">Date: <strong>26/10/2025</strong></p>
       </div>
     </div>
-    <div id="statusMessage" class="text-center text-sm font-medium header-subtitle pt-1 pb-2">Loading data...</div>
+    <div id="statusMessage" class="text-center text-xs font-medium header-subtitle">Loading data...</div>
   </header>
   
   <div id="tab-controls-container">
