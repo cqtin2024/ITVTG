@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* -------------------------------------------------------------------------- */
-    /* CUSTOM VARIABLES (VER 3.0 - FIXED HEADER VISIBILITY)     */
+    /* CUSTOM VARIABLES (VER 3.1 - FINAL FIX: HEADER/TAB BAR)     */
     /* -------------------------------------------------------------------------- */
     :root {
       --primary: #007BFF;        /* Xanh Dương Sáng - Màu nhấn chính */
@@ -20,8 +20,8 @@
       --tab-inactive-bg: #FFFFFF; 
       --tab-inactive-color: #15203D; 
       
-      /* NEW: Chiều cao ước tính tăng lên 95px để chứa cả Status Message */
-      --H-HEADER: 95px;          
+      /* NEW: Chiều cao ước tính tăng lên 98px để tạo khoảng trống an toàn */
+      --H-HEADER: 98px;          
       --H-TABS: 40px;            /* Chiều cao Tab Bar */
     }
     
@@ -45,8 +45,8 @@
         width: 100vw; 
         flex-shrink: 0; 
         padding: 1rem; 
-        /* min-height = 100vh - (Header 95px + Tabs 40px) = 135px */
-        min-height: calc(100vh - 135px); 
+        /* min-height = 100vh - (Header 98px + Tabs 40px) = 138px */
+        min-height: calc(100vh - 138px); 
         overflow-y: auto; 
     }
     
@@ -58,25 +58,25 @@
         border-bottom: 4px solid var(--primary); 
         background-color: var(--header-bg); 
         box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
-        /* Giảm padding top/bottom tổng thể để tối ưu không gian trong 95px */
+        /* Tối ưu padding: 0.3rem top, 0.1rem bottom */
         padding: 0.3rem 1rem 0.1rem 1rem; 
         height: var(--H-HEADER); 
         overflow: hidden; 
         display: flex;
         flex-direction: column;
+        /* Dùng space-between để Logo/Tiêu đề và Status Message được phân bổ */
         justify-content: space-between;
     }
     
-    /* Container chính chứa Logo và Tiêu đề - Cho phép nó chiếm phần lớn không gian */
+    /* Container chính chứa Logo và Tiêu đề */
     .header-main-content {
         display: flex;
         align-items: center; 
         justify-content: center;
         gap: 0.75rem; 
-        /* Đảm bảo khối này chiếm khoảng trống cần thiết, không bị Status Message chen lấn */
         flex-grow: 1; 
-        /* NEW: Đảm bảo có khoảng đệm phía dưới để cách biệt với Status Message */
-        padding-bottom: 0.2rem; 
+        /* FIX: Loại bỏ padding-bottom không cần thiết để không lãng phí không gian */
+        padding-bottom: 0; 
     }
 
     /* Logo 75% chiều cao của khối nội dung chính */
@@ -101,7 +101,7 @@
     /* Container cho Tab Bar */
     #tab-controls-container {
         position: fixed;
-        /* FIX: Tab Bar bắt đầu chính xác ngay sau Header (95px) */
+        /* FIX: Tab Bar bắt đầu chính xác ngay sau Header (98px) */
         top: var(--H-HEADER); 
         left: 0; 
         right: 0; 
@@ -112,7 +112,7 @@
     }
 
     /* MOBILE: Điều chỉnh Padding Top cho nội dung chính */
-    /* FIX: Tổng padding là (Header 95px + Tabs 40px) = 135px */
+    /* FIX: Tổng padding là (Header 98px + Tabs 40px) = 138px */
     #main-content-wrapper { 
         padding-top: calc(var(--H-HEADER) + var(--H-TABS)) !important; 
         overflow-x: hidden;
@@ -121,17 +121,16 @@
     /* Status message */
     #statusMessage {
         font-size: 0.7rem !important; 
-        /* NEW: Giữ padding nhỏ để đảm bảo nó hiển thị gọn gàng */
         padding-bottom: 0.2rem !important;
         padding-top: 0.1rem !important;
-        line-height: 1; /* NEW: Đảm bảo chỉ chiếm một dòng */
+        line-height: 1; 
     }
 
     /* -------------------------------------------------------------------------- */
     /* DESKTOP (>= 992px) - Bố cục gọn gàng hơn */
     /* -------------------------------------------------------------------------- */
     @media (min-width: 992px) {
-        /* Giữ nguyên logic Desktop từ Ver 2.9 */
+        
         header {
             position: static !important;
             height: auto !important;
