@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* -------------------------------------------------------------------------- */
-    /* CUSTOM VARIABLES (VER 3.4 - TEAM CARD LAYOUT)     */
+    /* CUSTOM VARIABLES (VER 3.3 - STATUS ICON)     */
     /* -------------------------------------------------------------------------- */
     :root {
       --primary: #007BFF;        /* Xanh Dương Sáng - Màu nhấn chính */
@@ -44,6 +44,7 @@
         width: 100vw; 
         flex-shrink: 0; 
         padding: 1rem; 
+        /* min-height = 100vh - (Header 115px + Tabs 40px) = 155px */
         min-height: calc(100vh - 155px); 
         overflow-y: auto; 
     }
@@ -64,6 +65,7 @@
         justify-content: space-between;
     }
     
+    /* Container chính chứa Logo và Tiêu đề */
     .header-main-content {
         display: flex;
         align-items: center; 
@@ -91,6 +93,7 @@
         font-size: 0.7rem; 
     }
     
+    /* Container cho Tab Bar */
     #tab-controls-container {
         position: fixed;
         top: var(--H-HEADER); 
@@ -102,21 +105,23 @@
         padding: 0.3rem 0; 
     }
 
+    /* MOBILE: Điều chỉnh Padding Top cho nội dung chính */
     #main-content-wrapper { 
         padding-top: calc(var(--H-HEADER) + var(--H-TABS)) !important; 
         overflow-x: hidden;
     }
     
+    /* Status message */
     #statusMessage {
         font-size: 0.7rem !important; 
         padding-bottom: 0.2rem !important;
         padding-top: 0.1rem !important;
         line-height: 1; 
-        color: #B0BEC5; 
+        color: #B0BEC5; /* Màu chữ mờ */
     }
 
     /* -------------------------------------------------------------------------- */
-    /* STATUS ICON STYLES */
+    /* NEW: STATUS ICON STYLES */
     /* -------------------------------------------------------------------------- */
     .status-icon {
         width: 10px;
@@ -129,7 +134,7 @@
     }
 
     .status-success {
-        background-color: #28a745; 
+        background-color: #28a745; /* Green */
         animation: pulse-green 1.5s infinite alternate;
     }
 
@@ -139,7 +144,7 @@
     }
     
     .status-error {
-        background-color: var(--accent); 
+        background-color: var(--accent); /* Yellow/Red for error */
         box-shadow: 0 0 0 2px var(--accent);
     }
     
@@ -381,8 +386,8 @@
         const data = await res.json();
         
         // 2. Tải thành công
-        msg.textContent = ''; 
-        icon.classList.add('status-success'); 
+        msg.textContent = ''; // Xóa dòng chữ Loading
+        icon.classList.add('status-success'); // Hiển thị icon xanh nhấp nháy
         
         cachedTeamList = data.tL || [];
         
@@ -395,7 +400,7 @@
         }
         msg.textContent = '⚠️ Data load error: ' + errorMsg;
         icon.classList.remove('status-success');
-        icon.classList.add('status-error'); 
+        icon.classList.add('status-error'); // Hiển thị icon lỗi
         renderData({});
       }
     }
@@ -598,16 +603,11 @@
                 const p2Name = team.P[1] || '';
                 const combinedName = `${getLastTwoWords(p1Name)} & ${getLastTwoWords(p2Name)}`; 
 
-                // Cấu trúc 2 dòng mới sử dụng Flexbox
                 html += `<div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-                            <div class='flex justify-between items-start mb-1'> 
-                                <div class='text-sm font-bold text-red-700 flex-shrink-0 mr-2'>${combinedName}</div>
-                                <div class='text-xs text-gray-700 text-right'>1. ${p1Name}</div>
-                            </div>
-                            <div class='flex justify-between items-start'>
-                                <div class='text-xs text-gray-600 flex-shrink-0 mr-2'>ID: ${team.T} | Group: ${team.g}</div>
-                                <div class='text-xs text-gray-700 text-right'>2. ${p2Name}</div>
-                            </div>
+                            <div class='text-sm font-semibold text-red-700'>${combinedName}</div>
+                            <div class='text-xs text-gray-600'>ID: ${team.T} | Group: ${team.g}</div>
+                            <div class='text-xs mt-2 text-gray-700'>1. ${p1Name}</div>
+                            <div class='text-xs text-gray-700'>2. ${p2Name}</div>
                          </div>`;
             });
 
