@@ -1,560 +1,89 @@
 {
-  "tableA": [
-    {
-      "D": "Team 9",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 3",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 11",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 5",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    }
-  ],
-  "tableB": [
-    {
-      "D": "Team 4",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 7",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 12",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 1",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    }
-  ],
-  "tableC": [
-    {
-      "D": "Team 16",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 10",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 14",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 6",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    }
-  ],
-  "tableD": [
-    {
-      "D": "Team 13",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 8",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 15",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 2",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    }
-  ],
-  "matchesA": [
-    {
-      "t": "14:00",
-      "c": "S1",
-      "A": "Team 9",
-      "sA": "0",
-      "B": "Team 3",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:15",
-      "c": "S1",
-      "A": "Team 11",
-      "sA": "0",
-      "B": "Team 5",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:30",
-      "c": "S1",
-      "A": "Team 9",
-      "sA": "0",
-      "B": "Team 11",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:45",
-      "c": "S1",
-      "A": "Team 3",
-      "sA": "0",
-      "B": "Team 5",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:00",
-      "c": "S1",
-      "A": "Team 9",
-      "sA": "0",
-      "B": "Team 5",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:15",
-      "c": "S1",
-      "A": "Team 3",
-      "sA": "0",
-      "B": "Team 11",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "matchesB": [
-    {
-      "t": "14:00",
-      "c": "S2",
-      "A": "Team 4",
-      "sA": "0",
-      "B": "Team 7",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:15",
-      "c": "S2",
-      "A": "Team 12",
-      "sA": "0",
-      "B": "Team 1",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:30",
-      "c": "S2",
-      "A": "Team 4",
-      "sA": "0",
-      "B": "Team 12",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:45",
-      "c": "S2",
-      "A": "Team 7",
-      "sA": "0",
-      "B": "Team 1",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:00",
-      "c": "S2",
-      "A": "Team 4",
-      "sA": "0",
-      "B": "Team 1",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:15",
-      "c": "S2",
-      "A": "Team 7",
-      "sA": "0",
-      "B": "Team 12",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "matchesC": [
-    {
-      "t": "14:00",
-      "c": "S3",
-      "A": "Team 16",
-      "sA": "0",
-      "B": "Team 10",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:15",
-      "c": "S3",
-      "A": "Team 14",
-      "sA": "0",
-      "B": "Team 6",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:30",
-      "c": "S3",
-      "A": "Team 16",
-      "sA": "0",
-      "B": "Team 14",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:45",
-      "c": "S3",
-      "A": "Team 10",
-      "sA": "0",
-      "B": "Team 6",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:00",
-      "c": "S3",
-      "A": "Team 16",
-      "sA": "0",
-      "B": "Team 6",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:15",
-      "c": "S3",
-      "A": "Team 10",
-      "sA": "0",
-      "B": "Team 14",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "matchesD": [
-    {
-      "t": "14:00",
-      "c": "S4",
-      "A": "Team 13",
-      "sA": "0",
-      "B": "Team 8",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:15",
-      "c": "S4",
-      "A": "Team 15",
-      "sA": "0",
-      "B": "Team 2",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:30",
-      "c": "S4",
-      "A": "Team 13",
-      "sA": "0",
-      "B": "Team 15",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:45",
-      "c": "S4",
-      "A": "Team 8",
-      "sA": "0",
-      "B": "Team 2",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:00",
-      "c": "S4",
-      "A": "Team 13",
-      "sA": "0",
-      "B": "Team 2",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:15",
-      "c": "S4",
-      "A": "Team 8",
-      "sA": "0",
-      "B": "Team 15",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "quarterfinals": [
-    {
-      "t": "15:45",
-      "c": "S1",
-      "A": "W.A",
-      "sA": "0",
-      "B": "R.B",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:45",
-      "c": "S2",
-      "A": "W.C",
-      "sA": "0",
-      "B": "R.D",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:45",
-      "c": "S3",
-      "A": "W.B",
-      "sA": "0",
-      "B": "R.A",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:45",
-      "c": "S4",
-      "A": "W.D",
-      "sA": "0",
-      "B": "R.C",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "semifinals": [
-    {
-      "t": "16:10",
-      "c": "S1",
-      "A": "W.QF1",
-      "sA": "0",
-      "B": "W.QF2",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "16:10",
-      "c": "S2",
-      "A": "W.QF3",
-      "sA": "0",
-      "B": "W.QF4",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "final": {
-    "t": "16:40",
-    "c": "S2",
-    "A": "W.SF1",
-    "sA": "0",
-    "B": "W.SF2",
-    "sB": "0",
-    "Wn": "TBD",
-    "rU": "TBD"
-  },
-  "tL": [
-    {
-      "g": "A",
-      "T": "Team 9",
-      "P": [
-        "Từ Duy Hưng",
-        "Trần Nguyễn Minh Tú"
-      ]
-    },
-    {
-      "g": "A",
-      "T": "Team 3",
-      "P": [
-        "Võ Dương Quốc Thịnh",
-        "Lê Minh Phương"
-      ]
-    },
-    {
-      "g": "A",
-      "T": "Team 11",
-      "P": [
-        "Minh Chang",
-        "Lê Minh Châu"
-      ]
-    },
-    {
-      "g": "A",
-      "T": "Team 5",
-      "P": [
-        "Mai Quốc Khánh",
-        "Nguyễn Bá Linh Vũ"
-      ]
-    },
-    {
-      "g": "B",
-      "T": "Team 4",
-      "P": [
-        "Trần Quí Tuấn",
-        "Hoàng Mạnh Hùng"
-      ]
-    },
-    {
-      "g": "B",
-      "T": "Team 7",
-      "P": [
-        "Nguyễn Quốc Hùng",
-        "Phạm Đức Duy"
-      ]
-    },
-    {
-      "g": "B",
-      "T": "Team 12",
-      "P": [
-        "Đinh Hoàng Thanh Sơn",
-        "Trần Đỗ Khoa Tiến"
-      ]
-    },
-    {
-      "g": "B",
-      "T": "Team 1",
-      "P": [
-        "Bùi Quang Tiến",
-        "Mai Tất Thành"
-      ]
-    },
-    {
-      "g": "C",
-      "T": "Team 16",
-      "P": [
-        "Nguyễn Hoàng Thanh",
-        "Trần Công Phương"
-      ]
-    },
-    {
-      "g": "C",
-      "T": "Team 10",
-      "P": [
-        "Lê Duy",
-        "Hồ Thanh Vương"
-      ]
-    },
-    {
-      "g": "C",
-      "T": "Team 14",
-      "P": [
-        "Nguyễn Văn Cường",
-        "Đoàn Văn Dũng"
-      ]
-    },
-    {
-      "g": "C",
-      "T": "Team 6",
-      "P": [
-        "Trần Ngọc Đông Chu",
-        "Nguyễn Ngọc Hùng"
-      ]
-    },
-    {
-      "g": "D",
-      "T": "Team 13",
-      "P": [
-        "Lê Bá Châu",
-        "Ngô Hiền Phong"
-      ]
-    },
-    {
-      "g": "D",
-      "T": "Team 2",
-      "P": [
-        "Trần Viết Tuấn",
-        "Huỳnh Lê Quang Dũng"
-      ]
-    },
-    {
-      "g": "D",
-      "T": "Team 15",
-      "P": [
-        "Huỳnh Minh Thiện",
-        "Nguyễn Duy Minh"
-      ]
-    },
-    {
-      "g": "D",
-      "T": "Team 8",
-      "P": [
-        "Lại Tiến Mạnh",
-        "Cao Quang Tín"
-      ]
-    }
-  ]
+"tableA":[
+    {"D":"Team 9","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 3","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 11","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 5","W":0,"L":0,"HS":"0","Pts":0,"mP":0}
+],
+"tableB":[
+    {"D":"Team 4","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 7","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 12","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 1","W":0,"L":0,"HS":"0","Pts":0,"mP":0}
+],
+"tableC":[
+    {"D":"Team 16","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 10","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 14","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 6","W":0,"L":0,"HS":"0","Pts":0,"mP":0}
+],
+"tableD":[
+    {"D":"Team 13","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 8","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 15","W":0,"L":0,"HS":"0","Pts":0,"mP":0},
+    {"D":"Team 2","W":0,"L":0,"HS":"0","Pts":0,"mP":0}
+],
+"matchesA":[
+    {"t":"14:15","c":"S3","A":"Team 9","sA":"0","B":"Team 3","sB":"0","Wn":"TBD"},
+    {"t":"14:15","c":"S4","A":"Team 11","sA":"0","B":"Team 5","sB":"0","Wn":"TBD"},
+    {"t":"14:45","c":"S3","A":"Team 9","sA":"0","B":"Team 11","sB":"0","Wn":"TBD"},
+    {"t":"14:45","c":"S4","A":"Team 3","sA":"0","B":"Team 5","sB":"0","Wn":"TBD"},
+    {"t":"15:15","c":"S3","A":"Team 9","sA":"0","B":"Team 5","sB":"0","Wn":"TBD"},
+    {"t":"15:15","c":"S4","A":"Team 3","sA":"0","B":"Team 11","sB":"0","Wn":"TBD"}
+],
+"matchesB":[
+    {"t":"14:30","c":"S3","A":"Team 4","sA":"0","B":"Team 7","sB":"0","Wn":"TBD"},
+    {"t":"14:30","c":"S4","A":"Team 12","sA":"0","B":"Team 1","sB":"0","Wn":"TBD"},
+    {"t":"15:00","c":"S3","A":"Team 4","sA":"0","B":"Team 12","sB":"0","Wn":"TBD"},
+    {"t":"15:00","c":"S4","A":"Team 7","sA":"0","B":"Team 1","sB":"0","Wn":"TBD"},
+    {"t":"15:30","c":"S3","A":"Team 4","sA":"0","B":"Team 1","sB":"0","Wn":"TBD"},
+    {"t":"15:30","c":"S4","A":"Team 7","sA":"0","B":"Team 12","sB":"0","Wn":"TBD"}
+],
+"matchesC":[
+    {"t":"14:15","c":"S5","A":"Team 16","sA":"0","B":"Team 10","sB":"0","Wn":"TBD"},
+    {"t":"14:15","c":"S6","A":"Team 14","sA":"0","B":"Team 6","sB":"0","Wn":"TBD"},
+    {"t":"14:45","c":"S5","A":"Team 16","sA":"0","B":"Team 14","sB":"0","Wn":"TBD"},
+    {"t":"14:45","c":"S6","A":"Team 10","sA":"0","B":"Team 6","sB":"0","Wn":"TBD"},
+    {"t":"15:15","c":"S5","A":"Team 16","sA":"0","B":"Team 6","sB":"0","Wn":"TBD"},
+    {"t":"15:15","c":"S6","A":"Team 10","sA":"0","B":"Team 14","sB":"0","Wn":"TBD"}
+],
+"matchesD":[
+    {"t":"14:30","c":"S5","A":"Team 13","sA":"0","B":"Team 8","sB":"0","Wn":"TBD"},
+    {"t":"14:30","c":"S6","A":"Team 15","sA":"0","B":"Team 2","sB":"0","Wn":"TBD"},
+    {"t":"15:00","c":"S5","A":"Team 13","sA":"0","B":"Team 15","sB":"0","Wn":"TBD"},
+    {"t":"15:00","c":"S6","A":"Team 8","sA":"0","B":"Team 2","sB":"0","Wn":"TBD"},
+    {"t":"15:30","c":"S5","A":"Team 13","sA":"0","B":"Team 2","sB":"0","Wn":"TBD"},
+    {"t":"15:30","c":"S6","A":"Team 8","sA":"0","B":"Team 15","sB":"0","Wn":"TBD"}
+],
+"quarterfinals":[
+    {"A":"W.A","sA":"0","B":"R.B","sB":"0","Wn":"TBD", "t":"15:45", "c":"S3"},
+    {"A":"W.C","sA":"0","B":"R.D","sB":"0","Wn":"TBD", "t":"15:45", "c":"S4"},
+    {"A":"W.B","sA":"0","B":"R.A","sB":"0","Wn":"TBD", "t":"16:00", "c":"S5"},
+    {"A":"W.D","sA":"0","B":"R.C","sB":"0","Wn":"TBD", "t":"16:00", "c":"S6"}
+],
+"semifinals":[
+    {"A":"W.QF1","sA":"0","B":"W.QF2","sB":"0","Wn":"TBD", "t":"16:10", "c":"S4"},
+    {"A":"W.QF3","sA":"0","B":"W.QF4","sB":"0","Wn":"TBD", "t":"16:25", "c":"S5"}
+],
+"final":{
+    "A":"W.SF1","sA":"0","B":"W.SF2","sB":"0","Wn":"TBD","rU":"TBD", "t":"17:05", "c":"S5"
+},
+"tL":[
+    {"g":"A","T":"Team 9","P":["Từ Duy Hưng","Trần Nguyễn Minh Tú"]},
+    {"g":"A","T":"Team 3","P":["Võ Dương Quốc Thịnh","Lê Minh Phương"]},
+    {"g":"A","T":"Team 11","P":["Minh Chang","Lê Minh Châu"]},
+    {"g":"A","T":"Team 5","P":["Mai Quốc Khánh","Nguyễn Bá Linh Vũ"]},
+    {"g":"B","T":"Team 4","P":["Trần Quí Tuấn","Hoàng Mạnh Hùng"]},
+    {"g":"B","T":"Team 7","P":["Nguyễn Quốc Hùng","Phạm Đức Duy"]},
+    {"g":"B","T":"Team 12","P":["Đinh Hoàng Thanh Sơn","Trần Đỗ Khoa Tiến"]},
+    {"g":"B","T":"Team 1","P":["Bùi Quang Tiến","Mai Tất Thành"]},
+    {"g":"C","T":"Team 16","P":["Nguyễn Hoàng Thanh","Trần Công Phương"]},
+    {"g":"C","T":"Team 10","P":["Lê Duy","Hồ Thanh Vương"]},
+    {"g":"C","T":"Team 14","P":["Nguyễn Văn Cường","Đoàn Văn Dũng"]},
+    {"g":"C","T":"Team 6","P":["Trần Ngọc Đông Chu","Nguyễn Ngọc Hùng"]},
+    {"g":"D","T":"Team 13","P":["Lê Bá Châu","Ngô Hiền Phong"]},
+    {"g":"D","T":"Team 2","P":["Trần Viết Tuấn","Huỳnh Lê Quang Dũng"]},
+    {"g":"D","T":"Team 15","P":["Huỳnh Minh Thiện","Nguyễn Duy Minh"]},
+    {"g":"D","T":"Team 8","P":["Lại Tiến Mạnh","Cao Quang Tín"]}
+]
 }
