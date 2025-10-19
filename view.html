@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* -------------------------------------------------------------------------- */
-    /* CUSTOM VARIABLES (VER 2.4 - BLUE TONE)          */
+    /* CUSTOM VARIABLES (VER 2.5 - BLUE TONE)          */
     /* -------------------------------------------------------------------------- */
     :root {
       --primary: #007BFF;        /* Xanh Dương Sáng - Màu nhấn chính */
@@ -20,7 +20,7 @@
       --tab-inactive-bg: #FFFFFF; 
       --tab-inactive-color: #15203D; 
       
-      --H-HEADER: 105px; 
+      --H-HEADER: 100px; /* NEW: Giảm nhẹ chiều cao ước tính */
       --H-TABS: 50px;    
     }
     
@@ -53,7 +53,6 @@
     /* -------------------------------------------------------------------------- */
     header { 
         position: fixed; top: 0; left: 0; right: 0; z-index: 30; 
-        /* UPDATED: Đường viền header */
         border-bottom: 4px solid var(--primary); 
         background-color: var(--header-bg); 
         box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
@@ -61,6 +60,11 @@
         height: var(--H-HEADER); 
         overflow: hidden; 
     }
+    
+    /* NEW: Kích thước logo trên Mobile */
+    .header-logo { height: 3.5rem; } /* h-14 */
+    /* NEW: Kích thước chữ tiêu đề trên Mobile */
+    .header-title { font-size: 1.5rem; font-weight: 800; color: var(--content-bg); }
     
     /* Container cho Tab Bar, nằm ngay dưới Header */
     #tab-controls-container {
@@ -81,7 +85,7 @@
     }
     
     /* -------------------------------------------------------------------------- */
-    /* DESKTOP (>= 992px) */
+    /* DESKTOP (>= 992px) - Bố cục gọn gàng hơn */
     /* -------------------------------------------------------------------------- */
     @media (min-width: 992px) {
         
@@ -93,8 +97,17 @@
             padding-bottom: 0.5rem !important;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .header-title { font-size: 1.4rem; } 
+        /* NEW: Bố cục Header trên Desktop - Logo bên trái, chữ bên phải */
+        header .flex {
+            justify-content: flex-start !important; /* Căn trái */
+        }
         
+        /* NEW: Kích thước logo trên Desktop */
+        .header-logo { height: 2.5rem; } /* h-10 */
+        /* NEW: Kích thước chữ tiêu đề trên Desktop */
+        .header-title { font-size: 1.25rem !important; } /* Giảm cỡ chữ */
+
+
         /* Bỏ Cố định và Thu gọn Tab Bar */
         #tab-controls-container {
             position: static !important;
@@ -145,23 +158,19 @@
     /* -------------------------------------------------------------------------- */
     /* CÁC STYLES CHUNG (Áp dụng màu sắc mới)        */
     /* -------------------------------------------------------------------------- */
-    .header-title { font-size: 1.6rem; font-weight: 800; color: var(--content-bg); }
     .header-subtitle { color: #B0BEC5; }
     .tab-btn { 
         background-color: var(--tab-inactive-bg); color: var(--tab-inactive-color); 
         transition: all 0.2s ease; font-size: 0.85rem; border: 1px solid #B0BEC5; font-weight: 600; 
     }
-    
-    /* UPDATED: Tab Active (Màu Primary) */
     .active-primary { 
         background-color: var(--primary) !important; 
         color: var(--content-bg) !important; 
         border-color: var(--primary) !important;
     }
-    /* UPDATED: Tab Active (Màu Accent) */
     .active-accent { 
         background-color: var(--accent) !important; 
-        color: var(--header-bg) !important; /* Chữ đen trên nền vàng */
+        color: var(--header-bg) !important; 
         border-color: var(--accent) !important;
     }
 
@@ -171,21 +180,17 @@
     .bg-white { background-color: var(--content-bg) !important; color: var(--text-dark) !important; }
     .text-gray-600, .text-gray-700 { color: var(--text-muted) !important; }
     
-    /* UPDATED: Màu nền nhẹ cho các dòng xen kẽ/nhấn mạnh */
     .bg-green-50 { background-color: #E9F4FF !important; } /* Tông xanh nhạt */
     
-    /* UPDATED: Team Card Border */
     .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
     .team-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
     
-    /* UPDATED: Màu chữ cho Winner, Table Header, etc. */
     .text-green-700, .text-green-800, .border-green-500, .bg-green-700 { 
       color: var(--primary) !important; 
       border-color: var(--primary) !important;
     }
     .bg-green-700 { background-color: var(--primary) !important; color: var(--content-bg) !important; }
 
-    /* UPDATED: Màu nhấn phụ cho tên đội/chú ý */
     .text-red-700 { color: var(--accent) !important; }
 
     #refresh-btn { 
@@ -198,8 +203,8 @@
 <body class="font-sans">
   
   <header class="shadow-lg">
-    <div class="flex items-center justify-center gap-4 mb-2">
-      <img src="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/LogoITGVT.png" alt="Logo ITVTG" class="h-16 w-auto" />
+    <div class="flex items-center justify-center gap-4"> 
+      <img src="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/LogoITGVT.png" alt="Logo ITVTG" class="header-logo w-auto" />
       <div class="text-center">
         <h1 class="header-title">ITVTG PICKLEBALL TOURNAMENT 2025</h1>
         <p class="text-sm font-semibold header-subtitle">Date: <strong>26/10/2025</strong></p>
@@ -348,7 +353,6 @@
       goToSection(currentIndex); 
     }
     
-    // START NEW: Render Rounds function for 2-column desktop layout
     function renderRounds(data) {
         const c = document.getElementById('rounds');
         if (!data || !data.tableA) {
@@ -359,31 +363,25 @@
         const isDesktop = window.innerWidth >= 992;
         let html = ``; 
         
-        // Function to render a single group's table and matches
         const renderGroupContent = (name) => {
             let groupHtml = '';
-            // Render Table (Bảng xếp hạng)
             if (data[`table${name}`]) groupHtml += renderTable(data[`table${name}`], `Group ${name}`);
-            // Render Match List (Lịch thi đấu/Kết quả)
             if (data[`matches${name}`]) groupHtml += renderMatchList(data[`matches${name}`], `Results Group ${name}`);
             return groupHtml;
         };
 
         if (isDesktop) {
-            // Desktop Layout: 2 cột (Group A & B)
             html += `<div class="desktop-group-layout">`; 
             html += `<div>${renderGroupContent('A')}</div>`;
             html += `<div>${renderGroupContent('B')}</div>`;
             html += `</div>`;
 
-            // Desktop Layout: 2 cột (Group C & D)
             html += `<div class="desktop-group-layout mt-6">`; 
             html += `<div>${renderGroupContent('C')}</div>`;
             html += `<div>${renderGroupContent('D')}</div>`;
             html += `</div>`;
 
         } else {
-            // Mobile Layout: 1 cột tuần tự
             const tableNames = ['A', 'B', 'C', 'D'];
             tableNames.forEach(name => {
                 html += renderGroupContent(name);
@@ -392,8 +390,6 @@
         
         c.innerHTML = html;
     }
-    // END NEW: Render Rounds function for 2-column desktop layout
-
 
     function renderTable(table, title) {
       if (!table || table.length === 0) return '';
