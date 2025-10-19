@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ITVTG PICKLEBALL TOURNAMENT 2025</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* CUSTOM VARIABLES                              */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      --primary: #4DB6AC;        
+      --accent: #EF5350;         
+      --header-bg: #15203D;      
+      --body-bg: #F4F7F9;        
+      --content-bg: #FFFFFF;     
+      --text-dark: #333333;      
+      --text-muted: #666666;     
+      --tab-inactive-bg: #FFFFFF; 
+      --tab-inactive-color: #15203D; 
+      
+      /* NEW: Chiều cao ước tính cho Fixed Header và Tabs */
+      --H-HEADER: 105px; /* (Logo/Title block + Status Message) */
+      --H-TABS: 50px;    /* (Tab buttons + padding) */
+    }
+    
+    /* -------------------------------------------------------------------------- */
+    /* BASE STYLES                                 */
+    /* -------------------------------------------------------------------------- */
+    body { 
+      background-color: var(--body-bg); 
+      color: var(--text-dark); 
+      overflow-x: hidden; 
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; 
+    }
+    
+    /* MOBILE: Kích hoạt Carousel/Swipe */
+    #content-carousel { 
+        display: flex; 
+        width: 400vw; 
+        transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1); 
+    }
+    .swipe-section { 
+        width: 100vw; 
+        flex-shrink: 0; 
+        padding: 1rem; 
+        min-height: calc(100vh - 140px); /* Tùy chỉnh chiều cao tối thiểu */
+        overflow-y: auto; 
+    }
+    
+    /* -------------------------------------------------------------------------- */
+    /* MOBILE: HEADER & FIXED TAB BAR (Điều chỉnh vị trí) */
+    /* -------------------------------------------------------------------------- */
+    header { 
+        position: fixed; /* Giữ cố định */
+        top: 0; 
+        left: 0; 
+        right: 0; 
+        z-index: 30; /* Độ ưu tiên cao nhất */
+        border-bottom: 4px solid var(--primary); 
+        background-color: var(--header-bg); 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
+        padding: 0.8rem 1rem 0.5rem 1rem; 
+        
+        /* NEW: Định rõ chiều cao cố định của header */
+        height: var(--H-HEADER); 
+        overflow: hidden; 
+    }
+    
+    /* NEW: Container cho Tab Bar, nằm ngay dưới Header */
+    #tab-controls-container {
+        position: fixed;
+        top: var(--H-HEADER); /* ĐỈNH TAB BAR = ĐÁY HEADER */
+        left: 0; 
+        right: 0; 
+        z-index: 25; 
+        background-color: var(--body-bg); 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        padding: 0.5rem 0; /* Khoảng đệm nhỏ cho container tabs */
+    }
+
+    /* MOBILE: Điều chỉnh Padding Top cho nội dung chính */
+    #main-content-wrapper { 
+        /* Total offset = H-HEADER + H-TABS */
+        padding-top: calc(var(--H-HEADER) + var(--H-TABS)) !important; 
+        overflow-x: hidden;
+    }
+    
+    /* -------------------------------------------------------------------------- */
+    /* DESKTOP (>= 992px) - Bỏ cố định, căn giữa, tắt carousel */
+    /* -------------------------------------------------------------------------- */
+    @media (min-width: 992px) {
+        
+        /* Bỏ Cố định cho Header và Tabs */
+        header, #tab-controls-container {
+            position: static !important;
+            height: auto !important;
+            top: auto !important;
+            box-shadow: none !important;
+            background-color: var(--header-bg) !important; /* Giữ màu nền */
+        }
+        
+        /* Căn giữa Nội dung chính và Header/Tabs */
+        header, #tab-controls-container, #main-content-wrapper {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            max-width: 1200px; /* Độ rộng tối đa cho màn hình lớn */
+        }
+
+        /* Điều chỉnh Tab Bar */
+        #tab-controls-container {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            background-color: transparent !important; /* Bỏ nền cố định */
+        }
+        
+        /* Điều chỉnh Main Content */
+        #main-content-wrapper {
+            padding-top: 20px !important; /* Giảm padding top */
+        }
+        
+        /* TẮT CAROUSEL VÀ SWIPE */
+        #content-carousel {
+            width: auto !important;
+            display: block !important; /* Chuyển từ flexbox sang block */
+            transform: none !important; 
+            transition: none !important; 
+        }
+        
+        .swipe-section {
+            width: 100% !important; /* Mỗi section chiếm 100% chiều rộng container */
+            flex-shrink: 1; /* Cho phép co lại */
+            padding: 1rem 0;
+            display: none; /* JS sẽ xử lý hiển thị cái đang active */
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* CÁC STYLES KHÁC                               */
+    /* -------------------------------------------------------------------------- */
+    .header-title { font-size: 1.6rem; font-weight: 800; color: var(--content-bg); }
+    .header-subtitle { color: #B0BEC5; }
+    .tab-btn { 
+        background-color: var(--tab-inactive-bg); color: var(--tab-inactive-color); 
+        transition: all 0.2s ease; font-size: 0.85rem; border: 1px solid #B0BEC5; font-weight: 600; 
+    } 
+    /* ... (Giữ nguyên các style khác như table, team-card, refresh-btn) ... */
+    .match-time-court { display: flex; flex-direction: column; align-items: center; padding-top: 0.3rem; padding-bottom: 0.3rem; }
+    .match-time { font-weight: 600; font-size: 0.85rem; color: var(--text-dark); }
+    .match-court { font-size: 0.75rem; color: var(--text-muted); }
+    .bg-white { background-color: var(--content-bg) !important; color: var(--text-dark) !important; }
+    .text-gray-600, .text-gray-700 { color: var(--text-muted) !important; }
+    .bg-green-50 { background-color: #EEEEEE !important; } 
+    .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
+    .team-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+    .text-green-700 { color: var(--primary) !important; } 
+    .text-green-800 { color: var(--primary) !important; }
+    .text-red-700 { color: var(--accent) !important; }
+    .border-green-500 { border-color: var(--primary) !important; }
+    #refresh-btn { 
+        position: fixed; bottom: 20px; right: 20px; z-index: 50; 
+        background: var(--primary); color: var(--content-bg); font-weight: bold; padding: 14px; border-radius: 50%; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+    }
+  </style>
+</head>
+<body class="font-sans">
+  
+  <header class="shadow-lg">
+    <div class="flex items-center justify-center gap-4 mb-2">
+      <img src="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/LogoITGVT.png" alt="Logo ITVTG" class="h-16 w-auto" />
+      <div class="text-center">
+        <h1 class="header-title">ITVTG PICKLEBALL TOURNAMENT 2025</h1>
+        <p class="text-sm font-semibold header-subtitle">Date: <strong>26/10/2025</strong></p>
+      </div>
+    </div>
+    <div id="statusMessage" class="text-center text-sm font-medium header-subtitle pt-1 pb-2">Loading data...</div>
+  </header>
+  
+  <div id="tab-controls-container">
+    <div id="tab-controls" class="flex justify-around max-w-4xl mx-auto px-4">
+      <button onclick="goToSection(0)" class="tab-btn active-primary flex-1 mx-1 px-3 py-2 rounded-full shadow-md">GROUP</button>
+      <button onclick="goToSection(1)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">QUARTER</button>
+      <button onclick="goToSection(2)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">FINAL</button>
+      <button onclick="goToSection(3)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">TEAM</button>
+    </div>
+  </div>
+
+  <main id="main-content-wrapper" class="overflow-hidden">
+    <div id="content-carousel">
+      <section class="swipe-section" id="rounds">
+        <div class="bg-white p-4 rounded-xl shadow-md">
+          <p class="text-sm text-gray-600">Group stage data will be loaded automatically from the JSON file.</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="quarterfinals">
+        <div class="bg-white p-4 rounded-xl shadow-md">
+          <p class="text-sm text-gray-600">Quarterfinal matches will be shown here when data is available.</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="knockout">
+        <div class="bg-white p-4 rounded-xl shadow-md">
+          <p class="text-sm text-gray-600">Semifinals and Finals will be shown here when data is available.</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="players">
+        <div class='bg-white p-4 rounded-xl shadow-md'>
+          <p class='text-sm text-gray-600'>Loading team list...</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <button id="refresh-btn" title="Reload data" onclick="manualRefresh()">⟳</button>
+
+  <script>
+    const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state.json'; 
+    const REFRESH_INTERVAL = 30000;
+
+    const carousel = document.getElementById('content-carousel');
+    let currentIndex = 0;
+    let cachedTeamList = []; 
+
+    function getLastTwoWords(name) {
+      if (!name || typeof name !== 'string') return '';
+      const parts = name.trim().split(/\s+/).filter(Boolean);
+      return parts.length >= 2 ? parts.slice(-2).join(' ') : name;
+    }
+    
+    function getCombinedName(teamId) {
+        if (!teamId || teamId.includes('.') || teamId === 'TBD') return teamId; 
+
+        const team = cachedTeamList.find(t => t.T === teamId);
+        
+        if (team && team.P && team.P.length >= 2) {
+            const p1LastTwo = getLastTwoWords(team.P[0]);
+            const p2LastTwo = getLastTwoWords(team.P[1]);
+            return `${p1LastTwo} & ${p2LastTwo}`;
+        }
+        return teamId; 
+    }
+
+
+    function goToSection(index) {
+      currentIndex = Math.max(0, Math.min(3, index));
+      updateTabs();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // NEW: Xử lý giao diện Desktop (tắt Carousel)
+      const isDesktop = window.innerWidth >= 992;
+      const sections = document.querySelectorAll('.swipe-section');
+
+      if (isDesktop) {
+        // Trên Desktop: Chỉ hiện section đang active, ẩn các section khác
+        sections.forEach((section, i) => {
+            section.style.display = (i === currentIndex) ? 'block' : 'none';
+        });
+        carousel.style.transform = 'translateX(0)'; 
+        carousel.style.transition = 'none';
+
+      } else { 
+        // Trên Mobile: Kích hoạt Carousel/Swipe
+        sections.forEach(section => { section.style.display = 'block'; });
+        carousel.style.transition = 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)';
+        carousel.style.transform = `translateX(${currentIndex * -100}vw)`;
+      }
+    }
+
+    function updateTabs() {
+      document.querySelectorAll('#tab-controls button').forEach((btn, i) => {
+        btn.classList.remove('active-primary', 'active-accent');
+        if (i === currentIndex) {
+          btn.classList.add(i === 3 ? 'active-accent' : 'active-primary');
+        }
+      });
+    }
+
+    async function fetchData() {
+      const msg = document.getElementById('statusMessage');
+      msg.textContent = 'Loading data...';
+      try {
+        const res = await fetch(BASE_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP Error ${res.status}. Could not connect.`);
+        
+        const data = await res.json();
+        msg.textContent = `Load successful (${new Date().toLocaleTimeString('vi-VN')})`;
+        
+        cachedTeamList = data.tL || [];
+        
+        renderData(data);
+      } catch (err) {
+        let errorMsg = err.message;
+        if (window.location.protocol === 'file:') {
+             errorMsg += " (Possibly CORS error. Please run on a web server).";
+        }
+        msg.textContent = '⚠️ Data load error: ' + errorMsg;
+        renderData({});
+      }
+    }
+
+    function manualRefresh() {
+      const btn = document.getElementById('refresh-btn');
+      btn.disabled = true;
+      btn.classList.add('opacity-70');
+      fetchData().finally(() => setTimeout(() => { btn.disabled = false; btn.classList.remove('opacity-70'); }, 800));
+    }
+
+    function renderData(data) {
+      renderRounds(data);
+      renderQuarterfinals(data.quarterfinals);
+      renderKnockout(data.semifinals, data.final);
+      renderPlayers(data.tL); 
+      // NEW: Gọi lại goToSection để đảm bảo trạng thái hiển thị đúng trên Desktop
+      goToSection(currentIndex); 
+    }
+
+    function renderRounds(data) {
+      const c = document.getElementById('rounds');
+      if (!data || !data.tableA) {
+        c.innerHTML = `<div class='bg-white p-4 rounded-xl shadow-md'><p class='text-sm text-gray-600'>No group stage data available.</p></div>`;
+        return;
+      }
+      let html = ``; 
+
+      const tableNames = ['A', 'B', 'C', 'D'];
+      tableNames.forEach(name => {
+        if (data[`table${name}`]) html += renderTable(data[`table${name}`], `Group ${name}`);
+        if (data[`matches${name}`]) html += renderMatchList(data[`matches${name}`], `Results Group ${name}`);
+      });
+      
+      c.innerHTML = html;
+    }
+    
+    function renderTable(table, title) {
+      if (!table || table.length === 0) return '';
+      const headersMap = {'D': 'Team', 'W': 'W', 'L': 'L', 'HS': 'PD', 'Pts': 'Pts'}; 
+      const rawHeaders = Object.keys(table[0]).filter(h => h !== 'mP');
+      const displayHeaders = rawHeaders.map(h => headersMap[h] || h);
+
+      let html = `<div class='bg-white p-4 mt-4 rounded-xl shadow-md'><h3 class='text-lg font-semibold text-green-800 mb-2 text-center'>${title}</h3>`;
+      html += `<div class='overflow-x-auto'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr>` +
+        displayHeaders.map(h => `<th class='px-3 py-2'>${h}</th>`).join('') + `</tr></thead><tbody class='bg-white divide-y divide-gray-100'>`;
+      table.forEach((row, i) => {
+        let rowClass = i === 0 ? 'bg-green-50 font-semibold' : i === 1 ? 'bg-green-50' : '';
+        const teamName = row.D === 'Team' ? 'Team' : getCombinedName(row.D); 
+        html += `<tr class='hover:bg-green-50 ${rowClass}'>` + rawHeaders.map(h => {
+            if (h === 'D') return `<td class='px-3 py-2 text-left font-semibold'>${teamName}</td>`;
+            return `<td class='px-3 py-2 text-center'>${row[h]}</td>`;
+        }).join('') + `</tr>`;
+      });
+      html += `</tbody></table></div></div>`;
+      return html;
+    }
+
+    function renderMatchList(matches, title) {
+      if (!matches || matches.length === 0) return '';
+      let html = `<div class='bg-white p-4 mt-4 rounded-xl shadow-md'><h3 class='text-lg font-semibold text-green-800 mb-2 text-center'>${title}</h3>`;
+      html += `<div class='overflow-x-auto'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Time / Court</th><th>Team A</th><th>Score</th><th>Team B</th></tr></thead><tbody>`;
+      matches.forEach(m => {
+        const teamA = getCombinedName(m.A); 
+        const teamB = getCombinedName(m.B); 
+        
+        const aClass = m.Wn === m.A ? 'text-green-700 font-bold' : '';
+        const bClass = m.Wn === m.B ? 'text-green-700 font-bold' : '';
+        
+        const courtName = m.c ? 'Sân ' + m.c : '';
+
+        html += `<tr class='hover:bg-green-50'>
+                  <td class='px-3 py-2 text-center'>
+                    <div class='match-time-court'>
+                      <span class='match-time'>${m.t || ''}</span>
+                      <span class='match-court'>${courtName}</span>
+                    </div>
+                  </td>
+                  <td class='${aClass} text-center'>${teamA}</td>
+                  <td class='text-center font-bold'>${m.sA} - ${m.sB}</td>
+                  <td class='${bClass} text-center'>${teamB}</td>
+                 </tr>`;
+      });
+      html += `</tbody></table></div></div>`;
+      return html;
+    }
+
+    function renderQuarterfinals(quarters) {
+      const c = document.getElementById('quarterfinals');
+      if (!quarters || quarters.length === 0) {
+        c.innerHTML = `<div class='bg-white p-4 rounded-xl shadow-md text-gray-600 text-sm'>No quarterfinal data available.</div>`;
+        return;
+      }
+      let html = ``; 
+      html += `<div class='bg-white p-4 rounded-xl shadow-md'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Time / Court</th><th>Team A</th><th>Score</th><th>Team B</th><th>Winner</th></tr></thead><tbody>`;
+      quarters.forEach(m => {
+        const teamA = m.A;
+        const teamB = m.B;
+        const winner = m.Wn;
+        
+        const courtName = m.c ? 'Sân ' + m.c : '';
+
+
+        html += `<tr class='hover:bg-green-50'>
+                   <td class='px-3 py-2 text-center'>
+                     <div class='match-time-court'>
+                      <span class='match-time'>${m.t || ''}</span>
+                      <span class='match-court'>${courtName}</span>
+                    </div>
+                   </td>
+                   <td class='px-3 py-2 text-center'>${teamA || ''}</td>
+                   <td class='px-3 py-2 text-center font-bold'>${m.sA || ''} - ${m.sB || ''}</td>
+                   <td class='px-3 py-2 text-center'>${teamB || ''}</td>
+                   <td class='px-3 py-2 text-center text-green-700 font-semibold'>${winner || ''}</td>
+                 </tr>`;
+      });
+      html += `</tbody></table></div>`;
+      c.innerHTML = html;
+    }
+
+    function renderKnockout(semis, final) {
+      const c = document.getElementById('knockout');
+      let html = ``; 
+      const noData = (!semis || semis.length === 0) && (!final || final.Wn === "TBD");
+
+      if (semis && semis.length > 0) html += renderMatchList(semis, 'Semifinals');
+      if (final && final.A) {
+           const finalA = final.A;
+           const finalB = final.B;
+           const finalWinner = final.Wn;
+           const runnerUp = final.rU;
+
+           html += `<div class='winner-box bg-white p-4 mt-4 rounded-xl shadow-md text-center'><h3 class='text-lg font-semibold text-green-800 mb-2'>Final Match</h3><p><strong>${finalA || 'TBD'}</strong> (${final.sA || ''}) vs (${final.sB || ''}) <strong>${finalB || 'TBD'}</strong></p>`;
+           if (final.Wn && final.Wn !== "TBD") {
+               html += `<p class='mt-2 text-green-700 font-semibold'>🏆 Champion: ${finalWinner}</p><p class='text-gray-700'>Runner-up: ${runnerUp || ''}</p></div>`;
+           } else {
+               html += `<p class='mt-2 text-gray-600'>Final match result is not available.</p></div>`;
+           }
+      }
+      
+      if (noData) {
+        html += `<div class='bg-white p-4 rounded-xl shadow-md text-gray-600 text-sm'>No Semifinals or Final data available.</div>`;
+      }
+      c.innerHTML = html;
+    }
+
+    function renderPlayers(teamList) {
+        const c = document.getElementById('players');
+        let html = ``; 
+        
+        if (!teamList || teamList.length === 0) {
+            html += `<div class='bg-white p-4 rounded-xl shadow-md'><p class='text-sm text-gray-600'>Team list is not available (requires 'tL' key).</p></div>`;
+            c.innerHTML = html;
+            return;
+        }
+        
+        const teamsByGroup = teamList.reduce((acc, team) => {
+            (acc[team.g] = acc[team.g] || []).push(team);
+            return acc;
+        }, {});
+
+        for (const group in teamsByGroup) {
+            html += `<div class='bg-white p-4 rounded-xl shadow-md mt-4'>
+                        <h3 class='text-lg font-bold text-green-700 mb-3 text-center'>GROUP ${group}</h3>
+                        <div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>`;
+            
+            teamsByGroup[group].forEach(team => {
+                const p1Name = team.P[0] || '';
+                const p2Name = team.P[1] || '';
+                const combinedName = `${getLastTwoWords(p1Name)} & ${getLastTwoWords(p2Name)}`; 
+
+                html += `<div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
+                            <div class='text-sm font-semibold text-red-700'>${combinedName}</div>
+                            <div class='text-xs text-gray-600'>ID: ${team.T} | Group: ${team.g}</div>
+                            <div class='text-xs mt-2 text-gray-700'>1. ${p1Name}</div>
+                            <div class='text-xs text-gray-700'>2. ${p2Name}</div>
+                         </div>`;
+            });
+
+            html += `</div></div>`;
+        }
+        c.innerHTML = html;
+    }
+
+    // Swipe handling
+    let startX=0, isDown=false;
+    document.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; isDown=true; });
+    document.addEventListener('touchend', e=>{ 
+        if(!isDown) return; 
+        isDown=false; 
+        const endX = e.changedTouches[0].clientX; 
+        const diff = endX - startX; 
+        // Chỉ xử lý swipe trên mobile
+        if(window.innerWidth < 992) {
+            if(diff > 60) goToSection(currentIndex-1); 
+            if(diff < -60) goToSection(currentIndex+1); 
+        }
+    });
+
+    setInterval(fetchData, REFRESH_INTERVAL);
+    fetchData();
+  </script>
+</body>
+</html>
