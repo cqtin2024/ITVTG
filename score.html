@@ -167,14 +167,13 @@
             data['matches' + group].forEach(match => {
                 match.tStart = match.tStart || '';
                 match.tEnd = match.tEnd || '';
-                // Xác định trạng thái ban đầu: FINISHED nếu có tỉ số, ngược lại là SCHEDULED
                 match.status = (match.sA !== '0' || match.sB !== '0') ? 'FINISHED' : 'SCHEDULED';
             });
         });
 
         // --- CORE FUNCTIONS ---
         
-        // 1. Logic Tính Toán Bảng Xếp Hạng (Giữ nguyên: Pts=W, Tie-breaker: GS-GC > GS)
+        // 1. Logic Tính Toán Bảng Xếp Hạng 
         function calculateGroupTables() {
             const tableData = {};
             
@@ -226,7 +225,7 @@
             renderKnockoutTeams();
         }
 
-        // 2. Chức năng Kiểm tra Xung đột (Giữ nguyên)
+        // 2. Chức năng Kiểm tra Xung đột 
         function checkConflicts(group, index, newTime, newCourt, checkType) {
             const currentMatch = data['matches' + group][index];
             let conflictMessage = '';
@@ -248,7 +247,7 @@
             return conflictMessage;
         }
 
-        // 3. Chức năng Hiển thị Modal Quản lý (Giữ nguyên)
+        // 3. Chức năng Hiển thị Modal Quản lý 
         function showMatchEditor(group, index) {
             const match = data['matches' + group][index];
             
@@ -278,18 +277,30 @@
             if (match.status === 'SCHEDULED') {
                 btnStart.style.display = 'inline-block';
                 btnEnd.style.display = 'none';
+                // Cho phép sửa lịch khi đang SCHEDULED
+                document.getElementById('modalTime').disabled = false;
+                document.getElementById('modalCourt').disabled = false;
+                btnUpdateSchedule.style.display = 'inline-block';
             } else if (match.status === 'RUNNING') {
                 btnStart.style.display = 'none';
                 btnEnd.style.display = 'inline-block';
+                // Khóa sửa lịch khi đang RUNNING
+                document.getElementById('modalTime').disabled = true;
+                document.getElementById('modalCourt').disabled = true;
+                btnUpdateSchedule.style.display = 'none';
             } else if (match.status === 'FINISHED') {
                 btnStart.style.display = 'none';
                 btnEnd.style.display = 'none';
+                // Cho phép sửa lịch khi đã FINISHED nếu cần điều chỉnh lại
+                document.getElementById('modalTime').disabled = false;
+                document.getElementById('modalCourt').disabled = false;
+                btnUpdateSchedule.style.display = 'inline-block';
             }
 
             document.getElementById('matchModal').style.display = 'block';
         }
 
-        // 4. Chức năng Cập nhật Lịch (Giữ nguyên)
+        // 4. Chức năng Cập nhật Lịch (ĐÃ FIX LỖI MODAL)
         function updateSchedule(group, index) {
             const newTime = document.getElementById('modalTime').value.trim();
             const newCourt = document.getElementById('modalCourt').value.trim();
@@ -298,6 +309,8 @@
             if (!newTime || !newCourt) {
                 modalAlert.textContent = '❌ Vui lòng nhập đầy đủ Thời gian và Sân đấu.';
                 modalAlert.style.display = 'block';
+                modalAlert.style.backgroundColor = '#f8d7da';
+                modalAlert.style.color = '#721c24';
                 return;
             }
 
@@ -305,6 +318,8 @@
             if (conflict) {
                 modalAlert.textContent = conflict;
                 modalAlert.style.display = 'block';
+                modalAlert.style.backgroundColor = '#f8d7da';
+                modalAlert.style.color = '#721c24';
                 return;
             }
 
@@ -317,9 +332,14 @@
             modalAlert.style.display = 'block';
             
             renderMatches(); 
+
+            // Tự động đóng modal sau 1 giây
+            setTimeout(() => {
+                document.getElementById('matchModal').style.display = 'none';
+            }, 1000); 
         }
 
-        // 5. Chức năng Quản lý Bắt đầu/Kết thúc Trận đấu (ĐÃ CẬP NHẬT KIỂM TRA LUẬT PICKLEBALL)
+        // 5. Chức năng Quản lý Bắt đầu/Kết thúc Trận đấu (ĐÃ CẬP NHẬT LOGIC ĐÓNG MODAL)
         function handleMatchTime(action, group, index) {
             const now = new Date();
             const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -344,16 +364,19 @@
                 modalAlert.style.color = '#0f5132';
                 modalAlert.style.display = 'block';
                 
-                document.getElementById('btnStartMatch').style.display = 'none';
-                document.getElementById('btnEndMatch').style.display = 'inline-block';
-                document.getElementById('modalStartTime').textContent = match.tStart;
+                renderMatches(); 
+
+                // Tự động đóng modal sau 2 giây
+                setTimeout(() => {
+                    document.getElementById('matchModal').style.display = 'none';
+                }, 2000); 
 
             } else if (action === 'END') {
                 const scoreA = parseInt(document.getElementById('modalScoreA').value);
                 const scoreB = parseInt(document.getElementById('modalScoreB').value);
                 const winnerScore = Math.max(scoreA, scoreB);
                 const loserScore = Math.min(scoreA, scoreB);
-                let isValidScore = true;
+                let isWarning = false;
 
                 if (isNaN(scoreA) || isNaN(scoreB)) {
                      modalAlert.textContent = '❌ Vui lòng nhập tỉ số hợp lệ (số).';
@@ -367,21 +390,14 @@
                     return;
                 }
 
-                // KIỂM TRA LUẬT PICKLEBALL (Chạm 11, không cách 2 điểm)
-                // Score phải là X-Y, trong đó X là điểm thắng và X >= 11
-                if (winnerScore < 11 || (winnerScore === 11 && loserScore > 10) || (winnerScore > 11 && winnerScore - loserScore > 1)) {
-                    // Nếu điểm thắng < 11 -> chưa kết thúc
-                    // Nếu điểm thắng = 11 VÀ điểm thua > 10 (vd 11-11) -> lỗi logic (đã kiểm tra ở trên)
-                    // Nếu điểm thắng > 11 (vd 12-10, 13-11) -> có thể là lỗi nhập nếu luật là CHẠM 11 KHÔNG CÁCH 2
-                    
-                    if (winnerScore !== 11) {
-                         modalAlert.textContent = `⚠️ **CẢNH BÁO:** Tỉ số ${scoreA}-${scoreB} có vẻ không tuân thủ luật Pickleball (Chạm 11, không cách 2 điểm). Tỉ số chiến thắng phải là 11 (vd: 11-10, 11-9...). Nếu tỉ số này là chính xác, bạn có thể lưu.`;
-                         modalAlert.style.display = 'block';
-                         isValidScore = false;
-                    }
+                if (winnerScore !== 11 && winnerScore - loserScore !== 2) {
+                    // Cảnh báo nếu không phải là chạm 11, không cách 2 (Pickleball luật cũ)
+                    modalAlert.textContent = `⚠️ **CẢNH BÁO:** Tỉ số ${scoreA}-${scoreB} có vẻ không tuân thủ luật Pickleball (Chạm 11). Tỉ số chiến thắng phải đạt 11 điểm và hơn đối thủ ít nhất 1 điểm (ví dụ: 11-10).`;
+                    modalAlert.style.display = 'block';
+                    isWarning = true;
                 }
                 
-                if (isValidScore || confirm(modalAlert.textContent + "\n\nBạn có chắc chắn muốn lưu tỉ số này và kết thúc trận đấu không?")) {
+                if (!isWarning || confirm(modalAlert.textContent + "\n\nBạn có chắc chắn muốn lưu tỉ số này và kết thúc trận đấu không?")) {
                     match.tEnd = timeString;
                     match.sA = scoreA.toString();
                     match.sB = scoreB.toString();
@@ -398,21 +414,21 @@
             }
         }
         
-        // 6. Chức năng Tải về file JSON (Giữ nguyên)
+        // 6. Chức năng Tải về file JSON 
         function downloadJSON(data) {
             const dataStr = JSON.stringify(data, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'tournament_data_updated_pickleball.json'; // Tên file mới
+            a.download = 'tournament_data_updated_pickleball.json'; 
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
 
-        // --- RENDER FUNCTIONS (Giữ nguyên logic) ---
+        // --- RENDER FUNCTIONS ---
         
         function renderMatches() {
             const container = document.getElementById('matches-container');
