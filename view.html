@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* -------------------------------------------------------------------------- */
-    /* CUSTOM VARIABLES (VER 2.7 - COMPACT HEADER)     */
+    /* CUSTOM VARIABLES (VER 2.8 - ADJUSTED HEADER HEIGHT)     */
     /* -------------------------------------------------------------------------- */
     :root {
       --primary: #007BFF;        /* Xanh Dương Sáng - Màu nhấn chính */
@@ -20,7 +20,8 @@
       --tab-inactive-bg: #FFFFFF; 
       --tab-inactive-color: #15203D; 
       
-      --H-HEADER: 80px; 
+      /* NEW: Chiều cao ước tính tăng lên 90px */
+      --H-HEADER: 90px; 
       --H-TABS: 40px;    
     }
     
@@ -44,7 +45,8 @@
         width: 100vw; 
         flex-shrink: 0; 
         padding: 1rem; 
-        min-height: calc(100vh - 120px); 
+        /* Cần điều chỉnh min-height cho phù hợp với chiều cao header/tab mới (90 + 40 = 130) */
+        min-height: calc(100vh - 130px); 
         overflow-y: auto; 
     }
     
@@ -56,6 +58,7 @@
         border-bottom: 4px solid var(--primary); 
         background-color: var(--header-bg); 
         box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
+        /* Giữ padding cũ */
         padding: 0.5rem 1rem 0.2rem 1rem; 
         height: var(--H-HEADER); 
         overflow: hidden; 
@@ -67,10 +70,8 @@
     /* Container chính chứa Logo và Tiêu đề */
     .header-main-content {
         display: flex;
-        /* NEW: Căn giữa Logo theo chiều cao */
         align-items: center; 
         justify-content: center;
-        /* NEW: Giảm gap */
         gap: 0.75rem; 
         flex-grow: 1; 
     }
@@ -135,7 +136,7 @@
         /* Bố cục Header trên Desktop - Căn trái */
         header .header-main-content {
             justify-content: flex-start !important; 
-            align-items: center; /* Đảm bảo căn giữa chiều cao trên desktop */
+            align-items: center; 
             flex-grow: 0;
             gap: 1.25rem;
         }
