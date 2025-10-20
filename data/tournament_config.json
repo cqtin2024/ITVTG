@@ -1,0 +1,80 @@
+{
+  "key_legend": {
+    "rule_id": "Mã bộ quy tắc áp dụng",
+    "event_id": "Mã Nội dung thi đấu",
+    "round_code": "Mã vòng đấu (RR, KO, QF, SF, FINAL)",
+    "match_type": "Số set cần chơi/thắng (Ví dụ: Best of 3, 1 Set)",
+    "points_to_win": "Điểm cần đạt để thắng 1 set (Ví dụ: 11, 21)",
+    "win_by_points": "Số điểm cách biệt cần thiết (Ví dụ: 2)",
+    "cap_score": "Điểm tối đa tuyệt đối để dừng set/trận (Ví dụ: 30, null)",
+    "win_points": "Điểm thưởng cho trận thắng (Pts)",
+    "draw_points": "Điểm thưởng cho trận hòa (Pts)",
+    "advancement": "Số đội/người được chọn vào vòng tiếp theo từ mỗi bảng (Ví dụ: 2)",
+    "tie_breaker": "Danh sách ưu tiên tiêu chí phân loại"
+  },
+  
+  "rulesets": [
+    // --- CẦU LÔNG (BADMINTON - BB) ---
+    {
+      "rule_id": "RULE_BB_STD_21",
+      "sport": "Badminton",
+      "rounds": [
+        {
+          "round_code": "RR",
+          "match_type": "Best of 3", "points_to_win": 21, "win_by_points": 2, "cap_score": 30,
+          "win_points": 3, "loss_points": 0, "draw_points": 0, "advancement": 2,
+          "tie_breaker": ["Pts", "GD (Sets)", "GD (Points)", "Head-to-Head"], "advances_to_round_code": "KO"
+        },
+        {
+          "round_code": "KO",
+          "match_type": "Best of 3", "points_to_win": 21, "win_by_points": 2, "cap_score": 30,
+          "win_points": 1, "loss_points": 0, "advancement": 1, "advances_to_round_code": "Next Round"
+        }
+      ]
+    },
+    // --- BÓNG ĐÁ (FOOTBALL - FB) ---
+    {
+      "rule_id": "RULE_FB_7V7",
+      "sport": "Football (7v7)",
+      "rounds": [
+        {
+          "round_code": "RR",
+          "match_type": "Time Based (2x25 mins)", "points_to_win": null, "win_by_points": null, "cap_score": null,
+          "win_points": 3, "draw_points": 1, "loss_points": 0, "advancement": 2,
+          "tie_breaker": ["Pts", "Goal Difference", "Goals For"], "advances_to_round_code": "KO"
+        }
+      ]
+    },
+    // --- TENNIS (TN) ---
+    {
+      "rule_id": "RULE_TN_PROSET_8",
+      "sport": "Tennis",
+      "rounds": [
+        {
+          "round_code": "KO",
+          "match_type": "Pro Set (8 Games)", "points_to_win": null, "win_by_points": 2, "cap_score": null,
+          "win_points": 1, "loss_points": 0, "advancement": 1, "advances_to_round_code": "Next Round"
+        }
+      ]
+    }
+  ],
+  
+  "events": [
+    { 
+      "event_id": "BB_MS_A_OPEN", "event_name": "Cầu Lông Đơn Nam (Trình A)", "rule_id": "RULE_BB_STD_21",
+      "gender_restriction": "Male", "age_category": "Open"
+    },
+    { 
+      "event_id": "BB_XD_30", "event_name": "Cầu Lông Đôi Nam Nữ (30+)", "rule_id": "RULE_BB_STD_21",
+      "gender_restriction": "Mixed", "age_category": "30+"
+    },
+    { 
+      "event_id": "FB_7S_U18", "event_name": "Bóng Đá 7x7 (Dưới 18 tuổi)", "rule_id": "RULE_FB_7V7",
+      "gender_restriction": "Male", "age_category": "U18"
+    },
+    { 
+      "event_id": "TN_WD_SEN", "event_name": "Tennis Đôi Nữ (Senior)", "rule_id": "RULE_TN_PROSET_8",
+      "gender_restriction": "Female", "age_category": "Senior"
+    }
+  ]
+}
