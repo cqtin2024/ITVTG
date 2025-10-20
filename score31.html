@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Giải Đấu Pickleball Đôi Nam (Real-Time)</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải phông chữ Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for Dark Mode */
+        :root {
+            --bg-color: #111827; /* Gray-900 */
+            --text-color: #f3f4f6; /* Gray-100 */
+            --card-bg: #1f2937; /* Gray-800 */
+            --border-color: #374151; /* Gray-700 */
+            --accent-color: #06b6d4; /* Cyan-500 */
+            --match-bg: #1f2937;
+            --input-bg: #4b5563; /* Gray-600 */
+            --group-header-text: #60a5fa; /* Blue-400 */
+        }
+        
+        /* Light Mode Overrides */
+        .light-mode {
+            --bg-color: #f9fafb; /* Gray-50 */
+            --text-color: #111827; /* Gray-900 */
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb; /* Gray-200 */
+            --accent-color: #ef4444; /* Red-500 */
+            --match-bg: #f3f4f6; /* Gray-100 */
+            --input-bg: #ffffff;
+            --group-header-text: #10b981; /* Emerald-500 */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .score-input {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+        .score-input:focus {
+            box-shadow: 0 0 0 3px var(--accent-color);
+        }
+        .tab-button {
+            border-bottom-color: var(--border-color);
+        }
+        .tab-button.active {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            background-color: var(--card-bg);
+        }
+        .tab-content {
+            display: none;
+            background-color: var(--card-bg);
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1.5rem; /* p-6 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-2xl */
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar-thumb { background: var(--border-color); }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        
+        /* Specific content styles for brightness/clarity */
+        .match-card {
+            background-color: var(--match-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .light-mode .match-card {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div id="app" class="container mx-auto">
+        <!-- HEADER MỚI -->
+        <header class="flex items-center justify-between mb-6">
+            <div class="flex items-center">
+                 
+                <div class="text-left ml-4">
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">PICKLEBALL ĐÔI NAM</h1>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Quản Lý & Cập Nhật Tỉ Số Giải Đấu</p>
+                </div>
+            </div>
+            
+            <!-- Theme Toggle Button -->
+            <button id="themeToggle" class="p-3 rounded-full bg-[var(--card-bg)] shadow-md text-[var(--text-color)] hover:bg-[var(--border-color)] transition duration-200">
+                <svg id="sunIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="moonIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </header>
+
+        <!-- Status & Loading Indicator -->
+        <div id="loadingMessage" class="text-center p-4 bg-blue-900/50 rounded-lg text-blue-300 font-semibold mb-6">
+            Đang khởi tạo kết nối Firebase...
+        </div>
+        
+        <!-- Tab Navigation -->
+        <nav class="mb-8 border-b border-[var(--border-color)] overflow-x-auto whitespace-nowrap">
+            <button class="tab-button py-3 px-4 md:px-6 text-sm md:text-base font-semibold border-b-2 border-transparent text-gray-400 hover:text-[var(--accent-color)] transition" onclick="switchTab('General')" data-tab="General">General</button>
+            <button class="tab-button py-3 px-4 md:px-6 text-sm md:text-base font-semibold border-b-2 border-transparent text-gray-400 hover:text-[var(--accent-color)] transition" onclick="switchTab('GroupA')" data-tab="GroupA">Group A</button>
+            <button class="tab-button py-3 px-4 md:px-6 text-sm md:text-base font-semibold border-b-2 border-transparent text-gray-400 hover:text-[var(--accent-color)] transition" onclick="switchTab('GroupB')" data-tab="GroupB">Group B</button>
+            <button class="tab-button py-3 px-4 md:px-6 text-sm md:text-base font-semibold border-b-2 border-transparent text-gray-400 hover:text-[var(--accent-color)] transition" onclick="switchTab('GroupC')" data-tab="GroupC">Group C</button>
+            <button class="tab-button py-3 px-4 md:px-6 text-sm md:text-base font-semibold border-b-2 border-transparent text-gray-400 hover:text-[var(--accent-color)] transition" onclick="switchTab('GroupD')" data-tab="GroupD">Group D</button>
+            <button class="tab-button py-3 px-4 md:px-6 text-sm md:text-base font-semibold border-b-2 border-transparent text-gray-400 hover:text-[var(--accent-color)] transition" onclick="switchTab('Knockout')" data-tab="Knockout">Knockout</button>
+            <button class="tab-button py-3 px-4 md:px-6 text-sm md:text-base font-semibold border-b-2 border-transparent text-gray-400 hover:text-[var(--accent-color)] transition" onclick="switchTab('Configuration')" data-tab="Configuration">Cấu Hình</button>
+        </nav>
+
+        <!-- TAB: General (Final Results & Team List) -->
+        <div id="General" class="tab-content">
+             <h2 class="text-3xl font-extrabold text-yellow-500 mb-6 border-b border-[var(--border-color)] pb-2">Final Results (Kết quả chung cuộc)</h2>
+            <section id="finalResults" class="mb-10 p-4 rounded-xl shadow-lg bg-[var(--match-bg)]"></section>
+
+            <h2 class="text-3xl font-extrabold text-[var(--text-color)] mb-6 border-b border-[var(--border-color)] pb-2">Team List (Danh sách các đội)</h2>
+            <section id="teamList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Team cards will be rendered here -->
+            </section>
+        </div>
+
+        <!-- TAB: Group A (Standings & Matches) -->
+        <div id="GroupA" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div id="tableA" class="lg:col-span-1"></div>
+            <div id="matchesA" class="lg:col-span-2"></div>
+        </div>
+
+        <!-- TAB: Group B (Standings & Matches) -->
+        <div id="GroupB" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div id="tableB" class="lg:col-span-1"></div>
+            <div id="matchesB" class="lg:col-span-2"></div>
+        </div>
+
+        <!-- TAB: Group C (Standings & Matches) -->
+        <div id="GroupC" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div id="tableC" class="lg:col-span-1"></div>
+            <div id="matchesC" class="lg:col-span-2"></div>
+        </div>
+
+        <!-- TAB: Group D (Standings & Matches) -->
+        <div id="GroupD" class="tab-content grid grid-cols-1 lg:col-cols-3 gap-6">
+            <div id="tableD" class="lg:col-span-1"></div>
+            <div id="matchesD" class="lg:col-span-2"></div>
+        </div>
+
+        <!-- TAB: Knockout (Quarterfinals, Semifinals, Final) -->
+        <div id="Knockout" class="tab-content">
+            <div id="quarterfinals" class="mb-6"></div>
+            <div id="semifinals" class="mb-6"></div>
+            <div id="finalMatchSection">
+                <div id="finalSection"></div>
+            </div>
+        </div>
+
+        <!-- NEW TAB: Configuration -->
+        <div id="Configuration" class="tab-content space-y-8">
+            <h2 class="text-3xl font-extrabold text-[var(--accent-color)] mb-6 border-b border-[var(--border-color)] pb-2">Cấu Hình & Đồng Bộ Hóa Dữ Liệu</h2>
+            
+            <!-- Section 0: Theme -->
+            <section class="p-4 bg-[var(--match-bg)] rounded-lg border-l-4 border-yellow-500">
+                 <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    0. Tùy Chọn Giao Diện
+                </h3>
+                <p class="text-[var(--text-color)] mb-4">Bạn có thể chuyển đổi giữa giao diện Sáng và Tối để phù hợp với sở thích.</p>
+                <button onclick="document.getElementById('themeToggle').click()" class="w-full md:w-auto px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg shadow-lg transition duration-300">
+                    Chuyển Đổi Giao Diện (Hiện tại: <span id="currentThemeDisplay">Tối</span>)
+                </button>
+            </section>
+
+            <!-- Section 1: Initial Data Source (GitHub) -->
+            <section class="p-4 bg-[var(--match-bg)] rounded-lg border-l-4 border-green-500">
+                <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.21a2 2 0 011.026 1.858v6.244a2 2 0 01-1.026 1.858l-5.6 3.093a2 2 0 01-1.924 0l-5.6-3.093a2 2 0 01-1.026-1.858V7.892a2 2 0 011.026-1.858l5.6-3.093a2 2 0 011.924 0l5.6 3.093z"></path></svg>
+                    1. Nguồn Dữ Liệu Gốc (state3.json)
+                </h3>
+                <p class="text-gray-400 mb-2">Dữ liệu gốc được tải từ GitHub:</p>
+                <code class="block p-2 bg-[var(--input-bg)] rounded-md text-yellow-300 text-sm overflow-x-auto" id="staticDataUrlDisplay">Loading...</code>
+                
+                <div class="mt-4 pt-4 border-t border-[var(--border-color)]">
+                    <button id="reSyncButton" onclick="showConfirmationModal()" class="w-full md:w-auto px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg transition duration-300 disabled:opacity-50">
+                        Khởi động lại trạng thái (Ghi đè bằng state3.json gốc)
+                    </button>
+                    <p class="mt-2 text-xs text-red-500">CẢNH BÁO: Thao tác này sẽ xóa **TẤT CẢ** tỉ số hiện tại và tải lại dữ liệu từ file JSON gốc.</p>
+                </div>
+            </section>
+
+            <!-- Section 2: Real-time Update (Firebase) -->
+            <section class="p-4 bg-[var(--match-bg)] rounded-lg border-l-4 border-blue-500">
+                <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    2. Cập Nhật Tỉ Số Lên Firebase (Real-Time)
+                </h3>
+                <p class="text-gray-400 mb-2">Mọi tỉ số bạn nhập sẽ được lưu tự động lên Firebase Firestore và đồng bộ ngay lập tức với mọi người dùng khác đang mở trang này.</p>
+                <p class="text-sm text-blue-500 font-semibold">Cơ chế hoạt động:</p>
+                <ul class="list-disc list-inside ml-4 text-gray-300 space-y-1 text-sm">
+                    <li>Dùng `onSnapshot` để lắng nghe thay đổi từ Firestore (Real-time).</li>
+                    <li>Sử dụng `setTimeout` (debounce 3s) để tự động `setDoc` khi có thay đổi tỉ số.</li>
+                    <li>Điều này đảm bảo mọi người xem đều thấy tỉ số mới nhất trong thời gian thực.</li>
+                </ul>
+            </section>
+            
+            <!-- Section 3: GitHub Sync (Changes only) -->
+            <section class="p-4 bg-[var(--match-bg)] rounded-lg border-l-4 border-purple-500">
+                <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    3. Tạo File Cập Nhật GitHub (state3s.json)
+                </h3>
+                <p class="text-gray-400 mb-2">Tạo file JSON chứa **chỉ những tỉ số đã thay đổi** để bạn có thể lưu trữ trạng thái hiện tại lên GitHub (state3s.json).</p>
+                
+                <button id="generateDiffButton" onclick="generateDiffAndDisplay()" class="w-full md:w-auto px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg shadow-lg transition duration-300 mb-4">
+                    Tạo Nội Dung File state3s.json
+                </button>
+
+                <div id="diffOutputContainer" class="hidden">
+                    <p class="text-sm text-yellow-500 font-semibold mb-2">NỘI DUNG CẦN COPY (Dán vào state3s.json):</p>
+                    <textarea id="diffOutput" class="w-full h-40 p-3 bg-[var(--input-bg)] text-sm rounded-md resize-none border border-[var(--border-color)]" readonly></textarea>
+                    <p class="mt-2 text-xs text-purple-400">Lưu ý: Bạn phải tự sao chép và cập nhật file này lên GitHub.</p>
+                </div>
+            </section>
+        </div>
+
+    </div>
+    
+    <!-- Custom Confirmation Modal (Replace alert/confirm) -->
+    <div id="confirmationBox" class="modal-backdrop hidden">
+        <div class="bg-[var(--card-bg)] p-6 rounded-xl shadow-2xl w-11/12 max-w-sm border-t-4 border-red-500 text-[var(--text-color)]">
+            <h4 class="text-xl font-bold text-red-400 mb-4">Xác Nhận Khởi Động Lại</h4>
+            <p class="text-[var(--text-color)] mb-6">Bạn có chắc chắn muốn **KHỞI ĐỘNG LẠI** trạng thái giải đấu về dữ liệu gốc từ GitHub không? Điều này sẽ **GHI ĐÈ** lên tất cả tỉ số hiện tại!</p>
+            <div class="flex justify-end space-x-4">
+                <button id="confirmNo" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition duration-150">Hủy bỏ</button>
+                <button id="confirmYes" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition duration-150">Xác nhận Khởi động lại</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE SETUP (Mandatory for Canvas Environment) -->
+    <script type="module">
+        // Import các hàm Firebase
+        import { initializeApp as initApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth as getAuthService, signInAnonymously, signInWithCustomToken, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // IMPORT Firestore functions: Thêm onSnapshot để lắng nghe thay đổi
+        import { getFirestore as getDbService, doc, setDoc, getDoc, setLogLevel, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // GLOBAL CONSTANTS & VARIABLES
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
+        const FIRESTORE_COLLECTION_NAME = 'tournament_state_v3';
+        const FIRESTORE_DOC_ID = 'pickleball_state';
+        const STATIC_DATA_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3.json';
+        
+        let tournamentData = null; // Live state from Firebase
+        let initialTournamentData = null; // Original state from static JSON (for diff calculation)
+        let auth, db;
+        let saveTimeout = null;
+        let startX = 0; // for swipe detection
+        let endX = 0;   // for swipe detection
+        const swipeThreshold = 75; // Minimum distance for a swipe
+
+        // Hàm xây dựng Document Reference theo quy tắc Canvas Public Data
+        function getDocRef() {
+            return doc(db, 
+                "artifacts", 
+                appId, 
+                "public", 
+                "data", 
+                FIRESTORE_COLLECTION_NAME, 
+                FIRESTORE_DOC_ID
+            );
+        }
+        
+        // --- Theme Toggle Logic ---
+        function applyTheme(theme) {
+            const isDarkMode = theme === 'dark';
+            document.body.classList.toggle('light-mode', !isDarkMode);
+            document.getElementById('moonIcon').classList.toggle('hidden', !isDarkMode);
+            document.getElementById('sunIcon').classList.toggle('hidden', isDarkMode);
+            document.getElementById('currentThemeDisplay').textContent = isDarkMode ? 'Tối' : 'Sáng';
+            localStorage.setItem('theme', theme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('theme') === 'light' ? 'dark' : 'light';
+            applyTheme(currentTheme);
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
+            applyTheme(savedTheme);
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        });
+
+        // --- Swipe Navigation Logic ---
+        
+        function getCurrentTabIndex() {
+            const tabs = Array.from(document.querySelectorAll('.tab-button'));
+            return tabs.findIndex(tab => tab.classList.contains('active'));
+        }
+
+        function handleGesture() {
+            const tabs = Array.from(document.querySelectorAll('.tab-button'));
+            const currentIndex = getCurrentTabIndex();
+            
+            if (currentIndex === -1) return; // Should not happen
+
+            if (startX - endX > swipeThreshold) {
+                // Swiped Left (Next Tab)
+                if (currentIndex < tabs.length - 1) {
+                    tabs[currentIndex + 1].click();
+                }
+            } else if (endX - startX > swipeThreshold) {
+                // Swiped Right (Previous Tab)
+                if (currentIndex > 0) {
+                    tabs[currentIndex - 1].click();
+                }
+            }
+            startX = 0;
+            endX = 0;
+        }
+
+        document.getElementById('app').addEventListener('touchstart', (e) => {
+            // Check if touch target is a score input field to prevent interfering with typing
+            if (e.target.classList.contains('score-input')) return;
+            startX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        document.getElementById('app').addEventListener('touchend', (e) => {
+            if (e.target.classList.contains('score-input')) return;
+            endX = e.changedTouches[0].screenX;
+            handleGesture();
+        }, { passive: true });
+
+        // --- Tab Management Function ---
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            const activeContent = document.getElementById(tabName);
+            if (activeContent) {
+                if (tabName.startsWith('Group') || tabName === 'Knockout') {
+                    activeContent.style.display = 'grid';
+                } else {
+                    activeContent.style.display = 'block';
+                }
+            }
+            const activeButton = document.querySelector(`.tab-button[data-tab="${tabName}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
+        // --- Core Logic Functions ---
+        async function fetchWithRetry(url, options = {}, maxRetries = 5) {
+            let lastError = null;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response;
+                } catch (error) {
+                    lastError = error;
+                    const delay = Math.pow(2, i) * 1000; 
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            console.error("Failed to fetch data after multiple retries.", lastError);
+            throw lastError;
+        }
+
+        function getMatchWinner(scoreA, scoreB) {
+            const sA = parseInt(scoreA);
+            const sB = parseInt(scoreB);
+            if (sA > sB) return 'A';
+            if (sB > sA) return 'B';
+            return 'Chưa có';
+        }
+
+        // Group Standings Calculation (Logic kept the same)
+        function calculateGroupStandings(groupMatches) {
+            const standings = {};
+
+            groupMatches.forEach(match => {
+                if (!standings[match.A]) standings[match.A] = { D: match.A, W: 0, L: 0, HS: 0, Pts: 0, mP: 0, scoreDiff: 0 };
+                if (!standings[match.B]) standings[match.B] = { D: match.B, W: 0, L: 0, HS: 0, Pts: 0, mP: 0, scoreDiff: 0 };
+            });
+
+            groupMatches.forEach(match => {
+                const sA = parseInt(match.sA);
+                const sB = parseInt(match.sB);
+
+                standings[match.A].HS = Math.max(standings[match.A].HS, sA);
+                standings[match.B].HS = Math.max(standings[match.B].HS, sB);
+
+                standings[match.A].scoreDiff += (sA - sB);
+                standings[match.B].scoreDiff += (sB - sA);
+                
+                // Only count as played if at least one score is entered
+                if (sA !== 0 || sB !== 0) {
+                    standings[match.A].mP++;
+                    standings[match.B].mP++;
+                }
+
+                const winnerCode = getMatchWinner(sA, sB);
+                
+                if (winnerCode === 'A') {
+                    standings[match.A].W++;
+                    standings[match.A].Pts += 3;
+                    standings[match.B].L++;
+                    match.Wn = match.A;
+                } else if (winnerCode === 'B') {
+                    standings[match.B].W++;
+                    standings[match.B].Pts += 3;
+                    standings[match.A].L++;
+                    match.Wn = match.B;
+                } else {
+                     match.Wn = 'Chưa có';
+                }
+            });
+
+            const sortedStandings = Object.values(standings).sort((a, b) => {
+                if (b.W !== a.W) return b.W - a.W;
+                if (b.Pts !== a.Pts) return b.Pts - a.Pts;
+                if (b.scoreDiff !== a.scoreDiff) return b.scoreDiff - a.scoreDiff;
+                if (b.HS !== a.HS) return b.HS - a.HS;
+                return a.D.localeCompare(b.D);
+            }).map(({ D, W, L, HS, Pts, mP }) => ({ D, W, L, HS: String(HS), Pts, mP }));
+
+            return sortedStandings;
+        }
+
+        // Dynamic Progression Logic (Logic kept the same)
+        function updateKnockoutProgression(data) {
+            const rankings = {
+                A: calculateGroupStandings(data.matchesA),
+                B: calculateGroupStandings(data.matchesB),
+                C: calculateGroupStandings(data.matchesC),
+                D: calculateGroupStandings(data.matchesD)
+            };
+
+            const getRank = (group, rank) => rankings[group][rank - 1]?.D || `[${group}${rank}_Chờ]`;
+            const calculateMatchWinnerName = (match) => {
+                const winnerCode = getMatchWinner(match.sA, match.sB);
+                return winnerCode === 'A' ? match.A : (winnerCode === 'B' ? match.B : 'Chưa có');
+            };
+            const getLoser = (match) => {
+                 const winnerName = calculateMatchWinnerName(match);
+                 if (winnerName === match.A) return match.B;
+                 if (winnerName === match.B) return match.A;
+                 return 'Chưa có';
+            };
+
+            // QF
+            data.quarterfinals[0].A = getRank('A', 1); data.quarterfinals[0].B = getRank('B', 2);
+            data.quarterfinals[1].A = getRank('C', 1); data.quarterfinals[1].B = getRank('D', 2);
+            data.quarterfinals[2].A = getRank('B', 1); data.quarterfinals[2].B = getRank('A', 2);
+            data.quarterfinals[3].A = getRank('D', 1); data.quarterfinals[3].B = getRank('C', 2);
+            data.quarterfinals.forEach(qf => qf.Wn = calculateMatchWinnerName(qf));
+
+            // SF
+            data.semifinals[0].A = data.quarterfinals[0].Wn; data.semifinals[0].B = data.quarterfinals[1].Wn;
+            data.semifinals[1].A = data.quarterfinals[2].Wn; data.semifinals[1].B = data.quarterfinals[3].Wn;
+            data.semifinals.forEach(sf => sf.Wn = calculateMatchWinnerName(sf));
+
+            // Final
+            data.final.A = data.semifinals[0].Wn;
+            data.final.B = data.semifinals[1].Wn;
+            data.final.Wn = calculateMatchWinnerName(data.final);
+            data.final.rU = getLoser(data.final);
+
+            // Final Standings
+            data.champion = data.final.Wn === 'Chưa có' ? 'Đang chờ...' : data.final.Wn;
+            data.runnerUp = data.final.rU === 'Chưa có' ? 'Đang chờ...' : data.final.rU;
+            data.thirdPlace1 = getLoser(data.semifinals[0]) === 'Chưa có' ? 'Đang chờ...' : getLoser(data.semifinals[0]);
+            data.thirdPlace2 = getLoser(data.semifinals[1]) === 'Chờ...' ? 'Đang chờ...' : getLoser(data.semifinals[1]);
+            
+            data.tableA = rankings.A;
+            data.tableB = rankings.B;
+            data.tableC = rankings.C;
+            data.tableD = rankings.D;
+        }
+
+        // --- Firebase Data Operations ---
+        
+        async function saveTournamentState() {
+            if (!db || !tournamentData) return;
+            const docRef = getDocRef(); 
+            try {
+                await setDoc(docRef, { 
+                    data: tournamentData,
+                    updatedAt: new Date().toISOString()
+                });
+                const statusElement = document.getElementById('loadingMessage');
+                statusElement.textContent = "Đã lưu trạng thái giải đấu thành công! (Auto-save)";
+                statusElement.classList.add('bg-green-900/50');
+                statusElement.classList.remove('bg-red-900/50', 'bg-blue-900/50', 'bg-cyan-900/50', 'bg-orange-900/50', 'hidden');
+                setTimeout(() => statusElement.classList.add('hidden'), 2000);
+            } catch (error) {
+                console.error("Error saving tournament state to Firestore:", error);
+                const statusElement = document.getElementById('loadingMessage');
+                statusElement.textContent = "LỖI LƯU TRỮ! Dữ liệu không được ghi vào Firestore.";
+                statusElement.classList.add('bg-red-900/50');
+                statusElement.classList.remove('bg-green-900/50', 'bg-blue-900/50', 'bg-cyan-900/50', 'bg-orange-900/50', 'hidden');
+            }
+        }
+        
+        async function loadStaticDataAndSaveToFirestore(loadingMessage) {
+            try {
+                loadingMessage.textContent = "Không tìm thấy dữ liệu online. Đang tải dữ liệu gốc...";
+                const response = await fetchWithRetry(STATIC_DATA_URL);
+                const loadedData = await response.json();
+                
+                // IMPORTANT: Save initial state
+                initialTournamentData = JSON.parse(JSON.stringify(loadedData));
+                tournamentData = loadedData;
+                
+                await saveTournamentState(); 
+                
+                console.log("Static data loaded and successfully pushed to Firestore.");
+                loadingMessage.textContent = "Đã khởi tạo dữ liệu online thành công!";
+                loadingMessage.classList.remove('bg-blue-900/50', 'bg-orange-900/50');
+                loadingMessage.classList.add('bg-green-900/50');
+                return loadedData;
+
+            } catch (error) {
+                console.error("Error loading tournament data from static URL:", error);
+                loadingMessage.textContent = "Lỗi khi tải dữ liệu. Vui lòng kiểm tra console log.";
+                loadingMessage.classList.remove('bg-blue-900/50', 'bg-orange-900/50');
+                loadingMessage.classList.add('bg-red-900/50');
+                throw error;
+            }
+        }
+
+        // Global function to show confirmation modal
+        window.showConfirmationModal = function() {
+            document.getElementById('confirmationBox').classList.remove('hidden');
+        }
+
+        // Global function to handle re-sync button click logic
+        window.reSyncStaticData = async function() {
+            document.getElementById('confirmationBox').classList.add('hidden');
+            const loadingMessage = document.getElementById('loadingMessage');
+            
+            loadingMessage.textContent = "Đang TẢI LẠI dữ liệu gốc từ GitHub và GHI ĐÈ lên Firebase...";
+            loadingMessage.classList.remove('hidden', 'bg-red-900/50', 'bg-green-900/50', 'bg-cyan-900/50', 'bg-blue-900/50');
+            loadingMessage.classList.add('bg-orange-900/50');
+            
+            try {
+                await loadStaticDataAndSaveToFirestore(loadingMessage);
+                
+                loadingMessage.textContent = "KHỞI ĐỘNG LẠI THÀNH CÔNG! Đã tải lại dữ liệu gốc từ GitHub.";
+                loadingMessage.classList.add('bg-green-900/50');
+                loadingMessage.classList.remove('bg-orange-900/50');
+                setTimeout(() => loadingMessage.classList.add('hidden'), 3000);
+                
+                recalculateTournamentState();
+                renderUI();
+
+            } catch (error) {
+                console.error("Error during re-sync:", error);
+                loadingMessage.textContent = "LỖI TẢI LẠI DỮ LIỆU!";
+                loadingMessage.classList.remove('bg-orange-900/50');
+                loadingMessage.classList.add('bg-red-900/50');
+            }
+        };
+        
+        // --- GitHub Sync Diff Logic ---
+        function compareMatches(liveMatch, initialMatch) {
+            // Compare only score fields (sA and sB)
+            return liveMatch.sA !== initialMatch.sA || liveMatch.sB !== initialMatch.sB;
+        }
+
+        window.generateDiffAndDisplay = function() {
+            if (!tournamentData || !initialTournamentData) {
+                document.getElementById('diffOutput').value = "Lỗi: Dữ liệu gốc hoặc dữ liệu hiện tại chưa được tải.";
+                document.getElementById('diffOutputContainer').classList.remove('hidden');
+                return;
+            }
+
+            const diffData = {};
+            const rounds = ['matchesA', 'matchesB', 'matchesC', 'matchesD', 'quarterfinals', 'semifinals', 'final'];
+
+            rounds.forEach(roundKey => {
+                const liveRound = tournamentData[roundKey];
+                const initialRound = initialTournamentData[roundKey];
+
+                if (!liveRound) return; // Skip if round doesn't exist
+
+                // Handle 'final' which is an object, not an array
+                if (roundKey === 'final') {
+                    if (compareMatches(liveRound, initialRound)) {
+                        diffData[roundKey] = {
+                            sA: liveRound.sA,
+                            sB: liveRound.sB
+                        };
+                    }
+                    return;
+                }
+                
+                const modifiedMatches = [];
+                liveRound.forEach((liveMatch, index) => {
+                    const initialMatch = initialRound ? initialRound[index] : null;
+
+                    if (initialMatch && compareMatches(liveMatch, initialMatch)) {
+                        modifiedMatches.push({
+                            i: index, // Index of the match in the array
+                            sA: liveMatch.sA,
+                            sB: liveMatch.sB
+                        });
+                    }
+                });
+
+                if (modifiedMatches.length > 0) {
+                    diffData[roundKey] = modifiedMatches;
+                }
+            });
+
+            const diffOutputElement = document.getElementById('diffOutput');
+            diffOutputElement.value = JSON.stringify(diffData, null, 2);
+            document.getElementById('diffOutputContainer').classList.remove('hidden');
+            document.getElementById('diffOutput').select(); // Select for easy copy
+        };
+
+
+        // --- Rendering Functions ---
+
+        function renderTeams(teams) {
+            const listHtml = teams.map(team => `
+                <div class="bg-[var(--match-bg)] p-4 rounded-lg shadow-xl mb-4 border border-[var(--border-color)]">
+                    <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-2 flex justify-between items-center">${team.Tn} <span class="text-sm font-normal text-gray-400">Bảng ${team.g}</span></h3>
+                    <div class="grid grid-cols-1 gap-2 text-sm text-gray-300">
+                        ${team.P.map(p => `
+                            <div class="p-2 border border-[var(--border-color)] rounded-md">
+                                <p class="font-semibold text-[var(--text-color)]">${p.name}</p>
+                                <p>Cấp độ: <span class="text-green-400">${p.pL}</span> | NS: ${p.bY}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('teamList').innerHTML = listHtml;
+        }
+
+        function renderStandings(groupName, standings) {
+            const tableId = `table${groupName}`;
+            const tableHtml = `
+                <div class="p-4 rounded-lg shadow-xl h-full bg-[var(--match-bg)] border border-[var(--border-color)]">
+                    <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3">Bảng Xếp Hạng Bảng ${groupName}</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-[var(--border-color)]">
+                            <thead class="bg-[var(--border-color)]">
+                                <tr>
+                                    <th class="px-2 py-2 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Hạng</th>
+                                    <th class="px-2 py-2 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Đội</th>
+                                    <th class="px-2 py-2 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">T</th>
+                                    <th class="px-2 py-2 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">B</th>
+                                    <th class="px-2 py-2 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">Điểm</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[var(--border-color)]">
+                                ${standings.map((team, index) => `
+                                    <tr class="${index < 2 ? 'bg-green-600/30' : 'bg-[var(--card-bg)]'}">
+                                        <td class="px-2 py-2 whitespace-nowrap font-medium ${index === 0 ? 'text-yellow-400' : (index === 1 ? 'text-green-400' : 'text-[var(--text-color)]')}">${index + 1}</td>
+                                        <td class="px-2 py-2 whitespace-nowrap text-sm text-[var(--text-color)]">${team.D}</td>
+                                        <td class="px-2 py-2 whitespace-nowrap text-sm text-center text-green-500">${team.W}</td>
+                                        <td class="px-2 py-2 whitespace-nowrap text-sm text-center text-red-500">${team.L}</td>
+                                        <td class="px-2 py-2 whitespace-nowrap text-sm text-center font-bold text-[var(--accent-color)]">${team.Pts}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500">2 đội đứng đầu vào Tứ kết.</p>
+                </div>
+            `;
+            document.getElementById(tableId).innerHTML = tableHtml;
+        }
+
+        function renderMatches(id, matches, title, editable = true) {
+            const listHtml = matches.map((match, index) => {
+                const winnerName = match.A ? match.Wn || 'Chưa có' : 'Đang chờ...';
+                const winnerClass = winnerName === match.A || winnerName === match.B ? 'text-yellow-400 font-bold' : 'text-[var(--text-color)]';
+                const winnerBg = winnerName === match.A || winnerName === match.B ? 'bg-green-700/20' : 'bg-[var(--match-bg)]';
+                const disabled = !editable || match.A.includes('[') || match.B.includes('[') || match.A === 'Chưa có' || match.B === 'Chưa có';
+
+                return `
+                    <div class="match-card p-3 mb-2 rounded-lg ${winnerBg} shadow-md border border-[var(--border-color)]">
+                        <p class="text-xs text-gray-400 mb-1 flex justify-between">
+                            <span>${title.includes('Bảng') ? `Trận ${index + 1}` : `${title} ${index + 1}`}</span>
+                            <span>${match.t} | Sân ${match.c}</span>
+                        </p>
+                        <div class="flex items-center justify-between font-semibold">
+                            <!-- Team A -->
+                            <div class="flex-1 text-left ${winnerName === match.A ? winnerClass : 'text-[var(--text-color)]'} text-sm sm:text-base">
+                                ${match.A}
+                            </div>
+                            
+                            <!-- Score Input A -->
+                            <input type="number" min="0" value="${match.sA}" data-match-round="${id}" data-match-index="${index}" data-team="A"
+                                class="score-input w-10 h-7 md:w-12 md:h-8 text-center rounded-md mx-1 md:mx-2 focus:ring-2 focus:ring-[var(--accent-color)] transition duration-150 text-sm" ${disabled ? 'disabled' : ''}>
+
+                            <span class="text-sm md:text-lg text-gray-400 mx-1">-</span>
+
+                            <!-- Score Input B -->
+                            <input type="number" min="0" value="${match.sB}" data-match-round="${id}" data-match-index="${index}" data-team="B"
+                                class="score-input w-10 h-7 md:w-12 md:h-8 text-center rounded-md mx-1 md:mx-2 focus:ring-2 focus:ring-[var(--accent-color)] transition duration-150 text-sm" ${disabled ? 'disabled' : ''}>
+                            
+                            <!-- Team B -->
+                            <div class="flex-1 text-right ${winnerName === match.B ? winnerClass : 'text-[var(--text-color)]'} text-sm sm:text-base">
+                                ${match.B}
+                            </div>
+                        </div>
+                        <p class="text-center text-xs mt-1 text-gray-500">
+                            Thắng: <span class="font-bold text-green-400">${winnerName}</span>
+                        </p>
+                    </div>
+                `;
+            }).join('');
+
+            let sectionTitle = title;
+            if (id === 'quarterfinals') { sectionTitle = 'Tứ Kết (Quarterfinals)'; }
+            else if (id === 'semifinals') { sectionTitle = 'Bán Kết (Semifinals)'; }
+            else if (id === 'finalSection') { sectionTitle = 'Chung Kết (Final)'; }
+            else if (id.startsWith('matches')) {
+                const groupName = id.replace('matches', '');
+                sectionTitle = `Nhập Tỉ Số Bảng ${groupName} (Group ${groupName} Score Entry)`;
+            }
+
+            document.getElementById(id).innerHTML = `
+                <h2 class="text-2xl font-extrabold text-[var(--accent-color)] mb-4 border-b border-[var(--border-color)] pb-2">${sectionTitle}</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    ${listHtml}
+                </div>
+            `;
+        }
+
+        function renderFinalResults(data) {
+            document.getElementById('finalResults').innerHTML = `
+                <h2 class="text-xl font-extrabold text-yellow-500 mb-4">Kết Quả Chung Cuộc</h2>
+                <div class="space-y-3">
+                    <div class="p-3 bg-yellow-900/40 rounded-lg border-l-4 border-yellow-400">
+                        <p class="text-xs text-yellow-300">Vô Địch (1st Place)</p>
+                        <p class="text-2xl font-black text-white">${data.champion || 'Đang chờ...'}</p>
+                    </div>
+                    <div class="p-3 bg-gray-700/40 rounded-lg border-l-4 border-gray-400">
+                        <p class="text-xs text-gray-300">Á Quân (2nd Place)</p>
+                        <p class="text-xl font-black text-white">${data.runnerUp || 'Đang chờ...'}</p>
+                    </div>
+                    <div class="p-3 bg-green-700/40 rounded-lg border-l-4 border-green-400">
+                        <p class="text-xs text-green-300">Đồng Hạng 3 (Joint 3rd Place)</p>
+                        <p class="text-lg font-black text-white">${data.thirdPlace1 || 'Đang chờ...'} & ${data.thirdPlace2 || 'Đang chờ...'}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // --- Main Rendering & Event Handling ---
+
+        function renderUI() {
+            if (!tournamentData) return;
+            
+            document.getElementById('staticDataUrlDisplay').textContent = STATIC_DATA_URL;
+            document.getElementById('diffOutputContainer').classList.add('hidden'); // Hide diff output on fresh render
+
+            // 1. Render Team List
+            renderTeams(tournamentData.tL);
+
+            // 2. Render Group Standings
+            renderStandings('A', tournamentData.tableA);
+            renderStandings('B', tournamentData.tableB);
+            renderStandings('C', tournamentData.tableC);
+            renderStandings('D', tournamentData.tableD);
+
+            // 3. Render Matches 
+            renderMatches('matchesA', tournamentData.matchesA, 'Vòng Bảng - Bảng A', true);
+            renderMatches('matchesB', tournamentData.matchesB, 'Vòng Bảng - Bảng B', true);
+            renderMatches('matchesC', tournamentData.matchesC, 'Vòng Bảng - Bảng C', true);
+            renderMatches('matchesD', tournamentData.matchesD, 'Vòng Bảng - Bảng D', true);
+            renderMatches('quarterfinals', tournamentData.quarterfinals, 'Tứ Kết', true);
+            renderMatches('semifinals', tournamentData.semifinals, 'Bán Kết', true);
+            renderMatches('finalSection', [tournamentData.final], 'Chung Kết', true);
+
+            // 4. Render Final Results
+            renderFinalResults(tournamentData);
+            
+            // 5. Add event listeners for score changes
+            document.querySelectorAll('.score-input').forEach(input => {
+                if (!input.disabled) {
+                    input.removeEventListener('change', handleScoreChange);
+                    input.addEventListener('change', handleScoreChange);
+                }
+            });
+
+            if (!document.querySelector('.tab-button.active')) {
+                 switchTab('General');
+            }
+        }
+
+        function handleScoreChange(event) {
+            const input = event.target;
+            let score = parseInt(input.value);
+            if (isNaN(score) || score < 0) {
+                score = 0;
+                input.value = 0;
+            }
+
+            const roundKey = input.getAttribute('data-match-round');
+            const matchIndex = parseInt(input.getAttribute('data-match-index'));
+            const team = input.getAttribute('data-team');
+            
+            let targetMatch;
+            if (roundKey === 'finalSection') {
+                targetMatch = tournamentData.final;
+            } else {
+                targetMatch = tournamentData[roundKey][matchIndex];
+            }
+            
+            const scoreKey = team === 'A' ? 'sA' : 'sB';
+            targetMatch[scoreKey] = String(score);
+
+            recalculateTournamentState();
+            renderUI();
+            
+            // Auto-save functionality (Debounce)
+            const statusElement = document.getElementById('loadingMessage');
+            statusElement.textContent = "Thay đổi đã được ghi nhận... Đang chờ lưu (3s)";
+            statusElement.classList.add('bg-blue-900/50');
+            statusElement.classList.remove('bg-red-900/50', 'bg-green-900/50', 'bg-cyan-900/50', 'bg-orange-900/50', 'hidden');
+
+            if (saveTimeout) {
+                clearTimeout(saveTimeout);
+            }
+
+            saveTimeout = setTimeout(() => {
+                saveTournamentState();
+            }, 3000);
+        }
+
+        function recalculateTournamentState() {
+            if (!tournamentData) return;
+            updateKnockoutProgression(tournamentData);
+        }
+
+        async function initializeApp() {
+            const loadingMessage = document.getElementById('loadingMessage');
+            
+            // 1. Firebase Initialization
+            try {
+                const app = initApp(firebaseConfig);
+                auth = getAuthService(app);
+                db = getDbService(app);
+                await setPersistence(auth, browserSessionPersistence);
+                
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Firebase initialization (non-fatal) failed:", error);
+                loadingMessage.textContent = "Lỗi khởi tạo Firebase. Kiểm tra console log.";
+                loadingMessage.classList.add('bg-red-900/50');
+                return;
+            }
+
+            const docRef = getDocRef(); 
+            
+            // 2. Check for existing data in Firestore
+            const docSnap = await getDoc(docRef);
+
+            if (!docSnap.exists() || !docSnap.data().data) {
+                await loadStaticDataAndSaveToFirestore(loadingMessage);
+            } else {
+                // If data exists, load it and also clone it as initial state
+                const data = docSnap.data().data;
+                initialTournamentData = JSON.parse(JSON.stringify(data));
+                tournamentData = data;
+                recalculateTournamentState();
+                renderUI();
+            }
+            
+            // 3. Setup Real-Time Listener (onSnapshot)
+            loadingMessage.textContent = "Đang kết nối thời gian thực...";
+            loadingMessage.classList.remove('hidden');
+
+            onSnapshot(docRef, (snapshot) => {
+                if (snapshot.exists() && snapshot.data().data) {
+                    const receivedData = snapshot.data().data;
+                    
+                    // Update only if data is different (prevent local redraw on own save)
+                    if (JSON.stringify(tournamentData) !== JSON.stringify(receivedData)) {
+                        tournamentData = receivedData;
+                        console.log("Real-time update received from Firestore.");
+                        
+                        const statusElement = document.getElementById('loadingMessage');
+                        statusElement.textContent = "Cập nhật tỉ số thời gian thực đã hoàn thành.";
+                        statusElement.classList.remove('bg-red-900/50', 'bg-blue-900/50', 'bg-green-900/50', 'bg-orange-900/50');
+                        statusElement.classList.add('bg-cyan-900/50'); 
+                        statusElement.classList.remove('hidden');
+                        setTimeout(() => statusElement.classList.add('hidden'), 2000);
+                        
+                        recalculateTournamentState();
+                        renderUI();
+                    }
+                }
+                document.getElementById('loadingMessage').classList.add('hidden');
+            }, (error) => {
+                console.error("Error setting up onSnapshot listener:", error);
+                loadingMessage.textContent = "LỖI KẾT NỐI THỜI GIAN THỰC! Vui lòng kiểm tra lại console log.";
+                loadingMessage.classList.add('bg-red-900/50');
+                loadingMessage.classList.remove('hidden');
+            });
+
+            // Attach event listeners to the custom modal buttons
+            document.getElementById('confirmYes').onclick = window.reSyncStaticData;
+            document.getElementById('confirmNo').onclick = () => document.getElementById('confirmationBox').classList.add('hidden');
+
+            renderUI();
+        }
+
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
