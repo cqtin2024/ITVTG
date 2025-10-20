@@ -1,0 +1,13 @@
+tournament_config.json: Chứa các quy tắc chơi (Rulesets) và định nghĩa các nội dung thi đấu (Events), bao gồm phân loại theo độ tuổi/giới tính.
+tournament_data.json: Chứa dữ liệu thực tế của giải đấu (danh sách đội, bảng xếp hạng, kết quả trận đấu).
+management_roles.json: Chứa danh sách Ban Tổ Chức và Trọng tài với phạm vi phụ trách.
+File: Lịch Thi Đấu (schedule.json)
+File này cung cấp cái nhìn tổng quan theo ngày và chi tiết theo từng trận đấu. 
+
+  Cách Sử Dụng File Lịch Thi Đấu
+Tổ chức theo Ngày (date): Giúp dễ dàng tạo lịch trình hàng ngày.
+Mã Trận đấu (match_name): Sử dụng mã này để tham chiếu đến trận đấu cụ thể khi cập nhật kết quả trong tournament_data.json.
+Tham chiếu người thắng (W.QF1): Cho phép tạo lịch thi đấu trước cả vòng loại trực tiếp, trong đó W.QF1 là viết tắt của "Winner of Quarter Final 1".
+
+  https://docs.google.com/document/d/18wvHPOZqd_w6ML-VOFli9dwtZ1xaD3bj4brXAEC9fWo/edit?usp=sharing
+
