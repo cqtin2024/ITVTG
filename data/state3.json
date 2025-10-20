@@ -25,458 +25,45 @@
     "B": "Team B (Đội B)",
     "sB": "Score B (Tỉ số Đội B)",
     "Wn": "Winner (Đội thắng)",
-    "rU": "Runner-Up (Đội về nhì)"
-  },
-  "tableA": [
-    {
-      "D": "Team 9",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 3",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 11",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 5",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    }
-  ],
-  "tableB": [
-    {
-      "D": "Team 4",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 7",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 12",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 1",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    }
-  ],
-  "tableC": [
-    {
-      "D": "Team 16",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 10",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 14",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 6",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    }
-  ],
-  "tableD": [
-    {
-      "D": "Team 13",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 8",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 15",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    },
-    {
-      "D": "Team 2",
-      "W": 0,
-      "L": 0,
-      "HS": "0",
-      "Pts": 0,
-      "mP": 0
-    }
-  ],
-  "matchesA": [
-    {
-      "t": "14:15",
-      "c": "S3",
-      "A": "Team 9",
-      "sA": "0",
-      "B": "Team 3",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:15",
-      "c": "S4",
-      "A": "Team 11",
-      "sA": "0",
-      "B": "Team 5",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:45",
-      "c": "S3",
-      "A": "Team 9",
-      "sA": "0",
-      "B": "Team 11",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:45",
-      "c": "S4",
-      "A": "Team 3",
-      "sA": "0",
-      "B": "Team 5",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:15",
-      "c": "S3",
-      "A": "Team 9",
-      "sA": "0",
-      "B": "Team 5",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:15",
-      "c": "S4",
-      "A": "Team 3",
-      "sA": "0",
-      "B": "Team 11",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "matchesB": [
-    {
-      "t": "14:30",
-      "c": "S3",
-      "A": "Team 4",
-      "sA": "0",
-      "B": "Team 7",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:30",
-      "c": "S4",
-      "A": "Team 12",
-      "sA": "0",
-      "B": "Team 1",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:00",
-      "c": "S3",
-      "A": "Team 4",
-      "sA": "0",
-      "B": "Team 12",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:00",
-      "c": "S4",
-      "A": "Team 7",
-      "sA": "0",
-      "B": "Team 1",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:30",
-      "c": "S3",
-      "A": "Team 4",
-      "sA": "0",
-      "B": "Team 1",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:30",
-      "c": "S4",
-      "A": "Team 7",
-      "sA": "0",
-      "B": "Team 12",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "matchesC": [
-    {
-      "t": "14:15",
-      "c": "S5",
-      "A": "Team 16",
-      "sA": "0",
-      "B": "Team 10",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:15",
-      "c": "S6",
-      "A": "Team 14",
-      "sA": "0",
-      "B": "Team 6",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:45",
-      "c": "S5",
-      "A": "Team 16",
-      "sA": "0",
-      "B": "Team 14",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:45",
-      "c": "S6",
-      "A": "Team 10",
-      "sA": "0",
-      "B": "Team 6",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:15",
-      "c": "S5",
-      "A": "Team 16",
-      "sA": "0",
-      "B": "Team 6",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:15",
-      "c": "S6",
-      "A": "Team 10",
-      "sA": "0",
-      "B": "Team 14",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "matchesD": [
-    {
-      "t": "14:30",
-      "c": "S5",
-      "A": "Team 13",
-      "sA": "0",
-      "B": "Team 8",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "14:30",
-      "c": "S6",
-      "A": "Team 15",
-      "sA": "0",
-      "B": "Team 2",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:00",
-      "c": "S5",
-      "A": "Team 13",
-      "sA": "0",
-      "B": "Team 15",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:00",
-      "c": "S6",
-      "A": "Team 8",
-      "sA": "0",
-      "B": "Team 2",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:30",
-      "c": "S5",
-      "A": "Team 13",
-      "sA": "0",
-      "B": "Team 2",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:30",
-      "c": "S6",
-      "A": "Team 8",
-      "sA": "0",
-      "B": "Team 15",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "quarterfinals": [
-    {
-      "t": "15:45",
-      "c": "S3",
-      "A": "W.A",
-      "sA": "0",
-      "B": "R.B",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "15:45",
-      "c": "S4",
-      "A": "W.C",
-      "sA": "0",
-      "B": "R.D",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "16:00",
-      "c": "S5",
-      "A": "W.B",
-      "sA": "0",
-      "B": "R.A",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "16:00",
-      "c": "S6",
-      "A": "W.D",
-      "sA": "0",
-      "B": "R.C",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "semifinals": [
-    {
-      "t": "16:10",
-      "c": "S4",
-      "A": "W.QF1",
-      "sA": "0",
-      "B": "W.QF2",
-      "sB": "0",
-      "Wn": "TBD"
-    },
-    {
-      "t": "16:25",
-      "c": "S5",
-      "A": "W.QF3",
-      "sA": "0",
-      "B": "W.QF4",
-      "sB": "0",
-      "Wn": "TBD"
-    }
-  ],
-  "final": {
-    "t": "17:05",
-    "c": "S5",
-    "A": "W.SF1",
-    "sA": "0",
-    "B": "W.SF2",
-    "sB": "0",
-    "Wn": "TBD",
-    "rU": "TBD"
+    "MD": "Match Details (Chi tiết trận đấu)",
+    "R": "Round (Vòng đấu)",
+    "mI": "Match ID (Mã trận đấu)",
+    "tA": "Team A ID (Mã đội A)",
+    "tB": "Team B ID (Mã đội B)",
+    "s1A": "Score Set 1 Team A",
+    "s1B": "Score Set 1 Team B",
+    "s2A": "Score Set 2 Team A",
+    "s2B": "Score Set 2 Team B",
+    "s3A": "Score Set 3 Team A (nếu có)",
+    "s3B": "Score Set 3 Team B (nếu có)",
+    "W_tA": "Team A Wins",
+    "W_tB": "Team B Wins",
+    "Status": "Status (Trạng thái: P-Pending, F-Finished)",
+    "R_TL": "Ranking Team List (Bảng xếp hạng)",
+    "M_R": "Match Results (Kết quả thi đấu)"
   },
   "tL": [
     {
       "g": "A",
-      "T": "Team 9",
-      "aPL": 4.5,
-      "s": 0,
+      "T": "Team 1",
+      "aPL": 5,
+      "s": 1,
       "P": [
         {
-          "name": "Từ Duy Hưng",
-          "bY": "1995",
+          "name": "Nguyễn Thế Huy",
+          "bY": "1997",
           "ph": "09xx-xxx-001",
-          "em": "duyhung@example.com",
-          "pL": 4,
+          "em": "thehuy@example.com",
+          "pL": 5,
           "gC": "BD_DB",
           "fC": "RR_KO"
         },
         {
-          "name": "Trần Nguyễn Minh Tú",
+          "name": "Phạm Văn Tới",
           "bY": "1998",
           "ph": "09xx-xxx-002",
-          "em": "minhtu@example.com",
-          "pL": 3,
+          "em": "vantoi@example.com",
+          "pL": 5,
           "gC": "BD_DB",
           "fC": "RR_KO"
         }
@@ -484,24 +71,24 @@
     },
     {
       "g": "A",
-      "T": "Team 3",
-      "aPL": 4.5,
-      "s": 0,
+      "T": "Team 2",
+      "aPL": 4,
+      "s": 2,
       "P": [
         {
-          "name": "Võ Dương Quốc Thịnh",
-          "bY": "1996",
+          "name": "Trần Thanh Tú",
+          "bY": "1999",
           "ph": "09xx-xxx-003",
-          "em": "quocthinh@example.com",
-          "pL": 3,
+          "em": "thanhtu@example.com",
+          "pL": 4,
           "gC": "BD_DB",
           "fC": "RR_KO"
         },
         {
-          "name": "Lê Minh Phương",
-          "bY": "1997",
+          "name": "Lê Văn Tiến",
+          "bY": "2000",
           "ph": "09xx-xxx-004",
-          "em": "minhphuong@example.com",
+          "em": "vantien@example.com",
           "pL": 4,
           "gC": "BD_DB",
           "fC": "RR_KO"
@@ -509,17 +96,17 @@
       ]
     },
     {
-      "g": "A",
-      "T": "Team 11",
-      "aPL": 4.5,
-      "s": 0,
+      "g": "B",
+      "T": "Team 3",
+      "aPL": 3,
+      "s": 1,
       "P": [
         {
-          "name": "Minh Chang",
-          "bY": "2000",
+          "name": "Nguyễn Thanh An",
+          "bY": "2002",
           "ph": "09xx-xxx-005",
-          "em": "minhchang@example.com",
-          "pL": 2,
+          "em": "thanhan@example.com",
+          "pL": 4,
           "gC": "BD_DB",
           "fC": "RR_KO"
         },
@@ -567,31 +154,131 @@
       "s": 0,
       "P": [
         {
-          "name": "Trần Quí Tuấn",
-          "bY": "1992",
+          "name": "Đặng Huy Bình",
+          "bY": "1988",
           "ph": "09xx-xxx-009",
-          "em": "quytuan@example.com",
-          "pL": 3,
+          "em": "huybinh@example.com",
+          "pL": 5,
           "gC": "BD_DB",
           "fC": "RR_KO"
         },
         {
-          "name": "Hoàng Mạnh Hùng",
-          "bY": "1993",
+          "name": "Phan Hữu Lợi",
+          "bY": "1989",
           "ph": "09xx-xxx-010",
-          "em": "manhhung@example.com",
-          "pL": 3,
+          "em": "huuloi@example.com",
+          "pL": 4,
           "gC": "BD_DB",
           "fC": "RR_KO"
         }
       ]
+    }
+  ],
+  "R_TL": [
+    {
+      "D": "Team 1",
+      "g": "A",
+      "W": 0,
+      "L": 0,
+      "HS": 0,
+      "Pts": 0,
+      "mP": 0
     },
     {
+      "D": "Team 2",
+      "g": "A",
+      "W": 0,
+      "L": 0,
+      "HS": 0,
+      "Pts": 0,
+      "mP": 0
+    },
+    {
+      "D": "Team 5",
+      "g": "A",
+      "W": 0,
+      "L": 0,
+      "HS": 0,
+      "Pts": 0,
+      "mP": 0
+    },
+    {
+      "D": "Team 3",
       "g": "B",
-      "T": "Team 7",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
+      "W": 0,
+      "L": 0,
+      "HS": 0,
+      "Pts": 0,
+      "mP": 0
+    },
+    {
+      "D": "Team 4",
+      "g": "B",
+      "W": 0,
+      "L": 0,
+      "HS": 0,
+      "Pts": 0,
+      "mP": 0
+    }
+  ],
+  "M_R": [
+    {
+      "MD": [
         {
-          "name": "Nguyễn Quốc Hùng",
-          "bY": "1
+          "R": "Vòng 1",
+          "mI": "M_A1",
+          "t": "18:00",
+          "c": "Sân 1",
+          "A": "Team 1",
+          "tA": "Team 1",
+          "sA": 0,
+          "B": "Team 2",
+          "tB": "Team 2",
+          "sB": 0,
+          "s1A": 0,
+          "s1B": 0,
+          "s2A": 0,
+          "s2B": 0,
+          "Wn": "TBD",
+          "Status": "P"
+        },
+        {
+          "R": "Vòng 1",
+          "mI": "M_A2",
+          "t": "18:30",
+          "c": "Sân 2",
+          "A": "Team 5",
+          "tA": "Team 5",
+          "sA": 0,
+          "B": "Team 1",
+          "tB": "Team 1",
+          "sB": 0,
+          "s1A": 0,
+          "s1B": 0,
+          "s2A": 0,
+          "s2B": 0,
+          "Wn": "TBD",
+          "Status": "P"
+        },
+        {
+          "R": "Vòng 1",
+          "mI": "M_B1",
+          "t": "18:00",
+          "c": "Sân 3",
+          "A": "Team 3",
+          "tA": "Team 3",
+          "sA": 0,
+          "B": "Team 4",
+          "tB": "Team 4",
+          "sB": 0,
+          "s1A": 0,
+          "s1B": 0,
+          "s2A": 0,
+          "s2B": 0,
+          "Wn": "TBD",
+          "Status": "P"
+        }
+      ]
+    }
+  ]
+}
