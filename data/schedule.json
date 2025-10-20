@@ -1,0 +1,101 @@
+{
+  "key_legend": {
+    "event_id": "Mã Nội dung thi đấu",
+    "date": "Ngày thi đấu (YYYY-MM-DD)",
+    "time": "Thời gian bắt đầu (HH:MM)",
+    "court": "Sân/Vị trí thi đấu (Ví dụ: Sân A, Bàn 3, Sân bóng 7x7)",
+    "round_code": "Mã vòng đấu (RR, QF, FINAL)",
+    "team_A": "Đội/VĐV A",
+    "team_B": "Đội/VĐV B"
+  },
+  
+  "tournament_schedule": [
+    // --- NGÀY 1: 2025-10-20 ---
+    {
+      "date": "2025-10-20",
+      "day_name": "Thứ Hai",
+      "events_on_day": ["BB_MS_A_OPEN", "FB_7S_U18"],
+      "matches": [
+        // Cầu Lông Đơn Nam (BB_MS_A_OPEN) - Vòng Bảng
+        {
+          "event_id": "BB_MS_A_OPEN",
+          "round_code": "RR",
+          "time": "08:00",
+          "court": "Sân Cầu Lông 1",
+          "match_name": "Trận G1_M1",
+          "team_A": "VĐV 1",
+          "team_B": "VĐV 3"
+        },
+        // Bóng Đá 7x7 (FB_7S_U18) - Vòng Bảng
+        {
+          "event_id": "FB_7S_U18",
+          "round_code": "RR",
+          "time": "18:30",
+          "court": "Sân Bóng 7x7",
+          "match_name": "Trận G2_M1",
+          "team_A": "Team U18 A",
+          "team_B": "Team U18 B"
+        },
+        {
+          "event_id": "BB_MS_A_OPEN",
+          "round_code": "RR",
+          "time": "08:45",
+          "court": "Sân Cầu Lông 2",
+          "match_name": "Trận G1_M2",
+          "team_A": "VĐV 2",
+          "team_B": "VĐV 4"
+        }
+      ]
+    },
+    
+    // --- NGÀY 2: 2025-10-21 ---
+    {
+      "date": "2025-10-21",
+      "day_name": "Thứ Ba",
+      "events_on_day": ["BB_MS_A_OPEN", "TN_WD_SEN"],
+      "matches": [
+        // Tennis Đôi Nữ (TN_WD_SEN) - Vòng Tứ kết
+        {
+          "event_id": "TN_WD_SEN",
+          "round_code": "QF",
+          "time": "10:00",
+          "court": "Sân Tennis A",
+          "match_name": "QF1",
+          "team_A": "Cặp Đôi Vàng",
+          "team_B": "Cặp Đôi Đồng"
+        },
+        // Cầu Lông Đơn Nam - Loại Trực Tiếp
+        {
+          "event_id": "BB_MS_A_OPEN",
+          "round_code": "SF",
+          "time": "17:00",
+          "court": "Sân Cầu Lông Trung Tâm",
+          "match_name": "Bán kết 1",
+          // Sử dụng mã người thắng (W.M1) nếu lịch được sắp xếp tự động sau vòng bảng
+          "team_A": "W.QF1", 
+          "team_B": "W.QF2"
+        }
+      ]
+    },
+
+    // --- NGÀY 3: 2025-10-22 (Chung Kết) ---
+    {
+      "date": "2025-10-22",
+      "day_name": "Thứ Tư",
+      "events_on_day": ["BB_MS_A_OPEN", "TN_WD_SEN"],
+      "matches": [
+        // Chung kết Cầu Lông
+        {
+          "event_id": "BB_MS_A_OPEN",
+          "round_code": "FINAL",
+          "time": "19:00",
+          "court": "Sân Cầu Lông Trung Tâm",
+          "match_name": "CHUNG KẾT",
+          "team_A": "W.SF1",
+          "team_B": "W.SF2",
+          "note": "Trực tiếp trên kênh A"
+        }
+      ]
+    }
+  ]
+}
