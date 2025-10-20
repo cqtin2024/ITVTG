@@ -1,0 +1,39 @@
+{
+  "organizing_committee": {
+    "members": [
+      {
+        "id": "OC_001",
+        "role": "Trưởng Ban Tổ Chức",
+        "name": "Nguyễn Văn A",
+        "scope": "All Events",
+        "contact": "09xx-xxx-001"
+      },
+      {
+        "id": "OC_002",
+        "role": "Điều phối viên",
+        "name": "Trần Thị C",
+        "scope": "Badminton, Tennis", // Phụ trách nhóm môn vợt
+        "contact": "tranthic@email.com"
+      }
+    ]
+  },
+  
+  "referees": {
+    "officials": [
+      {
+        "id": "RF_FB_01",
+        "referee_level": "Quốc gia",
+        "name": "Hoàng Minh Khoa",
+        "scope": "Football", // Chỉ làm việc cho Bóng đá
+        "assigned_matches": []
+      },
+      {
+        "id": "RF_BB_01",
+        "referee_level": "Cấp CLB",
+        "name": "Lê Phước Dũng",
+        "scope": "Badminton", // Chỉ làm việc cho Cầu lông
+        "assigned_matches": []
+      }
+    ]
+  }
+}
