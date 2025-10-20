@@ -191,6 +191,10 @@
             padding-bottom: 0.4rem !important;
         }
 
+        #main-content-wrapper {
+            width: 100%; /* Đảm bảo wrapper chiếm toàn bộ chiều rộng */
+            padding-top: 1rem !important; /* Điều chỉnh padding cho desktop */
+        }
         #content-carousel {
             width: auto !important;
             display: block !important;
@@ -201,7 +205,13 @@
             width: 100% !important; 
             display: none; 
             padding: 1rem 0;
+            margin: 0 auto; /* Căn giữa nội dung desktop */
+            max-width: 1200px;
         }
+        .swipe-section:first-child, .swipe-section:nth-child(2), .swipe-section:nth-child(3), .swipe-section:nth-child(4) {
+             padding-top: 0 !important;
+        }
+
         .bg-white { padding: 1.25rem; }
         
         .desktop-group-layout {
@@ -308,10 +318,13 @@
   <button id="refresh-btn" title="Reload data" onclick="manualRefresh()">⟳</button>
 
   <script>
-    const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state.json'; 
-    const REFRESH_INTERVAL = 30000;
-
-    const carousel = document.getElementById('content-carousel');
+    // --------------------------------------------------------------------------
+    // CẤU HÌNH TẢI DỮ LIỆU TỪ MẠNG
+    // Đã cập nhật để trỏ đến đường dẫn RAW trên GitHub
+    // --------------------------------------------------------------------------
+    const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3.json';
+    const REFRESH_INTERVAL = 30000; // 30 giây
+    
     let currentIndex = 0;
     let cachedTeamList = []; 
 
@@ -328,14 +341,15 @@
         
         // Kiểm tra team.P là mảng object và có thuộc tính 'name'
         if (team && team.P && team.P.length >= 2 && team.P[0] && typeof team.P[0] === 'object' && team.P[0].name) {
-            const p1Name = team.P[0].name; // Lấy thuộc tính name từ object
-            const p2Name = team.P[1].name; // Lấy thuộc tính name từ object
+            const p1Name = team.P[0].name; 
+            const p2Name = team.P[1].name; 
             
             const p1LastTwo = getLastTwoWords(p1Name);
             const p2LastTwo = getLastTwoWords(p2Name);
             return `${p1LastTwo} & ${p2LastTwo}`;
         }
-        // Fallback (cũng bao gồm cả trường hợp JSON cũ team.P là mảng string)
+        
+        // Fallback (cho trường hợp JSON có mảng string)
         if (team && team.P && team.P.length >= 2 && typeof team.P[0] === 'string') {
              const p1LastTwo = getLastTwoWords(team.P[0]);
              const p2LastTwo = getLastTwoWords(team.P[1]);
@@ -351,6 +365,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       const isDesktop = window.innerWidth >= 992;
+      const carousel = document.getElementById('content-carousel');
       const sections = document.querySelectorAll('.swipe-section');
 
       if (isDesktop) {
@@ -376,22 +391,25 @@
       });
     }
 
+    // HÀM TẢI DỮ LIỆU TỪ MẠNG
     async function fetchData() {
       const msg = document.getElementById('statusMessage');
       const icon = document.getElementById('dataStatusIcon');
 
       // 1. Reset trạng thái & Bắt đầu Loading
-      msg.textContent = 'Loading data...';
+      msg.textContent = 'Fetching data...';
       icon.classList.remove('status-success', 'status-error');
       
       try {
-        const res = await fetch(BASE_URL, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP Error ${res.status}. Could not connect.`);
-        
-        const data = await res.json();
+        const response = await fetch(BASE_URL, { cache: 'no-store' }); // Thêm no-store để đảm bảo luôn lấy file mới nhất
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json(); 
         
         // 2. Tải thành công
-        msg.textContent = `Last updated: ${new Date().toLocaleTimeString()} (Ver 3.7)`;
+        msg.textContent = `Last updated: ${new Date().toLocaleTimeString()} (Source: GitHub Raw)`;
+        icon.classList.remove('status-error');
         icon.classList.add('status-success'); 
         
         cachedTeamList = data.tL || [];
@@ -399,14 +417,10 @@
         renderData(data);
       } catch (err) {
         // 3. Xảy ra lỗi
-        let errorMsg = err.message;
-        if (window.location.protocol === 'file:') {
-             errorMsg += " (Possibly CORS error. Please run on a web server).";
-        }
-        msg.textContent = '⚠️ Data load error: ' + errorMsg;
+        msg.textContent = `⚠️ Error fetching data: ${err.message}`;
         icon.classList.remove('status-success');
         icon.classList.add('status-error'); 
-        renderData({});
+        console.error("Error fetching data:", err);
       }
     }
 
@@ -414,6 +428,7 @@
       const btn = document.getElementById('refresh-btn');
       btn.disabled = true;
       btn.classList.add('opacity-70');
+      // Chỉ gọi lại fetchData và sau đó bỏ disabled
       fetchData().finally(() => setTimeout(() => { btn.disabled = false; btn.classList.remove('opacity-70'); }, 800));
     }
 
@@ -427,7 +442,7 @@
     
     function renderRounds(data) {
         const c = document.getElementById('rounds');
-        if (!data || !data.tableA) {
+        if (!data || (!data.tableA && !data.tableB && !data.tableC && !data.tableD)) {
             c.innerHTML = `<div class='bg-white p-4 rounded-xl shadow-md'><p class='text-sm text-gray-600'>No group stage data available.</p></div>`;
             return;
         }
@@ -437,8 +452,14 @@
         
         const renderGroupContent = (name) => {
             let groupHtml = '';
-            if (data[`table${name}`]) groupHtml += renderTable(data[`table${name}`], `Group ${name}`);
-            if (data[`matches${name}`]) groupHtml += renderMatchList(data[`matches${name}`], `Results Group ${name}`);
+            // Kiểm tra và render bảng
+            if (data[`table${name}`] && data[`table${name}`].length > 0) {
+                 groupHtml += renderTable(data[`table${name}`], `BẢNG ${name}`);
+            }
+            // Kiểm tra và render lịch thi đấu
+            if (data[`matches${name}`] && data[`matches${name}`].length > 0) {
+                 groupHtml += renderMatchList(data[`matches${name}`], `Lịch thi đấu Bảng ${name}`);
+            }
             return groupHtml;
         };
 
@@ -465,7 +486,7 @@
 
     function renderTable(table, title) {
       if (!table || table.length === 0) return '';
-      const headersMap = {'D': 'Team', 'W': 'W', 'L': 'L', 'HS': 'PD', 'Pts': 'Pts'}; 
+      const headersMap = {'D': 'Team', 'W': 'W', 'L': 'L', 'HS': 'HS', 'Pts': 'Pts'}; 
       const rawHeaders = Object.keys(table[0]).filter(h => h !== 'mP');
       const displayHeaders = rawHeaders.map(h => headersMap[h] || h);
 
@@ -495,10 +516,9 @@
         const aClass = m.Wn === m.A ? 'text-green-700 font-bold' : '';
         const bClass = m.Wn === m.B ? 'text-green-700 font-bold' : '';
         
-        // Dữ liệu JSON mới dùng 'S1', 'S2', v.v. nên giữ nguyên
         const courtName = m.c ? 'Sân ' + m.c : ''; 
 
-        // SCORE DISPLAY LOGIC (Ver 3.5)
+        // SCORE DISPLAY LOGIC
         const scoreA = m.sA || '0';
         const scoreB = m.sB || '0';
         let scoreDisplay;
@@ -521,7 +541,7 @@
                 scoreDisplay = `<span class='text-sm text-gray-700'>${scoreA} - ${scoreB}</span>`;
             }
         } else {
-            scoreDisplay = `<span class='text-sm text-gray-500'>0 - 0</span>`;
+            scoreDisplay = `<span class='text-sm text-gray-500'>TBD</span>`;
         }
 
 
@@ -548,9 +568,9 @@
         return;
       }
       let html = ``; 
-      html += `<div class='bg-white p-4 rounded-xl shadow-md'><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Time / Court</th><th>Team A</th><th>Score</th><th>Team B</th><th>Winner</th></tr></thead><tbody>`;
+      html += `<div class='bg-white p-4 rounded-xl shadow-md'><h3 class='text-lg font-semibold text-green-800 mb-2 text-center'>QUARTERFINALS</h3><table class='min-w-full divide-y divide-gray-200 text-sm'><thead class='bg-green-700 text-white'><tr><th>Time / Court</th><th>Team A</th><th>Score</th><th>Team B</th><th>Winner</th></tr></thead><tbody>`;
       quarters.forEach(m => {
-        const teamA = m.A; // Team ID, will be resolved by getCombinedName if in Team List
+        const teamA = m.A; // Team ID
         const teamB = m.B;
         const winner = m.Wn;
         
@@ -579,7 +599,7 @@
                 scoreDisplay = `<span class='text-sm text-gray-700'>${scoreA} - ${scoreB}</span>`;
             }
         } else {
-            scoreDisplay = `<span class='text-sm text-gray-500'>0 - 0</span>`;
+            scoreDisplay = `<span class='text-sm text-gray-500'>TBD</span>`;
         }
 
         html += `<tr class='hover:bg-green-50'>
@@ -602,9 +622,9 @@
     function renderKnockout(semis, final) {
       const c = document.getElementById('knockout');
       let html = ``; 
-      const noData = (!semis || semis.length === 0) && (!final || final.Wn === "TBD");
+      const noData = (!semis || semis.length === 0) && (!final || final.A === undefined);
 
-      if (semis && semis.length > 0) html += renderMatchList(semis, 'Semifinals');
+      if (semis && semis.length > 0) html += renderMatchList(semis, 'SEMIFINALS');
       if (final && final.A) {
            const finalA = final.A;
            const finalB = final.B;
@@ -636,7 +656,6 @@
       c.innerHTML = html;
     }
 
-    // --- MODIFIED FUNCTION (VER 3.7) ---
     function renderPlayers(teamList) {
         const c = document.getElementById('players');
         let html = ``; 
@@ -661,8 +680,8 @@
                 // Lấy tên từ thuộc tính 'name' của đối tượng người chơi
                 const p1Obj = team.P[0] || {};
                 const p2Obj = team.P[1] || {};
-                const p1Name = p1Obj.name || (typeof team.P[0] === 'string' ? team.P[0] : 'N/A'); // Fallback cho JSON cũ
-                const p2Name = p2Obj.name || (typeof team.P[1] === 'string' ? team.P[1] : 'N/A'); // Fallback cho JSON cũ
+                const p1Name = p1Obj.name || (typeof team.P[0] === 'string' ? team.P[0] : 'N/A'); 
+                const p2Name = p2Obj.name || (typeof team.P[1] === 'string' ? team.P[1] : 'N/A'); 
                 
                 const combinedName = `${getLastTwoWords(p1Name)} & ${getLastTwoWords(p2Name)}`; 
 
@@ -687,20 +706,22 @@
 
     // Swipe handling
     let startX=0, isDown=false;
-    document.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; isDown=true; });
-    document.addEventListener('touchend', e=>{ 
-        if(!isDown) return; 
-        isDown=false; 
-        const endX = e.changedTouches[0].clientX; 
-        const diff = endX - startX; 
-        if(window.innerWidth < 992) {
+    const isDesktop = window.innerWidth >= 992;
+    if (!isDesktop) {
+        document.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; isDown=true; });
+        document.addEventListener('touchend', e=>{ 
+            if(!isDown) return; 
+            isDown=false; 
+            const endX = e.changedTouches[0].clientX; 
+            const diff = endX - startX; 
             if(diff > 60) goToSection(currentIndex-1); 
             if(diff < -60) goToSection(currentIndex+1); 
-        }
-    });
+        });
+    }
 
-    setInterval(fetchData, REFRESH_INTERVAL);
+    // Tự động tải dữ liệu lần đầu và sau đó mỗi 30 giây
     fetchData();
+    setInterval(fetchData, REFRESH_INTERVAL); 
   </script>
 </body>
 </html>
