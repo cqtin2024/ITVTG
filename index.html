@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* -------------------------------------------------------------------------- */
-    /* CUSTOM VARIABLES (VER 3.6 - FIX JSON TL STRUCTURE)     */
+    /* CUSTOM VARIABLES (VER 3.7 - RESTRUCTURE TEAM CARD)     */
     /* -------------------------------------------------------------------------- */
     :root {
       --primary: #007BFF;        /* Xanh Dương Sáng - Màu nhấn chính */
@@ -321,7 +321,6 @@
       return parts.length >= 2 ? parts.slice(-2).join(' ') : name;
     }
     
-    // --- MODIFIED FUNCTION (VER 3.6) ---
     function getCombinedName(teamId) {
         if (!teamId || teamId.includes('.') || teamId === 'TBD') return teamId; 
 
@@ -392,7 +391,7 @@
         const data = await res.json();
         
         // 2. Tải thành công
-        msg.textContent = `Last updated: ${new Date().toLocaleTimeString()} (Ver 3.6)`;
+        msg.textContent = `Last updated: ${new Date().toLocaleTimeString()} (Ver 3.7)`;
         icon.classList.add('status-success'); 
         
         cachedTeamList = data.tL || [];
@@ -496,7 +495,6 @@
         const aClass = m.Wn === m.A ? 'text-green-700 font-bold' : '';
         const bClass = m.Wn === m.B ? 'text-green-700 font-bold' : '';
         
-        // Cần sửa lại key 'c' trong JSON để khớp với logic này hoặc sửa logic này để khớp với JSON mới ('S1' thay vì 'A1')
         // Dữ liệu JSON mới dùng 'S1', 'S2', v.v. nên giữ nguyên
         const courtName = m.c ? 'Sân ' + m.c : ''; 
 
@@ -638,7 +636,7 @@
       c.innerHTML = html;
     }
 
-    // --- MODIFIED FUNCTION (VER 3.6) ---
+    // --- MODIFIED FUNCTION (VER 3.7) ---
     function renderPlayers(teamList) {
         const c = document.getElementById('players');
         let html = ``; 
@@ -671,14 +669,13 @@
                 // Hiển thị thêm aPL và s (Hạt giống)
                 const teamDetail = `ID: ${team.T} | G: ${team.g} | Seed: ${team.s || 'N/A'} | Avg.Level: ${team.aPL || 'N/A'}`;
 
+                // Cấu trúc mới: 3 dòng chính
                 html += `<div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-                            <div class='flex justify-between items-start mb-1'> 
-                                <div class='text-sm font-bold text-red-700 flex-shrink-0 mr-2'>${combinedName}</div>
-                                <div class='text-xs text-gray-700 text-right'>1. ${p1Name}</div>
-                            </div>
-                            <div class='flex justify-between items-start'>
-                                <div class='text-xs text-gray-600 flex-shrink-0 mr-2'>${teamDetail}</div>
-                                <div class='text-xs text-gray-700 text-right'>2. ${p2Name}</div>
+                            <div class='text-sm font-bold text-red-700 mb-1'>${combinedName}</div>
+                            <div class='text-xs text-gray-600 mb-2'>${teamDetail}</div>
+                            <div class='text-xs text-gray-700 font-medium'>
+                                1. ${p1Name}<br/>
+                                2. ${p2Name}
                             </div>
                          </div>`;
             });
