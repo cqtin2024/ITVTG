@@ -1,0 +1,49 @@
+{
+  "tournament_info": {
+    "name": "HỘI THAO ĐA MÔN 2025",
+    "location": "Vũng Tàu",
+    "date": "20-22/10/2025"
+  },
+  
+  "team_list": [
+    { 
+      "event_id": "BB_XD_30", "T": "Cặp Đôi Vàng", "g": "G1", 
+      "P": [
+        { "name": "Nam A", "gender": "Male", "birth_year": 1990 }, 
+        { "name": "Nữ B", "gender": "Female", "birth_year": 1993 }
+      ]
+    },
+    { 
+      "event_id": "FB_7S_U18", "T": "Team U18 A", "g": "G2", 
+      "P": [
+        { "name": "Cầu thủ 1", "gender": "Male", "birth_year": 2008 },
+        { "name": "Cầu thủ 2", "gender": "Male", "birth_year": 2007 }
+      ]
+    },
+    { 
+      "event_id": "TN_WD_SEN", "T": "Cặp Đôi Bạc", "g": "KO", 
+      "P": [
+        { "name": "Mai", "gender": "Female", "birth_year": 1975 },
+        { "name": "Lan", "gender": "Female", "birth_year": 1980 }
+      ]
+    }
+  ],
+  
+  "group_tables": [
+    { "event_id": "BB_XD_30", "g": "G1", "D": "Cặp Đôi Vàng", "W": 2, "L": 0, "GF": 4, "GA": 0, "Pts": 6, "mP": 2 },
+    { "event_id": "FB_7S_U18", "g": "G2", "D": "Team U18 A", "W": 1, "L": 0, "D": 1, "GF": 5, "GA": 2, "Pts": 4, "mP": 2 }
+  ],
+  
+  "matches": [
+    // Trận Cầu Lông (Vòng Bảng)
+    {
+      "event_id": "BB_XD_30", "round_code": "RR", "t": "14:00",
+      "A": "Cặp Đôi Vàng", "sA": "2-0", "B": "Cặp Đôi Kim Cương", "sB": "0-2", "Wn": "Cặp Đôi Vàng"
+    },
+    // Trận Tennis (Vòng Loại Trực Tiếp)
+    {
+      "event_id": "TN_WD_SEN", "round_code": "KO", "t": "16:00",
+      "A": "Cặp Đôi Bạc", "sA": "8-3", "B": "Cặp Đôi Đồng", "sB": "3-8", "Wn": "Cặp Đôi Bạc"
+    }
+  ]
+}
