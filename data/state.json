@@ -165,8 +165,8 @@
   ],
   "matchesA": [
     {
-      "t": "14:00",
-      "c": "S1",
+      "t": "14:15",
+      "c": "S3",
       "A": "Team 9",
       "sA": "0",
       "B": "Team 3",
@@ -175,7 +175,7 @@
     },
     {
       "t": "14:15",
-      "c": "S1",
+      "c": "S4",
       "A": "Team 11",
       "sA": "0",
       "B": "Team 5",
@@ -183,8 +183,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "14:30",
-      "c": "S1",
+      "t": "14:45",
+      "c": "S3",
       "A": "Team 9",
       "sA": "0",
       "B": "Team 11",
@@ -193,7 +193,7 @@
     },
     {
       "t": "14:45",
-      "c": "S1",
+      "c": "S4",
       "A": "Team 3",
       "sA": "0",
       "B": "Team 5",
@@ -201,8 +201,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "15:00",
-      "c": "S1",
+      "t": "15:15",
+      "c": "S3",
       "A": "Team 9",
       "sA": "0",
       "B": "Team 5",
@@ -211,7 +211,7 @@
     },
     {
       "t": "15:15",
-      "c": "S1",
+      "c": "S4",
       "A": "Team 3",
       "sA": "0",
       "B": "Team 11",
@@ -221,8 +221,8 @@
   ],
   "matchesB": [
     {
-      "t": "14:00",
-      "c": "S2",
+      "t": "14:30",
+      "c": "S3",
       "A": "Team 4",
       "sA": "0",
       "B": "Team 7",
@@ -230,8 +230,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "14:15",
-      "c": "S2",
+      "t": "14:30",
+      "c": "S4",
       "A": "Team 12",
       "sA": "0",
       "B": "Team 1",
@@ -239,8 +239,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "14:30",
-      "c": "S2",
+      "t": "15:00",
+      "c": "S3",
       "A": "Team 4",
       "sA": "0",
       "B": "Team 12",
@@ -248,8 +248,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "14:45",
-      "c": "S2",
+      "t": "15:00",
+      "c": "S4",
       "A": "Team 7",
       "sA": "0",
       "B": "Team 1",
@@ -257,8 +257,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "15:00",
-      "c": "S2",
+      "t": "15:30",
+      "c": "S3",
       "A": "Team 4",
       "sA": "0",
       "B": "Team 1",
@@ -266,8 +266,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "15:15",
-      "c": "S2",
+      "t": "15:30",
+      "c": "S4",
       "A": "Team 7",
       "sA": "0",
       "B": "Team 12",
@@ -277,8 +277,8 @@
   ],
   "matchesC": [
     {
-      "t": "14:00",
-      "c": "S3",
+      "t": "14:15",
+      "c": "S5",
       "A": "Team 16",
       "sA": "0",
       "B": "Team 10",
@@ -287,7 +287,7 @@
     },
     {
       "t": "14:15",
-      "c": "S3",
+      "c": "S6",
       "A": "Team 14",
       "sA": "0",
       "B": "Team 6",
@@ -295,8 +295,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "14:30",
-      "c": "S3",
+      "t": "14:45",
+      "c": "S5",
       "A": "Team 16",
       "sA": "0",
       "B": "Team 14",
@@ -305,7 +305,7 @@
     },
     {
       "t": "14:45",
-      "c": "S3",
+      "c": "S6",
       "A": "Team 10",
       "sA": "0",
       "B": "Team 6",
@@ -313,8 +313,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "15:00",
-      "c": "S3",
+      "t": "15:15",
+      "c": "S5",
       "A": "Team 16",
       "sA": "0",
       "B": "Team 6",
@@ -323,7 +323,7 @@
     },
     {
       "t": "15:15",
-      "c": "S3",
+      "c": "S6",
       "A": "Team 10",
       "sA": "0",
       "B": "Team 14",
@@ -333,8 +333,8 @@
   ],
   "matchesD": [
     {
-      "t": "14:00",
-      "c": "S4",
+      "t": "14:30",
+      "c": "S5",
       "A": "Team 13",
       "sA": "0",
       "B": "Team 8",
@@ -342,8 +342,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "14:15",
-      "c": "S4",
+      "t": "14:30",
+      "c": "S6",
       "A": "Team 15",
       "sA": "0",
       "B": "Team 2",
@@ -351,8 +351,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "14:30",
-      "c": "S4",
+      "t": "15:00",
+      "c": "S5",
       "A": "Team 13",
       "sA": "0",
       "B": "Team 15",
@@ -360,8 +360,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "14:45",
-      "c": "S4",
+      "t": "15:00",
+      "c": "S6",
       "A": "Team 8",
       "sA": "0",
       "B": "Team 2",
@@ -369,8 +369,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "15:00",
-      "c": "S4",
+      "t": "15:30",
+      "c": "S5",
       "A": "Team 13",
       "sA": "0",
       "B": "Team 2",
@@ -378,8 +378,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "15:15",
-      "c": "S4",
+      "t": "15:30",
+      "c": "S6",
       "A": "Team 8",
       "sA": "0",
       "B": "Team 15",
@@ -390,7 +390,7 @@
   "quarterfinals": [
     {
       "t": "15:45",
-      "c": "S1",
+      "c": "S3",
       "A": "W.A",
       "sA": "0",
       "B": "R.B",
@@ -399,7 +399,7 @@
     },
     {
       "t": "15:45",
-      "c": "S2",
+      "c": "S4",
       "A": "W.C",
       "sA": "0",
       "B": "R.D",
@@ -407,8 +407,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "15:45",
-      "c": "S3",
+      "t": "16:00",
+      "c": "S5",
       "A": "W.B",
       "sA": "0",
       "B": "R.A",
@@ -416,8 +416,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "15:45",
-      "c": "S4",
+      "t": "16:00",
+      "c": "S6",
       "A": "W.D",
       "sA": "0",
       "B": "R.C",
@@ -428,7 +428,7 @@
   "semifinals": [
     {
       "t": "16:10",
-      "c": "S1",
+      "c": "S4",
       "A": "W.QF1",
       "sA": "0",
       "B": "W.QF2",
@@ -436,8 +436,8 @@
       "Wn": "TBD"
     },
     {
-      "t": "16:10",
-      "c": "S2",
+      "t": "16:25",
+      "c": "S5",
       "A": "W.QF3",
       "sA": "0",
       "B": "W.QF4",
@@ -446,8 +446,8 @@
     }
   ],
   "final": {
-    "t": "16:40",
-    "c": "S2",
+    "t": "17:05",
+    "c": "S5",
     "A": "W.SF1",
     "sA": "0",
     "B": "W.SF2",
@@ -594,283 +594,4 @@
       "P": [
         {
           "name": "Nguyễn Quốc Hùng",
-          "bY": "1999",
-          "ph": "09xx-xxx-011",
-          "em": "quochung@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Phạm Đức Duy",
-          "bY": "2000",
-          "ph": "09xx-xxx-012",
-          "em": "ducduy@example.com",
-          "pL": 5,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    },
-    {
-      "g": "B",
-      "T": "Team 12",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
-        {
-          "name": "Đinh Hoàng Thanh Sơn",
-          "bY": "1995",
-          "ph": "09xx-xxx-013",
-          "em": "thanhson@example.com",
-          "pL": 2,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Trần Đỗ Khoa Tiến",
-          "bY": "1997",
-          "ph": "09xx-xxx-014",
-          "em": "khoatien@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    },
-    {
-      "g": "B",
-      "T": "Team 1",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
-        {
-          "name": "Bùi Quang Tiến",
-          "bY": "1990",
-          "ph": "09xx-xxx-015",
-          "em": "quangtien@example.com",
-          "pL": 5,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Mai Tất Thành",
-          "bY": "1991",
-          "ph": "09xx-xxx-016",
-          "em": "tatthanh@example.com",
-          "pL": 5,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    },
-    {
-      "g": "C",
-      "T": "Team 16",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
-        {
-          "name": "Nguyễn Hoàng Thanh",
-          "bY": "1996",
-          "ph": "09xx-xxx-017",
-          "em": "hoangthanh@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Trần Công Phương",
-          "bY": "1997",
-          "ph": "09xx-xxx-018",
-          "em": "congphuong@example.com",
-          "pL": 2,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    },
-    {
-      "g": "C",
-      "T": "Team 10",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
-        {
-          "name": "Lê Duy",
-          "bY": "1994",
-          "ph": "09xx-xxx-019",
-          "em": "leduy@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Hồ Thanh Vương",
-          "bY": "1995",
-          "ph": "09xx-xxx-020",
-          "em": "thanhvuong@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    },
-    {
-      "g": "C",
-      "T": "Team 14",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
-        {
-          "name": "Nguyễn Văn Cường",
-          "bY": "1998",
-          "ph": "09xx-xxx-021",
-          "em": "vancuong@example.com",
-          "pL": 1,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Đoàn Văn Dũng",
-          "bY": "1999",
-          "ph": "09xx-xxx-022",
-          "em": "vandunga@example.com",
-          "pL": 2,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    },
-    {
-      "g": "C",
-      "T": "Team 6",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
-        {
-          "name": "Trần Ngọc Đông Chu",
-          "bY": "2000",
-          "ph": "09xx-xxx-023",
-          "em": "dongchu@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Nguyễn Ngọc Hùng",
-          "bY": "2001",
-          "ph": "09xx-xxx-024",
-          "em": "ngochung@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    },
-    {
-      "g": "D",
-      "T": "Team 13",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
-        {
-          "name": "Lê Bá Châu",
-          "bY": "1993",
-          "ph": "09xx-xxx-025",
-          "em": "bachau@example.com",
-          "pL": 5,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Ngô Hiền Phong",
-          "bY": "1994",
-          "ph": "09xx-xxx-026",
-          "em": "hienphong@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    },
-    {
-      "g": "D",
-      "T": "Team 2",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
-        {
-          "name": "Trần Viết Tuấn",
-          "bY": "1990",
-          "ph": "09xx-xxx-027",
-          "em": "viettuan@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Huỳnh Lê Quang Dũng",
-          "bY": "1991",
-          "ph": "09xx-xxx-028",
-          "em": "quangdunga@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    },
-    {
-      "g": "D",
-      "T": "Team 15",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
-        {
-          "name": "Huỳnh Minh Thiện",
-          "bY": "1995",
-          "ph": "09xx-xxx-029",
-          "em": "minhthien@example.com",
-          "pL": 2,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Nguyễn Duy Minh",
-          "bY": "1996",
-          "ph": "09xx-xxx-030",
-          "em": "duyminh@example.com",
-          "pL": 2,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    },
-    {
-      "g": "D",
-      "T": "Team 8",
-      "aPL": 4.5,
-      "s": 0,
-      "P": [
-        {
-          "name": "Lại Tiến Mạnh",
-          "bY": "1998",
-          "ph": "09xx-xxx-031",
-          "em": "tienmanh@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        },
-        {
-          "name": "Cao Quang Tín",
-          "bY": "1999",
-          "ph": "09xx-xxx-032",
-          "em": "quangtin@example.com",
-          "pL": 5,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
-        }
-      ]
-    }
-  ]
-}
+          "bY": "1
