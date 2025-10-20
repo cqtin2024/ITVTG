@@ -2,7 +2,8 @@
   "key_legend": {
     "tL": "Team List (Danh sách đội)",
     "g": "Group (Bảng đấu)",
-    "T": "Team Name (Tên đội)",
+    "T": "Team ID/Primary Name (Mã hệ thống/Tên đội chính)",
+    "Tn": "Nickname (Tên rút gọn - Ghép tên 2 thành viên)",
     "s": "Seed (Hạt giống)",
     "aPL": "Average Pick Level (Cấp độ chọn trung bình)",
     "P": "Players (Người chơi)",
@@ -29,7 +30,7 @@
   },
   "tableA": [
     {
-      "D": "Team 9",
+      "D": "Duy Hưng-Minh Tú",
       "W": 3,
       "L": 0,
       "HS": "11",
@@ -37,7 +38,7 @@
       "mP": 3
     },
     {
-      "D": "Team 3",
+      "D": "Quốc Thịnh-Minh Phương",
       "W": 2,
       "L": 1,
       "HS": "11",
@@ -45,7 +46,7 @@
       "mP": 3
     },
     {
-      "D": "Team 11",
+      "D": "Minh Chang-Minh Châu",
       "W": 1,
       "L": 2,
       "HS": "11",
@@ -53,7 +54,7 @@
       "mP": 3
     },
     {
-      "D": "Team 5",
+      "D": "Quốc Khánh-Linh Vũ",
       "W": 0,
       "L": 3,
       "HS": "0",
@@ -63,7 +64,7 @@
   ],
   "tableB": [
     {
-      "D": "Team 4",
+      "D": "Quí Tuấn-Mạnh Hùng",
       "W": 3,
       "L": 0,
       "HS": "11",
@@ -71,7 +72,7 @@
       "mP": 3
     },
     {
-      "D": "Team 7",
+      "D": "Quốc Hùng-Đức Duy",
       "W": 2,
       "L": 1,
       "HS": "11",
@@ -79,7 +80,7 @@
       "mP": 3
     },
     {
-      "D": "Team 12",
+      "D": "Thanh Sơn-Khoa Tiến",
       "W": 1,
       "L": 2,
       "HS": "11",
@@ -87,7 +88,7 @@
       "mP": 3
     },
     {
-      "D": "Team 1",
+      "D": "Quang Tiến-Tất Thành",
       "W": 0,
       "L": 3,
       "HS": "0",
@@ -97,7 +98,7 @@
   ],
   "tableC": [
     {
-      "D": "Team 16",
+      "D": "Hoàng Thanh-Công Phương",
       "W": 3,
       "L": 0,
       "HS": "11",
@@ -105,7 +106,7 @@
       "mP": 3
     },
     {
-      "D": "Team 10",
+      "D": "Lê Duy-Thanh Vương",
       "W": 2,
       "L": 1,
       "HS": "11",
@@ -113,7 +114,7 @@
       "mP": 3
     },
     {
-      "D": "Team 14",
+      "D": "Văn Cường-Văn Dũng",
       "W": 1,
       "L": 2,
       "HS": "11",
@@ -121,7 +122,7 @@
       "mP": 3
     },
     {
-      "D": "Team 6",
+      "D": "Đông Chu-Ngọc Hùng",
       "W": 0,
       "L": 3,
       "HS": "0",
@@ -131,7 +132,7 @@
   ],
   "tableD": [
     {
-      "D": "Team 13",
+      "D": "Bá Châu-Hiền Phong",
       "W": 3,
       "L": 0,
       "HS": "11",
@@ -139,7 +140,7 @@
       "mP": 3
     },
     {
-      "D": "Team 8",
+      "D": "Tiến Mạnh-Quang Tín",
       "W": 2,
       "L": 1,
       "HS": "11",
@@ -147,7 +148,7 @@
       "mP": 3
     },
     {
-      "D": "Team 15",
+      "D": "Minh Thiện-Duy Minh",
       "W": 1,
       "L": 2,
       "HS": "11",
@@ -155,7 +156,7 @@
       "mP": 3
     },
     {
-      "D": "Team 2",
+      "D": "Viết Tuấn-Quang Dũng",
       "W": 0,
       "L": 3,
       "HS": "0",
@@ -167,298 +168,299 @@
     {
       "t": "14:15",
       "c": "S3",
-      "A": "Team 9",
+      "A": "Duy Hưng-Minh Tú",
       "sA": "11",
-      "B": "Team 3",
+      "B": "Quốc Thịnh-Minh Phương",
       "sB": "0",
-      "Wn": "Team 9"
+      "Wn": "Duy Hưng-Minh Tú"
     },
     {
       "t": "14:15",
       "c": "S4",
-      "A": "Team 11",
+      "A": "Minh Chang-Minh Châu",
       "sA": "11",
-      "B": "Team 5",
+      "B": "Quốc Khánh-Linh Vũ",
       "sB": "0",
-      "Wn": "Team 11"
+      "Wn": "Minh Chang-Minh Châu"
     },
     {
       "t": "14:45",
       "c": "S3",
-      "A": "Team 9",
+      "A": "Duy Hưng-Minh Tú",
       "sA": "11",
-      "B": "Team 11",
+      "B": "Minh Chang-Minh Châu",
       "sB": "0",
-      "Wn": "Team 9"
+      "Wn": "Duy Hưng-Minh Tú"
     },
     {
       "t": "14:45",
       "c": "S4",
-      "A": "Team 3",
+      "A": "Quốc Thịnh-Minh Phương",
       "sA": "11",
-      "B": "Team 5",
+      "B": "Quốc Khánh-Linh Vũ",
       "sB": "0",
-      "Wn": "Team 3"
+      "Wn": "Quốc Thịnh-Minh Phương"
     },
     {
       "t": "15:15",
       "c": "S3",
-      "A": "Team 9",
+      "A": "Duy Hưng-Minh Tú",
       "sA": "11",
-      "B": "Team 5",
+      "B": "Quốc Khánh-Linh Vũ",
       "sB": "0",
-      "Wn": "Team 9"
+      "Wn": "Duy Hưng-Minh Tú"
     },
     {
       "t": "15:15",
       "c": "S4",
-      "A": "Team 3",
+      "A": "Quốc Thịnh-Minh Phương",
       "sA": "11",
-      "B": "Team 11",
+      "B": "Minh Chang-Minh Châu",
       "sB": "0",
-      "Wn": "Team 3"
+      "Wn": "Quốc Thịnh-Minh Phương"
     }
   ],
   "matchesB": [
     {
       "t": "14:30",
       "c": "S3",
-      "A": "Team 4",
+      "A": "Quí Tuấn-Mạnh Hùng",
       "sA": "11",
-      "B": "Team 7",
+      "B": "Quốc Hùng-Đức Duy",
       "sB": "0",
-      "Wn": "Team 4"
+      "Wn": "Quí Tuấn-Mạnh Hùng"
     },
     {
       "t": "14:30",
       "c": "S4",
-      "A": "Team 12",
+      "A": "Thanh Sơn-Khoa Tiến",
       "sA": "11",
-      "B": "Team 1",
+      "B": "Quang Tiến-Tất Thành",
       "sB": "0",
-      "Wn": "Team 12"
+      "Wn": "Thanh Sơn-Khoa Tiến"
     },
     {
       "t": "15:00",
       "c": "S3",
-      "A": "Team 4",
+      "A": "Quí Tuấn-Mạnh Hùng",
       "sA": "11",
-      "B": "Team 12",
+      "B": "Thanh Sơn-Khoa Tiến",
       "sB": "0",
-      "Wn": "Team 4"
+      "Wn": "Quí Tuấn-Mạnh Hùng"
     },
     {
       "t": "15:00",
       "c": "S4",
-      "A": "Team 7",
+      "A": "Quốc Hùng-Đức Duy",
       "sA": "11",
-      "B": "Team 1",
+      "B": "Quang Tiến-Tất Thành",
       "sB": "0",
-      "Wn": "Team 7"
+      "Wn": "Quốc Hùng-Đức Duy"
     },
     {
       "t": "15:30",
       "c": "S3",
-      "A": "Team 4",
+      "A": "Quí Tuấn-Mạnh Hùng",
       "sA": "11",
-      "B": "Team 1",
+      "B": "Quang Tiến-Tất Thành",
       "sB": "0",
-      "Wn": "Team 4"
+      "Wn": "Quí Tuấn-Mạnh Hùng"
     },
     {
       "t": "15:30",
       "c": "S4",
-      "A": "Team 7",
+      "A": "Quốc Hùng-Đức Duy",
       "sA": "11",
-      "B": "Team 12",
+      "B": "Thanh Sơn-Khoa Tiến",
       "sB": "0",
-      "Wn": "Team 7"
+      "Wn": "Quốc Hùng-Đức Duy"
     }
   ],
   "matchesC": [
     {
       "t": "14:15",
       "c": "S5",
-      "A": "Team 16",
+      "A": "Hoàng Thanh-Công Phương",
       "sA": "11",
-      "B": "Team 10",
+      "B": "Lê Duy-Thanh Vương",
       "sB": "0",
-      "Wn": "Team 16"
+      "Wn": "Hoàng Thanh-Công Phương"
     },
     {
       "t": "14:15",
       "c": "S6",
-      "A": "Team 14",
+      "A": "Văn Cường-Văn Dũng",
       "sA": "11",
-      "B": "Team 6",
+      "B": "Đông Chu-Ngọc Hùng",
       "sB": "0",
-      "Wn": "Team 14"
+      "Wn": "Văn Cường-Văn Dũng"
     },
     {
       "t": "14:45",
       "c": "S5",
-      "A": "Team 16",
+      "A": "Hoàng Thanh-Công Phương",
       "sA": "11",
-      "B": "Team 14",
+      "B": "Văn Cường-Văn Dũng",
       "sB": "0",
-      "Wn": "Team 16"
+      "Wn": "Hoàng Thanh-Công Phương"
     },
     {
       "t": "14:45",
       "c": "S6",
-      "A": "Team 10",
+      "A": "Lê Duy-Thanh Vương",
       "sA": "11",
-      "B": "Team 6",
+      "B": "Đông Chu-Ngọc Hùng",
       "sB": "0",
-      "Wn": "Team 10"
+      "Wn": "Lê Duy-Thanh Vương"
     },
     {
       "t": "15:15",
       "c": "S5",
-      "A": "Team 16",
+      "A": "Hoàng Thanh-Công Phương",
       "sA": "11",
-      "B": "Team 6",
+      "B": "Đông Chu-Ngọc Hùng",
       "sB": "0",
-      "Wn": "Team 16"
+      "Wn": "Hoàng Thanh-Công Phương"
     },
     {
       "t": "15:15",
       "c": "S6",
-      "A": "Team 10",
+      "A": "Lê Duy-Thanh Vương",
       "sA": "11",
-      "B": "Team 14",
+      "B": "Văn Cường-Văn Dũng",
       "sB": "0",
-      "Wn": "Team 10"
+      "Wn": "Lê Duy-Thanh Vương"
     }
   ],
   "matchesD": [
     {
       "t": "14:30",
       "c": "S5",
-      "A": "Team 13",
+      "A": "Bá Châu-Hiền Phong",
       "sA": "11",
-      "B": "Team 8",
+      "B": "Tiến Mạnh-Quang Tín",
       "sB": "0",
-      "Wn": "Team 13"
+      "Wn": "Bá Châu-Hiền Phong"
     },
     {
       "t": "14:30",
       "c": "S6",
-      "A": "Team 15",
+      "A": "Minh Thiện-Duy Minh",
       "sA": "11",
-      "B": "Team 2",
+      "B": "Viết Tuấn-Quang Dũng",
       "sB": "0",
-      "Wn": "Team 15"
+      "Wn": "Minh Thiện-Duy Minh"
     },
     {
       "t": "15:00",
       "c": "S5",
-      "A": "Team 13",
+      "A": "Bá Châu-Hiền Phong",
       "sA": "11",
-      "B": "Team 15",
+      "B": "Minh Thiện-Duy Minh",
       "sB": "0",
-      "Wn": "Team 13"
+      "Wn": "Bá Châu-Hiền Phong"
     },
     {
       "t": "15:00",
       "c": "S6",
-      "A": "Team 8",
+      "A": "Tiến Mạnh-Quang Tín",
       "sA": "11",
-      "B": "Team 2",
+      "B": "Viết Tuấn-Quang Dũng",
       "sB": "0",
-      "Wn": "Team 8"
+      "Wn": "Tiến Mạnh-Quang Tín"
     },
     {
       "t": "15:30",
       "c": "S5",
-      "A": "Team 13",
+      "A": "Bá Châu-Hiền Phong",
       "sA": "11",
-      "B": "Team 2",
+      "B": "Viết Tuấn-Quang Dũng",
       "sB": "0",
-      "Wn": "Team 13"
+      "Wn": "Bá Châu-Hiền Phong"
     },
     {
       "t": "15:30",
       "c": "S6",
-      "A": "Team 8",
+      "A": "Tiến Mạnh-Quang Tín",
       "sA": "11",
-      "B": "Team 15",
+      "B": "Minh Thiện-Duy Minh",
       "sB": "0",
-      "Wn": "Team 8"
+      "Wn": "Tiến Mạnh-Quang Tín"
     }
   ],
   "quarterfinals": [
     {
       "t": "15:45",
       "c": "S3",
-      "A": "Team 9",
+      "A": "Duy Hưng-Minh Tú",
       "sA": "11",
-      "B": "Team 7",
+      "B": "Quốc Hùng-Đức Duy",
       "sB": "0",
-      "Wn": "Team 9"
+      "Wn": "Duy Hưng-Minh Tú"
     },
     {
       "t": "15:45",
       "c": "S4",
-      "A": "Team 16",
+      "A": "Hoàng Thanh-Công Phương",
       "sA": "11",
-      "B": "Team 8",
+      "B": "Tiến Mạnh-Quang Tín",
       "sB": "0",
-      "Wn": "Team 16"
+      "Wn": "Hoàng Thanh-Công Phương"
     },
     {
       "t": "16:00",
       "c": "S5",
-      "A": "Team 4",
+      "A": "Quí Tuấn-Mạnh Hùng",
       "sA": "11",
-      "B": "Team 3",
+      "B": "Quốc Thịnh-Minh Phương",
       "sB": "0",
-      "Wn": "Team 4"
+      "Wn": "Quí Tuấn-Mạnh Hùng"
     },
     {
       "t": "16:00",
       "c": "S6",
-      "A": "Team 13",
+      "A": "Bá Châu-Hiền Phong",
       "sA": "11",
-      "B": "Team 10",
+      "B": "Lê Duy-Thanh Vương",
       "sB": "0",
-      "Wn": "Team 13"
+      "Wn": "Bá Châu-Hiền Phong"
     }
   ],
   "semifinals": [
     {
       "t": "16:10",
       "c": "S4",
-      "A": "Team 9",
+      "A": "Duy Hưng-Minh Tú",
       "sA": "11",
-      "B": "Team 16",
+      "B": "Hoàng Thanh-Công Phương",
       "sB": "0",
-      "Wn": "Team 9"
+      "Wn": "Duy Hưng-Minh Tú"
     },
     {
       "t": "16:25",
       "c": "S5",
-      "A": "Team 4",
+      "A": "Quí Tuấn-Mạnh Hùng",
       "sA": "11",
-      "B": "Team 13",
+      "B": "Bá Châu-Hiền Phong",
       "sB": "0",
-      "Wn": "Team 4"
+      "Wn": "Quí Tuấn-Mạnh Hùng"
     }
   ],
   "final": {
     "t": "17:05",
     "c": "S5",
-    "A": "Team 9",
+    "A": "Duy Hưng-Minh Tú",
     "sA": "11",
-    "B": "Team 4",
+    "B": "Quí Tuấn-Mạnh Hùng",
     "sB": "9",
-    "Wn": "Team 9",
-    "rU": "Team 4"
+    "Wn": "Duy Hưng-Minh Tú",
+    "rU": "Quí Tuấn-Mạnh Hùng"
   },
   "tL": [
     {
       "g": "A",
       "T": "Team 9",
+      "Tn": "Duy Hưng-Minh Tú",
       "aPL": 4.5,
       "s": 0,
       "P": [
@@ -485,6 +487,7 @@
     {
       "g": "A",
       "T": "Team 3",
+      "Tn": "Quốc Thịnh-Minh Phương",
       "aPL": 4.5,
       "s": 0,
       "P": [
@@ -511,6 +514,7 @@
     {
       "g": "A",
       "T": "Team 11",
+      "Tn": "Minh Chang-Minh Châu",
       "aPL": 4.5,
       "s": 0,
       "P": [
@@ -537,6 +541,7 @@
     {
       "g": "A",
       "T": "Team 5",
+      "Tn": "Quốc Khánh-Linh Vũ",
       "aPL": 4.5,
       "s": 0,
       "P": [
@@ -563,6 +568,7 @@
     {
       "g": "B",
       "T": "Team 4",
+      "Tn": "Quí Tuấn-Mạnh Hùng",
       "aPL": 3.0,
       "s": 0,
       "P": [
@@ -589,6 +595,7 @@
     {
       "g": "B",
       "T": "Team 7",
+      "Tn": "Quốc Hùng-Đức Duy",
       "aPL": 5.0,
       "s": 0,
       "P": [
@@ -615,6 +622,7 @@
     {
       "g": "B",
       "T": "Team 12",
+      "Tn": "Thanh Sơn-Khoa Tiến",
       "aPL": 3.0,
       "s": 0,
       "P": [
@@ -641,6 +649,7 @@
     {
       "g": "B",
       "T": "Team 1",
+      "Tn": "Quang Tiến-Tất Thành",
       "aPL": 4.0,
       "s": 0,
       "P": [
@@ -667,6 +676,7 @@
     {
       "g": "C",
       "T": "Team 16",
+      "Tn": "Hoàng Thanh-Công Phương",
       "aPL": 3.0,
       "s": 0,
       "P": [
@@ -693,6 +703,7 @@
     {
       "g": "C",
       "T": "Team 10",
+      "Tn": "Lê Duy-Thanh Vương",
       "aPL": 3.5,
       "s": 0,
       "P": [
@@ -719,6 +730,7 @@
     {
       "g": "C",
       "T": "Team 14",
+      "Tn": "Văn Cường-Văn Dũng",
       "aPL": 4.0,
       "s": 0,
       "P": [
@@ -745,6 +757,7 @@
     {
       "g": "C",
       "T": "Team 6",
+      "Tn": "Đông Chu-Ngọc Hùng",
       "aPL": 4.0,
       "s": 0,
       "P": [
@@ -771,6 +784,7 @@
     {
       "g": "D",
       "T": "Team 13",
+      "Tn": "Bá Châu-Hiền Phong",
       "aPL": 3.0,
       "s": 0,
       "P": [
@@ -797,6 +811,7 @@
     {
       "g": "D",
       "T": "Team 8",
+      "Tn": "Tiến Mạnh-Quang Tín",
       "aPL": 4.0,
       "s": 0,
       "P": [
@@ -823,6 +838,7 @@
     {
       "g": "D",
       "T": "Team 15",
+      "Tn": "Minh Thiện-Duy Minh",
       "aPL": 3.5,
       "s": 0,
       "P": [
@@ -849,6 +865,7 @@
     {
       "g": "D",
       "T": "Team 2",
+      "Tn": "Viết Tuấn-Quang Dũng",
       "aPL": 3.5,
       "s": 0,
       "P": [
