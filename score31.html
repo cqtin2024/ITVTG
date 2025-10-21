@@ -1,216 +1,230 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu Pickleball Đôi Nam (GitHub API Sync)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #111827;
-            --text-color: #f3f4f6;
-            --card-bg: #1f2937;
-            --border-color: #374151;
-            --accent-color: #06b6d4;
-            --match-bg: #1f2937;
-            --input-bg: #4b5563;
-            --group-header-text: #60a5fa;
-        }
-        .light-mode {
-            --bg-color: #f9fafb;
-            --text-color: #111827;
-            --card-bg: #ffffff;
-            --border-color: #e5e7eb;
-            --accent-color: #ef4444;
-            --match-bg: #f3f4f6;
-            --input-bg: #ffffff;
-            --group-header-text: #10b981;
-        }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s, color 0.3s; }
-        .tab-button.active { color: var(--accent-color); border-color: var(--accent-color); background-color: var(--card-bg); }
-        .tab-content { display: none; background-color: var(--card-bg); border-radius: 0.75rem; padding: 1.5rem; }
-    </style>
-</head>
-<body class="p-4 md:p-8">
-    <div id="app" class="container mx-auto">
-        <header class="flex items-center justify-between mb-6">
-            <div class="flex items-center">
-                <svg class="w-10 h-10 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
-                <div class="ml-4">
-                    <h1 class="text-2xl font-extrabold text-[var(--text-color)]">PICKLEBALL ĐÔI NAM</h1>
-                    <p class="text-xs text-[var(--accent-color)]">Quản Lý & Cập Nhật Tỉ Số (GitHub API Sync)</p>
-                </div>
-            </div>
-            <button id="themeToggle" class="p-3 rounded-full bg-[var(--card-bg)] text-[var(--text-color)] hover:bg-[var(--border-color)]">
-                🌗
-            </button>
-        </header>
-
-        <div id="statusMessage" class="text-center p-4 bg-blue-900/50 rounded-lg text-blue-300 font-semibold mb-6">
-            Đang tải dữ liệu từ GitHub...
-        </div>
-
-        <nav class="mb-8 border-b border-[var(--border-color)] overflow-x-auto whitespace-nowrap">
-            <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('General')" data-tab="General">General</button>
-            <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('GroupA')" data-tab="GroupA">Group A</button>
-            <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('GroupB')" data-tab="GroupB">Group B</button>
-            <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('GroupC')" data-tab="GroupC">Group C</button>
-            <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('GroupD')" data-tab="GroupD">Group D</button>
-            <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('Knockout')" data-tab="Knockout">Knockout</button>
-            <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('Configuration')" data-tab="Configuration">Cấu Hình</button>
-        </nav>
-
-        <div id="General" class="tab-content">
-            <h2 class="text-xl font-bold text-yellow-500 mb-2">Kết quả chung cuộc</h2>
-            <div id="finalResults"></div>
-        </div>
-        <div id="GroupA" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6"><div id="tableA"></div><div id="matchesA"></div></div>
-        <div id="GroupB" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6"><div id="tableB"></div><div id="matchesB"></div></div>
-        <div id="GroupC" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6"><div id="tableC"></div><div id="matchesC"></div></div>
-        <div id="GroupD" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6"><div id="tableD"></div><div id="matchesD"></div></div>
-        <div id="Knockout" class="tab-content"><div id="quarterfinals"></div><div id="semifinals"></div><div id="finalSection"></div></div>
-
-        <div id="Configuration" class="tab-content space-y-8">
-            <h2 class="text-2xl font-bold text-red-500">Cấu Hình & Đồng Bộ (GitHub API)</h2>
-            <input type="password" id="githubToken" class="w-full p-2 rounded-md border border-gray-600" placeholder="Dán GitHub Token vào đây...">
-            <button onclick="saveToken()" class="bg-green-600 text-white px-4 py-2 rounded-lg mt-2">Lưu Token</button>
-            <button onclick="commitChangesToGitHub()" id="commitButton" class="bg-purple-600 text-white px-4 py-2 rounded-lg mt-2">COMMIT TỈ SỐ LÊN GITHUB</button>
-            <div id="commitResult" class="hidden mt-3 p-3 rounded-lg text-sm font-semibold"></div>
-        </div>
-    </div>
-
-<!-- ========================================================= -->
-<!-- 🔧 SCRIPT ĐÃ ĐƯỢC FIX: COMMIT KHÔNG LỖI                    -->
-<!-- ========================================================= -->
-<script>
-const GITHUB_REPO_OWNER = 'cqtin2024';
-const GITHUB_REPO_NAME = 'ITVTG';
-const FILE_PATH = 'data/state3s.json';
-const BRANCH = 'main';
-const API_URL = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${FILE_PATH}`;
-const BASE_DATA_URL = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/data/state3.json`;
-
-let tournamentData = null;
-let githubToken = '';
-
-function jsonToBase64(obj) {
-  return btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2))));
-}
-function showStatus(message, type = 'info') {
-  const el = document.getElementById('commitResult');
-  el.innerHTML = message;
-  el.classList.remove('hidden');
-  el.className = `mt-3 p-3 rounded-lg text-sm font-semibold ${type === 'success'
-    ? 'bg-green-900/50 text-green-200'
-    : type === 'error'
-      ? 'bg-red-900/50 text-red-200'
-      : 'bg-blue-900/50 text-blue-200'}`;
-  console.log(message);
-}
-
-async function loadDataFromGitHub() {
-  const status = document.getElementById('statusMessage');
-  status.textContent = 'Đang tải dữ liệu từ GitHub...';
-  status.classList.remove('hidden');
-  try {
-    const res = await fetch(BASE_DATA_URL);
-    if (!res.ok) throw new Error(`Không thể tải dữ liệu (${res.status})`);
-    tournamentData = await res.json();
-    status.textContent = '✅ Dữ liệu đã tải xong.';
-    setTimeout(() => status.classList.add('hidden'), 1500);
-    renderUI();
-  } catch (e) {
-    console.error(e);
-    status.textContent = '❌ Lỗi khi tải dữ liệu.';
-    status.classList.add('bg-red-900/50');
-  }
-}
-
-async function commitChangesToGitHub() {
-  githubToken = localStorage.getItem('githubToken') || '';
-  if (!githubToken) return showStatus('⚠️ Vui lòng nhập và lưu GitHub Token.', 'error');
-  if (!tournamentData) return showStatus('❌ Chưa có dữ liệu để commit.', 'error');
-
-  const base64Content = jsonToBase64(tournamentData);
-  const headers = {
-    'Authorization': `token ${githubToken}`,
-    'Accept': 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json'
-  };
-
-  try {
-    const getRes = await fetch(API_URL + `?ref=${BRANCH}`, { headers });
-    let currentSha = null;
-    if (getRes.status === 200) {
-      const data = await getRes.json();
-      currentSha = data.sha;
-      showStatus(`Đã lấy SHA hiện tại: ${currentSha.substring(0, 8)}...`);
-    } else if (getRes.status === 404) showStatus('File chưa tồn tại, sẽ tạo mới...', 'info');
-    else if (getRes.status === 401) throw new Error('Token không hợp lệ hoặc thiếu quyền repo.');
-
-    const putRes = await fetch(API_URL, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify({
-        message: 'Update state3s.json via tournament app',
-        content: base64Content,
-        branch: BRANCH,
-        sha: currentSha || undefined
-      })
-    });
-
-    if (putRes.status === 401) throw new Error('Token sai hoặc hết hạn.');
-    if (!putRes.ok) {
-      const err = await putRes.json();
-      throw new Error(`Lỗi commit: ${putRes.status} - ${err.message}`);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pickleball Championship – Score Manager (Full Fixed)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s; }
+    :root {
+      --bg: #111827; --text: #f9fafb; --accent: #06b6d4;
+      --card: #1f2937; --border: #374151;
     }
+    .light-mode {
+      --bg: #f9fafb; --text: #111827; --accent: #ef4444;
+      --card: #ffffff; --border: #e5e7eb;
+    }
+    body { background-color: var(--bg); color: var(--text); }
+    .tab-button.active { color: var(--accent); border-color: var(--accent); }
+    .tab-content { display: none; background: var(--card); padding: 1.5rem; border-radius: 0.75rem; }
+  </style>
+</head>
 
-    const result = await putRes.json();
-    showStatus(
-      `✅ Commit thành công! SHA: <a href="${result.commit.html_url}" target="_blank" class="underline">${result.commit.sha.substring(0, 7)}</a>`,
-      'success'
-    );
-  } catch (err) {
-    console.error(err);
-    showStatus(`❌ Lỗi khi commit: ${err.message}`, 'error');
+<body class="p-4 md:p-8">
+  <div class="container mx-auto">
+    <header class="flex items-center justify-between mb-6">
+      <div class="flex items-center">
+        <svg class="w-10 h-10 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"/>
+        </svg>
+        <div class="ml-4">
+          <h1 class="text-2xl font-extrabold">Pickleball Championship</h1>
+          <p class="text-xs text-[var(--accent)]">Quản lý & cập nhật tỉ số – GitHub API Sync</p>
+        </div>
+      </div>
+      <button id="themeToggle" class="p-3 rounded-full bg-[var(--card)] text-[var(--text)] hover:bg-[var(--border)]">🌗</button>
+    </header>
+
+    <div id="statusMessage" class="text-center p-4 bg-blue-900/50 rounded-lg text-blue-300 font-semibold mb-6">Đang tải dữ liệu...</div>
+
+    <nav class="mb-8 border-b border-[var(--border)] overflow-x-auto whitespace-nowrap">
+      <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('General')" data-tab="General">General</button>
+      <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('GroupA')" data-tab="GroupA">Group A</button>
+      <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('GroupB')" data-tab="GroupB">Group B</button>
+      <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('GroupC')" data-tab="GroupC">Group C</button>
+      <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('GroupD')" data-tab="GroupD">Group D</button>
+      <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('Knockout')" data-tab="Knockout">Knockout</button>
+      <button class="tab-button py-3 px-4 border-b-2 border-transparent" onclick="switchTab('Configuration')" data-tab="Configuration">Cấu Hình</button>
+    </nav>
+
+    <!-- Nội dung từng tab -->
+    <div id="General" class="tab-content"><div id="finalResults"></div></div>
+    <div id="GroupA" class="tab-content grid grid-cols-1 lg:grid-cols-2 gap-4"><div id="tableA"></div><div id="matchesA"></div></div>
+    <div id="GroupB" class="tab-content grid grid-cols-1 lg:grid-cols-2 gap-4"><div id="tableB"></div><div id="matchesB"></div></div>
+    <div id="GroupC" class="tab-content grid grid-cols-1 lg:grid-cols-2 gap-4"><div id="tableC"></div><div id="matchesC"></div></div>
+    <div id="GroupD" class="tab-content grid grid-cols-1 lg:grid-cols-2 gap-4"><div id="tableD"></div><div id="matchesD"></div></div>
+    <div id="Knockout" class="tab-content space-y-4"><div id="quarterfinals"></div><div id="semifinals"></div><div id="finalSection"></div></div>
+
+    <div id="Configuration" class="tab-content space-y-4">
+      <h2 class="text-xl font-bold text-red-500">Đồng Bộ Dữ Liệu</h2>
+      <input type="password" id="githubToken" class="w-full p-2 rounded-md border border-gray-600" placeholder="Dán GitHub Token..." />
+      <button onclick="saveToken()" class="bg-green-600 text-white px-4 py-2 rounded-lg mt-2">Lưu Token</button>
+      <button onclick="commitChangesToGitHub()" class="bg-purple-600 text-white px-4 py-2 rounded-lg mt-2">COMMIT LÊN GITHUB</button>
+      <div id="commitResult" class="hidden mt-3 p-3 rounded-lg text-sm font-semibold"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- SCRIPT HOÀN CHỈNH – FIX COMMIT VÀ HIỂN THỊ ĐẦY ĐỦ          -->
+  <!-- ========================================================= -->
+  <script>
+  const OWNER = 'cqtin2024';
+  const REPO = 'ITVTG';
+  const FILE_PATH = 'data/state3s.json';
+  const BRANCH = 'main';
+  const API_URL = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`;
+  const BASE_DATA_URL = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/data/state3.json`;
+
+  let tournamentData = null;
+  let githubToken = '';
+
+  function jsonToBase64(obj) {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2))));
   }
-}
-
-function saveToken() {
-  const token = document.getElementById('githubToken').value.trim();
-  if (!token) {
-    localStorage.removeItem('githubToken');
-    showStatus('Đã xóa token cục bộ.', 'info');
-    return;
+  function showStatus(msg, type='info') {
+    const el = document.getElementById('commitResult');
+    el.innerHTML = msg;
+    el.classList.remove('hidden');
+    el.className = `mt-3 p-3 rounded-lg text-sm font-semibold ${
+      type === 'success' ? 'bg-green-900/50 text-green-200' :
+      type === 'error' ? 'bg-red-900/50 text-red-200' :
+      'bg-blue-900/50 text-blue-200'}`;
+    console.log(msg);
   }
-  localStorage.setItem('githubToken', token);
-  document.getElementById('githubToken').value = '********';
-  showStatus('Đã lưu token cục bộ.', 'success');
-}
 
-function switchTab(tabName) {
-  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-  document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-  document.getElementById(tabName).style.display = 'block';
-  const btn = document.querySelector(`.tab-button[data-tab="${tabName}"]`);
-  if (btn) btn.classList.add('active');
-}
+  async function loadDataFromGitHub() {
+    const status = document.getElementById('statusMessage');
+    status.textContent = 'Đang tải dữ liệu...';
+    try {
+      const res = await fetch(BASE_DATA_URL);
+      if (!res.ok) throw new Error('Không tải được file JSON');
+      tournamentData = await res.json();
+      status.textContent = '✅ Dữ liệu đã tải xong.';
+      setTimeout(()=>status.classList.add('hidden'), 1500);
+      renderUI();
+    } catch(err) {
+      console.error(err);
+      status.textContent = '❌ Lỗi khi tải dữ liệu.';
+      status.classList.add('bg-red-900/50');
+    }
+  }
 
-function renderUI() {
-  if (!tournamentData) return;
-  document.getElementById('finalResults').innerHTML =
-    `<p class="text-yellow-400">Cập nhật từ GitHub thành công (${new Date().toLocaleTimeString()})</p>`;
-  switchTab('General');
-}
+  async function commitChangesToGitHub() {
+    githubToken = localStorage.getItem('githubToken') || '';
+    if (!githubToken) return showStatus('⚠️ Vui lòng nhập Token.', 'error');
+    if (!tournamentData) return showStatus('❌ Chưa có dữ liệu.', 'error');
 
-function initializeApp() {
-  githubToken = localStorage.getItem('githubToken') || '';
-  if (githubToken) document.getElementById('githubToken').value = '********';
-  document.getElementById('themeToggle').onclick = () => document.body.classList.toggle('light-mode');
-  loadDataFromGitHub();
-}
-window.onload = initializeApp;
-</script>
+    const base64Content = jsonToBase64(tournamentData);
+    const headers = {
+      'Authorization': `token ${githubToken}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    };
+
+    try {
+      const getRes = await fetch(API_URL + `?ref=${BRANCH}`, { headers });
+      let sha = null;
+      if (getRes.status === 200) {
+        const d = await getRes.json();
+        sha = d.sha;
+        showStatus(`Đã lấy SHA: ${sha.substring(0,8)}...`);
+      } else if (getRes.status === 404) showStatus('File chưa tồn tại, sẽ tạo mới...');
+      else if (getRes.status === 401) throw new Error('Token sai hoặc thiếu quyền.');
+
+      const putRes = await fetch(API_URL, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({
+          message: 'Update state3s.json via tournament app',
+          content: base64Content,
+          branch: BRANCH,
+          sha: sha || undefined
+        })
+      });
+
+      if (putRes.status === 401) throw new Error('Token hết hạn hoặc sai.');
+      if (!putRes.ok) {
+        const e = await putRes.json();
+        throw new Error(`Lỗi commit: ${e.message}`);
+      }
+      const result = await putRes.json();
+      showStatus(`✅ Commit thành công! <a href="${result.commit.html_url}" target="_blank" class="underline">${result.commit.sha.substring(0,7)}</a>`, 'success');
+    } catch(err) {
+      console.error(err);
+      showStatus(`❌ ${err.message}`, 'error');
+    }
+  }
+
+  function saveToken() {
+    const t = document.getElementById('githubToken').value.trim();
+    if (!t) {
+      localStorage.removeItem('githubToken');
+      showStatus('Đã xoá token cục bộ.', 'info');
+      return;
+    }
+    localStorage.setItem('githubToken', t);
+    document.getElementById('githubToken').value = '********';
+    showStatus('Đã lưu token.', 'success');
+  }
+
+  // ----- Hiển thị UI các bảng -----
+  function renderGroup(key, tableId, matchesId) {
+    const g = tournamentData.groups?.[key];
+    if (!g) return;
+    const tEl = document.getElementById(tableId);
+    tEl.innerHTML = `<h3 class="text-lg font-bold mb-2 text-cyan-400">Bảng ${key}</h3>
+      <table class="min-w-full border text-sm">
+      <thead><tr class="bg-gray-800"><th>Đội</th><th>W</th><th>L</th><th>+/-</th></tr></thead>
+      <tbody>${g.teams.map(t=>`<tr><td>${t.name}</td><td>${t.wins}</td><td>${t.losses}</td><td>${t.diff}</td></tr>`).join('')}</tbody>
+      </table>`;
+    const mEl = document.getElementById(matchesId);
+    mEl.innerHTML = `<h4 class="font-semibold mb-2 text-yellow-400">Trận đấu</h4>` + 
+      g.matches.map(m=>`<div class="p-2 border-b border-gray-700 flex justify-between items-center">
+        <span>${m.team1} vs ${m.team2}</span>
+        <input type="text" value="${m.score || ''}" class="w-16 text-center bg-gray-800 text-white rounded">
+      </div>`).join('');
+  }
+
+  function renderKnockout() {
+    const qf = tournamentData.quarterfinals || [];
+    const sf = tournamentData.semifinals || [];
+    const fn = tournamentData.final || [];
+    const section = (title, arr) => `<h3 class="text-lg font-bold mb-2 text-green-400">${title}</h3>` +
+      arr.map(m=>`<div class="p-2 border-b">${m.team1} vs ${m.team2} (${m.score || '-'})</div>`).join('');
+    document.getElementById('quarterfinals').innerHTML = section('Tứ kết', qf);
+    document.getElementById('semifinals').innerHTML = section('Bán kết', sf);
+    document.getElementById('finalSection').innerHTML = section('Chung kết', fn);
+  }
+
+  function renderUI() {
+    if (!tournamentData) return;
+    renderGroup('A','tableA','matchesA');
+    renderGroup('B','tableB','matchesB');
+    renderGroup('C','tableC','matchesC');
+    renderGroup('D','tableD','matchesD');
+    renderKnockout();
+    document.getElementById('finalResults').innerHTML =
+      `<p class="text-yellow-400 font-semibold">Dữ liệu đã tải lúc ${new Date().toLocaleTimeString()}</p>`;
+    switchTab('General');
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+    document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+    document.getElementById(tab).style.display='block';
+    const btn=document.querySelector(`[data-tab="${tab}"]`);
+    if(btn)btn.classList.add('active');
+  }
+
+  function initializeApp() {
+    githubToken = localStorage.getItem('githubToken')||'';
+    if (githubToken) document.getElementById('githubToken').value='********';
+    document.getElementById('themeToggle').onclick = ()=>document.body.classList.toggle('light-mode');
+    loadDataFromGitHub();
+  }
+  window.onload = initializeApp;
+  </script>
 </body>
 </html>
