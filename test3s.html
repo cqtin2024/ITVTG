@@ -3,122 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đồng Bộ Dữ Liệu JSON GitHub</title>
+    <title>Đồng Bộ Dữ Liệu Trạng Thái JSON</title>
+    <!-- Tải Tailwind CSS cho styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f9;
-        }
-        h1, h2 {
-            color: #333;
-            border-bottom: 2px solid #ccc;
-            padding-bottom: 10px;
-        }
-        #github-data-container, #update-form, #new-data-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
+        /* Thiết lập font Inter mặc định */
+        body { font-family: 'Inter', sans-serif; }
+        /* Tùy chỉnh màu sắc để dễ nhìn hơn */
         .data-item {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            background-color: #e9ecef;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .loading { color: orange; font-weight: bold; }
-        .error { color: red; font-weight: bold; }
-        textarea {
-            width: 100%;
-            height: 150px;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            font-family: monospace;
+        .data-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
-        button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .note {
-            background-color: #fff3cd;
-            border-left: 5px solid #ffc107;
-            padding: 10px;
-            margin-top: 20px;
-            color: #856404;
+        /* Style cho pre/code block */
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 p-4 sm:p-8 min-h-screen">
 
-    <h1>Đồng Bộ Dữ Liệu Trạng Thái JSON</h1>
+    <!-- Container chính -->
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-8 border-b-4 border-blue-500 pb-2">
+            Ứng Dụng Đồng Bộ Dữ Liệu Trạng Thái
+        </h1>
 
-    <div class="note">
-        <strong>⚠️ Lưu ý Quan trọng:</strong> Chức năng "Cập nhật" ở đây chỉ là **GIẢ LẬP**. Việc ghi dữ liệu thực tế lên GitHub API **cần một Server Backend** để bảo mật thông tin xác thực (token).
-    </div>
+        <!-- Thẻ cảnh báo về bảo mật -->
+        <div class="note bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-lg mb-6">
+            <p class="font-semibold mb-2">⚠️ Cảnh báo Bảo mật & Chức năng:</p>
+            <p class="text-sm">Chức năng "Giả lập Cập nhật" ở đây **KHÔNG THỰC HIỆN** việc ghi dữ liệu lên GitHub. Việc ghi dữ liệu thực tế đòi hỏi **một Server Backend** bảo mật và **Token GitHub** để xác thực.</p>
+        </div>
 
-    <div id="update-form">
-        <h2>Bước 1: Nhập Dữ liệu Mới</h2>
-        <textarea id="json-input" placeholder="Dán mảng JSON mới vào đây. Ví dụ: [{&quot;x&quot;: 1, &quot;y&quot;: 2, &quot;state&quot;: &quot;Mới&quot;}]"></textarea>
-        <button onclick="simulateUpdate()">Giả lập Cập nhật và Đồng bộ</button>
-    </div>
+        <!-- KHU VỰC CẬP NHẬT DỮ LIỆU -->
+        <div id="update-form" class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">1. Nhập Dữ liệu JSON Mới (Giả lập Gửi)</h2>
+            <textarea id="json-input" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono text-sm" placeholder="Dán toàn bộ mảng JSON mới vào đây. Ví dụ: [{&#34;x&#34;: 10, &#34;y&#34;: 20, &#34;z&#34;: 0.5, &#34;w&#34;: 0.5, &#34;state&#34;: &#34;New State&#34;}]"></textarea>
+            <button onclick="simulateUpdate()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-150 shadow-md hover:shadow-lg">
+                Giả lập Cập nhật và Đồng bộ
+            </button>
+        </div>
 
-    <div id="new-data-container">
-        <h2>Bước 2: Dữ liệu Cập nhật Đã Đồng bộ (Giả lập)</h2>
-        <p>Phần này hiển thị dữ liệu đã nhập (giả lập là đã được đẩy lên GitHub).</p>
-        <div id="new-data-output"></div>
-    </div>
+        <!-- KHU VỰC DỮ LIỆU MỚI ĐÃ ĐỒNG BỘ (GIẢ LẬP) -->
+        <div id="new-data-container" class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-bold text-green-600 mb-4">2. Dữ liệu Cập nhật Đã Đồng bộ (Giả lập)</h2>
+            <div id="new-data-output" class="min-h-[100px] border border-dashed border-gray-300 p-3 rounded-lg bg-green-50">
+                <p class="text-gray-500">Chưa có dữ liệu mới được nhập.</p>
+            </div>
+        </div>
 
-    <div id="github-data-container">
-        <h2>Dữ liệu Hiện tại từ File GitHub Gốc (GET)</h2>
-        <p class="loading">Đang tải dữ liệu gốc từ GitHub...</p>
+        <!-- KHU VỰC DỮ LIỆU GỐC TỪ GITHUB -->
+        <div id="github-data-container" class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">3. Dữ liệu Hiện tại từ File GitHub Gốc (GET)</h2>
+            <p class="text-sm text-gray-500 mb-4">Nguồn: <a href="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3s.json" target="_blank" class="text-blue-500 hover:text-blue-700"><code>https://raw.githubusercontent.com/...state3s.json</code></a></p>
+            <div id="data-output" class="min-h-[100px]">
+                <p class="loading text-orange-500 font-semibold flex items-center">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Đang tải dữ liệu gốc...
+                </p>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Đường dẫn Raw (thô) đến file JSON trên GitHub
         const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3s.json';
-        const githubDataContainer = document.getElementById('github-data-container');
+        
+        const dataOutput = document.getElementById('data-output');
         const newDataOutput = document.getElementById('new-data-output');
 
-        // Hàm chung để render dữ liệu
+        // Hàm chung để render (hiển thị) dữ liệu
         function renderData(container, data) {
-            container.innerHTML = ''; // Xóa nội dung cũ
+            container.innerHTML = '';
             
             if (Array.isArray(data) && data.length > 0) {
                 data.forEach((item, index) => {
                     const itemDiv = document.createElement('div');
-                    itemDiv.className = 'data-item';
+                    itemDiv.className = 'data-item bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm mb-2 hover:bg-white';
                     
-                    // Hiển thị tất cả các cặp key: value
+                    // Hiển thị tất cả các cặp key: value trong đối tượng JSON
                     let content = `<strong>#${index + 1}</strong>: `;
                     for (const key in item) {
                         if (item.hasOwnProperty(key)) {
-                            content += `${key}: ${item[key]}, `;
+                            // Làm nổi bật trường 'state'
+                            const value = (key === 'state' || key === 'State') ? `<span class="font-bold text-indigo-600">${item[key]}</span>` : item[key];
+                            content += `<span class="font-medium text-gray-600">${key}</span>: ${value}, `;
                         }
                     }
                     itemDiv.innerHTML = content.slice(0, -2); // Cắt bỏ dấu phẩy cuối cùng
                     container.appendChild(itemDiv);
                 });
+            } else if (data && typeof data === 'object') {
+                 // Nếu dữ liệu không phải là mảng (ví dụ: là 1 object đơn)
+                container.innerHTML = `<p class="font-semibold text-gray-700 mb-2">Dữ liệu là một Object đơn:</p>`;
+                const pre = document.createElement('pre');
+                pre.className = 'bg-gray-100 p-3 rounded-lg overflow-x-auto text-xs';
+                pre.textContent = JSON.stringify(data, null, 2);
+                container.appendChild(pre);
             } else {
-                container.innerHTML = '<p>Không có dữ liệu hoặc dữ liệu không hợp lệ.</p>';
-                container.innerHTML += `<pre><code>${JSON.stringify(data, null, 2)}</code></pre>`;
+                container.innerHTML = '<p class="text-red-500 font-semibold">Không có dữ liệu hoặc dữ liệu không hợp lệ.</p>';
             }
         }
 
         // 1. Tải và hiển thị dữ liệu gốc từ GitHub (GET)
         function fetchGitHubData() {
-            githubDataContainer.querySelector('.loading').textContent = 'Đang tải dữ liệu gốc từ GitHub...';
+            // Hiển thị loading state
+            dataOutput.innerHTML = `<p class="loading text-orange-500 font-semibold flex items-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Đang tải dữ liệu gốc...
+            </p>`;
             
             fetch(GITHUB_JSON_URL)
                 .then(response => {
@@ -128,11 +130,10 @@
                     return response.json();
                 })
                 .then(data => {
-                    githubDataContainer.querySelector('h2').textContent = 'Dữ liệu Hiện tại từ File GitHub Gốc (GET)';
-                    renderData(githubDataContainer, data);
+                    renderData(dataOutput, data);
                 })
                 .catch(error => {
-                    githubDataContainer.innerHTML = `<p class="error">Đã xảy ra lỗi khi tải dữ liệu gốc: ${error.message}</p>`;
+                    dataOutput.innerHTML = `<p class="text-red-500 font-semibold">Lỗi khi tải dữ liệu gốc: ${error.message}. Vui lòng kiểm tra đường dẫn hoặc kết nối mạng.</p>`;
                     console.error("Lỗi:", error);
                 });
         }
@@ -144,26 +145,25 @@
             try {
                 // Thử phân tích JSON
                 const updatedData = JSON.parse(jsonInput);
-
-                // --- Giai đoạn GIẢ LẬP gửi lên Backend ---
+                
+                // --- GIẢ LẬP: Gửi yêu cầu POST/PUT lên Backend Server (API của bạn) ---
                 console.log("Giả lập: Đã gửi dữ liệu này lên Server Backend để commit lên GitHub:");
                 console.log(updatedData);
-                
+
                 // Hiển thị dữ liệu mới (Giả lập đã được đồng bộ)
-                newDataOutput.innerHTML = '';
-                newDataOutput.innerHTML += '<p style="color: green; font-weight: bold;">✅ Cập nhật GIẢ LẬP thành công! (Dữ liệu này sẽ được Server Backend ghi lên GitHub).</p>';
+                newDataOutput.innerHTML = '<p class="text-green-700 font-bold mb-3">✅ Cập nhật GIẢ LẬP thành công! Dữ liệu mới đã sẵn sàng (cần Backend để ghi lên GitHub).</p>';
                 renderData(newDataOutput, updatedData);
                 
             } catch (error) {
+                // Xử lý lỗi nếu JSON không hợp lệ
                 alert("Lỗi cú pháp JSON! Vui lòng kiểm tra lại dữ liệu bạn dán.");
-                newDataOutput.innerHTML = `<p class="error">Lỗi phân tích cú pháp JSON: ${error.message}</p>`;
+                newDataOutput.innerHTML = `<p class="text-red-500 font-semibold">Lỗi phân tích cú pháp JSON: ${error.message}</p>`;
                 console.error("Lỗi phân tích JSON:", error);
             }
         }
 
-        // Chạy khi trang web được tải
+        // Bắt đầu tải dữ liệu khi trang web được tải
         fetchGitHubData();
     </script>
-
 </body>
 </html>
