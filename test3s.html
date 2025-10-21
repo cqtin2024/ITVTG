@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kết Nối Dữ Liệu JSON từ GitHub</title>
+    <title>Đồng Bộ Dữ Liệu JSON GitHub</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
             background-color: #f4f4f9;
         }
-        h1 {
+        h1, h2 {
             color: #333;
             border-bottom: 2px solid #ccc;
             padding-bottom: 10px;
         }
-        #data-container {
+        #github-data-container, #update-form, #new-data-container {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
         .data-item {
             border: 1px solid #ddd;
@@ -28,73 +29,140 @@
             border-radius: 4px;
             background-color: #e9ecef;
         }
-        .loading {
-            color: orange;
-            font-weight: bold;
+        .loading { color: orange; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-family: monospace;
         }
-        .error {
-            color: red;
-            font-weight: bold;
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 10px;
+            margin-top: 20px;
+            color: #856404;
         }
     </style>
 </head>
 <body>
 
-    <h1>Dữ Liệu Trạng Thái từ File state3s.json (GitHub)</h1>
-    <p>Nguồn: <code>https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3s.json</code></p>
+    <h1>Đồng Bộ Dữ Liệu Trạng Thái JSON</h1>
 
-    <div id="data-container">
-        <p class="loading">Đang tải dữ liệu...</p>
+    <div class="note">
+        <strong>⚠️ Lưu ý Quan trọng:</strong> Chức năng "Cập nhật" ở đây chỉ là **GIẢ LẬP**. Việc ghi dữ liệu thực tế lên GitHub API **cần một Server Backend** để bảo mật thông tin xác thực (token).
+    </div>
+
+    <div id="update-form">
+        <h2>Bước 1: Nhập Dữ liệu Mới</h2>
+        <textarea id="json-input" placeholder="Dán mảng JSON mới vào đây. Ví dụ: [{&quot;x&quot;: 1, &quot;y&quot;: 2, &quot;state&quot;: &quot;Mới&quot;}]"></textarea>
+        <button onclick="simulateUpdate()">Giả lập Cập nhật và Đồng bộ</button>
+    </div>
+
+    <div id="new-data-container">
+        <h2>Bước 2: Dữ liệu Cập nhật Đã Đồng bộ (Giả lập)</h2>
+        <p>Phần này hiển thị dữ liệu đã nhập (giả lập là đã được đẩy lên GitHub).</p>
+        <div id="new-data-output"></div>
+    </div>
+
+    <div id="github-data-container">
+        <h2>Dữ liệu Hiện tại từ File GitHub Gốc (GET)</h2>
+        <p class="loading">Đang tải dữ liệu gốc từ GitHub...</p>
     </div>
 
     <script>
-        // 1. Đường dẫn Raw (thô) đến file JSON trên GitHub
         const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3s.json';
-        
-        const dataContainer = document.getElementById('data-container');
+        const githubDataContainer = document.getElementById('github-data-container');
+        const newDataOutput = document.getElementById('new-data-output');
 
-        // Hàm fetch dữ liệu
-        function fetchData() {
+        // Hàm chung để render dữ liệu
+        function renderData(container, data) {
+            container.innerHTML = ''; // Xóa nội dung cũ
+            
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'data-item';
+                    
+                    // Hiển thị tất cả các cặp key: value
+                    let content = `<strong>#${index + 1}</strong>: `;
+                    for (const key in item) {
+                        if (item.hasOwnProperty(key)) {
+                            content += `${key}: ${item[key]}, `;
+                        }
+                    }
+                    itemDiv.innerHTML = content.slice(0, -2); // Cắt bỏ dấu phẩy cuối cùng
+                    container.appendChild(itemDiv);
+                });
+            } else {
+                container.innerHTML = '<p>Không có dữ liệu hoặc dữ liệu không hợp lệ.</p>';
+                container.innerHTML += `<pre><code>${JSON.stringify(data, null, 2)}</code></pre>`;
+            }
+        }
+
+        // 1. Tải và hiển thị dữ liệu gốc từ GitHub (GET)
+        function fetchGitHubData() {
+            githubDataContainer.querySelector('.loading').textContent = 'Đang tải dữ liệu gốc từ GitHub...';
+            
             fetch(GITHUB_JSON_URL)
                 .then(response => {
-                    // Kiểm tra xem request có thành công không
                     if (!response.ok) {
-                        throw new Error(`Lỗi HTTP! Status: ${response.status}. Có thể đường dẫn Raw đã bị thay đổi.`);
+                        throw new Error(`Lỗi HTTP! Status: ${response.status}.`);
                     }
-                    // Chuyển đổi phản hồi thành đối tượng JSON
                     return response.json();
                 })
                 .then(data => {
-                    // 2. Xử lý và hiển thị dữ liệu
-                    dataContainer.innerHTML = '<h2>Dữ liệu đã tải thành công:</h2>';
-                    
-                    if (Array.isArray(data) && data.length > 0) {
-                        data.forEach((item, index) => {
-                            const itemDiv = document.createElement('div');
-                            itemDiv.className = 'data-item';
-                            
-                            // Hiển thị từng trường dữ liệu của đối tượng JSON
-                            let content = `<strong>#${index + 1}</strong>: `;
-                            content += `x: ${item.x}, y: ${item.y}, z: ${item.z}, w: ${item.w}, `;
-                            content += `Trạng thái: <strong>${item.state}</strong>`;
-
-                            itemDiv.innerHTML = content;
-                            dataContainer.appendChild(itemDiv);
-                        });
-                    } else {
-                        dataContainer.innerHTML += '<p>File JSON không phải là một mảng hoặc không có dữ liệu.</p>';
-                        dataContainer.innerHTML += `<pre><code>${JSON.stringify(data, null, 2)}</code></pre>`;
-                    }
+                    githubDataContainer.querySelector('h2').textContent = 'Dữ liệu Hiện tại từ File GitHub Gốc (GET)';
+                    renderData(githubDataContainer, data);
                 })
                 .catch(error => {
-                    // 3. Xử lý lỗi (ví dụ: không thể kết nối hoặc lỗi phân tích JSON)
-                    dataContainer.innerHTML = `<p class="error">Đã xảy ra lỗi khi tải dữ liệu: ${error.message}</p>`;
+                    githubDataContainer.innerHTML = `<p class="error">Đã xảy ra lỗi khi tải dữ liệu gốc: ${error.message}</p>`;
                     console.error("Lỗi:", error);
                 });
         }
+        
+        // 2. Hàm GIẢ LẬP việc cập nhật và đồng bộ
+        function simulateUpdate() {
+            const jsonInput = document.getElementById('json-input').value;
+            
+            try {
+                // Thử phân tích JSON
+                const updatedData = JSON.parse(jsonInput);
 
-        // Gọi hàm để bắt đầu tải dữ liệu khi trang web được load
-        fetchData();
+                // --- Giai đoạn GIẢ LẬP gửi lên Backend ---
+                console.log("Giả lập: Đã gửi dữ liệu này lên Server Backend để commit lên GitHub:");
+                console.log(updatedData);
+                
+                // Hiển thị dữ liệu mới (Giả lập đã được đồng bộ)
+                newDataOutput.innerHTML = '';
+                newDataOutput.innerHTML += '<p style="color: green; font-weight: bold;">✅ Cập nhật GIẢ LẬP thành công! (Dữ liệu này sẽ được Server Backend ghi lên GitHub).</p>';
+                renderData(newDataOutput, updatedData);
+                
+            } catch (error) {
+                alert("Lỗi cú pháp JSON! Vui lòng kiểm tra lại dữ liệu bạn dán.");
+                newDataOutput.innerHTML = `<p class="error">Lỗi phân tích cú pháp JSON: ${error.message}</p>`;
+                console.error("Lỗi phân tích JSON:", error);
+            }
+        }
+
+        // Chạy khi trang web được tải
+        fetchGitHubData();
     </script>
 
 </body>
