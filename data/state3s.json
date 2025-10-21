@@ -569,7 +569,7 @@
       "g": "B",
       "T": "Team 4",
       "Tn": "Quí Tuấn-Mạnh Hùng",
-      "aPL": 3.0,
+      "aPL": 3,
       "s": 0,
       "P": [
         {
@@ -596,7 +596,7 @@
       "g": "B",
       "T": "Team 7",
       "Tn": "Quốc Hùng-Đức Duy",
-      "aPL": 5.0,
+      "aPL": 5,
       "s": 0,
       "P": [
         {
@@ -623,7 +623,7 @@
       "g": "B",
       "T": "Team 12",
       "Tn": "Thanh Sơn-Khoa Tiến",
-      "aPL": 3.0,
+      "aPL": 3,
       "s": 0,
       "P": [
         {
@@ -650,7 +650,7 @@
       "g": "B",
       "T": "Team 1",
       "Tn": "Quang Tiến-Tất Thành",
-      "aPL": 4.0,
+      "aPL": 4,
       "s": 0,
       "P": [
         {
@@ -677,7 +677,7 @@
       "g": "C",
       "T": "Team 16",
       "Tn": "Hoàng Thanh-Công Phương",
-      "aPL": 3.0,
+      "aPL": 3,
       "s": 0,
       "P": [
         {
@@ -731,7 +731,7 @@
       "g": "C",
       "T": "Team 14",
       "Tn": "Văn Cường-Văn Dũng",
-      "aPL": 4.0,
+      "aPL": 4,
       "s": 0,
       "P": [
         {
@@ -758,7 +758,7 @@
       "g": "C",
       "T": "Team 6",
       "Tn": "Đông Chu-Ngọc Hùng",
-      "aPL": 4.0,
+      "aPL": 4,
       "s": 0,
       "P": [
         {
@@ -785,7 +785,7 @@
       "g": "D",
       "T": "Team 13",
       "Tn": "Bá Châu-Hiền Phong",
-      "aPL": 3.0,
+      "aPL": 3,
       "s": 0,
       "P": [
         {
@@ -812,7 +812,7 @@
       "g": "D",
       "T": "Team 8",
       "Tn": "Tiến Mạnh-Quang Tín",
-      "aPL": 4.0,
+      "aPL": 4,
       "s": 0,
       "P": [
         {
@@ -884,8 +884,8 @@
           "ph": "09xx-xxx-032",
           "em": "quangdung@example.com",
           "pL": 4,
-          "gC": "BD_DB",
-          "fC": "RR_KO"
+          "gC": "",
+          "fC": ""
         }
       ]
     }
