@@ -371,7 +371,8 @@
                 } else if (shaResponse.status === 401) {
                     // Lỗi xác thực
                     const errorJson = await shaResponse.json();
-                    throw new Error(`401 Unauthorized: ${errorJson.message || 'Token không hợp lệ hoặc thiếu quyền 'repo'. Vui lòng kiểm tra lại Token của bạn.'}`);
+                    // FIX: Changed 'repo' to "repo" to avoid SyntaxError in template literal
+                    throw new Error(`401 Unauthorized: ${errorJson.message || 'Token không hợp lệ hoặc thiếu quyền "repo". Vui lòng kiểm tra lại Token của bạn.'}`);
                 } else if (!shaResponse.ok) {
                     const errorJson = await shaResponse.json();
                     throw new Error(`Lỗi API khi lấy SHA: ${shaResponse.status} - ${errorJson.message || shaResponse.statusText}`);
@@ -408,7 +409,8 @@
                 if (commitResponse.status === 401) {
                      // Lỗi xác thực trong lúc PUT
                     const errorJson = await commitResponse.json();
-                    throw new Error(`401 Unauthorized: ${errorJson.message || 'Token không hợp lệ hoặc thiếu quyền 'repo'. Vui lòng kiểm tra lại Token của bạn.'}`);
+                    // FIX: Changed 'repo' to "repo" to avoid SyntaxError in template literal
+                    throw new Error(`401 Unauthorized: ${errorJson.message || 'Token không hợp lệ hoặc thiếu quyền "repo". Vui lòng kiểm tra lại Token của bạn.'}`);
                 } else if (!commitResponse.ok) {
                     const errorData = await commitResponse.json();
                     throw new Error(`Commit thất bại: Status ${commitResponse.status}. ${errorData.message || 'Lỗi không xác định.'}`);
