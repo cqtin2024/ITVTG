@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Auto-Sync)</title>
+    <title>Quản Lý Giải Đấu Pickleball (GitHub Auto-Sync) - v2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +101,7 @@
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
                     <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL</h1>
-                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Auto-Sync Tỉ Số & Cập Nhật Đội (GitHub Sync)</p>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Auto-Sync Tỉ Số & Cập Nhật Đội (GitHub Sync) - v2.0</p>
                 </div>
             </div>
             
@@ -206,7 +207,7 @@
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     3. Tùy Chọn Khôi Phục & Giao Diện
                 </h3>
-                <p class="text-[var(--text-color)] mb-4">Sử dụng nút này để **Khôi phục toàn bộ** dữ liệu giải đấu về trạng thái mẫu gốc (state3.json).</p>
+                <p class="text-[var(--text-color)] mb-4">Sử dụng nút này để **Khôi phục toàn bộ** dữ liệu giải đấu về trạng thái mẫu gốc (state3.json). Thao tác này sẽ ghi đè `state3s.json`.</p>
                 <button onclick="document.getElementById('themeToggle').click()" class="md:w-auto px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg shadow-lg transition duration-300 mr-4">
                     Chuyển Đổi Giao Diện (Hiện tại: <span id="currentThemeDisplay">Tối</span>)
                 </button>
@@ -315,7 +316,7 @@
         // Hàm Commit chung cho cả 2 file (state3s.json và state3.json)
         async function getShaAndCommit(fileUrl, contentBase64, commitMessage, buttonId, resultElementId) {
             const pat = githubToken.trim();
-            const commitButton = document.getElementById(buttonId);
+            const commitButton = buttonId ? document.getElementById(buttonId) : null;
             
             if (buttonId) {
                 commitButton.disabled = true;
@@ -324,7 +325,12 @@
             
             if (!pat || pat.length === 0) {
                  showStatus('Lỗi: Vui lòng nhập và lưu GitHub Token trước.', 'error', resultElementId);
-                 if (buttonId) commitButton.disabled = false;
+                 if (buttonId) {
+                    // Đặt lại text cụ thể cho từng nút
+                    if(buttonId === 'commitTeamButton') commitButton.textContent = 'CẬP NHẬT THÔNG TIN ĐỘI (Ghi đè state3.json)';
+                    if(buttonId === 'resetButton') commitButton.textContent = 'Khôi Phục Dữ Liệu Gốc (state3.json)';
+                    commitButton.disabled = false;
+                 }
                  return;
             }
 
@@ -353,7 +359,7 @@
                 }
                 
                 // --- BƯỚC 2: THỰC HIỆN COMMIT (PUT request) ---
-                if (buttonId) commitButton.textContent = 'Đang Commit (PUT)...';
+                if (commitButton) commitButton.textContent = 'Đang Commit (PUT)...';
                 
                 const payload = {
                     message: commitMessage,
@@ -389,7 +395,7 @@
                 console.error("Lỗi Commit GitHub:", error);
                 showStatus(`LỖI COMMIT: ${error.message}`, 'error', resultElementId);
             } finally {
-                 if (buttonId) {
+                 if (commitButton) {
                     // Đặt lại text cụ thể cho từng nút
                     if(buttonId === 'commitTeamButton') commitButton.textContent = 'CẬP NHẬT THÔNG TIN ĐỘI (Ghi đè state3.json)';
                     if(buttonId === 'resetButton') commitButton.textContent = 'Khôi Phục Dữ Liệu Gốc (state3.json)';
@@ -414,7 +420,12 @@
                 if (roundKey === 'final') {
                     scoreData[roundKey] = {
                         sA: liveRound.sA,
-                        sB: liveRound.sB
+                        sB: liveRound.sB,
+                         // Lưu cả các trường này để giữ trạng thái đầy đủ
+                        A: liveRound.A, 
+                        B: liveRound.B,
+                        t: liveRound.t,
+                        c: liveRound.c
                     };
                     return;
                 }
@@ -473,9 +484,10 @@
                 return;
             }
 
-            // Lấy toàn bộ dữ liệu hiện tại trong bộ nhớ (đã bao gồm thay đổi team)
+            // Lấy toàn bộ dữ liệu gốc (state3.json)
             const fullBaseData = JSON.parse(JSON.stringify(initialTournamentData));
-            fullBaseData.tL = tournamentData.tL; // Chỉ thay đổi Team List (tL)
+            // Cập nhật Team List mới nhất từ trạng thái đang hoạt động (tournamentData)
+            fullBaseData.tL = tournamentData.tL; 
 
             const base64Content = jsonToBase64(fullBaseData);
             const commitMessage = 'Update team details and overwrite state3.json via web app';
@@ -492,7 +504,7 @@
             switchTab('TeamManagement');
         }
         
-        // --- LOGIC KHÔI PHỤC DỮ LIỆU GỐC (state3.json) ---
+        // --- LOGIC KHÔI PHỤC DỮ LIỆU GỐC (state3.json -> state3s.json) ---
         
         window.restoreBaseData = async function() {
             githubToken = localStorage.getItem('githubToken') || ''; 
@@ -612,9 +624,6 @@
         window.showConfirmationModal = function() {
             document.getElementById('confirmationBox').classList.remove('hidden');
         }
-
-        // Global function to handle re-sync button click logic (Now renamed to restoreBaseData)
-        // Handled in restoreBaseData function now.
         
         // --- Theme Toggle Logic ---
         function applyTheme(theme) {
@@ -687,10 +696,9 @@
             }
         }
 
-        // --- Score Calculation & Progression (Same as previous) ---
+        // --- Score Calculation & Progression ---
         
         function calculateGroupStandings(groupMatches) {
-            // ... (Logic giữ nguyên) ...
             const standings = {};
 
             groupMatches.forEach(match => {
@@ -744,7 +752,6 @@
         }
 
         function updateKnockoutProgression(data) {
-            // ... (Logic giữ nguyên) ...
             const rankings = {
                 A: calculateGroupStandings(data.matchesA),
                 B: calculateGroupStandings(data.matchesB),
@@ -794,10 +801,9 @@
             data.tableD = rankings.D;
         }
 
-        // --- Rendering Functions (Giữ nguyên) ---
+        // --- Rendering Functions ---
 
         function renderTeams(teams) {
-            // ... (Logic giữ nguyên) ...
             const listHtml = teams.map(team => `
                 <div class="bg-[var(--match-bg)] p-4 rounded-lg shadow-xl mb-4 border border-[var(--border-color)]">
                     <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-2 flex justify-between items-center">${team.Tn} <span class="text-sm font-normal text-gray-400">Bảng ${team.g}</span></h3>
@@ -815,7 +821,6 @@
         }
         
         function renderTeamManagement(teams) {
-             // ... (Logic giữ nguyên) ...
              const listHtml = teams.map((team, teamIndex) => `
                 <div class="bg-[var(--match-bg)] p-4 rounded-lg shadow-xl mb-4 border border-blue-500/50">
                     <h3 class="text-xl font-bold text-blue-400 mb-3">
@@ -853,7 +858,6 @@
         }
         
         function handleTeamDataChange(event) {
-            // ... (Logic giữ nguyên) ...
             const input = event.target;
             const teamIndex = parseInt(input.getAttribute('data-team-index'));
             const playerIndex = input.getAttribute('data-player-index'); 
@@ -882,7 +886,6 @@
 
 
         function renderStandings(groupName, standings) {
-             // ... (Logic giữ nguyên) ...
              const tableId = `table${groupName}`;
             const tableHtml = `
                 <div class="p-4 rounded-lg shadow-xl h-full bg-[var(--match-bg)] border border-[var(--border-color)]">
@@ -918,7 +921,6 @@
         }
 
         function renderMatches(id, matches, title, editable = true) {
-            // ... (Logic giữ nguyên) ...
             const listHtml = matches.map((match, index) => {
                 const winnerName = match.A ? match.Wn || 'Chưa có' : 'Đang chờ...';
                 const winnerClass = winnerName === match.A || winnerName === match.B ? 'text-yellow-400 font-bold' : 'text-[var(--text-color)]';
@@ -974,7 +976,6 @@
 
 
         function renderFinalResults(data) {
-            // ... (Logic giữ nguyên) ...
             document.getElementById('finalResults').innerHTML = `
                 <h2 class="text-xl font-extrabold text-yellow-500 mb-4">Kết Quả Chung Cuộc</h2>
                 <div class="space-y-3">
@@ -1002,10 +1003,7 @@
             // 1. Render Team List (Read-Only on General Tab)
             renderTeams(tournamentData.tL);
             
-            // 2. Render Team Management (Editable on TeamManagement Tab) - Chỉ gọi khi chuyển tab
-            // renderTeamManagement(tournamentData.tL); 
-
-            // 3. Render Group Standings
+            // 2. Render Group Standings
             renderStandings('A', tournamentData.tableA);
             renderStandings('B', tournamentData.tableB);
             renderStandings('C', tournamentData.tableC);
@@ -1094,6 +1092,8 @@
 
             // Event listeners
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            
+            // KHẮC PHỤC LỖI 2: Thêm 'text-input' vào điều kiện kiểm tra chạm/vuốt
             document.getElementById('app').addEventListener('touchstart', (e) => {
                 if (e.target.classList.contains('score-input') || e.target.classList.contains('text-input')) return;
                 startX = e.changedTouches[0].screenX;
@@ -1105,7 +1105,7 @@
                 handleGesture();
             }, { passive: true });
             
-            // Modal button setup (Dùng restoreBaseData thay cho reSyncStaticData)
+            // KHẮC PHỤC LỖI 1: Gọi đúng hàm restoreBaseData
             document.getElementById('confirmYes').onclick = window.restoreBaseData;
             document.getElementById('confirmNo').onclick = () => document.getElementById('confirmationBox').classList.add('hidden');
 
