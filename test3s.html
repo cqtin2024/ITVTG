@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đồng Bộ Dữ Liệu Trạng Thái JSON</title>
+    <title>Đồng Bộ Dữ Liệu Trạng Thái JSON (Thử nghiệm PAT)</title>
     <!-- Tải Tailwind CSS cho styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -28,30 +28,43 @@
 
     <!-- Container chính -->
     <div class="max-w-4xl mx-auto">
-        <h1 class="text-4xl font-extrabold text-gray-800 mb-8 border-b-4 border-blue-500 pb-2">
-            Ứng Dụng Đồng Bộ Dữ Liệu Trạng Thái
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-8 border-b-4 border-red-500 pb-2">
+            Ứng Dụng Đồng Bộ Dữ Liệu (THỬ NGHIỆM NGUY HIỂM)
         </h1>
 
         <!-- Thẻ cảnh báo về bảo mật -->
-        <div class="note bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-lg mb-6">
-            <p class="font-semibold mb-2">⚠️ Cảnh báo Bảo mật & Chức năng:</p>
-            <p class="text-sm">Chức năng "Giả lập Cập nhật" ở đây **KHÔNG THỰC HIỆN** việc ghi dữ liệu lên GitHub. Việc ghi dữ liệu thực tế đòi hỏi **một Server Backend** bảo mật và **Token GitHub** để xác thực.</p>
+        <div class="note bg-red-100 border-l-4 border-red-600 text-red-800 p-4 rounded-lg mb-6 shadow-md">
+            <p class="font-bold mb-2 text-lg">⚠️ CẢNH BÁO NGUY HIỂM VỀ BẢO MẬT! (Sử dụng Token trực tiếp)</p>
+            <p class="text-sm">
+                Việc dán Personal Access Token (PAT) vào đây làm lộ Token của bạn cho bất kỳ ai.
+                **Token này có thể bị sử dụng để chiếm quyền truy cập Repository của bạn.** Chức năng này chỉ được dùng để thử nghiệm API cục bộ. 
+                **Hãy xóa Token ngay sau khi thử nghiệm xong.**
+            </p>
         </div>
 
         <!-- KHU VỰC CẬP NHẬT DỮ LIỆU -->
         <div id="update-form" class="bg-white p-6 rounded-xl shadow-lg mb-8">
-            <h2 class="text-2xl font-bold text-blue-600 mb-4">1. Nhập Dữ liệu JSON Mới (Giả lập Gửi)</h2>
-            <textarea id="json-input" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono text-sm" placeholder="Dán toàn bộ mảng JSON mới vào đây. Ví dụ: [{&#34;x&#34;: 10, &#34;y&#34;: 20, &#34;z&#34;: 0.5, &#34;w&#34;: 0.5, &#34;state&#34;: &#34;New State&#34;}]"></textarea>
-            <button onclick="simulateUpdate()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-150 shadow-md hover:shadow-lg">
-                Giả lập Cập nhật và Đồng bộ
+            <h2 class="text-2xl font-bold text-red-600 mb-4">1. Nhập Dữ liệu & Token (Cập nhật THỰC TẾ)</h2>
+            
+            <!-- Nhập PAT -->
+            <input type="password" id="pat-input" placeholder="Dán GitHub Personal Access Token (PAT) vào đây" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 font-mono text-sm mb-4">
+
+            <!-- Nhập Commit Message -->
+            <input type="text" id="commit-message-input" placeholder="Nhập tin nhắn Commit (mặc định: 'Update data from web app')" value="Update data from web app" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm mb-4">
+
+            <!-- Nhập JSON mới -->
+            <textarea id="json-input" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 font-mono text-sm" placeholder="Dán toàn bộ mảng JSON mới vào đây."></textarea>
+            
+            <button onclick="updateGitHubData()" class="w-full mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition duration-150 shadow-md hover:shadow-lg">
+                THỰC HIỆN Cập nhật lên GitHub (Cần PAT)
             </button>
         </div>
-
-        <!-- KHU VỰC DỮ LIỆU MỚI ĐÃ ĐỒNG BỘ (GIẢ LẬP) -->
-        <div id="new-data-container" class="bg-white p-6 rounded-xl shadow-lg mb-8">
-            <h2 class="text-2xl font-bold text-green-600 mb-4">2. Dữ liệu Cập nhật Đã Đồng bộ (Giả lập)</h2>
-            <div id="new-data-output" class="min-h-[100px] border border-dashed border-gray-300 p-3 rounded-lg bg-green-50">
-                <p class="text-gray-500">Chưa có dữ liệu mới được nhập.</p>
+        
+        <!-- KHU VỰC HIỂN THỊ TRẠNG THÁI CẬP NHẬT -->
+        <div id="status-container" class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-bold text-orange-600 mb-4">2. Trạng thái Cập nhật</h2>
+            <div id="update-status" class="min-h-[50px] border border-dashed border-gray-300 p-3 rounded-lg bg-yellow-50">
+                <p class="text-gray-500">Trạng thái sẽ hiển thị ở đây sau khi nhấn nút cập nhật.</p>
             </div>
         </div>
 
@@ -60,23 +73,23 @@
             <h2 class="text-2xl font-bold text-gray-700 mb-4">3. Dữ liệu Hiện tại từ File GitHub Gốc (GET)</h2>
             <p class="text-sm text-gray-500 mb-4">Nguồn: <a href="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3s.json" target="_blank" class="text-blue-500 hover:text-blue-700"><code>https://raw.githubusercontent.com/...state3s.json</code></a></p>
             <div id="data-output" class="min-h-[100px]">
-                <p class="loading text-orange-500 font-semibold flex items-center">
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Đang tải dữ liệu gốc...
-                </p>
+                <!-- Loading content here -->
             </div>
         </div>
     </div>
 
     <script>
-        // Đường dẫn Raw (thô) đến file JSON trên GitHub
-        const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3s.json';
+        // Cấu hình GitHub Repository
+        const REPO_OWNER = 'cqtin2024';
+        const REPO_NAME = 'ITVTG';
+        const FILE_PATH = 'data/state3s.json';
+        const BRANCH = 'main';
+
+        const GITHUB_JSON_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${FILE_PATH}`;
+        const GITHUB_API_CONTENT_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
         
         const dataOutput = document.getElementById('data-output');
-        const newDataOutput = document.getElementById('new-data-output');
+        const updateStatus = document.getElementById('update-status');
 
         // Hàm chung để render (hiển thị) dữ liệu
         function renderData(container, data) {
@@ -87,20 +100,17 @@
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'data-item bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm mb-2 hover:bg-white';
                     
-                    // Hiển thị tất cả các cặp key: value trong đối tượng JSON
                     let content = `<strong>#${index + 1}</strong>: `;
                     for (const key in item) {
                         if (item.hasOwnProperty(key)) {
-                            // Làm nổi bật trường 'state'
-                            const value = (key === 'state' || key === 'State') ? `<span class="font-bold text-indigo-600">${item[key]}</span>` : item[key];
+                            const value = (key.toLowerCase() === 'state') ? `<span class="font-bold text-indigo-600">${item[key]}</span>` : item[key];
                             content += `<span class="font-medium text-gray-600">${key}</span>: ${value}, `;
                         }
                     }
-                    itemDiv.innerHTML = content.slice(0, -2); // Cắt bỏ dấu phẩy cuối cùng
+                    itemDiv.innerHTML = content.slice(0, -2);
                     container.appendChild(itemDiv);
                 });
             } else if (data && typeof data === 'object') {
-                 // Nếu dữ liệu không phải là mảng (ví dụ: là 1 object đơn)
                 container.innerHTML = `<p class="font-semibold text-gray-700 mb-2">Dữ liệu là một Object đơn:</p>`;
                 const pre = document.createElement('pre');
                 pre.className = 'bg-gray-100 p-3 rounded-lg overflow-x-auto text-xs';
@@ -138,27 +148,94 @@
                 });
         }
         
-        // 2. Hàm GIẢ LẬP việc cập nhật và đồng bộ
-        function simulateUpdate() {
-            const jsonInput = document.getElementById('json-input').value;
-            
-            try {
-                // Thử phân tích JSON
-                const updatedData = JSON.parse(jsonInput);
-                
-                // --- GIẢ LẬP: Gửi yêu cầu POST/PUT lên Backend Server (API của bạn) ---
-                console.log("Giả lập: Đã gửi dữ liệu này lên Server Backend để commit lên GitHub:");
-                console.log(updatedData);
+        // 2. Hàm THỰC HIỆN Cập nhật và Đồng bộ lên GitHub API
+        async function updateGitHubData() {
+            const pat = document.getElementById('pat-input').value.trim();
+            const jsonInput = document.getElementById('json-input').value.trim();
+            const commitMessage = document.getElementById('commit-message-input').value.trim() || 'Update data from web app';
 
-                // Hiển thị dữ liệu mới (Giả lập đã được đồng bộ)
-                newDataOutput.innerHTML = '<p class="text-green-700 font-bold mb-3">✅ Cập nhật GIẢ LẬP thành công! Dữ liệu mới đã sẵn sàng (cần Backend để ghi lên GitHub).</p>';
-                renderData(newDataOutput, updatedData);
-                
+            updateStatus.innerHTML = '<p class="text-blue-500 font-semibold">Bắt đầu cập nhật... (Bước 1: Lấy SHA hiện tại)</p>';
+
+            if (!pat) {
+                updateStatus.innerHTML = '<p class="text-red-500 font-semibold">Lỗi: Vui lòng nhập Personal Access Token (PAT).</p>';
+                return;
+            }
+
+            let updatedData;
+            try {
+                updatedData = JSON.parse(jsonInput);
             } catch (error) {
-                // Xử lý lỗi nếu JSON không hợp lệ
-                alert("Lỗi cú pháp JSON! Vui lòng kiểm tra lại dữ liệu bạn dán.");
-                newDataOutput.innerHTML = `<p class="text-red-500 font-semibold">Lỗi phân tích cú pháp JSON: ${error.message}</p>`;
-                console.error("Lỗi phân tích JSON:", error);
+                updateStatus.innerHTML = `<p class="text-red-500 font-semibold">Lỗi cú pháp JSON: ${error.message}. Vui lòng kiểm tra lại dữ liệu.</p>`;
+                return;
+            }
+
+            // BƯỚC 1: Lấy SHA của file hiện tại
+            let currentSha;
+            try {
+                const response = await fetch(GITHUB_API_CONTENT_URL + `?ref=${BRANCH}`, {
+                    headers: {
+                        'Authorization': `token ${pat}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorJson = await response.json();
+                    throw new Error(`Lỗi API GitHub (GET SHA): Status ${response.status}. ${errorJson.message || 'Lỗi không xác định.'}`);
+                }
+
+                const fileInfo = await response.json();
+                currentSha = fileInfo.sha;
+                updateStatus.innerHTML = `<p class="text-blue-500 font-semibold">Bước 1 hoàn thành. SHA hiện tại: ${currentSha}</p>`;
+            } catch (error) {
+                updateStatus.innerHTML = `<p class="text-red-500 font-semibold">Thất bại khi lấy SHA: ${error.message}</p>`;
+                console.error("Lỗi GET SHA:", error);
+                return;
+            }
+
+            // BƯỚC 2: Gửi yêu cầu PUT để cập nhật file
+            try {
+                updateStatus.innerHTML = '<p class="text-blue-500 font-semibold">Bước 2: Đang gửi yêu cầu PUT để cập nhật file...</p>';
+                
+                // Mã hóa nội dung mới sang Base64
+                // Sử dụng Buffer.from().toString('base64') trong Node.js, trong trình duyệt dùng btoa()
+                const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(updatedData, null, 2))));
+
+                const putResponse = await fetch(GITHUB_API_CONTENT_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${pat}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        message: commitMessage,
+                        content: contentBase64,
+                        sha: currentSha,
+                        branch: BRANCH
+                    })
+                });
+
+                if (!putResponse.ok) {
+                    const errorJson = await putResponse.json();
+                    throw new Error(`Lỗi API GitHub (PUT): Status ${putResponse.status}. ${errorJson.message || 'Lỗi không xác định.'}`);
+                }
+
+                const result = await putResponse.json();
+                
+                // Cập nhật trạng thái thành công
+                updateStatus.innerHTML = `
+                    <p class="text-green-600 font-bold mb-2">✅ Cập nhật thành công!</p>
+                    <p class="text-sm">Commit: <a href="${result.commit.html_url}" target="_blank" class="text-blue-500 hover:underline">${result.commit.sha.substring(0, 7)}</a></p>
+                    <p class="text-sm">Tải lại dữ liệu gốc trong 5 giây...</p>
+                `;
+                
+                // Tự động tải lại dữ liệu gốc sau khi cập nhật thành công
+                setTimeout(fetchGitHubData, 5000);
+
+            } catch (error) {
+                updateStatus.innerHTML = `<p class="text-red-500 font-semibold">Thất bại khi cập nhật: ${error.message}</p>`;
+                console.error("Lỗi PUT:", error);
             }
         }
 
