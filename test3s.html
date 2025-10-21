@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết Nối Dữ Liệu JSON từ GitHub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+        }
+        #data-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .data-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+        }
+        .loading {
+            color: orange;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Dữ Liệu Trạng Thái từ File state3s.json (GitHub)</h1>
+    <p>Nguồn: <code>https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3s.json</code></p>
+
+    <div id="data-container">
+        <p class="loading">Đang tải dữ liệu...</p>
+    </div>
+
+    <script>
+        // 1. Đường dẫn Raw (thô) đến file JSON trên GitHub
+        const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3s.json';
+        
+        const dataContainer = document.getElementById('data-container');
+
+        // Hàm fetch dữ liệu
+        function fetchData() {
+            fetch(GITHUB_JSON_URL)
+                .then(response => {
+                    // Kiểm tra xem request có thành công không
+                    if (!response.ok) {
+                        throw new Error(`Lỗi HTTP! Status: ${response.status}. Có thể đường dẫn Raw đã bị thay đổi.`);
+                    }
+                    // Chuyển đổi phản hồi thành đối tượng JSON
+                    return response.json();
+                })
+                .then(data => {
+                    // 2. Xử lý và hiển thị dữ liệu
+                    dataContainer.innerHTML = '<h2>Dữ liệu đã tải thành công:</h2>';
+                    
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach((item, index) => {
+                            const itemDiv = document.createElement('div');
+                            itemDiv.className = 'data-item';
+                            
+                            // Hiển thị từng trường dữ liệu của đối tượng JSON
+                            let content = `<strong>#${index + 1}</strong>: `;
+                            content += `x: ${item.x}, y: ${item.y}, z: ${item.z}, w: ${item.w}, `;
+                            content += `Trạng thái: <strong>${item.state}</strong>`;
+
+                            itemDiv.innerHTML = content;
+                            dataContainer.appendChild(itemDiv);
+                        });
+                    } else {
+                        dataContainer.innerHTML += '<p>File JSON không phải là một mảng hoặc không có dữ liệu.</p>';
+                        dataContainer.innerHTML += `<pre><code>${JSON.stringify(data, null, 2)}</code></pre>`;
+                    }
+                })
+                .catch(error => {
+                    // 3. Xử lý lỗi (ví dụ: không thể kết nối hoặc lỗi phân tích JSON)
+                    dataContainer.innerHTML = `<p class="error">Đã xảy ra lỗi khi tải dữ liệu: ${error.message}</p>`;
+                    console.error("Lỗi:", error);
+                });
+        }
+
+        // Gọi hàm để bắt đầu tải dữ liệu khi trang web được load
+        fetchData();
+    </script>
+
+</body>
+</html>
