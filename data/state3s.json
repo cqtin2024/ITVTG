@@ -1,250 +1,893 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đồng Bộ Dữ Liệu Trạng Thái JSON (Thử nghiệm PAT)</title>
-    <!-- Tải Tailwind CSS cho styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Thiết lập font Inter mặc định */
-        body { font-family: 'Inter', sans-serif; }
-        /* Tùy chỉnh màu sắc để dễ nhìn hơn */
-        .data-item {
-            transition: transform 0.2s, box-shadow 0.2s;
+{
+  "key_legend": {
+    "tL": "Team List (Danh sách đội)",
+    "g": "Group (Bảng đấu)",
+    "T": "Team ID/Primary Name (Mã hệ thống/Tên đội chính)",
+    "Tn": "Nickname (Tên rút gọn - Ghép tên 2 thành viên)",
+    "s": "Seed (Hạt giống)",
+    "aPL": "Average Pick Level (Cấp độ chọn trung bình)",
+    "P": "Players (Người chơi)",
+    "pL": "Pick Level (Cấp độ chọn cá nhân)",
+    "bY": "Birth Year (Năm sinh)",
+    "ph": "Phone (Số điện thoại)",
+    "em": "Email (Thư điện tử)",
+    "gC": "Game Code (Mã môn chơi: BD_DB - Cầu lông Đôi)",
+    "fC": "Format Code (Mã thể thức: RR_KO - Vòng tròn + Loại trực tiếp)",
+    "D": "Team Name (Tên đội - trong bảng xếp hạng)",
+    "W": "Wins (Số trận thắng)",
+    "L": "Losses (Số trận thua)",
+    "HS": "High Score (Điểm cao nhất)",
+    "Pts": "Points (Điểm số tích lũy)",
+    "mP": "Matches Played (Số trận đã đấu)",
+    "t": "Time (Thời gian)",
+    "c": "Court (Sân đấu)",
+    "A": "Team A (Đội A)",
+    "sA": "Score A (Tỉ số Đội A)",
+    "B": "Team B (Đội B)",
+    "sB": "Score B (Tỉ số Đội B)",
+    "Wn": "Winner (Đội thắng)",
+    "rU": "Runner-Up (Đội về nhì)"
+  },
+  "tableA": [
+    {
+      "D": "Duy Hưng-Minh Tú",
+      "W": 3,
+      "L": 0,
+      "HS": "11",
+      "Pts": 9,
+      "mP": 3
+    },
+    {
+      "D": "Quốc Thịnh-Minh Phương",
+      "W": 2,
+      "L": 1,
+      "HS": "11",
+      "Pts": 6,
+      "mP": 3
+    },
+    {
+      "D": "Minh Chang-Minh Châu",
+      "W": 1,
+      "L": 2,
+      "HS": "11",
+      "Pts": 3,
+      "mP": 3
+    },
+    {
+      "D": "Quốc Khánh-Linh Vũ",
+      "W": 0,
+      "L": 3,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 3
+    }
+  ],
+  "tableB": [
+    {
+      "D": "Quí Tuấn-Mạnh Hùng",
+      "W": 3,
+      "L": 0,
+      "HS": "11",
+      "Pts": 9,
+      "mP": 3
+    },
+    {
+      "D": "Quốc Hùng-Đức Duy",
+      "W": 2,
+      "L": 1,
+      "HS": "11",
+      "Pts": 6,
+      "mP": 3
+    },
+    {
+      "D": "Thanh Sơn-Khoa Tiến",
+      "W": 1,
+      "L": 2,
+      "HS": "11",
+      "Pts": 3,
+      "mP": 3
+    },
+    {
+      "D": "Quang Tiến-Tất Thành",
+      "W": 0,
+      "L": 3,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 3
+    }
+  ],
+  "tableC": [
+    {
+      "D": "Hoàng Thanh-Công Phương",
+      "W": 3,
+      "L": 0,
+      "HS": "11",
+      "Pts": 9,
+      "mP": 3
+    },
+    {
+      "D": "Lê Duy-Thanh Vương",
+      "W": 2,
+      "L": 1,
+      "HS": "11",
+      "Pts": 6,
+      "mP": 3
+    },
+    {
+      "D": "Văn Cường-Văn Dũng",
+      "W": 1,
+      "L": 2,
+      "HS": "11",
+      "Pts": 3,
+      "mP": 3
+    },
+    {
+      "D": "Đông Chu-Ngọc Hùng",
+      "W": 0,
+      "L": 3,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 3
+    }
+  ],
+  "tableD": [
+    {
+      "D": "Bá Châu-Hiền Phong",
+      "W": 3,
+      "L": 0,
+      "HS": "11",
+      "Pts": 9,
+      "mP": 3
+    },
+    {
+      "D": "Tiến Mạnh-Quang Tín",
+      "W": 2,
+      "L": 1,
+      "HS": "11",
+      "Pts": 6,
+      "mP": 3
+    },
+    {
+      "D": "Minh Thiện-Duy Minh",
+      "W": 1,
+      "L": 2,
+      "HS": "11",
+      "Pts": 3,
+      "mP": 3
+    },
+    {
+      "D": "Viết Tuấn-Quang Dũng",
+      "W": 0,
+      "L": 3,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 3
+    }
+  ],
+  "matchesA": [
+    {
+      "t": "14:15",
+      "c": "S3",
+      "A": "Duy Hưng-Minh Tú",
+      "sA": "11",
+      "B": "Quốc Thịnh-Minh Phương",
+      "sB": "0",
+      "Wn": "Duy Hưng-Minh Tú"
+    },
+    {
+      "t": "14:15",
+      "c": "S4",
+      "A": "Minh Chang-Minh Châu",
+      "sA": "11",
+      "B": "Quốc Khánh-Linh Vũ",
+      "sB": "0",
+      "Wn": "Minh Chang-Minh Châu"
+    },
+    {
+      "t": "14:45",
+      "c": "S3",
+      "A": "Duy Hưng-Minh Tú",
+      "sA": "11",
+      "B": "Minh Chang-Minh Châu",
+      "sB": "0",
+      "Wn": "Duy Hưng-Minh Tú"
+    },
+    {
+      "t": "14:45",
+      "c": "S4",
+      "A": "Quốc Thịnh-Minh Phương",
+      "sA": "11",
+      "B": "Quốc Khánh-Linh Vũ",
+      "sB": "0",
+      "Wn": "Quốc Thịnh-Minh Phương"
+    },
+    {
+      "t": "15:15",
+      "c": "S3",
+      "A": "Duy Hưng-Minh Tú",
+      "sA": "11",
+      "B": "Quốc Khánh-Linh Vũ",
+      "sB": "0",
+      "Wn": "Duy Hưng-Minh Tú"
+    },
+    {
+      "t": "15:15",
+      "c": "S4",
+      "A": "Quốc Thịnh-Minh Phương",
+      "sA": "11",
+      "B": "Minh Chang-Minh Châu",
+      "sB": "0",
+      "Wn": "Quốc Thịnh-Minh Phương"
+    }
+  ],
+  "matchesB": [
+    {
+      "t": "14:30",
+      "c": "S3",
+      "A": "Quí Tuấn-Mạnh Hùng",
+      "sA": "11",
+      "B": "Quốc Hùng-Đức Duy",
+      "sB": "0",
+      "Wn": "Quí Tuấn-Mạnh Hùng"
+    },
+    {
+      "t": "14:30",
+      "c": "S4",
+      "A": "Thanh Sơn-Khoa Tiến",
+      "sA": "11",
+      "B": "Quang Tiến-Tất Thành",
+      "sB": "0",
+      "Wn": "Thanh Sơn-Khoa Tiến"
+    },
+    {
+      "t": "15:00",
+      "c": "S3",
+      "A": "Quí Tuấn-Mạnh Hùng",
+      "sA": "11",
+      "B": "Thanh Sơn-Khoa Tiến",
+      "sB": "0",
+      "Wn": "Quí Tuấn-Mạnh Hùng"
+    },
+    {
+      "t": "15:00",
+      "c": "S4",
+      "A": "Quốc Hùng-Đức Duy",
+      "sA": "11",
+      "B": "Quang Tiến-Tất Thành",
+      "sB": "0",
+      "Wn": "Quốc Hùng-Đức Duy"
+    },
+    {
+      "t": "15:30",
+      "c": "S3",
+      "A": "Quí Tuấn-Mạnh Hùng",
+      "sA": "11",
+      "B": "Quang Tiến-Tất Thành",
+      "sB": "0",
+      "Wn": "Quí Tuấn-Mạnh Hùng"
+    },
+    {
+      "t": "15:30",
+      "c": "S4",
+      "A": "Quốc Hùng-Đức Duy",
+      "sA": "11",
+      "B": "Thanh Sơn-Khoa Tiến",
+      "sB": "0",
+      "Wn": "Quốc Hùng-Đức Duy"
+    }
+  ],
+  "matchesC": [
+    {
+      "t": "14:15",
+      "c": "S5",
+      "A": "Hoàng Thanh-Công Phương",
+      "sA": "11",
+      "B": "Lê Duy-Thanh Vương",
+      "sB": "0",
+      "Wn": "Hoàng Thanh-Công Phương"
+    },
+    {
+      "t": "14:15",
+      "c": "S6",
+      "A": "Văn Cường-Văn Dũng",
+      "sA": "11",
+      "B": "Đông Chu-Ngọc Hùng",
+      "sB": "0",
+      "Wn": "Văn Cường-Văn Dũng"
+    },
+    {
+      "t": "14:45",
+      "c": "S5",
+      "A": "Hoàng Thanh-Công Phương",
+      "sA": "11",
+      "B": "Văn Cường-Văn Dũng",
+      "sB": "0",
+      "Wn": "Hoàng Thanh-Công Phương"
+    },
+    {
+      "t": "14:45",
+      "c": "S6",
+      "A": "Lê Duy-Thanh Vương",
+      "sA": "11",
+      "B": "Đông Chu-Ngọc Hùng",
+      "sB": "0",
+      "Wn": "Lê Duy-Thanh Vương"
+    },
+    {
+      "t": "15:15",
+      "c": "S5",
+      "A": "Hoàng Thanh-Công Phương",
+      "sA": "11",
+      "B": "Đông Chu-Ngọc Hùng",
+      "sB": "0",
+      "Wn": "Hoàng Thanh-Công Phương"
+    },
+    {
+      "t": "15:15",
+      "c": "S6",
+      "A": "Lê Duy-Thanh Vương",
+      "sA": "11",
+      "B": "Văn Cường-Văn Dũng",
+      "sB": "0",
+      "Wn": "Lê Duy-Thanh Vương"
+    }
+  ],
+  "matchesD": [
+    {
+      "t": "14:30",
+      "c": "S5",
+      "A": "Bá Châu-Hiền Phong",
+      "sA": "11",
+      "B": "Tiến Mạnh-Quang Tín",
+      "sB": "0",
+      "Wn": "Bá Châu-Hiền Phong"
+    },
+    {
+      "t": "14:30",
+      "c": "S6",
+      "A": "Minh Thiện-Duy Minh",
+      "sA": "11",
+      "B": "Viết Tuấn-Quang Dũng",
+      "sB": "0",
+      "Wn": "Minh Thiện-Duy Minh"
+    },
+    {
+      "t": "15:00",
+      "c": "S5",
+      "A": "Bá Châu-Hiền Phong",
+      "sA": "11",
+      "B": "Minh Thiện-Duy Minh",
+      "sB": "0",
+      "Wn": "Bá Châu-Hiền Phong"
+    },
+    {
+      "t": "15:00",
+      "c": "S6",
+      "A": "Tiến Mạnh-Quang Tín",
+      "sA": "11",
+      "B": "Viết Tuấn-Quang Dũng",
+      "sB": "0",
+      "Wn": "Tiến Mạnh-Quang Tín"
+    },
+    {
+      "t": "15:30",
+      "c": "S5",
+      "A": "Bá Châu-Hiền Phong",
+      "sA": "11",
+      "B": "Viết Tuấn-Quang Dũng",
+      "sB": "0",
+      "Wn": "Bá Châu-Hiền Phong"
+    },
+    {
+      "t": "15:30",
+      "c": "S6",
+      "A": "Tiến Mạnh-Quang Tín",
+      "sA": "11",
+      "B": "Minh Thiện-Duy Minh",
+      "sB": "0",
+      "Wn": "Tiến Mạnh-Quang Tín"
+    }
+  ],
+  "quarterfinals": [
+    {
+      "t": "15:45",
+      "c": "S3",
+      "A": "Duy Hưng-Minh Tú",
+      "sA": "11",
+      "B": "Quốc Hùng-Đức Duy",
+      "sB": "0",
+      "Wn": "Duy Hưng-Minh Tú"
+    },
+    {
+      "t": "15:45",
+      "c": "S4",
+      "A": "Hoàng Thanh-Công Phương",
+      "sA": "11",
+      "B": "Tiến Mạnh-Quang Tín",
+      "sB": "0",
+      "Wn": "Hoàng Thanh-Công Phương"
+    },
+    {
+      "t": "16:00",
+      "c": "S5",
+      "A": "Quí Tuấn-Mạnh Hùng",
+      "sA": "11",
+      "B": "Quốc Thịnh-Minh Phương",
+      "sB": "0",
+      "Wn": "Quí Tuấn-Mạnh Hùng"
+    },
+    {
+      "t": "16:00",
+      "c": "S6",
+      "A": "Bá Châu-Hiền Phong",
+      "sA": "11",
+      "B": "Lê Duy-Thanh Vương",
+      "sB": "0",
+      "Wn": "Bá Châu-Hiền Phong"
+    }
+  ],
+  "semifinals": [
+    {
+      "t": "16:10",
+      "c": "S4",
+      "A": "Duy Hưng-Minh Tú",
+      "sA": "11",
+      "B": "Hoàng Thanh-Công Phương",
+      "sB": "0",
+      "Wn": "Duy Hưng-Minh Tú"
+    },
+    {
+      "t": "16:25",
+      "c": "S5",
+      "A": "Quí Tuấn-Mạnh Hùng",
+      "sA": "11",
+      "B": "Bá Châu-Hiền Phong",
+      "sB": "0",
+      "Wn": "Quí Tuấn-Mạnh Hùng"
+    }
+  ],
+  "final": {
+    "t": "17:05",
+    "c": "S5",
+    "A": "Duy Hưng-Minh Tú",
+    "sA": "11",
+    "B": "Quí Tuấn-Mạnh Hùng",
+    "sB": "9",
+    "Wn": "Duy Hưng-Minh Tú",
+    "rU": "Quí Tuấn-Mạnh Hùng"
+  },
+  "tL": [
+    {
+      "g": "A",
+      "T": "Team 9",
+      "Tn": "Duy Hưng-Minh Tú",
+      "aPL": 4.5,
+      "s": 0,
+      "P": [
+        {
+          "name": "Từ Duy Hưng",
+          "bY": "1995",
+          "ph": "09xx-xxx-001",
+          "em": "duyhung@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Trần Nguyễn Minh Tú",
+          "bY": "1998",
+          "ph": "09xx-xxx-002",
+          "em": "minhtu@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
         }
-        .data-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+      ]
+    },
+    {
+      "g": "A",
+      "T": "Team 3",
+      "Tn": "Quốc Thịnh-Minh Phương",
+      "aPL": 4.5,
+      "s": 0,
+      "P": [
+        {
+          "name": "Võ Dương Quốc Thịnh",
+          "bY": "1996",
+          "ph": "09xx-xxx-003",
+          "em": "quocthinh@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Lê Minh Phương",
+          "bY": "1997",
+          "ph": "09xx-xxx-004",
+          "em": "minhphuong@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
         }
-        /* Style cho pre/code block */
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
+      ]
+    },
+    {
+      "g": "A",
+      "T": "Team 11",
+      "Tn": "Minh Chang-Minh Châu",
+      "aPL": 4.5,
+      "s": 0,
+      "P": [
+        {
+          "name": "Minh Chang",
+          "bY": "2000",
+          "ph": "09xx-xxx-005",
+          "em": "minhchang@example.com",
+          "pL": 2,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Lê Minh Châu",
+          "bY": "2001",
+          "ph": "09xx-xxx-006",
+          "em": "minhchau@example.com",
+          "pL": 2,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
         }
-    </style>
-</head>
-<body class="bg-gray-50 p-4 sm:p-8 min-h-screen">
-
-    <!-- Container chính -->
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-4xl font-extrabold text-gray-800 mb-8 border-b-4 border-red-500 pb-2">
-            Ứng Dụng Đồng Bộ Dữ Liệu (THỬ NGHIỆM NGUY HIỂM)
-        </h1>
-
-        <!-- Thẻ cảnh báo về bảo mật -->
-        <div class="note bg-red-100 border-l-4 border-red-600 text-red-800 p-4 rounded-lg mb-6 shadow-md">
-            <p class="font-bold mb-2 text-lg">⚠️ CẢNH BÁO NGUY HIỂM VỀ BẢO MẬT! (Sử dụng Token trực tiếp)</p>
-            <p class="text-sm">
-                Việc dán Personal Access Token (PAT) vào đây làm lộ Token của bạn cho bất kỳ ai.
-                **Token này có thể bị sử dụng để chiếm quyền truy cập Repository của bạn.** Chức năng này chỉ được dùng để thử nghiệm API cục bộ. 
-                **Hãy xóa Token ngay sau khi thử nghiệm xong.**
-            </p>
-        </div>
-
-        <!-- KHU VỰC CẬP NHẬT DỮ LIỆU -->
-        <div id="update-form" class="bg-white p-6 rounded-xl shadow-lg mb-8">
-            <h2 class="text-2xl font-bold text-red-600 mb-4">1. Nhập Dữ liệu & Token (Cập nhật THỰC TẾ)</h2>
-            
-            <!-- Nhập PAT -->
-            <input type="password" id="pat-input" placeholder="Dán GitHub Personal Access Token (PAT) vào đây" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 font-mono text-sm mb-4">
-
-            <!-- Nhập Commit Message -->
-            <input type="text" id="commit-message-input" placeholder="Nhập tin nhắn Commit (mặc định: 'Update data from web app')" value="Update data from web app" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 text-sm mb-4">
-
-            <!-- Nhập JSON mới -->
-            <textarea id="json-input" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 font-mono text-sm" placeholder="Dán toàn bộ mảng JSON mới vào đây."></textarea>
-            
-            <button onclick="updateGitHubData()" class="w-full mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition duration-150 shadow-md hover:shadow-lg">
-                THỰC HIỆN Cập nhật lên GitHub (Cần PAT)
-            </button>
-        </div>
-        
-        <!-- KHU VỰC HIỂN THỊ TRẠNG THÁI CẬP NHẬT -->
-        <div id="status-container" class="bg-white p-6 rounded-xl shadow-lg mb-8">
-            <h2 class="text-2xl font-bold text-orange-600 mb-4">2. Trạng thái Cập nhật</h2>
-            <div id="update-status" class="min-h-[50px] border border-dashed border-gray-300 p-3 rounded-lg bg-yellow-50">
-                <p class="text-gray-500">Trạng thái sẽ hiển thị ở đây sau khi nhấn nút cập nhật.</p>
-            </div>
-        </div>
-
-        <!-- KHU VỰC DỮ LIỆU GỐC TỪ GITHUB -->
-        <div id="github-data-container" class="bg-white p-6 rounded-xl shadow-lg">
-            <h2 class="text-2xl font-bold text-gray-700 mb-4">3. Dữ liệu Hiện tại từ File GitHub Gốc (GET)</h2>
-            <p class="text-sm text-gray-500 mb-4">Nguồn: <a href="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state3s.json" target="_blank" class="text-blue-500 hover:text-blue-700"><code>https://raw.githubusercontent.com/...state3s.json</code></a></p>
-            <div id="data-output" class="min-h-[100px]">
-                <!-- Loading content here -->
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Cấu hình GitHub Repository
-        const REPO_OWNER = 'cqtin2024';
-        const REPO_NAME = 'ITVTG';
-        const FILE_PATH = 'data/state3s.json';
-        const BRANCH = 'main';
-
-        const GITHUB_JSON_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${FILE_PATH}`;
-        const GITHUB_API_CONTENT_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
-        
-        const dataOutput = document.getElementById('data-output');
-        const updateStatus = document.getElementById('update-status');
-
-        // Hàm chung để render (hiển thị) dữ liệu
-        function renderData(container, data) {
-            container.innerHTML = '';
-            
-            if (Array.isArray(data) && data.length > 0) {
-                data.forEach((item, index) => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'data-item bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm mb-2 hover:bg-white';
-                    
-                    let content = `<strong>#${index + 1}</strong>: `;
-                    for (const key in item) {
-                        if (item.hasOwnProperty(key)) {
-                            const value = (key.toLowerCase() === 'state') ? `<span class="font-bold text-indigo-600">${item[key]}</span>` : item[key];
-                            content += `<span class="font-medium text-gray-600">${key}</span>: ${value}, `;
-                        }
-                    }
-                    itemDiv.innerHTML = content.slice(0, -2);
-                    container.appendChild(itemDiv);
-                });
-            } else if (data && typeof data === 'object') {
-                container.innerHTML = `<p class="font-semibold text-gray-700 mb-2">Dữ liệu là một Object đơn:</p>`;
-                const pre = document.createElement('pre');
-                pre.className = 'bg-gray-100 p-3 rounded-lg overflow-x-auto text-xs';
-                pre.textContent = JSON.stringify(data, null, 2);
-                container.appendChild(pre);
-            } else {
-                container.innerHTML = '<p class="text-red-500 font-semibold">Không có dữ liệu hoặc dữ liệu không hợp lệ.</p>';
-            }
+      ]
+    },
+    {
+      "g": "A",
+      "T": "Team 5",
+      "Tn": "Quốc Khánh-Linh Vũ",
+      "aPL": 4.5,
+      "s": 0,
+      "P": [
+        {
+          "name": "Mai Quốc Khánh",
+          "bY": "1993",
+          "ph": "09xx-xxx-007",
+          "em": "quockhanh@example.com",
+          "pL": 5,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Nguyễn Bá Linh Vũ",
+          "bY": "1994",
+          "ph": "09xx-xxx-008",
+          "em": "linhvua@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
         }
-
-        // 1. Tải và hiển thị dữ liệu gốc từ GitHub (GET)
-        function fetchGitHubData() {
-            // Hiển thị loading state
-            dataOutput.innerHTML = `<p class="loading text-orange-500 font-semibold flex items-center">
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Đang tải dữ liệu gốc...
-            </p>`;
-            
-            fetch(GITHUB_JSON_URL)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Lỗi HTTP! Status: ${response.status}.`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    renderData(dataOutput, data);
-                })
-                .catch(error => {
-                    dataOutput.innerHTML = `<p class="text-red-500 font-semibold">Lỗi khi tải dữ liệu gốc: ${error.message}. Vui lòng kiểm tra đường dẫn hoặc kết nối mạng.</p>`;
-                    console.error("Lỗi:", error);
-                });
+      ]
+    },
+    {
+      "g": "B",
+      "T": "Team 4",
+      "Tn": "Quí Tuấn-Mạnh Hùng",
+      "aPL": 3,
+      "s": 0,
+      "P": [
+        {
+          "name": "Trần Quí Tuấn",
+          "bY": "1992",
+          "ph": "09xx-xxx-009",
+          "em": "quytuan@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Hoàng Mạnh Hùng",
+          "bY": "1993",
+          "ph": "09xx-xxx-010",
+          "em": "manhhung@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
         }
-        
-        // 2. Hàm THỰC HIỆN Cập nhật và Đồng bộ lên GitHub API
-        async function updateGitHubData() {
-            const pat = document.getElementById('pat-input').value.trim();
-            const jsonInput = document.getElementById('json-input').value.trim();
-            const commitMessage = document.getElementById('commit-message-input').value.trim() || 'Update data from web app';
-
-            updateStatus.innerHTML = '<p class="text-blue-500 font-semibold">Bắt đầu cập nhật... (Bước 1: Lấy SHA hiện tại)</p>';
-
-            if (!pat) {
-                updateStatus.innerHTML = '<p class="text-red-500 font-semibold">Lỗi: Vui lòng nhập Personal Access Token (PAT).</p>';
-                return;
-            }
-
-            let updatedData;
-            try {
-                updatedData = JSON.parse(jsonInput);
-            } catch (error) {
-                updateStatus.innerHTML = `<p class="text-red-500 font-semibold">Lỗi cú pháp JSON: ${error.message}. Vui lòng kiểm tra lại dữ liệu.</p>`;
-                return;
-            }
-
-            // BƯỚC 1: Lấy SHA của file hiện tại (ĐÃ THÊM CACHE-BUSTING)
-            let currentSha;
-            try {
-                // Thêm timestamp để đảm bảo request không bị cache
-                const timestamp = new Date().getTime(); 
-                const url = GITHUB_API_CONTENT_URL + `?ref=${BRANCH}&t=${timestamp}`;
-
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `token ${pat}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-
-                if (!response.ok) {
-                    const errorJson = await response.json();
-                    throw new Error(`Lỗi API GitHub (GET SHA): Status ${response.status}. ${errorJson.message || 'Lỗi không xác định.'}`);
-                }
-
-                const fileInfo = await response.json();
-                currentSha = fileInfo.sha;
-                updateStatus.innerHTML = `<p class="text-blue-500 font-semibold">Bước 1 hoàn thành. SHA hiện tại: ${currentSha}</p>`;
-            } catch (error) {
-                updateStatus.innerHTML = `<p class="text-red-500 font-semibold">Thất bại khi lấy SHA: ${error.message}</p>`;
-                console.error("Lỗi GET SHA:", error);
-                return;
-            }
-
-            // BƯỚC 2: Gửi yêu cầu PUT để cập nhật file
-            try {
-                updateStatus.innerHTML = '<p class="text-blue-500 font-semibold">Bước 2: Đang gửi yêu cầu PUT để cập nhật file...</p>';
-                
-                // Mã hóa nội dung mới sang Base64
-                // btoa(unescape(encodeURIComponent(...))) là cách chuẩn để xử lý UTF-8 trong trình duyệt
-                const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(updatedData, null, 2))));
-
-                const putResponse = await fetch(GITHUB_API_CONTENT_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${pat}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/vnd.github.v3+json'
-                    },
-                    body: JSON.stringify({
-                        message: commitMessage,
-                        content: contentBase64,
-                        sha: currentSha,
-                        branch: BRANCH
-                    })
-                });
-
-                if (!putResponse.ok) {
-                    const errorJson = await putResponse.json();
-                    throw new Error(`Lỗi API GitHub (PUT): Status ${putResponse.status}. ${errorJson.message || 'Lỗi không xác định.'}`);
-                }
-
-                const result = await putResponse.json();
-                
-                // Cập nhật trạng thái thành công
-                updateStatus.innerHTML = `
-                    <p class="text-green-600 font-bold mb-2">✅ Cập nhật thành công!</p>
-                    <p class="text-sm">Commit: <a href="${result.commit.html_url}" target="_blank" class="text-blue-500 hover:underline">${result.commit.sha.substring(0, 7)}</a></p>
-                    <p class="text-sm">Tải lại dữ liệu gốc trong 5 giây...</p>
-                `;
-                
-                // Tự động tải lại dữ liệu gốc sau khi cập nhật thành công
-                setTimeout(fetchGitHubData, 5000);
-
-            } catch (error) {
-                updateStatus.innerHTML = `<p class="text-red-500 font-semibold">Thất bại khi cập nhật: ${error.message}</p>`;
-                console.error("Lỗi PUT:", error);
-            }
+      ]
+    },
+    {
+      "g": "B",
+      "T": "Team 7",
+      "Tn": "Quốc Hùng-Đức Duy",
+      "aPL": 5,
+      "s": 0,
+      "P": [
+        {
+          "name": "Nguyễn Quốc Hùng",
+          "bY": "1995",
+          "ph": "09xx-xxx-011",
+          "em": "quochung@example.com",
+          "pL": 5,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Phạm Đức Duy",
+          "bY": "1996",
+          "ph": "09xx-xxx-012",
+          "em": "ducduy@example.com",
+          "pL": 5,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
         }
-
-        // Bắt đầu tải dữ liệu khi trang web được tải
-        fetchGitHubData();
-    </script>
-</body>
-</html>
+      ]
+    },
+    {
+      "g": "B",
+      "T": "Team 12",
+      "Tn": "Thanh Sơn-Khoa Tiến",
+      "aPL": 3,
+      "s": 0,
+      "P": [
+        {
+          "name": "Đinh Hoàng Thanh Sơn",
+          "bY": "1997",
+          "ph": "09xx-xxx-013",
+          "em": "thanhson@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Trần Đỗ Khoa Tiến",
+          "bY": "1998",
+          "ph": "09xx-xxx-014",
+          "em": "khoatien@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        }
+      ]
+    },
+    {
+      "g": "B",
+      "T": "Team 1",
+      "Tn": "Quang Tiến-Tất Thành",
+      "aPL": 4,
+      "s": 0,
+      "P": [
+        {
+          "name": "Bùi Quang Tiến",
+          "bY": "1995",
+          "ph": "09xx-xxx-015",
+          "em": "quangtien@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Mai Tất Thành",
+          "bY": "1996",
+          "ph": "09xx-xxx-016",
+          "em": "tatthanh@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        }
+      ]
+    },
+    {
+      "g": "C",
+      "T": "Team 16",
+      "Tn": "Hoàng Thanh-Công Phương",
+      "aPL": 3,
+      "s": 0,
+      "P": [
+        {
+          "name": "Nguyễn Hoàng Thanh",
+          "bY": "1992",
+          "ph": "09xx-xxx-017",
+          "em": "hoangthanh@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Trần Công Phương",
+          "bY": "1993",
+          "ph": "09xx-xxx-018",
+          "em": "congphuong@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        }
+      ]
+    },
+    {
+      "g": "C",
+      "T": "Team 10",
+      "Tn": "Lê Duy-Thanh Vương",
+      "aPL": 3.5,
+      "s": 0,
+      "P": [
+        {
+          "name": "Lê Duy",
+          "bY": "1994",
+          "ph": "09xx-xxx-019",
+          "em": "leduy@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Hồ Thanh Vương",
+          "bY": "1995",
+          "ph": "09xx-xxx-020",
+          "em": "thanhvuong@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        }
+      ]
+    },
+    {
+      "g": "C",
+      "T": "Team 14",
+      "Tn": "Văn Cường-Văn Dũng",
+      "aPL": 4,
+      "s": 0,
+      "P": [
+        {
+          "name": "Nguyễn Văn Cường",
+          "bY": "1996",
+          "ph": "09xx-xxx-021",
+          "em": "vancuong@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Đoàn Văn Dũng",
+          "bY": "1997",
+          "ph": "09xx-xxx-022",
+          "em": "vandzung@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        }
+      ]
+    },
+    {
+      "g": "C",
+      "T": "Team 6",
+      "Tn": "Đông Chu-Ngọc Hùng",
+      "aPL": 4,
+      "s": 0,
+      "P": [
+        {
+          "name": "Trần Ngọc Đông Chu",
+          "bY": "1998",
+          "ph": "09xx-xxx-023",
+          "em": "dongchu@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Nguyễn Ngọc Hùng",
+          "bY": "1999",
+          "ph": "09xx-xxx-024",
+          "em": "ngochung@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        }
+      ]
+    },
+    {
+      "g": "D",
+      "T": "Team 13",
+      "Tn": "Bá Châu-Hiền Phong",
+      "aPL": 3,
+      "s": 0,
+      "P": [
+        {
+          "name": "Lê Bá Châu",
+          "bY": "1992",
+          "ph": "09xx-xxx-025",
+          "em": "bachau@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Ngô Hiền Phong",
+          "bY": "1993",
+          "ph": "09xx-xxx-026",
+          "em": "hienphong@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        }
+      ]
+    },
+    {
+      "g": "D",
+      "T": "Team 8",
+      "Tn": "Tiến Mạnh-Quang Tín",
+      "aPL": 4,
+      "s": 0,
+      "P": [
+        {
+          "name": "Lại Tiến Mạnh",
+          "bY": "1994",
+          "ph": "09xx-xxx-027",
+          "em": "tienmanh@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Cao Quang Tín",
+          "bY": "1995",
+          "ph": "09xx-xxx-028",
+          "em": "quangtin@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        }
+      ]
+    },
+    {
+      "g": "D",
+      "T": "Team 15",
+      "Tn": "Minh Thiện-Duy Minh",
+      "aPL": 3.5,
+      "s": 0,
+      "P": [
+        {
+          "name": "Huỳnh Minh Thiện",
+          "bY": "1996",
+          "ph": "09xx-xxx-029",
+          "em": "minhthien@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Nguyễn Duy Minh",
+          "bY": "1997",
+          "ph": "09xx-xxx-030",
+          "em": "duyminh@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        }
+      ]
+    },
+    {
+      "g": "D",
+      "T": "Team 2",
+      "Tn": "Viết Tuấn-Quang Dũng",
+      "aPL": 3.5,
+      "s": 0,
+      "P": [
+        {
+          "name": "Trần Viết Tuấn",
+          "bY": "1998",
+          "ph": "09xx-xxx-031",
+          "em": "viettuan@example.com",
+          "pL": 3,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        },
+        {
+          "name": "Huỳnh Lê Quang Dũng",
+          "bY": "1999",
+          "ph": "09xx-xxx-032",
+          "em": "quangdung@example.com",
+          "pL": 4,
+          "gC": "BD_DB",
+          "fC": "RR_KO"
+        }
+      ]
+    }
+  ]
+}
