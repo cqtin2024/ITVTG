@@ -184,7 +184,7 @@
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                     1. GitHub Personal Access Token (PAT)
                 </h3>
-                <p class="text-sm text-red-300 mb-4 font-bold">CẢNH BÁO BẢO MẬT: Token này sẽ được lưu trữ trong trình duyệt. Chỉ sử dụng Token có phạm vi (Scope) nhỏ nhất. <span class="text-yellow-300">CẦN PHẢI CÓ QUYỀN **repo**</span>.</p>
+                <p class="text-sm text-red-300 mb-4 font-bold">CẢNH BÁO BẢO MẬT: Token này sẽ được lưu trữ trong trình duyệt. Chỉ sử dụng Token có phạm vi (Scope) nhỏ nhất. <span class="text-yellow-300">CẦN PHẢI CÓ QUYỀN **repo** (hoặc contents:write)</span>.</p>
                 <input type="password" id="githubToken" 
                     class="score-input w-full p-2 rounded-md focus:ring-red-500 transition" 
                     placeholder="Dán GitHub PAT của bạn vào đây...">
@@ -369,7 +369,7 @@
                     showStatus('File state3s.json chưa tồn tại, sẽ tạo mới.', 'info');
                 } else if (shaResponse.status === 401) {
                     // Lỗi xác thực
-                    throw new Error("401 Unauthorized: Token không hợp lệ hoặc thiếu quyền 'repo'. Vui lòng kiểm tra lại Token của bạn.");
+                    throw new Error("401 Unauthorized. Vui lòng kiểm tra: 1) Token hết hạn/bị thu hồi. 2) Thiếu quyền 'repo' (Classic PAT) hoặc 'contents:write' (Fine-Grained PAT). 3) Bạn đã Dán & Lưu Token mới nhất.");
                 } else if (!shaResponse.ok) {
                     throw new Error(`Lỗi API khi lấy SHA: ${shaResponse.status} - ${shaResponse.statusText}`);
                 } else {
@@ -402,7 +402,7 @@
 
                 if (commitResponse.status === 401) {
                      // Lỗi xác thực (lặp lại)
-                    throw new Error("401 Unauthorized: Token không hợp lệ hoặc thiếu quyền 'repo' để COMMIT. Vui lòng kiểm tra lại Token của bạn.");
+                    throw new Error("401 Unauthorized. Vui lòng kiểm tra: 1) Token hết hạn/bị thu hồi. 2) Thiếu quyền 'repo' (Classic PAT) hoặc 'contents:write' (Fine-Grained PAT). 3) Bạn đã Dán & Lưu Token mới nhất.");
                 } else if (!commitResponse.ok) {
                     const errorData = await commitResponse.json();
                     throw new Error(`Commit thất bại: ${commitResponse.status}. ${errorData.message || 'Lỗi không xác định.'}`);
