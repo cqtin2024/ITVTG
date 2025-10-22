@@ -1,0 +1,19 @@
+📦 Hướng dẫn sử dụng Pickleball PWA (phiên bản cập nhật)
+
+1️⃣ Cấu trúc thư mục:
+/ (thư mục gốc)
+├── score34.html
+├── manifest.json
+├── service-worker.js
+└── /icons/
+    ├── icon-192.png
+    └── icon-512.png
+
+2️⃣ Thêm hai icon PNG (192x192 và 512x512) vào thư mục /icons/.
+
+3️⃣ Triển khai app qua HTTPS (GitHub Pages / Netlify).
+
+4️⃣ Các chỉnh sửa mới:
+   ✅ Hiển thị đúng tên đội theo 'Tn' trong mọi khu vực (Group, Knockout, Kết quả).
+   ✅ Đồng bộ dữ liệu qua GitHub như cũ.
+   ✅ PWA hỗ trợ cache v2 (tự làm mới khi có bản mới).

@@ -1,0 +1,13 @@
+{
+  "name": "Quản Lý Giải Đấu Pickleball",
+  "short_name": "Pickleball",
+  "start_url": "./score34.html",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#06b6d4",
+  "description": "Ứng dụng quản lý giải đấu Pickleball – cập nhật tỉ số, đồng bộ GitHub.",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

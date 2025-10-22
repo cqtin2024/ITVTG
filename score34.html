@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#06b6d4">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync)</title>
@@ -306,12 +308,10 @@
          * @returns {string|null} Mã đội (T) hoặc null.
          */
         function getTeamIdByShortName(shortName) {
-            if (!tournamentData || !tournamentData.tL) return null;
-            for (const team of tournamentData.tL) {
-                if (team.Tn === shortName) {
-                    return team.T;
-                }
-            }
+    const source = tournamentData?.tL || initialTournamentData?.tL || [];
+    const found = source.find(team => team.Tn === shortName);
+    return found ? found.T : null;
+}
             return null;
         }
         
@@ -321,12 +321,11 @@
          * @returns {string|null} Tên rút gọn (Tn) hoặc null.
          */
         function getTeamShortNameById(teamId) {
-             if (!tournamentData || !tournamentData.tL) return teamId; // Trả về ID nếu không tìm thấy
-             for (const team of tournamentData.tL) {
-                 if (team.T === teamId) {
-                     return team.Tn;
-                 }
-             }
+    if (!teamId) return "TBD";
+    const source = initialTournamentData?.tL || tournamentData?.tL || [];
+    const found = source.find(team => team.T === teamId);
+    return found?.Tn || teamId || "TBD";
+}
              return teamId; // Trả về ID nếu không tìm thấy
          }
 
@@ -1430,5 +1429,14 @@
 
         window.onload = initializeApp;
     </script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(() => console.log("✅ Service Worker registered successfully."))
+      .catch(err => console.error("❌ Service Worker registration failed:", err));
+  });
+}
+</script>
 </body>
 </html>
