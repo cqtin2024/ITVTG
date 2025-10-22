@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for Dark Mode */
+        :root {
+            --bg-color: #111827; /* Gray-900 */
+            --text-color: #f3f4f6; /* Gray-100 */
+            --card-bg: #1f2937; /* Gray-800 */
+            --border-color: #374151; /* Gray-700 */
+            --accent-color: #06b6d4; /* Cyan-500 */
+            --match-bg: #1f2937;
+            --input-bg: #4b5563; /* Gray-600 */
+            --group-header-text: #60a5fa; /* Blue-400 */
+        }
+        
+        /* Light Mode Overrides */
+        .light-mode {
+            --bg-color: #f9fafb; /* Gray-50 */
+            --text-color: #111827; /* Gray-900 */
+            --card-bg: #ffffff; /* White */
+            --border-color: #e5e7eb; /* Gray-200 */
+            --accent-color: #0ea5e9; /* Sky-500 */
+            --match-bg: #f3f4f6; /* Gray-100 */
+            --input-bg: #d1d5db; /* Gray-300 */
+            --group-header-text: #06b6d4; /* Cyan-500 */
+        }
+
+        /* General Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s;
+        }
+
+        /* Customize scrollbar for tables */
+        .overflow-x-auto::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .overflow-x-auto::-webkit-scrollbar-track {
+            background-color: var(--card-bg);
+        }
+    </style>
+</head>
+<body class="bg-[var(--bg-color)] text-[var(--text-color)]">
+    <div id="app" class="flex flex-col min-h-screen transition-colors duration-300">
+        
+        <header class="sticky top-0 bg-[var(--card-bg)] shadow-lg z-10 p-4 border-b border-[var(--border-color)]">
+            <div class="flex justify-between items-center max-w-7xl mx-auto">
+                <h1 class="text-xl font-extrabold text-[var(--accent-color)]">Quản Lý Giải Đấu</h1>
+                <div class="flex items-center space-x-3">
+                    <button id="themeToggle" class="p-2 rounded-full hover:bg-[var(--border-color)] transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </button>
+                    <button id="settingsBtn" class="p-2 rounded-full hover:bg-[var(--border-color)] transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow p-4 max-w-7xl mx-auto w-full">
+            
+            <section id="settingsPanel" class="hidden bg-[var(--card-bg)] p-4 rounded-lg shadow-lg mb-6 border border-[var(--border-color)]">
+                <h2 class="text-xl font-bold mb-4">Cài Đặt và Đồng Bộ GitHub</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="githubToken" class="block text-sm font-medium mb-1">GitHub Personal Access Token (PAT):</label>
+                        <input type="password" id="githubToken" placeholder="Nhập PAT của bạn" class="w-full p-2 rounded bg-[var(--input-bg)] text-[var(--text-color)] text-input">
+                        <p class="text-xs mt-1 text-gray-400">PAT cần quyền 'repo' để cập nhật file.</p>
+                    </div>
+                    <div>
+                        <label for="repoOwner" class="block text-sm font-medium mb-1">Tên chủ sở hữu Repo (Owner):</label>
+                        <input type="text" id="repoOwner" placeholder="vd: your-username" class="w-full p-2 rounded bg-[var(--input-bg)] text-[var(--text-color)] text-input">
+                    </div>
+                    <div>
+                        <label for="repoName" class="block text-sm font-medium mb-1">Tên Repo:</label>
+                        <input type="text" id="repoName" placeholder="vd: tournament-data" class="w-full p-2 rounded bg-[var(--input-bg)] text-[var(--text-color)] text-input">
+                    </div>
+                    <div>
+                        <label for="dataPath" class="block text-sm font-medium mb-1">Đường dẫn File JSON (Path):</label>
+                        <input type="text" id="dataPath" placeholder="vd: data/group_stage.json" class="w-full p-2 rounded bg-[var(--input-bg)] text-[var(--text-color)] text-input">
+                    </div>
+                    <button id="saveSettingsBtn" class="w-full py-2 bg-[var(--accent-color)] text-white font-bold rounded hover:opacity-90 transition-opacity">Lưu Cài Đặt</button>
+                    <button onclick="window.reSyncStaticData()" class="w-full py-2 bg-red-600 text-white font-bold rounded hover:opacity-90 transition-opacity mt-2">Đồng Bộ Lại Dữ Liệu Tĩnh</button>
+                </div>
+            </section>
+            
+            <section id="standings-section" class="mb-8">
+                <h2 class="text-2xl font-bold mb-4 text-[var(--text-color)]">Bảng Xếp Hạng</h2>
+                
+                <div id="group-tabs" class="flex border-b border-[var(--border-color)] mb-4 overflow-x-auto whitespace-nowrap">
+                    </div>
+                
+                <div id="standings-content">
+                    <p class="text-[var(--text-color)]">Đang tải dữ liệu...</p>
+                </div>
+            </section>
+
+            <section id="match-update-section" class="bg-[var(--card-bg)] p-4 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold text-[var(--accent-color)] mb-4">Cập Nhật Trận Đấu</h2>
+                
+                <div class="flex space-x-2 mb-4">
+                    <button onclick="window.updateMatchList('pending')" id="btn-pending" class="flex-1 py-2 rounded bg-gray-600 hover:bg-gray-700 font-bold text-white">Chờ thi đấu</button>
+                    <button onclick="window.updateMatchList('completed')" id="btn-completed" class="flex-1 py-2 rounded bg-gray-600 hover:bg-gray-700 font-bold text-white">Đã hoàn thành</button>
+                </div>
+
+                <div id="match-list" class="space-y-4">
+                    </div>
+                
+                <div id="commit-status" class="mt-4 p-3 rounded text-sm hidden"></div>
+                
+                <button id="commit-all-btn" class="w-full py-3 bg-green-600 text-white font-bold rounded mt-6 hover:bg-green-700 transition-colors">LƯU & CẬP NHẬT KẾT QUẢ LÊN GITHUB</button>
+                <p class="text-sm mt-2 text-gray-400 text-center">Chỉ các trận đấu có điểm số hợp lệ mới được cập nhật.</p>
+
+            </section>
+
+        </main>
+        
+        <footer class="p-4 text-center text-sm text-gray-500 border-t border-[var(--border-color)] mt-8">
+            Quản Lý Giải Đấu Pickleball - Phiên bản đồng bộ GitHub
+        </footer>
+    </div>
+    
+    <div id="confirmationBox" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-[var(--card-bg)] p-6 rounded-lg shadow-xl w-80">
+            <p class="text-lg font-semibold mb-4 text-[var(--text-color)]">Xác nhận Đồng bộ</p>
+            <p id="confirmationMessage" class="mb-6 text-[var(--text-color)]">Bạn có chắc chắn muốn đồng bộ lại toàn bộ dữ liệu tĩnh? Điều này sẽ ghi đè mọi thay đổi hiện tại.</p>
+            <div class="flex justify-end space-x-4">
+                <button id="confirmNo" class="py-2 px-4 rounded bg-gray-500 text-white hover:bg-gray-600">Hủy</button>
+                <button id="confirmYes" class="py-2 px-4 rounded bg-red-600 text-white hover:bg-red-700">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        // --- GLOBAL VARIABLES ---
+        let currentData = null; // Stores the full JSON data (groups, teams, matches)
+        window.groupStandings = {}; // Stores the calculated standings
+        let currentMatchView = 'pending';
+        let startX = 0;
+        let endX = 0;
+        
+        // Biến toàn cục để theo dõi tab đang hoạt động (MỚI)
+        let activeGroup = 'Group A';
+
+        // --- GITHUB CONFIG & UTILS ---
+        const GITHUB_API_URL = 'https://api.github.com/repos/';
+        const settingsKeys = ['githubToken', 'repoOwner', 'repoName', 'dataPath'];
+
+        function getSetting(key) {
+            return localStorage.getItem(key);
+        }
+
+        function saveSettings() {
+            settingsKeys.forEach(key => {
+                localStorage.setItem(key, document.getElementById(key).value.trim());
+            });
+            alert('Cài đặt đã được lưu!');
+            loadDataFromGitHub(); // Tải lại dữ liệu với cài đặt mới
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('light-mode');
+            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
+
+        function handleGesture() {
+            const diff = startX - endX;
+            if (Math.abs(diff) > 50) {
+                // Swipe detected
+                const groupNames = Object.keys(window.groupStandings);
+                const currentIndex = groupNames.indexOf(activeGroup);
+                
+                if (diff > 0 && currentIndex < groupNames.length - 1) { // Swipe Left (next group)
+                    activeGroup = groupNames[currentIndex + 1];
+                    displayStandings(window.groupStandings);
+                } else if (diff < 0 && currentIndex > 0) { // Swipe Right (previous group)
+                    activeGroup = groupNames[currentIndex - 1];
+                    displayStandings(window.groupStandings);
+                }
+            }
+        }
+
+
+        // --- DATA FETCHING & SYNC ---
+
+        async function loadDataFromGitHub() {
+            const owner = getSetting('repoOwner');
+            const repo = getSetting('repoName');
+            const dataPath = getSetting('dataPath');
+            const token = getSetting('githubToken');
+
+            if (!owner || !repo || !dataPath) {
+                document.getElementById('standings-content').innerHTML = '<p class="text-red-400">Vui lòng điền đầy đủ thông tin GitHub trong Cài Đặt.</p>';
+                return;
+            }
+
+            const url = `${GITHUB_API_URL}${owner}/${repo}/contents/${dataPath}`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3.raw'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Lỗi ${response.status}: Không thể tải file. Kiểm tra PAT và đường dẫn.`);
+                }
+
+                currentData = await response.json();
+                processData(currentData);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('standings-content').innerHTML = `<p class="text-red-400">${error.message}</p>`;
+            }
+        }
+        
+        // Dùng để mở modal xác nhận (Thay vì gọi trực tiếp reSyncStaticData)
+        window.reSyncStaticData = () => {
+            document.getElementById('confirmationBox').classList.remove('hidden');
+            document.getElementById('confirmationMessage').textContent = 'Bạn có chắc chắn muốn đồng bộ lại toàn bộ dữ liệu tĩnh (từ file data_static.json)? Điều này sẽ ghi đè mọi thay đổi hiện tại.';
+            
+            // Cài đặt lại hành động cho nút Yes
+            document.getElementById('confirmYes').onclick = () => {
+                document.getElementById('confirmationBox').classList.add('hidden');
+                // Gọi hàm sync chính thức
+                syncStaticData();
+            };
+        };
+
+        async function syncStaticData() {
+            const owner = getSetting('repoOwner');
+            const repo = getSetting('repoName');
+            const dataPath = getSetting('dataPath');
+            const token = getSetting('githubToken');
+
+            const url = `data_static.json`; // Giả định có file data_static.json cùng cấp
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Không tìm thấy file data_static.json.");
+                
+                const staticData = await response.json();
+                
+                // Lấy SHA của file hiện tại trên GitHub
+                const shaUrl = `${GITHUB_API_URL}${owner}/${repo}/contents/${dataPath}`;
+                const shaResponse = await fetch(shaUrl, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                
+                if (!shaResponse.ok) throw new Error("Lỗi khi lấy SHA của file.");
+                const fileInfo = await shaResponse.json();
+                const sha = fileInfo.sha;
+
+                // Chuẩn bị payload để commit
+                const content = JSON.stringify(staticData, null, 2);
+                const payload = {
+                    message: "Sync: Khôi phục dữ liệu tĩnh từ data_static.json",
+                    content: btoa(unescape(encodeURIComponent(content))), // Base64 encoding
+                    sha: sha 
+                };
+
+                const commitResponse = await fetch(shaUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!commitResponse.ok) {
+                    throw new Error(`Lỗi commit ${commitResponse.status}: Không thể cập nhật file.`);
+                }
+
+                alert("Khôi phục dữ liệu tĩnh thành công! Đang tải lại...");
+                await loadDataFromGitHub();
+            } catch (error) {
+                alert(`Lỗi Đồng bộ Dữ liệu Tĩnh: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+
+        // --- RANKING CALCULATION ---
+
+        // Hàm tính toán thống kê cho một đội trong một trận đấu
+        function calculateTeamStatsForMatch(match, teamId, setsToWin = 2) {
+            const isTeam1 = match.team1 === teamId;
+            const teamScores = isTeam1 ? match.scores.map(s => s[0]) : match.scores.map(s => s[1]);
+            const opponentScores = isTeam1 ? match.scores.map(s => s[1]) : match.scores.map(s => s[0]);
+            
+            let gamesWon = 0;
+            let gamesLost = 0;
+            let pointsFor = 0;
+            let pointsAgainst = 0;
+            
+            match.scores.forEach(scorePair => {
+                const teamScore = isTeam1 ? scorePair[0] : scorePair[1];
+                const opponentScore = isTeam1 ? scorePair[1] : scorePair[0];
+
+                if (teamScore > opponentScore) {
+                    gamesWon++;
+                } else if (opponentScore > teamScore) {
+                    gamesLost++;
+                }
+
+                pointsFor += teamScore;
+                pointsAgainst += opponentScore;
+            });
+
+            const matchWon = gamesWon >= setsToWin;
+            const matchLost = gamesLost >= setsToWin;
+
+            return {
+                W: matchWon ? 1 : 0,
+                L: matchLost ? 1 : 0,
+                Points: matchWon ? 3 : 0, // 3 points for a win, 0 for a loss
+                GW: gamesWon, // Games Won
+                GL: gamesLost, // Games Lost
+                PF: pointsFor, // Points For
+                PA: pointsAgainst, // Points Against
+                GD: pointsFor - pointsAgainst // Goal/Point Differential
+            };
+        }
+
+        // Hàm tính toán xếp hạng nhóm (Đã kiểm tra và giữ nguyên logic)
+        function calculateGroupStandings(group, matches) {
+            const teams = group.teams;
+            const teamStats = {};
+
+            // Khởi tạo stats
+            teams.forEach(teamId => {
+                teamStats[teamId] = {
+                    teamId: teamId,
+                    W: 0, L: 0, Points: 0, 
+                    GW: 0, GL: 0, PF: 0, PA: 0, GD: 0
+                };
+            });
+
+            // Tổng hợp stats từ các trận đấu ĐÃ HOÀN THÀNH
+            matches.filter(m => m.group === group.id && m.status === 'completed').forEach(match => {
+                const teamsInMatch = [match.team1, match.team2];
+                
+                teamsInMatch.forEach(teamId => {
+                    const stats = calculateTeamStatsForMatch(match, teamId, group.setsToWin || 2);
+
+                    teamStats[teamId].W += stats.W;
+                    teamStats[teamId].L += stats.L;
+                    teamStats[teamId].Points += stats.Points;
+                    teamStats[teamId].GW += stats.GW;
+                    teamStats[teamId].GL += stats.GL;
+                    teamStats[teamId].PF += stats.PF;
+                    teamStats[teamId].PA += stats.PA;
+                    teamStats[teamId].GD += stats.GD;
+                });
+            });
+
+            // Chuyển đổi sang mảng để sắp xếp
+            const sortedStandings = Object.values(teamStats);
+
+            // Sắp xếp thứ hạng (Ưu tiên: Points -> Matches Won -> GD -> PF)
+            sortedStandings.sort((a, b) => {
+                // 1. Primary: Tournament Points (Matches Won * 3)
+                if (b.Points !== a.Points) {
+                    return b.Points - a.Points;
+                }
+                
+                // Secondary check: Matches Won (W)
+                if (b.W !== a.W) {
+                    return b.W - a.W;
+                }
+
+                // 2. Tie-breaker 1: Point Differential (GD)
+                if (b.GD !== a.GD) {
+                    return b.GD - a.GD;
+                }
+
+                // 3. Tie-breaker 2: Points For (PF)
+                if (b.PF !== a.PF) {
+                    return b.PF - a.PF;
+                }
+                
+                // 4. Fallback: teamId (alphabetical ascending)
+                return a.teamId.localeCompare(b.teamId); 
+            });
+
+            return sortedStandings;
+        }
+
+
+        // --- DISPLAY & UI LOGIC (Tích hợp Tabs) ---
+        
+        // Hàm tạo các nút tab (MỚI)
+        function renderGroupTabs(standingsData) {
+            const tabsContainer = document.getElementById('group-tabs');
+            tabsContainer.innerHTML = '';
+            const groupNames = Object.keys(standingsData);
+            
+            // Nếu không có dữ liệu nhóm, dừng lại
+            if (groupNames.length === 0) return;
+
+            // Đảm bảo tab mặc định là một trong các nhóm có sẵn
+            if (!groupNames.includes(activeGroup)) {
+                activeGroup = groupNames[0];
+            }
+
+            groupNames.forEach(groupName => {
+                const button = document.createElement('button');
+                button.id = `tab-${groupName.replace(/\s/g, '-')}`;
+                button.textContent = groupName;
+                button.className = 'py-2 px-4 text-sm font-medium focus:outline-none transition-colors duration-200';
+                
+                // Cập nhật giao diện tab (active/inactive)
+                const isActive = groupName === activeGroup;
+                if (isActive) {
+                    button.classList.add('border-b-2', 'border-[var(--accent-color)]', 'text-[var(--accent-color)]');
+                    button.classList.remove('text-gray-400', 'hover:text-[var(--accent-color)]');
+                } else {
+                    button.classList.add('text-gray-400', 'hover:text-[var(--accent-color)]');
+                    button.classList.remove('border-b-2', 'border-[var(--accent-color)]', 'text-[var(--accent-color)]');
+                }
+
+                button.addEventListener('click', () => {
+                    activeGroup = groupName;
+                    // Chạy lại hàm hiển thị để cập nhật cả tabs và standings
+                    displayStandings(window.groupStandings); 
+                });
+
+                tabsContainer.appendChild(button);
+            });
+        }
+
+        // Hàm mới: Chỉ hiển thị bảng xếp hạng cho nhóm đang hoạt động (MỚI)
+        function renderActiveStandings(standingsData) {
+            const contentContainer = document.getElementById('standings-content');
+            contentContainer.innerHTML = '';
+
+            const activeGroupStandings = standingsData[activeGroup];
+            if (!activeGroupStandings || activeGroupStandings.length === 0) {
+                contentContainer.innerHTML = `<p class="text-[var(--text-color)]">Không tìm thấy dữ liệu hoặc chưa có trận đấu nào hoàn thành cho ${activeGroup}.</p>`;
+                return;
+            }
+
+            // Tái sử dụng HTML cho bảng xếp hạng (chỉ hiển thị một bảng)
+            let html = `
+                <div class="standings-table-container bg-[var(--card-bg)] p-4 rounded-lg shadow-lg mb-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-[var(--border-color)]">
+                            <thead class="bg-[var(--card-bg)] sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Hạng</th>
+                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Đội</th>
+                                    <th class="px-3 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Đ</th>
+                                    <th class="px-3 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">T/B</th>
+                                    <th class="px-3 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">HS Điểm</th>
+                                    <th class="px-3 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Điểm Ghi (PF)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[var(--border-color)] text-[var(--text-color)]">
+            `;
+
+            activeGroupStandings.forEach((team, index) => {
+                html += `
+                    <tr class="${index % 2 === 0 ? 'bg-[var(--card-bg)]' : 'bg-[var(--match-bg)]'} hover:bg-gray-700">
+                        <td class="px-3 py-2 whitespace-nowrap text-sm font-bold">${index + 1}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm">${team.teamId}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm text-center font-bold text-[var(--accent-color)]">${team.Points}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm text-center">${team.W}-${team.L}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm text-center ${team.GD > 0 ? 'text-green-400 font-semibold' : team.GD < 0 ? 'text-red-400' : 'text-yellow-400'}">${team.GD}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm text-center">${team.PF}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            contentContainer.innerHTML = html;
+        }
+
+        // Cập nhật hàm này để sử dụng logic tabs (ĐÃ SỬA)
+        function displayStandings(standingsData) {
+            window.groupStandings = standingsData; // Lưu dữ liệu để sử dụng lại
+            
+            // 1. Tạo và cập nhật các nút tab
+            renderGroupTabs(standingsData);
+
+            // 2. Chỉ hiển thị bảng xếp hạng cho nhóm đang hoạt động
+            renderActiveStandings(standingsData);
+        }
+
+        function displayMatchList(matches) {
+            const matchList = document.getElementById('match-list');
+            matchList.innerHTML = '';
+            
+            const filteredMatches = matches.filter(m => m.status === currentMatchView);
+
+            if (filteredMatches.length === 0) {
+                 matchList.innerHTML = `<p class="text-center py-4 text-gray-400">Không có trận đấu nào ở trạng thái "${currentMatchView === 'pending' ? 'Chờ thi đấu' : 'Đã hoàn thành'}".</p>`;
+                 return;
+            }
+
+            filteredMatches.forEach(match => {
+                const groupInfo = currentData.groups.find(g => g.id === match.group);
+                const setsToWin = groupInfo ? groupInfo.setsToWin : 2;
+                
+                const card = document.createElement('div');
+                card.id = `match-${match.id}`;
+                card.className = `p-3 rounded-lg bg-[var(--match-bg)] shadow-md border border-[var(--border-color)] space-y-2`;
+                
+                let scoresHtml = '';
+                for (let i = 0; i < setsToWin * 2 - 1; i++) {
+                    const score1 = match.scores[i] ? match.scores[i][0] : '';
+                    const score2 = match.scores[i] ? match.scores[i][1] : '';
+                    const setIndex = i + 1;
+                    
+                    scoresHtml += `
+                        <div class="flex items-center space-x-1">
+                            <input type="number" data-match-id="${match.id}" data-set="${setIndex}" data-team="1" 
+                                class="score-input w-12 p-1 text-center bg-[var(--input-bg)] rounded text-[var(--text-color)]" 
+                                value="${score1}" placeholder="Set ${setIndex}" min="0" ${match.status === 'completed' ? 'disabled' : ''}>
+                            <span class="text-sm">-</span>
+                            <input type="number" data-match-id="${match.id}" data-set="${setIndex}" data-team="2" 
+                                class="score-input w-12 p-1 text-center bg-[var(--input-bg)] rounded text-[var(--text-color)]" 
+                                value="${score2}" placeholder="Set ${setIndex}" min="0" ${match.status === 'completed' ? 'disabled' : ''}>
+                        </div>
+                    `;
+                }
+                
+                // Add an input listener to handle score updates and change status if valid
+                card.addEventListener('input', (e) => {
+                    if (e.target.classList.contains('score-input')) {
+                        const updatedMatch = getMatchScores(match.id);
+                        if (checkMatchCompletion(updatedMatch, setsToWin)) {
+                            match.status = 'pending_update';
+                            e.target.closest('.rounded-lg').classList.add('border-yellow-400', 'border-2');
+                        } else {
+                            match.status = 'pending';
+                            e.target.closest('.rounded-lg').classList.remove('border-yellow-400', 'border-2');
+                        }
+                    }
+                });
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-sm font-semibold text-gray-400">
+                        <span>${match.group} | ${match.matchTime}</span>
+                        <span class="status-badge text-xs px-2 py-1 rounded ${match.status === 'completed' ? 'bg-green-600' : 'bg-blue-600'} text-white">${match.status === 'completed' ? 'Hoàn thành' : 'Chờ đấu'}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-lg font-bold">
+                        <span class="w-1/3 truncate">${match.team1}</span>
+                        <span class="text-xl mx-2 text-[var(--accent-color)]">VS</span>
+                        <span class="w-1/3 text-right truncate">${match.team2}</span>
+                    </div>
+                    <div class="flex justify-center items-center space-x-2 pt-2">
+                        ${scoresHtml}
+                    </div>
+                `;
+                matchList.appendChild(card);
+            });
+            
+            // Set active button style
+            document.getElementById('btn-pending').classList.toggle('bg-[var(--accent-color)]', currentMatchView === 'pending');
+            document.getElementById('btn-pending').classList.toggle('bg-gray-600', currentMatchView !== 'pending');
+            document.getElementById('btn-completed').classList.toggle('bg-[var(--accent-color)]', currentMatchView === 'completed');
+            document.getElementById('btn-completed').classList.toggle('bg-gray-600', currentMatchView !== 'completed');
+        }
+        
+        // --- HELPER FUNCTIONS ---
+
+        function getMatchScores(matchId) {
+            const match = currentData.matches.find(m => m.id === matchId);
+            if (!match) return null;
+
+            const groupInfo = currentData.groups.find(g => g.id === match.group);
+            const setsToWin = groupInfo ? groupInfo.setsToWin : 2;
+            
+            const newScores = [];
+            
+            // Dùng DOM để lấy điểm số từ các input
+            const inputs = document.querySelectorAll(`.score-input[data-match-id="${matchId}"]`);
+            
+            for(let i = 0; i < inputs.length / 2; i++) {
+                const input1 = document.querySelector(`.score-input[data-match-id="${matchId}"][data-set="${i + 1}"][data-team="1"]`);
+                const input2 = document.querySelector(`.score-input[data-match-id="${matchId}"][data-set="${i + 1}"][data-team="2"]`);
+                
+                const score1 = input1 ? parseInt(input1.value) : NaN;
+                const score2 = input2 ? parseInt(input2.value) : NaN;
+                
+                if (!isNaN(score1) && !isNaN(score2)) {
+                    newScores.push([score1, score2]);
+                } else if (i < setsToWin * 2 - 1 && (!isNaN(score1) || !isNaN(score2))) {
+                    // Nếu một trong hai ô có điểm, vẫn thêm vào để tính toán, nhưng sẽ không qua checkMatchCompletion
+                    newScores.push([score1 || 0, score2 || 0]);
+                }
+            }
+
+            match.scores = newScores;
+            return match;
+        }
+
+        // Kiểm tra xem trận đấu đã hoàn thành (đủ số set thắng) chưa
+        function checkMatchCompletion(match, setsToWin) {
+            let wins1 = 0;
+            let wins2 = 0;
+            let totalSetsCompleted = 0;
+
+            for (const [score1, score2] of match.scores) {
+                if (typeof score1 !== 'number' || typeof score2 !== 'number' || isNaN(score1) || isNaN(score2)) {
+                    continue; // Bỏ qua set chưa nhập đủ điểm
+                }
+                
+                // Giả sử luật chơi là thắng 11 điểm cách 2
+                const isSetComplete = (Math.max(score1, score2) >= 11 && Math.abs(score1 - score2) >= 2) || 
+                                     (score1 >= 11 && score1 > score2 && score2 < 11) || // Simplified check
+                                     (score2 >= 11 && score2 > score1 && score1 < 11) ||
+                                     (Math.max(score1, score2) > 11 && Math.abs(score1 - score2) >= 2);
+
+                if (!isSetComplete) {
+                    // Nếu set hiện tại chưa kết thúc, trận đấu chưa thể hoàn thành
+                    return false;
+                }
+
+                totalSetsCompleted++;
+                if (score1 > score2) {
+                    wins1++;
+                } else if (score2 > score1) {
+                    wins2++;
+                }
+                
+                // Kiểm tra điều kiện thắng trận
+                if (wins1 >= setsToWin || wins2 >= setsToWin) {
+                    return true;
+                }
+            }
+            
+            // Nếu đủ set (ví dụ 3 set cho best of 3) nhưng chưa có ai thắng
+            // Hoặc số set hoàn thành ít hơn tổng số set đã ghi trong JSON (có thể có set bỏ trống)
+            return wins1 >= setsToWin || wins2 >= setsToWin;
+        }
+
+        // --- PROCESS AND SYNC ---
+
+        function processData(data) {
+            const standings = {};
+            data.groups.forEach(group => {
+                standings[group.id] = calculateGroupStandings(group, data.matches);
+            });
+            displayStandings(standings);
+            window.updateMatchList(currentMatchView);
+        }
+        
+        window.updateMatchList = (view) => {
+            currentMatchView = view;
+            displayMatchList(currentData.matches);
+        }
+
+        async function commitAllUpdates() {
+            const token = getSetting('githubToken');
+            const owner = getSetting('repoOwner');
+            const repo = getSetting('repoName');
+            const dataPath = getSetting('dataPath');
+            const statusDiv = document.getElementById('commit-status');
+
+            if (!token || !owner || !repo || !dataPath) {
+                statusDiv.className = 'mt-4 p-3 rounded text-sm bg-red-400 text-white';
+                statusDiv.textContent = 'Lỗi: Vui lòng điền đầy đủ cài đặt GitHub.';
+                statusDiv.classList.remove('hidden');
+                return;
+            }
+            
+            // 1. Cập nhật scores và status
+            let matchesToUpdateCount = 0;
+            currentData.matches.forEach(match => {
+                const groupInfo = currentData.groups.find(g => g.id === match.group);
+                const setsToWin = groupInfo ? groupInfo.setsToWin : 2;
+                
+                // Lấy điểm mới nhất từ DOM (đã được lưu tạm vào currentData.matches khi input)
+                const isComplete = checkMatchCompletion(match, setsToWin); 
+                
+                if (isComplete && match.status !== 'completed') {
+                    match.status = 'completed';
+                    matchesToUpdateCount++;
+                } else if (!isComplete && match.status === 'completed') {
+                    // Nếu người dùng xóa điểm của trận đã complete, đưa về pending
+                    match.status = 'pending';
+                    matchesToUpdateCount++;
+                } else if (match.status === 'pending_update') {
+                    // Đánh dấu trận pending_update thành pending sau khi lấy điểm
+                    match.status = 'pending'; 
+                }
+            });
+            
+            if (matchesToUpdateCount === 0) {
+                 statusDiv.className = 'mt-4 p-3 rounded text-sm bg-yellow-400 text-black';
+                 statusDiv.textContent = 'Không có trận đấu mới nào hoàn thành hoặc cần cập nhật trạng thái.';
+                 statusDiv.classList.remove('hidden');
+                 return;
+            }
+
+            // 2. Fetch SHA của file hiện tại
+            const url = `${GITHUB_API_URL}${owner}/${repo}/contents/${dataPath}`;
+            statusDiv.className = 'mt-4 p-3 rounded text-sm bg-blue-400 text-white';
+            statusDiv.textContent = 'Đang lấy thông tin file hiện tại...';
+            statusDiv.classList.remove('hidden');
+            
+            try {
+                const shaResponse = await fetch(url, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                
+                if (!shaResponse.ok) throw new Error("Lỗi khi lấy SHA file.");
+                const fileInfo = await shaResponse.json();
+                const sha = fileInfo.sha;
+
+                // 3. Commit file mới
+                const content = JSON.stringify(currentData, null, 2);
+                const payload = {
+                    message: `[SCORE UPDATE] Cập nhật ${matchesToUpdateCount} trận đấu mới.`,
+                    content: btoa(unescape(encodeURIComponent(content))), // Base64 encoding
+                    sha: sha 
+                };
+
+                statusDiv.textContent = 'Đang gửi commit lên GitHub...';
+
+                const commitResponse = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!commitResponse.ok) {
+                    const errorDetails = await commitResponse.json();
+                    throw new Error(`Lỗi commit ${commitResponse.status}: ${errorDetails.message || 'Không rõ.'}`);
+                }
+
+                statusDiv.className = 'mt-4 p-3 rounded text-sm bg-green-600 text-white';
+                statusDiv.textContent = `Thành công! Đã cập nhật ${matchesToUpdateCount} trận đấu lên GitHub. Đang tải lại dữ liệu...`;
+
+                // 4. Tải lại dữ liệu sau khi commit
+                setTimeout(loadDataFromGitHub, 1500);
+
+            } catch (error) {
+                statusDiv.className = 'mt-4 p-3 rounded text-sm bg-red-600 text-white';
+                statusDiv.textContent = `Lỗi: ${error.message}`;
+                console.error('Commit failed:', error);
+            }
+        }
+
+        // --- INITIALIZATION ---
+
+        function initializeApp() {
+            // Load theme preference
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+            } else {
+                document.body.classList.remove('light-mode');
+            }
+
+            // Load and display settings
+            settingsKeys.forEach(key => {
+                const value = getSetting(key);
+                if (value && document.getElementById(key)) {
+                    document.getElementById(key).value = value;
+                }
+            });
+            // Mask token after loading
+            if (document.getElementById('githubToken').value.length > 0) {
+                 document.getElementById('githubToken').value = '********';
+            }
+            
+            // Event listeners
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('settingsBtn').addEventListener('click', () => {
+                document.getElementById('settingsPanel').classList.toggle('hidden');
+            });
+            document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
+            document.getElementById('commit-all-btn').addEventListener('click', commitAllUpdates);
+            
+            // Swipe/Gesture setup
+            document.getElementById('app').addEventListener('touchstart', (e) => {
+                // Đảm bảo không kích hoạt swipe khi chạm vào input
+                if (e.target.classList.contains('score-input') || e.target.classList.contains('text-input')) return;
+                startX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            document.getElementById('app').addEventListener('touchend', (e) => {
+                // Đảm bảo không kích hoạt swipe khi chạm vào input
+                if (e.target.classList.contains('score-input') || e.target.classList.contains('text-input')) return;
+                endX = e.changedTouches[0].screenX;
+                handleGesture();
+            }, { passive: true });
+            
+            // Modal button setup
+            // Note: window.reSyncStaticData is now just an alias to open the modal
+            // document.getElementById('confirmYes').onclick is set inside the modal opening function
+            document.getElementById('confirmNo').onclick = () => document.getElementById('confirmationBox').classList.add('hidden');
+            
+            // Start data loading
+            loadDataFromGitHub();
+        }
+
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
