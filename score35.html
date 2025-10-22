@@ -48,6 +48,11 @@
         .score-input:focus, .text-input:focus {
             box-shadow: 0 0 0 3px var(--accent-color);
         }
+        .score-input:disabled, .text-input:disabled {
+            background-color: #374151; /* Gray-700 */
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
         .tab-button {
             border-bottom-color: var(--border-color);
         }
@@ -300,15 +305,20 @@
              return JSON.parse(jsonString);
         }
 
+        // --- CÁC HÀM TRA CỨU ĐỘI ĐÃ ĐƯỢC CHUẨN HÓA DỰA TRÊN CẤU TRÚC JSON MỚI ---
+        
         /**
-         * Lấy ID của đội dựa trên tên rút gọn.
-         * @param {string} shortName - Tên rút gọn của đội (Tn).
+         * Lấy ID của đội (T) dựa trên tên đội dùng trong match object (Tn/D).
+         * ASSUMPTION: The team name string in match object (A/B) is stored in the team.Tn field in tL.
+         * @param {string} teamName - Tên đội đầy đủ (e.g., "Duy Hưng-Minh Tú").
          * @returns {string|null} Mã đội (T) hoặc null.
          */
-        function getTeamIdByShortName(shortName) {
+        function getTeamIdByTeamName(teamName) {
             if (!tournamentData || !tournamentData.tL) return null;
+            // Dùng D để tra cứu nếu Tn bị thiếu hoặc dùng để hiển thị khác
             for (const team of tournamentData.tL) {
-                if (team.Tn === shortName) {
+                // Ưu tiên so sánh với Tn (Tên rút gọn/định danh)
+                if (team.Tn === teamName) {
                     return team.T;
                 }
             }
@@ -316,19 +326,21 @@
         }
         
         /**
-         * Lấy tên rút gọn của đội dựa trên ID.
+         * Lấy tên rút gọn của đội (Tn) dựa trên ID.
          * @param {string} teamId - Mã đội (T).
-         * @returns {string|null} Tên rút gọn (Tn) hoặc null.
+         * @returns {string|null} Tên rút gọn (Tn) hoặc Mã đội nếu không tìm thấy.
          */
-        function getTeamShortNameById(teamId) {
-             if (!tournamentData || !tournamentData.tL) return teamId; // Trả về ID nếu không tìm thấy
+        function getTeamNameById(teamId) {
+             if (!tournamentData || !tournamentData.tL) return teamId;
              for (const team of tournamentData.tL) {
                  if (team.T === teamId) {
                      return team.Tn;
                  }
              }
-             return teamId; // Trả về ID nếu không tìm thấy
+             return teamId;
          }
+
+        // ------------------------------------------------------------------------
 
         /**
          * Hợp nhất dữ liệu tỉ số vào dữ liệu giải đấu chính.
@@ -348,7 +360,14 @@
                     merged[matchesKey] = merged[matchesKey].map((match, index) => {
                         const diffMatch = diffData[matchesKey][index];
                         if (diffMatch) {
-                            return { ...match, ...diffMatch };
+                            // Merge only score and winner/loser fields
+                            return { 
+                                ...match, 
+                                sA: diffMatch.sA !== undefined ? diffMatch.sA : match.sA,
+                                sB: diffMatch.sB !== undefined ? diffMatch.sB : match.sB,
+                                Wn: diffMatch.Wn !== undefined ? diffMatch.Wn : match.Wn,
+                                rU: diffMatch.rU !== undefined ? diffMatch.rU : match.rU,
+                            };
                         }
                         return match;
                     });
@@ -361,7 +380,13 @@
                      merged[round] = merged[round].map((match, index) => {
                          const diffMatch = diffData[round][index];
                          if (diffMatch) {
-                             return { ...match, ...diffMatch };
+                             return { 
+                                 ...match, 
+                                 sA: diffMatch.sA !== undefined ? diffMatch.sA : match.sA,
+                                 sB: diffMatch.sB !== undefined ? diffMatch.sB : match.sB,
+                                 Wn: diffMatch.Wn !== undefined ? diffMatch.Wn : match.Wn,
+                                 rU: diffMatch.rU !== undefined ? diffMatch.rU : match.rU,
+                             };
                          }
                          return match;
                      });
@@ -378,18 +403,28 @@
 
         /**
          * Xác định đội thắng và cập nhật trường Wn.
+         * Dùng cho cả vòng bảng (isGroupMatch=true, dùng A/B là tên đội) và vòng loại (isGroupMatch=false, dùng tA/tB là ID).
          * @param {Object} match - Đối tượng trận đấu.
-         * @param {string} teamAId - Mã đội A (T).
-         * @param {string} teamBId - Mã đội B (T).
+         * @param {boolean} isGroupMatch - True nếu là trận vòng bảng (dùng A, B, Wn strings), False nếu là vòng loại (dùng tA, tB, Wn IDs).
          */
-        function calculateWinner(match, teamAId, teamBId) {
+        function calculateWinner(match, isGroupMatch) {
             const scoreA = parseInt(match.sA) || 0;
             const scoreB = parseInt(match.sB) || 0;
 
+            let teamA, teamB;
+            if (isGroupMatch) {
+                teamA = match.A; // Team Name string
+                teamB = match.B; // Team Name string
+            } else {
+                teamA = match.tA; // Team ID (T)
+                teamB = match.tB; // Team ID (T)
+            }
+            
+            // Chỉ tính thắng thua nếu có tỉ số khác 0
             if (scoreA > scoreB) {
-                match.Wn = teamAId;
+                match.Wn = teamA;
             } else if (scoreB > scoreA) {
-                match.Wn = teamBId;
+                match.Wn = teamB;
             } else {
                 match.Wn = null; // Hòa hoặc chưa đấu
             }
@@ -417,7 +452,6 @@
             if (!tournamentData) return;
 
             const groups = ['A', 'B', 'C', 'D'];
-            const allTeams = tournamentData.tL;
 
             groups.forEach(group => {
                 const matchesKey = `matches${group}`;
@@ -433,25 +467,28 @@
                 
                 // 2. Aggregate stats from matches
                 groupMatches.forEach(match => {
-                    const teamAId = getTeamIdByShortName(match.tA);
-                    const teamBId = getTeamIdByShortName(match.tB);
-                    
-                    if (teamAId && teamBId && match.Wn) {
-                         // Cập nhật Winner/Loser cho match object
-                         calculateWinner(match, teamAId, teamBId);
+                    // Calculate Winner (Wn is the name string)
+                    calculateWinner(match, true); 
 
+                    // Get team IDs for stat update
+                    const teamAId = getTeamIdByTeamName(match.A); // Get ID from Team Name string
+                    const teamBId = getTeamIdByTeamName(match.B); // Get ID from Team Name string
+                    const winnerName = match.Wn;
+                    const winnerId = winnerName ? getTeamIdByTeamName(winnerName) : null;
+                    
+                    if (teamAId && teamBId) {
                          // Cập nhật stats
-                         if (match.Wn === teamAId) {
+                         if (winnerId === teamAId) {
                              if (teamStats[teamAId]) { teamStats[teamAId].W += 1; teamStats[teamAId].Pts += 3; teamStats[teamAId].mP += 1; }
                              if (teamStats[teamBId]) { teamStats[teamBId].L += 1; teamStats[teamBId].mP += 1; }
-                         } else if (match.Wn === teamBId) {
+                         } else if (winnerId === teamBId) {
                              if (teamStats[teamBId]) { teamStats[teamBId].W += 1; teamStats[teamBId].Pts += 3; teamStats[teamBId].mP += 1; }
                              if (teamStats[teamAId]) { teamStats[teamAId].L += 1; teamStats[teamAId].mP += 1; }
+                         } else if (match.sA || match.sB) {
+                              // Trường hợp hòa hoặc chưa tính thắng thua nhưng đã có tỉ số
+                             if (teamStats[teamAId]) { teamStats[teamAId].mP += 1; }
+                             if (teamStats[teamBId]) { teamStats[teamBId].mP += 1; }
                          }
-                    } else if (teamAId && teamBId && (match.sA || match.sB) ) {
-                         // Nếu có tỉ số nhưng chưa xác định thắng/thua (chẳng hạn hòa 1-1 set)
-                         if (teamStats[teamAId]) { teamStats[teamAId].mP += 1; }
-                         if (teamStats[teamBId]) { teamStats[teamBId].mP += 1; }
                     }
                 });
                 
@@ -470,21 +507,25 @@
                     return team;
                 });
                 
-                // 4. Sort the table (The most crucial part for "rank" update)
+                // 4. Sort the table
                 groupTable.sort((a, b) => {
-                    // Ưu tiên 1: Số trận thắng (W)
                     if (b.W !== a.W) return b.W - a.W;
-                    // Ưu tiên 2: Điểm số (Pts)
                     if (b.Pts !== a.Pts) return b.Pts - a.Pts;
-                    // Ưu tiên 3: Hiệu số (Nếu có field Hiệu số) hoặc Thành tích đối đầu (Cần logic phức tạp hơn)
-                    // Hiện tại, giữ nguyên thứ tự nếu W và Pts bằng nhau.
                     return 0; 
                 });
                 
                 tournamentData[tableKey] = groupTable;
                 
-                // 5. Update team list (tL) with final positions for knockout seeding (Dữ liệu chưa có seed nhưng có thể chuẩn bị cho vòng loại)
-                // Cập nhật thông tin đội đi tiếp vào tL nếu cần (logic phức tạp, tạm bỏ qua)
+                // 5. Update team list (tL) D-Tn based on position
+                // Logic cập nhật tên đội D theo vị trí để hiển thị đúng trên bảng xếp hạng (team.D = team.Tn)
+                const sortedTeamIds = groupTable.map(team => team.T);
+                tournamentData.tL = tournamentData.tL.map(team => {
+                    if (sortedTeamIds.includes(team.T)) {
+                        // Cập nhật D = Tn theo yêu cầu cũ
+                        return { ...team, D: team.Tn };
+                    }
+                    return team;
+                });
             });
         }
 
@@ -499,12 +540,12 @@
             const matches = Array.isArray(tournamentData[round]) ? tournamentData[round] : [tournamentData[round]];
 
             matches.forEach(match => {
-                const teamAId = match.tA; // Vòng loại dùng T (ID) thay vì Tn (ShortName)
+                const teamAId = match.tA; // Vòng loại dùng T (ID)
                 const teamBId = match.tB;
 
                 if (teamAId && teamBId) {
-                    // Cập nhật Winner/Loser
-                    calculateWinner(match, teamAId, teamBId);
+                    // Cập nhật Winner/Loser (Wn là ID của đội thắng)
+                    calculateWinner(match, false); // false for knockout match (uses tA/tB, sets Wn to ID)
                     
                     if (round === 'final' && match.Wn) {
                          // Cập nhật đội Á quân cho trận chung kết
@@ -538,7 +579,6 @@
                     }
                 }
             });
-            // Cần chạy lại hàm này nếu có trận đấu mới được cập nhật
         }
         
         /**
@@ -580,9 +620,12 @@
                         const fieldsToCompare = ['sA', 'sB', 'Wn', 'rU'];
                         
                         fieldsToCompare.forEach(field => {
-                            // Sử dụng String() để so sánh an toàn hơn (null vs 'null', 0 vs '0')
+                            // So sánh dựa trên giá trị (bao gồm null)
                             if (String(currentMatch[field]) !== String(initialMatch[field])) {
-                                diffMatch[field] = currentMatch[field];
+                                // Chỉ gán giá trị nếu nó khác, bao gồm cả null
+                                if (currentMatch[field] !== undefined) {
+                                     diffMatch[field] = currentMatch[field];
+                                }
                                 isDiff = true;
                             }
                         });
@@ -717,7 +760,6 @@
                 // Header
                 html += `<thead><tr>`;
                 html += `<th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">#</th>`;
-                // ĐÃ SỬA: Thay ${legend.D} bằng TEAM theo yêu cầu
                 html += `<th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">TEAM</th>`; 
                 html += `<th class="px-3 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">${legend.W}</th>`;
                 html += `<th class="px-3 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">${legend.L}</th>`;
@@ -733,7 +775,7 @@
                     
                     html += `<tr class="${rowClasses} transition duration-150">`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${rank}</td>`;
-                    // ĐÃ SỬA: Giữ nguyên team.D để hiển thị tên đội
+                    // Dùng team.D để hiển thị tên đội
                     html += `<td class="px-3 py-3 whitespace-nowrap text-sm font-medium">${team.D}</td>`; 
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.W}</td>`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.L}</td>`;
@@ -753,25 +795,30 @@
                 html += `<div class="space-y-3">`;
 
                 matchesData.forEach((match, index) => {
-                    const teamAId = getTeamIdByShortName(match.tA);
-                    const teamBId = getTeamIdByShortName(match.tB);
+                    // Cấu trúc mới dùng A và B làm tên đội
+                    const teamA = match.A; 
+                    const teamB = match.B;
                     
                     const scoreA = match.sA !== undefined ? match.sA : '';
                     const scoreB = match.sB !== undefined ? match.sB : '';
                     const matchId = `${group}-${index}`;
                     
-                    const isCompleted = match.Wn !== null && match.Wn !== undefined;
-                    const winnerClassA = isCompleted && match.Wn === teamAId ? 'font-extrabold text-[var(--accent-color)]' : 'font-medium';
-                    const winnerClassB = isCompleted && match.Wn === teamBId ? 'font-extrabold text-[var(--accent-color)]' : 'font-medium';
-                    const winnerIconA = isCompleted && match.Wn === teamAId ? '🏆' : '';
-                    const winnerIconB = isCompleted && match.Wn === teamBId ? '🏆' : '';
+                    // Wn là tên đội thắng (string)
+                    const isCompleted = match.Wn !== null && match.Wn !== undefined && match.Wn !== '';
+                    const winnerClassA = isCompleted && match.Wn === teamA ? 'font-extrabold text-[var(--accent-color)]' : 'font-medium';
+                    const winnerClassB = isCompleted && match.Wn === teamB ? 'font-extrabold text-[var(--accent-color)]' : 'font-medium';
+                    const winnerIconA = isCompleted && match.Wn === teamA ? '🏆' : '';
+                    const winnerIconB = isCompleted && match.Wn === teamB ? '🏆' : '';
                     
+                    // Thêm thông tin thời gian (t) và sân (c)
+                    const timeCourt = (match.t && match.c) ? ` (${match.t} - ${match.c})` : '';
+
                     html += `
                         <div class="match-card p-4 rounded-lg shadow-md border-2 ${isCompleted ? 'border-green-600/50' : 'border-[var(--border-color)]'}">
-                            <h3 class="text-lg font-bold mb-3">Match ${index + 1}</h3>
+                            <h3 class="text-lg font-bold mb-3">Match ${index + 1}${timeCourt}</h3>
                             <div class="grid grid-cols-5 gap-2 items-center text-center">
                                 
-                                <div class="col-span-2 text-left ${winnerClassA}">${winnerIconA} ${match.tA}</div>
+                                <div class="col-span-2 text-left ${winnerClassA}">${winnerIconA} ${teamA}</div>
                                 
                                 <div>
                                     <input type="number" id="scoreA-${matchId}" value="${scoreA}" 
@@ -787,7 +834,7 @@
                                            onchange="updateMatchScore('${group}', ${index}, 'B', this.value)">
                                 </div>
                                 
-                                <div class="col-span-2 text-right ${winnerClassB}">${match.tB} ${winnerIconB}</div>
+                                <div class="col-span-2 text-right ${winnerClassB}">${teamB} ${winnerIconB}</div>
                             </div>
                         </div>`;
                 });
@@ -821,13 +868,15 @@
                 const teamAId = match.tA;
                 const teamBId = match.tB;
                 const matchPos = match.Pos || (index + 1);
-                const teamAName = getTeamShortNameById(teamAId) || 'TBD';
-                const teamBName = getTeamShortNameById(teamBId) || 'TBD';
+                // Vòng loại vẫn dùng ID, nên ta dùng getTeamNameById
+                const teamAName = getTeamNameById(teamAId) || 'TBD';
+                const teamBName = getTeamNameById(teamBId) || 'TBD';
                 
                 const scoreA = match.sA !== undefined ? match.sA : '';
                 const scoreB = match.sB !== undefined ? match.sB : '';
                 const matchId = `${round}-${matchPos}`;
                 
+                // Vòng loại Wn là ID
                 const isCompleted = match.Wn !== null && match.Wn !== undefined && teamAName !== 'TBD' && teamBName !== 'TBD';
                 const winnerClassA = isCompleted && match.Wn === teamAId ? 'font-extrabold text-[var(--accent-color)]' : 'font-medium';
                 const winnerClassB = isCompleted && match.Wn === teamBId ? 'font-extrabold text-[var(--accent-color)]' : 'font-medium';
@@ -878,8 +927,9 @@
              const winnerId = finalMatch.Wn;
              const runnerUpId = finalMatch.rU;
              
-             const winnerName = getTeamShortNameById(winnerId);
-             const runnerUpName = getTeamShortNameById(runnerUpId);
+             // Vòng loại dùng ID
+             const winnerName = getTeamNameById(winnerId);
+             const runnerUpName = getTeamNameById(runnerUpId);
              
              let html = ``;
              
@@ -1022,7 +1072,6 @@
             const finalSection = document.getElementById('finalSection');
             if (finalSection) {
                  finalSection.innerHTML = '';
-                 // renderKnockoutRound handles the match rendering, but the element name is `finalMatchSection`
                  const finalData = tournamentData.final;
                  if (finalData) {
                       let html = `
@@ -1036,8 +1085,9 @@
                       const matchPos = match.Pos || (index + 1);
                       const teamAId = match.tA;
                       const teamBId = match.tB;
-                      const teamAName = getTeamShortNameById(teamAId) || 'TBD';
-                      const teamBName = getTeamShortNameById(teamBId) || 'TBD';
+                      // Vòng loại dùng ID
+                      const teamAName = getTeamNameById(teamAId) || 'TBD';
+                      const teamBName = getTeamNameById(teamBId) || 'TBD';
                       
                       const scoreA = match.sA !== undefined ? match.sA : '';
                       const scoreB = match.sB !== undefined ? match.sB : '';
@@ -1113,7 +1163,7 @@
             const matchesKey = `matches${group}`;
             const field = team === 'A' ? 'sA' : 'sB';
             
-            // Đảm bảo giá trị là số hoặc string rỗng
+            // Đảm bảo giá trị là số hoặc null
             const scoreValue = value.trim() === '' ? null : parseInt(value);
 
             if (tournamentData[matchesKey] && tournamentData[matchesKey][index]) {
@@ -1135,7 +1185,7 @@
              const roundData = tournamentData[round];
              const field = team === 'A' ? 'sA' : 'sB';
              
-             // Đảm bảo giá trị là số hoặc string rỗng
+             // Đảm bảo giá trị là số hoặc null
              const scoreValue = value.trim() === '' ? null : parseInt(value);
 
              if (Array.isArray(roundData) && roundData[index]) {
