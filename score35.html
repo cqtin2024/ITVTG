@@ -827,10 +827,10 @@
                 const teamAName = getTeamShortNameById(teamAId) || 'TBD';
                 const teamBName = getTeamShortNameById(teamBId) || 'TBD';
                 
-                // --- THÊM: Logic để vô hiệu hóa input nếu đội là TBD (Cho score35) ---
+                // --- Logic để vô hiệu hóa input nếu đội là TBD (Fix score35) ---
                 const disabledA = teamAName === 'TBD' ? 'disabled' : '';
                 const disabledB = teamBName === 'TBD' ? 'disabled' : '';
-                // -------------------------------------------------------------------
+                // ---------------------------------------------------------------
 
                 const scoreA = match.sA !== undefined ? match.sA : '';
                 const scoreB = match.sB !== undefined ? match.sB : '';
@@ -847,7 +847,7 @@
                 const teamBDisplay = teamBName === 'TBD' ? `(Winner ${match.pB})` : teamBName;
                 
                 html += `
-                    <div class="match-card p-4 rounded-lg shadow-lg border-2 ${isCompleted ? 'border-purple-600' : 'border-gray-700'}">
+                    <div class="match-card p-4 rounded-lg shadow-lg border-2 ${isCompleted ? 'border-purple-600/50' : 'border-gray-700'}">
                         <h3 class="text-xl font-bold mb-3">${title}</h3>
                         <div class="grid grid-cols-5 gap-2 items-center text-center">
                             
@@ -1047,10 +1047,10 @@
                       const teamAName = getTeamShortNameById(teamAId) || 'TBD';
                       const teamBName = getTeamShortNameById(teamBId) || 'TBD';
                       
-                      // --- THÊM: Logic để vô hiệu hóa input nếu đội là TBD (Cho score35) ---
+                      // --- Logic để vô hiệu hóa input nếu đội là TBD (Fix score35) ---
                       const disabledA = teamAName === 'TBD' ? 'disabled' : '';
                       const disabledB = teamBName === 'TBD' ? 'disabled' : '';
-                      // -------------------------------------------------------------------
+                      // ---------------------------------------------------------------
 
                       const scoreA = match.sA !== undefined ? match.sA : '';
                       const scoreB = match.sB !== undefined ? match.sB : '';
@@ -1217,10 +1217,10 @@
 
             try {
                 // 1. Lấy SHA hiện tại của file
+                // CẦN BỎ HEADER 'Accept': 'application/vnd.github.v3.raw' để API trả về metadata (bao gồm SHA)
                 const getResponse = await fetch(apiUrl, {
                     headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Accept': 'application/vnd.github.v3.raw'
+                        'Authorization': `token ${githubToken}`
                     }
                 });
                 
@@ -1229,7 +1229,7 @@
                 }
                 
                 const fileData = await getResponse.json();
-                const currentSha = fileData.sha;
+                const currentSha = fileData.sha; // <--- This should now work correctly
 
                 // 2. Commit nội dung mới
                 const commitBody = {
