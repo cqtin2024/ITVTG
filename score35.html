@@ -738,8 +738,10 @@
                     
                     html += `<tr class="${rowClasses} transition duration-150">`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${rank}</td>`;
-                    // ĐIỀU CHỈNH: Sử dụng team.Tn thay vì team.D
-                    html += `<td class="px-3 py-3 whitespace-nowrap text-sm font-medium">${team.Tn}</td>`; 
+                    
+                    // FIX LỖI 1: Sử dụng fallback getTeamShortNameById(team.T) nếu team.Tn undefined
+                    html += `<td class="px-3 py-3 whitespace-nowrap text-sm font-medium">${team.Tn || getTeamShortNameById(team.T)}</td>`; 
+                    
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.W}</td>`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.L}</td>`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.Pts}</td>`;
@@ -776,7 +778,7 @@
                             <h3 class="text-lg font-bold mb-3">Match ${index + 1}</h3>
                             <div class="grid grid-cols-5 gap-2 items-center text-center">
                                 
-                                <div class="col-span-2 text-left ${winnerClassA}">${winnerIconA} ${match.tA}</div>
+                                <div class="col-span-2 text-left ${winnerClassA}">${winnerIconA} ${match.tA || ''}</div>
                                 
                                 <div>
                                     <input type="number" id="scoreA-${matchId}" value="${scoreA}" 
@@ -792,7 +794,7 @@
                                            onchange="updateMatchScore('${group}', ${index}, 'B', this.value)">
                                 </div>
                                 
-                                <div class="col-span-2 text-right ${winnerClassB}">${match.tB} ${winnerIconB}</div>
+                                <div class="col-span-2 text-right ${winnerClassB}">${match.tB || ''} ${winnerIconB}</div>
                             </div>
                         </div>`;
                 });
