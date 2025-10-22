@@ -1217,27 +1217,37 @@
 
             try {
                 // 1. Lấy SHA hiện tại của file
-                // CẦN BỎ HEADER 'Accept': 'application/vnd.github.v3.raw' để API trả về metadata (bao gồm SHA)
                 const getResponse = await fetch(apiUrl, {
                     headers: {
                         'Authorization': `token ${githubToken}`
                     }
                 });
                 
-                if (!getResponse.ok) {
+                let currentSha = undefined; // Dùng undefined để dễ dàng bỏ qua field SHA nếu file không tồn tại
+                
+                if (getResponse.ok) {
+                    const fileData = await getResponse.json();
+                    currentSha = fileData.sha;
+                } else if (getResponse.status === 404 || getResponse.status === 422) {
+                     // Nếu file không tìm thấy (404) hoặc không thể xử lý (422 - thường xảy ra khi file trống hoặc có vấn đề),
+                     // coi như là tạo file mới.
+                     console.warn(`File not found or unprocessable (Status ${getResponse.status}). Will attempt to CREATE new file.`);
+                     // currentSha giữ nguyên là undefined.
+                } else {
                     throw new Error(`Lỗi khi lấy SHA: ${getResponse.statusText} (${getResponse.status})`);
                 }
-                
-                const fileData = await getResponse.json();
-                const currentSha = fileData.sha; // <--- This should now work correctly
 
                 // 2. Commit nội dung mới
                 const commitBody = {
                     message: commitMessage,
                     content: base64Content,
-                    sha: currentSha,
                     branch: BRANCH
                 };
+                
+                // CHỈ thêm sha nếu nó được lấy thành công (tức là đang cập nhật file đã tồn tại)
+                if (currentSha) {
+                     commitBody.sha = currentSha;
+                }
 
                 const commitResponse = await fetch(apiUrl, {
                     method: 'PUT',
