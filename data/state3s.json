@@ -1,12 +1,18 @@
 {
+  "matchesA": [
+    {
+      "sB": 12
+    },
+    {
+      "sB": 12
+    },
+    {
+      "sB": 13
+    }
+  ],
   "matchesC": [
     {
       "sB": 6
-    }
-  ],
-  "matchesD": [
-    {
-      "sB": 9
     }
   ],
   "quarterfinals": [
