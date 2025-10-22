@@ -93,7 +93,7 @@
                         <input type="text" id="dataPath" placeholder="vd: data/group_stage.json" class="w-full p-2 rounded bg-[var(--input-bg)] text-[var(--text-color)] text-input">
                     </div>
                     <button id="saveSettingsBtn" class="w-full py-2 bg-[var(--accent-color)] text-white font-bold rounded hover:opacity-90 transition-opacity">Lưu Cài Đặt</button>
-                    <button onclick="window.reSyncStaticData()" class="w-full py-2 bg-red-600 text-white font-bold rounded hover:opacity-90 transition-opacity mt-2">Đồng Bộ Lại Dữ Liệu Tĩnh</button>
+                    <button onclick="window.confirmStaticResync()" class="w-full py-2 bg-red-600 text-white font-bold rounded hover:opacity-90 transition-opacity mt-2">Đồng Bộ Lại Dữ Liệu Tĩnh</button>
                 </div>
             </section>
             
@@ -136,7 +136,7 @@
     <div id="confirmationBox" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
         <div class="bg-[var(--card-bg)] p-6 rounded-lg shadow-xl w-80">
             <p class="text-lg font-semibold mb-4 text-[var(--text-color)]">Xác nhận Đồng bộ</p>
-            <p id="confirmationMessage" class="mb-6 text-[var(--text-color)]">Bạn có chắc chắn muốn đồng bộ lại toàn bộ dữ liệu tĩnh? Điều này sẽ ghi đè mọi thay đổi hiện tại.</p>
+            <p id="confirmationMessage" class="mb-6 text-[var(--text-color)]">Bạn có chắc chắn muốn thực hiện hành động này?</p>
             <div class="flex justify-end space-x-4">
                 <button id="confirmNo" class="py-2 px-4 rounded bg-gray-500 text-white hover:bg-gray-600">Hủy</button>
                 <button id="confirmYes" class="py-2 px-4 rounded bg-red-600 text-white hover:bg-red-700">Đồng ý</button>
@@ -152,8 +152,9 @@
         let currentMatchView = 'pending';
         let startX = 0;
         let endX = 0;
+        let savedPat = ''; // Biến để lưu PAT đã nhập, giúp mask input
         
-        // Biến toàn cục để theo dõi tab đang hoạt động (MỚI)
+        // Biến toàn cục để theo dõi tab đang hoạt động
         let activeGroup = 'Group A';
 
         // --- GITHUB CONFIG & UTILS ---
@@ -161,12 +162,29 @@
         const settingsKeys = ['githubToken', 'repoOwner', 'repoName', 'dataPath'];
 
         function getSetting(key) {
+            // Lấy PAT từ biến savedPat nếu có, hoặc từ localStorage
+            if (key === 'githubToken' && savedPat) return savedPat;
             return localStorage.getItem(key);
         }
 
         function saveSettings() {
             settingsKeys.forEach(key => {
-                localStorage.setItem(key, document.getElementById(key).value.trim());
+                const inputElement = document.getElementById(key);
+                const value = inputElement.value.trim();
+                
+                if (key === 'githubToken') {
+                    // Nếu giá trị là '********' thì không lưu, dùng giá trị cũ
+                    if (value !== '********' && value !== '') {
+                        localStorage.setItem(key, value);
+                        savedPat = value;
+                    }
+                    // Mask input field
+                    if (localStorage.getItem(key)) {
+                        inputElement.value = '********';
+                    }
+                } else {
+                    localStorage.setItem(key, value);
+                }
             });
             alert('Cài đặt đã được lưu!');
             loadDataFromGitHub(); // Tải lại dữ liệu với cài đặt mới
@@ -180,8 +198,8 @@
 
         function handleGesture() {
             const diff = startX - endX;
-            if (Math.abs(diff) > 50) {
-                // Swipe detected
+            // Chỉ kích hoạt swipe nếu khoảng cách đủ lớn
+            if (Math.abs(diff) > 70) { 
                 const groupNames = Object.keys(window.groupStandings);
                 const currentIndex = groupNames.indexOf(activeGroup);
                 
@@ -204,8 +222,10 @@
             const dataPath = getSetting('dataPath');
             const token = getSetting('githubToken');
 
-            if (!owner || !repo || !dataPath) {
-                document.getElementById('standings-content').innerHTML = '<p class="text-red-400">Vui lòng điền đầy đủ thông tin GitHub trong Cài Đặt.</p>';
+            const standingsContent = document.getElementById('standings-content');
+            if (!owner || !repo || !dataPath || !token || token === '********') {
+                standingsContent.innerHTML = '<p class="text-red-400">Vui lòng điền đầy đủ thông tin GitHub và PAT trong Cài Đặt.</p>';
+                document.getElementById('commit-status').classList.add('hidden');
                 return;
             }
 
@@ -227,21 +247,23 @@
                 processData(currentData);
             } catch (error) {
                 console.error('Error loading data:', error);
-                document.getElementById('standings-content').innerHTML = `<p class="text-red-400">${error.message}</p>`;
+                standingsContent.innerHTML = `<p class="text-red-400">Lỗi Tải Dữ Liệu: ${error.message}</p>`;
+                document.getElementById('commit-status').classList.add('hidden');
             }
         }
         
-        // Dùng để mở modal xác nhận (Thay vì gọi trực tiếp reSyncStaticData)
-        window.reSyncStaticData = () => {
-            document.getElementById('confirmationBox').classList.remove('hidden');
+        // Mở modal xác nhận khôi phục dữ liệu tĩnh
+        window.confirmStaticResync = () => {
+            const box = document.getElementById('confirmationBox');
             document.getElementById('confirmationMessage').textContent = 'Bạn có chắc chắn muốn đồng bộ lại toàn bộ dữ liệu tĩnh (từ file data_static.json)? Điều này sẽ ghi đè mọi thay đổi hiện tại.';
             
-            // Cài đặt lại hành động cho nút Yes
+            // Cài đặt hành động cho nút Yes
             document.getElementById('confirmYes').onclick = () => {
-                document.getElementById('confirmationBox').classList.add('hidden');
-                // Gọi hàm sync chính thức
+                box.classList.add('hidden');
                 syncStaticData();
             };
+            document.getElementById('confirmNo').onclick = () => box.classList.add('hidden');
+            box.classList.remove('hidden');
         };
 
         async function syncStaticData() {
@@ -254,7 +276,7 @@
             
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error("Không tìm thấy file data_static.json.");
+                if (!response.ok) throw new Error("Không tìm thấy file data_static.json. Đảm bảo file tồn tại trên server/local.");
                 
                 const staticData = await response.json();
                 
@@ -264,7 +286,7 @@
                     headers: { 'Authorization': `token ${token}` }
                 });
                 
-                if (!shaResponse.ok) throw new Error("Lỗi khi lấy SHA của file.");
+                if (!shaResponse.ok) throw new Error("Lỗi khi lấy SHA của file. Kiểm tra PAT.");
                 const fileInfo = await shaResponse.json();
                 const sha = fileInfo.sha;
 
@@ -303,8 +325,6 @@
         // Hàm tính toán thống kê cho một đội trong một trận đấu
         function calculateTeamStatsForMatch(match, teamId, setsToWin = 2) {
             const isTeam1 = match.team1 === teamId;
-            const teamScores = isTeam1 ? match.scores.map(s => s[0]) : match.scores.map(s => s[1]);
-            const opponentScores = isTeam1 ? match.scores.map(s => s[1]) : match.scores.map(s => s[0]);
             
             let gamesWon = 0;
             let gamesLost = 0;
@@ -328,10 +348,11 @@
             const matchWon = gamesWon >= setsToWin;
             const matchLost = gamesLost >= setsToWin;
 
+            // ĐIỀU CHỈNH: Trận thắng 1 điểm, Trận thua 0 điểm
             return {
                 W: matchWon ? 1 : 0,
                 L: matchLost ? 1 : 0,
-                Points: matchWon ? 3 : 0, // 3 points for a win, 0 for a loss
+                Points: matchWon ? 1 : 0, 
                 GW: gamesWon, // Games Won
                 GL: gamesLost, // Games Lost
                 PF: pointsFor, // Points For
@@ -340,7 +361,7 @@
             };
         }
 
-        // Hàm tính toán xếp hạng nhóm (Đã kiểm tra và giữ nguyên logic)
+        // Hàm tính toán xếp hạng nhóm
         function calculateGroupStandings(group, matches) {
             const teams = group.teams;
             const teamStats = {};
@@ -377,12 +398,12 @@
 
             // Sắp xếp thứ hạng (Ưu tiên: Points -> Matches Won -> GD -> PF)
             sortedStandings.sort((a, b) => {
-                // 1. Primary: Tournament Points (Matches Won * 3)
+                // 1. Primary: Tournament Points (Matches Won * 1)
                 if (b.Points !== a.Points) {
                     return b.Points - a.Points;
                 }
                 
-                // Secondary check: Matches Won (W)
+                // Secondary check: Matches Won (W) (Thực chất là Points, nhưng giữ lại để minh bạch)
                 if (b.W !== a.W) {
                     return b.W - a.W;
                 }
@@ -407,13 +428,12 @@
 
         // --- DISPLAY & UI LOGIC (Tích hợp Tabs) ---
         
-        // Hàm tạo các nút tab (MỚI)
+        // Hàm tạo các nút tab
         function renderGroupTabs(standingsData) {
             const tabsContainer = document.getElementById('group-tabs');
             tabsContainer.innerHTML = '';
             const groupNames = Object.keys(standingsData);
             
-            // Nếu không có dữ liệu nhóm, dừng lại
             if (groupNames.length === 0) return;
 
             // Đảm bảo tab mặc định là một trong các nhóm có sẵn
@@ -447,7 +467,7 @@
             });
         }
 
-        // Hàm mới: Chỉ hiển thị bảng xếp hạng cho nhóm đang hoạt động (MỚI)
+        // Hàm mới: Chỉ hiển thị bảng xếp hạng cho nhóm đang hoạt động
         function renderActiveStandings(standingsData) {
             const contentContainer = document.getElementById('standings-content');
             contentContainer.innerHTML = '';
@@ -499,7 +519,7 @@
             contentContainer.innerHTML = html;
         }
 
-        // Cập nhật hàm này để sử dụng logic tabs (ĐÃ SỬA)
+        // Cập nhật hàm này để sử dụng logic tabs
         function displayStandings(standingsData) {
             window.groupStandings = standingsData; // Lưu dữ liệu để sử dụng lại
             
@@ -530,9 +550,12 @@
                 card.className = `p-3 rounded-lg bg-[var(--match-bg)] shadow-md border border-[var(--border-color)] space-y-2`;
                 
                 let scoresHtml = '';
-                for (let i = 0; i < setsToWin * 2 - 1; i++) {
-                    const score1 = match.scores[i] ? match.scores[i][0] : '';
-                    const score2 = match.scores[i] ? match.scores[i][1] : '';
+                // Best-of-X: Cần X*2 - 1 set để có kết quả
+                const maxSets = setsToWin * 2 - 1; 
+
+                for (let i = 0; i < maxSets; i++) {
+                    const score1 = match.scores[i] !== undefined ? match.scores[i][0] : '';
+                    const score2 = match.scores[i] !== undefined ? match.scores[i][1] : '';
                     const setIndex = i + 1;
                     
                     scoresHtml += `
@@ -572,7 +595,7 @@
                         <span class="text-xl mx-2 text-[var(--accent-color)]">VS</span>
                         <span class="w-1/3 text-right truncate">${match.team2}</span>
                     </div>
-                    <div class="flex justify-center items-center space-x-2 pt-2">
+                    <div class="flex flex-wrap justify-center items-center gap-2 pt-2">
                         ${scoresHtml}
                     </div>
                 `;
@@ -594,24 +617,28 @@
 
             const groupInfo = currentData.groups.find(g => g.id === match.group);
             const setsToWin = groupInfo ? groupInfo.setsToWin : 2;
+            const maxSets = setsToWin * 2 - 1;
             
             const newScores = [];
             
             // Dùng DOM để lấy điểm số từ các input
-            const inputs = document.querySelectorAll(`.score-input[data-match-id="${matchId}"]`);
-            
-            for(let i = 0; i < inputs.length / 2; i++) {
-                const input1 = document.querySelector(`.score-input[data-match-id="${matchId}"][data-set="${i + 1}"][data-team="1"]`);
-                const input2 = document.querySelector(`.score-input[data-match-id="${matchId}"][data-set="${i + 1}"][data-team="2"]`);
+            for(let i = 0; i < maxSets; i++) {
+                const setIndex = i + 1;
+                const input1 = document.querySelector(`.score-input[data-match-id="${matchId}"][data-set="${setIndex}"][data-team="1"]`);
+                const input2 = document.querySelector(`.score-input[data-match-id="${matchId}"][data-set="${setIndex}"][data-team="2"]`);
                 
                 const score1 = input1 ? parseInt(input1.value) : NaN;
                 const score2 = input2 ? parseInt(input2.value) : NaN;
                 
                 if (!isNaN(score1) && !isNaN(score2)) {
                     newScores.push([score1, score2]);
-                } else if (i < setsToWin * 2 - 1 && (!isNaN(score1) || !isNaN(score2))) {
-                    // Nếu một trong hai ô có điểm, vẫn thêm vào để tính toán, nhưng sẽ không qua checkMatchCompletion
-                    newScores.push([score1 || 0, score2 || 0]);
+                } else {
+                    // Nếu gặp set không hoàn chỉnh, dừng lại và chỉ lưu các set trước đó
+                    // Cho phép lưu các cặp [NaN, 0] hoặc [0, NaN] nếu có người nhập giữa chừng
+                    if (!isNaN(score1) || !isNaN(score2)) {
+                         newScores.push([score1 || 0, score2 || 0]);
+                    }
+                    break; 
                 }
             }
 
@@ -623,25 +650,25 @@
         function checkMatchCompletion(match, setsToWin) {
             let wins1 = 0;
             let wins2 = 0;
-            let totalSetsCompleted = 0;
 
             for (const [score1, score2] of match.scores) {
                 if (typeof score1 !== 'number' || typeof score2 !== 'number' || isNaN(score1) || isNaN(score2)) {
-                    continue; // Bỏ qua set chưa nhập đủ điểm
+                    // Nếu gặp NaN, tức là set đó chưa hoàn chỉnh
+                    return false;
                 }
                 
-                // Giả sử luật chơi là thắng 11 điểm cách 2
-                const isSetComplete = (Math.max(score1, score2) >= 11 && Math.abs(score1 - score2) >= 2) || 
-                                     (score1 >= 11 && score1 > score2 && score2 < 11) || // Simplified check
-                                     (score2 >= 11 && score2 > score1 && score1 < 11) ||
-                                     (Math.max(score1, score2) > 11 && Math.abs(score1 - score2) >= 2);
+                // Luật Pickleball: thắng 11 điểm, cách 2 (hoặc 15/21 cách 2)
+                const winScore = 11; // Giả định là 11 điểm
+
+                const isSetComplete = (Math.max(score1, score2) >= winScore && Math.abs(score1 - score2) >= 2) ||
+                                      (Math.max(score1, score2) >= winScore + 1 && Math.abs(score1 - score2) >= 1) || 
+                                      (score1 === winScore + 1 && score2 === winScore - 1); // Đơn giản hóa, cần chính xác hơn
 
                 if (!isSetComplete) {
-                    // Nếu set hiện tại chưa kết thúc, trận đấu chưa thể hoàn thành
+                    // Nếu set hiện tại chưa kết thúc (hoặc nhập điểm không hợp lệ), trận đấu chưa hoàn thành
                     return false;
                 }
 
-                totalSetsCompleted++;
                 if (score1 > score2) {
                     wins1++;
                 } else if (score2 > score1) {
@@ -654,16 +681,18 @@
                 }
             }
             
-            // Nếu đủ set (ví dụ 3 set cho best of 3) nhưng chưa có ai thắng
-            // Hoặc số set hoàn thành ít hơn tổng số set đã ghi trong JSON (có thể có set bỏ trống)
+            // Nếu thoát khỏi vòng lặp mà chưa đủ số set thắng
             return wins1 >= setsToWin || wins2 >= setsToWin;
         }
+
 
         // --- PROCESS AND SYNC ---
 
         function processData(data) {
             const standings = {};
             data.groups.forEach(group => {
+                // Đảm bảo teamIds là duy nhất trước khi tính toán
+                group.teams = [...new Set(group.teams)]; 
                 standings[group.id] = calculateGroupStandings(group, data.matches);
             });
             displayStandings(standings);
@@ -682,9 +711,9 @@
             const dataPath = getSetting('dataPath');
             const statusDiv = document.getElementById('commit-status');
 
-            if (!token || !owner || !repo || !dataPath) {
+            if (!token || !owner || !repo || !dataPath || token === '********') {
                 statusDiv.className = 'mt-4 p-3 rounded text-sm bg-red-400 text-white';
-                statusDiv.textContent = 'Lỗi: Vui lòng điền đầy đủ cài đặt GitHub.';
+                statusDiv.textContent = 'Lỗi: Vui lòng điền đầy đủ cài đặt GitHub và PAT.';
                 statusDiv.classList.remove('hidden');
                 return;
             }
@@ -698,16 +727,15 @@
                 // Lấy điểm mới nhất từ DOM (đã được lưu tạm vào currentData.matches khi input)
                 const isComplete = checkMatchCompletion(match, setsToWin); 
                 
-                if (isComplete && match.status !== 'completed') {
-                    match.status = 'completed';
-                    matchesToUpdateCount++;
-                } else if (!isComplete && match.status === 'completed') {
-                    // Nếu người dùng xóa điểm của trận đã complete, đưa về pending
+                // Trạng thái: completed -> pending (khi người dùng xóa điểm)
+                if (!isComplete && match.status === 'completed') {
                     match.status = 'pending';
                     matchesToUpdateCount++;
-                } else if (match.status === 'pending_update') {
-                    // Đánh dấu trận pending_update thành pending sau khi lấy điểm
-                    match.status = 'pending'; 
+                } 
+                // Trạng thái: pending/pending_update -> completed (khi nhập đủ điểm)
+                else if (isComplete && match.status !== 'completed') {
+                    match.status = 'completed';
+                    matchesToUpdateCount++;
                 }
             });
             
@@ -782,15 +810,16 @@
 
             // Load and display settings
             settingsKeys.forEach(key => {
-                const value = getSetting(key);
+                const value = localStorage.getItem(key);
                 if (value && document.getElementById(key)) {
-                    document.getElementById(key).value = value;
+                    if (key === 'githubToken') {
+                        savedPat = value;
+                        document.getElementById(key).value = '********';
+                    } else {
+                        document.getElementById(key).value = value;
+                    }
                 }
             });
-            // Mask token after loading
-            if (document.getElementById('githubToken').value.length > 0) {
-                 document.getElementById('githubToken').value = '********';
-            }
             
             // Event listeners
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
@@ -799,26 +828,25 @@
             });
             document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
             document.getElementById('commit-all-btn').addEventListener('click', commitAllUpdates);
-            
+
             // Swipe/Gesture setup
-            document.getElementById('app').addEventListener('touchstart', (e) => {
+            const appElement = document.getElementById('app');
+            appElement.addEventListener('touchstart', (e) => {
                 // Đảm bảo không kích hoạt swipe khi chạm vào input
-                if (e.target.classList.contains('score-input') || e.target.classList.contains('text-input')) return;
+                if (e.target.closest('input')) return;
                 startX = e.changedTouches[0].screenX;
             }, { passive: true });
 
-            document.getElementById('app').addEventListener('touchend', (e) => {
+            appElement.addEventListener('touchend', (e) => {
                 // Đảm bảo không kích hoạt swipe khi chạm vào input
-                if (e.target.classList.contains('score-input') || e.target.classList.contains('text-input')) return;
+                if (e.target.closest('input')) return;
                 endX = e.changedTouches[0].screenX;
                 handleGesture();
             }, { passive: true });
             
-            // Modal button setup
-            // Note: window.reSyncStaticData is now just an alias to open the modal
-            // document.getElementById('confirmYes').onclick is set inside the modal opening function
+            // Modal button setup (cài đặt lại khi modal được mở)
             document.getElementById('confirmNo').onclick = () => document.getElementById('confirmationBox').classList.add('hidden');
-            
+
             // Start data loading
             loadDataFromGitHub();
         }
