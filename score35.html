@@ -48,11 +48,6 @@
         .score-input:focus, .text-input:focus {
             box-shadow: 0 0 0 3px var(--accent-color);
         }
-        .score-input:disabled, .text-input:disabled {
-            background-color: #374151; /* Gray-700 */
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
         .tab-button {
             border-bottom-color: var(--border-color);
         }
@@ -722,8 +717,8 @@
                 // Header
                 html += `<thead><tr>`;
                 html += `<th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">#</th>`;
-                // ĐIỀU CHỈNH: Hiển thị Tn thay vì D
-                html += `<th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Tn</th>`; 
+                // ĐÃ SỬA: Thay ${legend.D} bằng TEAM theo yêu cầu
+                html += `<th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">TEAM</th>`; 
                 html += `<th class="px-3 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">${legend.W}</th>`;
                 html += `<th class="px-3 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">${legend.L}</th>`;
                 html += `<th class="px-3 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">${legend.Pts}</th>`;
@@ -738,10 +733,8 @@
                     
                     html += `<tr class="${rowClasses} transition duration-150">`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${rank}</td>`;
-                    
-                    // FIX LỖI 1: Sử dụng fallback getTeamShortNameById(team.T) nếu team.Tn undefined
-                    html += `<td class="px-3 py-3 whitespace-nowrap text-sm font-medium">${team.Tn || getTeamShortNameById(team.T)}</td>`; 
-                    
+                    // ĐÃ SỬA: Giữ nguyên team.D để hiển thị tên đội
+                    html += `<td class="px-3 py-3 whitespace-nowrap text-sm font-medium">${team.D}</td>`; 
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.W}</td>`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.L}</td>`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.Pts}</td>`;
@@ -778,7 +771,7 @@
                             <h3 class="text-lg font-bold mb-3">Match ${index + 1}</h3>
                             <div class="grid grid-cols-5 gap-2 items-center text-center">
                                 
-                                <div class="col-span-2 text-left ${winnerClassA}">${winnerIconA} ${match.tA || ''}</div>
+                                <div class="col-span-2 text-left ${winnerClassA}">${winnerIconA} ${match.tA}</div>
                                 
                                 <div>
                                     <input type="number" id="scoreA-${matchId}" value="${scoreA}" 
@@ -794,7 +787,7 @@
                                            onchange="updateMatchScore('${group}', ${index}, 'B', this.value)">
                                 </div>
                                 
-                                <div class="col-span-2 text-right ${winnerClassB}">${match.tB || ''} ${winnerIconB}</div>
+                                <div class="col-span-2 text-right ${winnerClassB}">${match.tB} ${winnerIconB}</div>
                             </div>
                         </div>`;
                 });
@@ -828,15 +821,9 @@
                 const teamAId = match.tA;
                 const teamBId = match.tB;
                 const matchPos = match.Pos || (index + 1);
-                // SỬ DỤNG getTeamShortNameById ĐỂ HIỂN THỊ TÊN RÚT GỌN (Tn)
                 const teamAName = getTeamShortNameById(teamAId) || 'TBD';
                 const teamBName = getTeamShortNameById(teamBId) || 'TBD';
                 
-                // --- Logic để vô hiệu hóa input nếu đội là TBD (Fix score35) ---
-                const disabledA = teamAName === 'TBD' ? 'disabled' : '';
-                const disabledB = teamBName === 'TBD' ? 'disabled' : '';
-                // ---------------------------------------------------------------
-
                 const scoreA = match.sA !== undefined ? match.sA : '';
                 const scoreB = match.sB !== undefined ? match.sB : '';
                 const matchId = `${round}-${matchPos}`;
@@ -852,7 +839,7 @@
                 const teamBDisplay = teamBName === 'TBD' ? `(Winner ${match.pB})` : teamBName;
                 
                 html += `
-                    <div class="match-card p-4 rounded-lg shadow-lg border-2 ${isCompleted ? 'border-purple-600/50' : 'border-gray-700'}">
+                    <div class="match-card p-4 rounded-lg shadow-lg border-2 ${isCompleted ? 'border-purple-600' : 'border-gray-700'}">
                         <h3 class="text-xl font-bold mb-3">${title}</h3>
                         <div class="grid grid-cols-5 gap-2 items-center text-center">
                             
@@ -861,7 +848,7 @@
                             <div>
                                 <input type="number" id="scoreA-${matchId}" value="${scoreA}" 
                                        class="score-input w-full p-2 rounded-md text-center text-lg" 
-                                       onchange="updateKnockoutScore('${round}', ${index}, 'A', this.value)" ${disabledA}>
+                                       onchange="updateKnockoutScore('${round}', ${index}, 'A', this.value)">
                             </div>
                             
                             <span class="text-xl font-bold text-purple-500"> - </span>
@@ -869,7 +856,7 @@
                             <div>
                                 <input type="number" id="scoreB-${matchId}" value="${scoreB}" 
                                        class="score-input w-full p-2 rounded-md text-center text-lg" 
-                                       onchange="updateKnockoutScore('${round}', ${index}, 'B', this.value)" ${disabledB}>
+                                       onchange="updateKnockoutScore('${round}', ${index}, 'B', this.value)">
                             </div>
                             
                             <div class="col-span-2 text-right ${winnerClassB}">${teamBDisplay} ${winnerIconB}</div>
@@ -891,13 +878,12 @@
              const winnerId = finalMatch.Wn;
              const runnerUpId = finalMatch.rU;
              
-             // SỬ DỤNG getTeamShortNameById ĐỂ HIỂN THỊ TÊN RÚT GỌN (Tn)
              const winnerName = getTeamShortNameById(winnerId);
              const runnerUpName = getTeamShortNameById(runnerUpId);
              
              let html = ``;
              
-             if (winnerName && runnerUpName && winnerName !== runnerUpName) {
+             if (winnerName && runnerUpName) {
                  html += `
                      <div class="text-center space-y-4">
                          <div class="p-6 bg-yellow-900/40 rounded-lg">
@@ -1050,15 +1036,9 @@
                       const matchPos = match.Pos || (index + 1);
                       const teamAId = match.tA;
                       const teamBId = match.tB;
-                      // SỬ DỤNG getTeamShortNameById ĐỂ HIỂN THỊ TÊN RÚT GỌN (Tn)
                       const teamAName = getTeamShortNameById(teamAId) || 'TBD';
                       const teamBName = getTeamShortNameById(teamBId) || 'TBD';
                       
-                      // --- Logic để vô hiệu hóa input nếu đội là TBD (Fix score35) ---
-                      const disabledA = teamAName === 'TBD' ? 'disabled' : '';
-                      const disabledB = teamBName === 'TBD' ? 'disabled' : '';
-                      // ---------------------------------------------------------------
-
                       const scoreA = match.sA !== undefined ? match.sA : '';
                       const scoreB = match.sB !== undefined ? match.sB : '';
                       const matchId = `${round}-${matchPos}`;
@@ -1084,7 +1064,7 @@
                                   <div>
                                       <input type="number" id="scoreA-${matchId}" value="${scoreA}" 
                                              class="score-input w-full p-2 rounded-md text-center text-lg" 
-                                             onchange="updateKnockoutScore('${round}', ${index}, 'A', this.value)" ${disabledA}>
+                                             onchange="updateKnockoutScore('${round}', ${index}, 'A', this.value)">
                                   </div>
                                   
                                   <span class="text-xl font-bold text-yellow-500"> - </span>
@@ -1092,7 +1072,7 @@
                                   <div>
                                       <input type="number" id="scoreB-${matchId}" value="${scoreB}" 
                                              class="score-input w-full p-2 rounded-md text-center text-lg" 
-                                             onchange="updateKnockoutScore('${round}', ${index}, 'B', this.value)" ${disabledB}>
+                                             onchange="updateKnockoutScore('${round}', ${index}, 'B', this.value)">
                                   </div>
                                   
                                   <div class="col-span-2 text-right ${winnerClassB}">${teamBDisplay} ${winnerIconB}${runnerUpIconB}</div>
@@ -1226,35 +1206,25 @@
                 // 1. Lấy SHA hiện tại của file
                 const getResponse = await fetch(apiUrl, {
                     headers: {
-                        'Authorization': `token ${githubToken}`
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3.raw'
                     }
                 });
                 
-                let currentSha = undefined; // Dùng undefined để dễ dàng bỏ qua field SHA nếu file không tồn tại
-                
-                if (getResponse.ok) {
-                    const fileData = await getResponse.json();
-                    currentSha = fileData.sha;
-                } else if (getResponse.status === 404 || getResponse.status === 422) {
-                     // Nếu file không tìm thấy (404) hoặc không thể xử lý (422 - thường xảy ra khi file trống hoặc có vấn đề),
-                     // coi như là tạo file mới.
-                     console.warn(`File not found or unprocessable (Status ${getResponse.status}). Will attempt to CREATE new file.`);
-                     // currentSha giữ nguyên là undefined.
-                } else {
+                if (!getResponse.ok) {
                     throw new Error(`Lỗi khi lấy SHA: ${getResponse.statusText} (${getResponse.status})`);
                 }
+                
+                const fileData = await getResponse.json();
+                const currentSha = fileData.sha;
 
                 // 2. Commit nội dung mới
                 const commitBody = {
                     message: commitMessage,
                     content: base64Content,
+                    sha: currentSha,
                     branch: BRANCH
                 };
-                
-                // CHỈ thêm sha nếu nó được lấy thành công (tức là đang cập nhật file đã tồn tại)
-                if (currentSha) {
-                     commitBody.sha = currentSha;
-                }
 
                 const commitResponse = await fetch(apiUrl, {
                     method: 'PUT',
