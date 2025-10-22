@@ -1,1 +1,18 @@
-
+{
+  "matchesC": [
+    {
+      "sB": 6
+    }
+  ],
+  "matchesD": [
+    {
+      "sB": 9
+    }
+  ],
+  "quarterfinals": [
+    {
+      "sA": 1,
+      "sB": 11
+    }
+  ]
+}
