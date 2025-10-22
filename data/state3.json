@@ -26,7 +26,18 @@
     "B": "Team B (Đội B)",
     "sB": "Score B (Tỉ số Đội B)",
     "Wn": "Winner (Đội thắng)",
-    "rU": "Runner-Up (Đội về nhì)"
+    "rU": "Runner-Up (Đội về nhì)",
+    "tableA": "Group A Standings (Bảng xếp hạng Bảng A)",
+    "tableB": "Group B Standings (Bảng xếp hạng Bảng B)",
+    "tableC": "Group C Standings (Bảng xếp hạng Bảng C)",
+    "tableD": "Group D Standings (Bảng xếp hạng Bảng D)",
+    "matchesA": "Group A Matches (Các trận đấu Bảng A)",
+    "matchesB": "Group B Matches (Các trận đấu Bảng B)",
+    "matchesC": "Group C Matches (Các trận đấu Bảng C)",
+    "matchesD": "Group D Matches (Các trận đấu Bảng D)",
+    "quarterfinals": "Quarterfinals Matches (Các trận Tứ kết)",
+    "semifinals": "Semifinals Matches (Các trận Bán kết)",
+    "final": "Final Match (Trận Chung kết)"
   },
   "tableA": [
     {
