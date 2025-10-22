@@ -722,7 +722,8 @@
                 // Header
                 html += `<thead><tr>`;
                 html += `<th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">#</th>`;
-                html += `<th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">${legend.D}</th>`;
+                // ĐIỀU CHỈNH: Hiển thị Tn thay vì D
+                html += `<th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Tn</th>`; 
                 html += `<th class="px-3 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">${legend.W}</th>`;
                 html += `<th class="px-3 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">${legend.L}</th>`;
                 html += `<th class="px-3 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">${legend.Pts}</th>`;
@@ -737,7 +738,8 @@
                     
                     html += `<tr class="${rowClasses} transition duration-150">`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${rank}</td>`;
-                    html += `<td class="px-3 py-3 whitespace-nowrap text-sm font-medium">${team.D}</td>`;
+                    // ĐIỀU CHỈNH: Sử dụng team.Tn thay vì team.D
+                    html += `<td class="px-3 py-3 whitespace-nowrap text-sm font-medium">${team.Tn}</td>`; 
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.W}</td>`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.L}</td>`;
                     html += `<td class="px-3 py-3 whitespace-nowrap text-center text-sm">${team.Pts}</td>`;
@@ -824,6 +826,7 @@
                 const teamAId = match.tA;
                 const teamBId = match.tB;
                 const matchPos = match.Pos || (index + 1);
+                // SỬ DỤNG getTeamShortNameById ĐỂ HIỂN THỊ TÊN RÚT GỌN (Tn)
                 const teamAName = getTeamShortNameById(teamAId) || 'TBD';
                 const teamBName = getTeamShortNameById(teamBId) || 'TBD';
                 
@@ -886,12 +889,13 @@
              const winnerId = finalMatch.Wn;
              const runnerUpId = finalMatch.rU;
              
+             // SỬ DỤNG getTeamShortNameById ĐỂ HIỂN THỊ TÊN RÚT GỌN (Tn)
              const winnerName = getTeamShortNameById(winnerId);
              const runnerUpName = getTeamShortNameById(runnerUpId);
              
              let html = ``;
              
-             if (winnerName && runnerUpName) {
+             if (winnerName && runnerUpName && winnerName !== runnerUpName) {
                  html += `
                      <div class="text-center space-y-4">
                          <div class="p-6 bg-yellow-900/40 rounded-lg">
@@ -1044,6 +1048,7 @@
                       const matchPos = match.Pos || (index + 1);
                       const teamAId = match.tA;
                       const teamBId = match.tB;
+                      // SỬ DỤNG getTeamShortNameById ĐỂ HIỂN THỊ TÊN RÚT GỌN (Tn)
                       const teamAName = getTeamShortNameById(teamAId) || 'TBD';
                       const teamBName = getTeamShortNameById(teamBId) || 'TBD';
                       
