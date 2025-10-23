@@ -229,10 +229,15 @@
         async function fetchGitHubFile(filename) {
             if (!githubConfig.repo || !githubConfig.token) {
                 console.error(`Missing GitHub config for ${filename}`);
+                // Bỏ qua lỗi 404 cho state3s.json (dữ liệu tỉ số có thể chưa tồn tại)
+                if (filename === 'state3s.json') return {}; 
+                document.getElementById('lastSyncStatus').textContent = 'LỖI: Vui lòng nhập cấu hình GitHub và Token hợp lệ.';
                 return null;
             }
             
-            const url = `https://api.github.com/repos/${githubConfig.repo}/contents/${filename}?ref=${githubConfig.branch}`;
+            // Xử lý trường hợp branch không được điền. Mặc định là main
+            const branchRef = githubConfig.branch || 'main';
+            const url = `https://api.github.com/repos/${githubConfig.repo}/contents/${filename}?ref=${branchRef}`;
             
             try {
                 const response = await fetch(url, {
@@ -243,7 +248,9 @@
                 });
                 
                 if (!response.ok) {
-                    throw new Error(`GitHub API error for ${filename}: ${response.statusText}`);
+                     // Nếu là state3s.json và không tồn tại (404), trả về đối tượng rỗng
+                    if (filename === 'state3s.json' && response.status === 404) return {};
+                    throw new Error(`GitHub API error for ${filename}: ${response.statusText} (Status: ${response.status})`);
                 }
                 
                 const data = await response.json();
@@ -258,8 +265,9 @@
         
         async function getFileSha(filename) {
             if (!githubConfig.repo || !githubConfig.token) return null;
-            
-            const url = `https://api.github.com/repos/${githubConfig.repo}/contents/${filename}?ref=${githubConfig.branch}`;
+             
+            const branchRef = githubConfig.branch || 'main';
+            const url = `https://api.github.com/repos/${githubConfig.repo}/contents/${filename}?ref=${branchRef}`;
             
             try {
                 const response = await fetch(url, {
@@ -270,7 +278,7 @@
                 });
                 
                 if (!response.ok) {
-                     // Nếu file chưa tồn tại, trả về null (không phải lỗi)
+                     // Nếu file chưa tồn tại (404), trả về null (không phải lỗi)
                     if (response.status === 404) return null;
                     throw new Error(`GitHub API error for SHA ${filename}: ${response.statusText}`);
                 }
@@ -295,7 +303,7 @@
             const data = {
                 message: commitMessage,
                 content: contentBase64,
-                branch: githubConfig.branch
+                branch: githubConfig.branch || 'main'
             };
             
             if (sha) {
@@ -338,12 +346,20 @@
 
             // 1. Tải state3.json (Cấu trúc gốc)
             const staticData = await fetchGitHubFile('state3.json');
-            if (!staticData) return;
-            tournamentData = staticData;
             
+            if (!staticData) {
+                 // Nếu không tải được cấu trúc gốc, dừng lại và chỉ hiển thị giao diện mặc định
+                tournamentData = null;
+                runAllLogic(); 
+                return;
+            }
+            
+            tournamentData = staticData;
+
             // 2. Tải state3s.json (Tỉ số thay đổi)
             const diffData = await fetchGitHubFile('state3s.json');
-            scoreDiffData = diffData || {};
+            // diffData sẽ là {} nếu file không tồn tại hoặc có lỗi (xem fetchGitHubFile)
+            scoreDiffData = diffData || {}; 
             
             runAllLogic();
         }
@@ -555,7 +571,7 @@
                 
                 match.Wn = winnerId;
 
-                // [ĐIỀU CHỈNH 1: XÁC ĐỊNH HẠNG BA & Á QUÂN]
+                // XÁC ĐỊNH HẠNG BA & Á QUÂN
                 if (round === 'final') {
                     // Chung kết: rU là Á quân
                     match.rU = loserId; 
@@ -574,11 +590,20 @@
                     let nextPos; // pA hoặc pB
 
                     if (Array.isArray(nextMatches)) { // Tứ kết -> Bán kết
+                         // Logic phức tạp hơn nếu không có trường Pos rõ ràng. Giả định Pos được sử dụng để phân biệt.
                          nextMatch = nextMatches.find(m => m.Pos === match.Pos);
-                         nextPos = match.pA === winnerId ? nextMatch.pA : nextMatch.pB;
-                         
+                         // Xác định vị trí tiếp theo (pA/pB) dựa trên vị trí của người thắng trong cặp đấu tiếp theo
+                         if (match.Pos === 'W_QF1' || match.Pos === 'W_QF2') { // QF1, QF2 -> SF1 (nextMatch là SF1)
+                             if (index === 0) nextPos = 'pA'; // Người thắng QF1 là pA của SF1
+                             else if (index === 1) nextPos = 'pB'; // Người thắng QF2 là pB của SF1
+                         } else if (match.Pos === 'W_QF3' || match.Pos === 'W_QF4') { // QF3, QF4 -> SF2
+                             if (index === 2) nextPos = 'pA'; // Người thắng QF3 là pA của SF2
+                             else if (index === 3) nextPos = 'pB'; // Người thắng QF4 là pB của SF2
+                         }
+
                     } else { // Bán kết -> Chung kết
                         nextMatch = nextMatches; // nextMatches là đối tượng final
+                        // Giả định SF1 -> pA của Final, SF2 -> pB của Final
                         nextPos = match.Pos === 'W_SF1' ? 'pA' : 'pB';
                     }
                     
@@ -593,7 +618,7 @@
             });
         }
         
-        // [ĐIỀU CHỈNH 2: HÀM MỚI XÁC ĐỊNH HẠNG CUỐI CÙNG]
+        // HÀM MỚI XÁC ĐỊNH HẠNG CUỐI CÙNG
         function determineFinalRanks() {
             if (!tournamentData) return;
 
@@ -635,6 +660,9 @@
         }
         
         function renderMatch(match, round) {
+            // Nếu không có dữ liệu giải đấu, hiển thị thẻ rỗng
+            if (!tournamentData) return `<div class="match-card p-3 rounded-lg shadow-md flex justify-center text-gray-500">Chưa tải được cấu trúc giải đấu. Vui lòng kiểm tra tab Cài đặt.</div>`;
+            
             const diff = scoreDiffData[match.Id] || {};
             const sA = diff.sA !== undefined ? diff.sA : match.sA;
             const sB = diff.sB !== undefined ? diff.sB : match.sB;
@@ -649,7 +677,7 @@
             const winnerClassB = (match.Wn && match.Wn === teamBId) ? 'font-bold text-accent-color' : '';
 
             // Nếu chưa xác định pA hoặc pB (vòng Knockout chưa đủ đội)
-            const teamALabel = teamAId ? teamAName : (match.Pos ? `(${match.Pos.replace('W_', 'Thắng ')})` : 'Chờ đội...');
+            const teamALabel = teamAId ? teamAName : (match.pA_Pos || match.Pos ? `(${match.pA_Pos || match.Pos.replace('W_', 'Thắng ')})` : 'Chờ đội...');
             const teamBLabel = teamBId ? teamBName : (match.pB_Pos ? `(${match.pB_Pos.replace('W_', 'Thắng ')})` : 'Chờ đội...');
             
             return `
@@ -683,8 +711,12 @@
         }
 
         function renderGroupSection() {
-            if (!tournamentData || !tournamentData.groups) return;
             const groupDiv = document.getElementById('group');
+            if (!tournamentData || !tournamentData.groups) {
+                groupDiv.innerHTML = `<div class="text-center py-12 text-gray-500">Chưa có dữ liệu vòng bảng. Vui lòng tải từ GitHub (tab Cài đặt).</div>`;
+                return;
+            }
+            
             let html = '';
 
             GROUP_ORDER.forEach(groupKey => {
@@ -744,15 +776,17 @@
         }
 
         function renderKnockoutSection(round) {
-            if (!tournamentData || !tournamentData[round]) return;
-            
             const containerId = round + '-matches';
             const container = document.getElementById(containerId);
+            if (!tournamentData || !tournamentData[round]) {
+                if (container) container.innerHTML = `<div class="text-center py-6 text-gray-500">Chưa có dữ liệu vòng ${round}.</div>`;
+                return;
+            }
+            
             let html = '';
             
             if (round === 'final') {
                 html = renderMatch(tournamentData.final, 'final');
-                // Trận Chung kết là một đối tượng, không phải mảng
             } else { 
                 tournamentData[round].forEach(match => {
                     html += renderMatch(match, round);
@@ -762,7 +796,6 @@
             if (container) container.innerHTML = html;
         }
         
-        // [ĐIỀU CHỈNH 3: CẬP NHẬT RENDER FINAL SECTION]
         function renderFinalSection() {
             // Render trận Chung kết trước
             renderKnockoutSection('final');
@@ -814,7 +847,11 @@
         // --- MAIN LOGIC FLOW ---
         
         function runAllLogic() {
-            if (!tournamentData) return;
+            if (!tournamentData) {
+                 renderAllSections();
+                 updateDiffData();
+                 return;
+            }
             
             // 1. Vòng Bảng
             recalculateAndSortGroupTables(); 
@@ -827,7 +864,7 @@
             updateKnockoutMatches('semifinals');
             updateKnockoutMatches('final');
             
-            // 4. [ĐIỀU CHỈNH 4: TÍNH TOÁN XẾP HẠNG CUỐI CÙNG]
+            // 4. TÍNH TOÁN XẾP HẠNG CUỐI CÙNG
             determineFinalRanks(); 
 
             // 5. Render và chuẩn bị đồng bộ
@@ -843,8 +880,9 @@
         }
 
         function updateDiffData() {
-            // Cập nhật trạng thái hiển thị của nút đồng bộ nếu có thay đổi
             const commitButton = document.querySelector('button[onclick="commitChanges()"]');
+            if (!commitButton) return;
+
             if (Object.keys(scoreDiffData).length > 0) {
                  commitButton.textContent = `ĐỒNG BỘ LÊN GITHUB (${Object.keys(scoreDiffData).length} thay đổi)`;
                  commitButton.classList.add('bg-red-600', 'hover:bg-red-700');
@@ -916,7 +954,7 @@
                 }
             });
             
-             // Thêm/Xóa class hidden khỏi các div con (chỉ cần thiết cho việc tải nội dung, không phải chuyển động)
+             // Chỉ ẩn/hiện tab đang hoạt động để tránh lỗi render
             tabs.forEach(tabId => {
                 const tabElement = document.getElementById(tabId);
                 if (tabElement) {
@@ -983,9 +1021,13 @@
             document.getElementById('confirmYes').onclick = window.reSyncStaticData;
             document.getElementById('confirmNo').onclick = () => document.getElementById('confirmationBox').classList.add('hidden');
             
-            // Commit button listeners (Do the buttons are created in HTML, only need the function definitions)
-
-            // Start data loading
+            // ----------------------------------------------------
+            // KHẮC PHỤC QUAN TRỌNG: Khởi tạo UI và Tab trước khi tải Data
+            // ----------------------------------------------------
+            changeTab(currentTab); 
+            renderAllSections(); 
+            
+            // Bắt đầu tải dữ liệu (sẽ không làm hỏng UI nếu lỗi)
             loadDataFromGitHub();
         }
 
