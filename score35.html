@@ -105,7 +105,7 @@
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
                     <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL</h1>
-                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.2**</p>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.3**</p>
                 </div>
             </div>
             
@@ -350,7 +350,8 @@
         function mergeData(baseData, diffData) {
             const merged = JSON.parse(JSON.stringify(baseData)); // Deep copy base
             
-            if (!diffData) return merged;
+            // Nếu diffData là đối tượng rỗng (do file rỗng) thì vẫn tiếp tục
+            if (!diffData || Object.keys(diffData).length === 0) return merged;
 
             // 1. Merge group match scores (matchesA-D)
             ['A', 'B', 'C', 'D'].forEach(group => {
@@ -702,8 +703,9 @@
 
         /**
          * Tải dữ liệu từ một URL.
+         * [FIX: Đã chỉnh sửa để xử lý lỗi JSON không hợp lệ/file rỗng một cách an toàn]
          * @param {string} url - URL của file JSON.
-         * @returns {Promise<Object|null>} Dữ liệu JSON hoặc null nếu thất bại.
+         * @returns {Promise<Object>} Dữ liệu JSON hoặc đối tượng rỗng nếu thất bại.
          */
         async function fetchData(url) {
             try {
@@ -711,14 +713,26 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                const data = await response.json();
+                
+                // 1. Đọc response dưới dạng text
+                const text = await response.text();
+                
+                // 2. Kiểm tra nếu nội dung rỗng (tránh "Unexpected end of JSON input")
+                if (!text.trim()) {
+                    return {}; // Trả về đối tượng rỗng
+                }
+                
+                // 3. Thử parse JSON từ nội dung đã đọc
+                const data = JSON.parse(text); 
                 return data;
             } catch (error) {
                 console.error(`Error fetching data from ${url}:`, error);
-                document.getElementById('statusMessage').textContent = `❌ Lỗi tải dữ liệu từ GitHub: ${url}`;
-                document.getElementById('statusMessage').classList.remove('bg-blue-900/50', 'text-blue-300');
+                document.getElementById('statusMessage').textContent = `❌ Lỗi tải dữ liệu từ GitHub (${url}): Vui lòng kiểm tra console.`;
+                document.getElementById('statusMessage').classList.remove('bg-blue-900/50', 'text-blue-300', 'bg-green-900/50', 'text-green-300');
                 document.getElementById('statusMessage').classList.add('bg-red-900/50', 'text-red-300');
-                return null;
+                
+                // Trả về đối tượng rỗng để tránh lỗi nghiêm trọng khi hợp nhất (merge) dữ liệu phụ.
+                return {}; 
             }
         }
 
@@ -733,9 +747,11 @@
             const baseDataPromise = fetchData(STATIC_DATA_URL); // state3.json
             const diffDataPromise = fetchData(DIFF_DATA_URL); // state3s.json
             
+            // fetchData sẽ trả về {} nếu lỗi
             const [baseData, diffData] = await Promise.all([baseDataPromise, diffDataPromise]);
             
-            if (baseData) {
+            // Chỉ tiếp tục nếu baseData không phải là đối tượng rỗng (lỗi tải file chính)
+            if (baseData && Object.keys(baseData).length > 0) {
                 // Tách biệt dữ liệu gốc và dữ liệu đã hợp nhất
                 initialTournamentData = JSON.parse(JSON.stringify(baseData)); 
                 tournamentData = mergeData(baseData, diffData);
@@ -1271,6 +1287,36 @@
         // HÀM COMMIT LÊN GITHUB
         // =================================================================
         
+        const MAX_BODY_LENGTH = 150; 
+        
+        /**
+         * Cố gắng parse response thành JSON. Nếu thất bại, đọc response thành TEXT để debug.
+         * [FIX: Đã thêm clone để đọc response body an toàn]
+         * @param {Response} response 
+         * @returns {Promise<Object|{jsonError: string, textBody: string}>}
+         */
+        async function safelyParseResponse(response) {
+            let fileData;
+            let responseBodyText = '';
+            // Clone response để có thể đọc body dưới dạng JSON và Text nếu cần
+            const responseClone = response.clone(); 
+
+            try {
+                fileData = await response.json();
+                return fileData; // Trả về JSON object nếu thành công
+            } catch (e) {
+                // Nếu không phải JSON, đọc nó như TEXT để debug
+                try {
+                    // Dùng response clone để đọc text (response gốc đã bị .json() tiêu thụ)
+                    responseBodyText = await responseClone.text(); 
+                } catch(textError) {
+                    responseBodyText = '(Không thể đọc nội dung phản hồi)';
+                }
+                // Trả về một đối tượng lỗi để xử lý tiếp
+                return { jsonError: e.message, textBody: responseBodyText.substring(0, MAX_BODY_LENGTH) };
+            }
+        }
+        
         /**
          * Lấy SHA hiện tại của file và commit nội dung mới.
          * @param {string} apiUrl - URL API GitHub cho file (state3.json hoặc state3s.json).
@@ -1288,33 +1334,6 @@
             resultElement.classList.add('hidden');
             resultElement.classList.remove('bg-red-900/50', 'bg-green-900/50');
             
-            const MAX_BODY_LENGTH = 150; 
-
-            /**
-             * Cố gắng parse response thành JSON. Nếu thất bại, đọc response thành TEXT để debug.
-             * @param {Response} response 
-             * @returns {Promise<Object|{jsonError: string, textBody: string}>}
-             */
-            async function safelyParseResponse(response) {
-                let fileData;
-                let responseBodyText = '';
-
-                try {
-                    fileData = await response.json();
-                    return fileData; // Trả về JSON object nếu thành công
-                } catch (e) {
-                    // Nếu không phải JSON, đọc nó như TEXT để debug
-                    try {
-                        responseBodyText = await response.text();
-                    } catch(textError) {
-                        responseBodyText = '(Không thể đọc nội dung phản hồi)';
-                    }
-                    // Trả về một đối tượng lỗi để xử lý tiếp
-                    return { jsonError: e.message, textBody: responseBodyText.substring(0, MAX_BODY_LENGTH) };
-                }
-            }
-
-
             try {
                 // 1. Lấy SHA hiện tại của file (GET request)
                 const getResponse = await fetch(apiUrl, {
@@ -1328,10 +1347,8 @@
                 if (!getResponse.ok) {
                     let errorDetails;
                     if (fileData.jsonError) {
-                        // Lỗi non-JSON khi status là lỗi (4xx, 5xx)
                         errorDetails = `Lỗi phản hồi (Status ${getResponse.status}): Nội dung KHÔNG phải JSON. Body: "${fileData.textBody}"`;
                     } else {
-                        // Lỗi JSON hợp lệ (ví dụ: {"message": "Not Found"})
                         errorDetails = fileData.message || getResponse.statusText;
                     }
                     throw new Error(`Lỗi khi lấy SHA: ${getResponse.status} - ${errorDetails}`);
@@ -1346,9 +1363,8 @@
                 const currentSha = fileData.sha;
                 
                 if (!currentSha) {
-                    // Đây là trường hợp file chưa tồn tại.
-                    // Nếu bạn muốn tạo file mới, bạn có thể bỏ qua lỗi này, nhưng ở đây
-                    // ta giả định file đã tồn tại.
+                    // Nếu không có SHA, tạo file mới (GitHub API yêu cầu SHA để update)
+                    // Ở đây, ta giả định file phải tồn tại.
                     throw new Error("Không tìm thấy SHA (file có thể không tồn tại hoặc lỗi cấu trúc).");
                 }
 
@@ -1374,7 +1390,6 @@
                 if (!commitResponse.ok) {
                     let errorDetails;
                      if (commitResult.jsonError) {
-                         // Lỗi non-JSON sau commit fail
                          errorDetails = `Lỗi Commit: ${commitResponse.status}. Phản hồi không phải JSON. Body: "${commitResult.textBody}"`;
                      } else {
                          // Xử lý lỗi từ GitHub API sau commit
@@ -1383,14 +1398,10 @@
                     throw new Error(`Lỗi API Commit: ${commitResponse.status} - ${errorDetails}`);
                 }
                 
-                // Xử lý trường hợp 200 OK nhưng JSON lỗi sau commit (rất hiếm)
-                if (commitResponse.ok && commitResult.jsonError) {
-                    throw new Error(`Lỗi cú pháp JSON sau Commit ${commitResponse.status} OK. Body: "${commitResult.textBody}"`);
-                }
-                
                 // 3. Xử lý thành công
                 resultElement.classList.remove('hidden');
                 resultElement.classList.add('bg-green-900/50');
+                // Commit result sẽ chứa SHA của commit mới.
                 resultElement.textContent = `✅ COMMIT thành công: ${commitResult.commit.sha.substring(0, 7)}.`;
                 
                 // Tải lại dữ liệu sau khi commit thành công
