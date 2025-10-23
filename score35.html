@@ -105,7 +105,7 @@
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
                     <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL</h1>
-                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.3**</p>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.4 (Fix Lỗi Commit JSON)**</p>
                 </div>
             </div>
             
@@ -1291,29 +1291,36 @@
         
         /**
          * Cố gắng parse response thành JSON. Nếu thất bại, đọc response thành TEXT để debug.
-         * [FIX: Đã thêm clone để đọc response body an toàn]
+         * [FIX: Đã chỉnh sửa để xử lý lỗi Status 200 OK nhưng Body rỗng]
          * @param {Response} response 
          * @returns {Promise<Object|{jsonError: string, textBody: string}>}
          */
         async function safelyParseResponse(response) {
-            let fileData;
             let responseBodyText = '';
             // Clone response để có thể đọc body dưới dạng JSON và Text nếu cần
             const responseClone = response.clone(); 
 
             try {
-                fileData = await response.json();
-                return fileData; // Trả về JSON object nếu thành công
-            } catch (e) {
-                // Nếu không phải JSON, đọc nó như TEXT để debug
-                try {
-                    // Dùng response clone để đọc text (response gốc đã bị .json() tiêu thụ)
-                    responseBodyText = await responseClone.text(); 
-                } catch(textError) {
-                    responseBodyText = '(Không thể đọc nội dung phản hồi)';
+                // 1. Thử đọc response dưới dạng text trước
+                responseBodyText = await responseClone.text();
+                
+                // 2. Nếu body rỗng, và status là thành công (200/201), coi như thành công và trả về object rỗng
+                if (!responseBodyText.trim() && (response.status === 200 || response.status === 201)) {
+                    console.warn(`[safelyParseResponse] Status ${response.status} OK nhưng Body rỗng. Coi là thành công.`);
+                    return {}; 
                 }
-                // Trả về một đối tượng lỗi để xử lý tiếp
-                return { jsonError: e.message, textBody: responseBodyText.substring(0, MAX_BODY_LENGTH) };
+
+                // 3. Nếu có nội dung, thử parse JSON
+                const fileData = JSON.parse(responseBodyText);
+                return fileData; // Trả về JSON object nếu thành công
+
+            } catch (e) {
+                // 4. Nếu lỗi parse JSON (hoặc response stream bị lỗi), trả về thông tin lỗi
+                const bodyPreview = responseBodyText.substring(0, MAX_BODY_LENGTH);
+                return { 
+                    jsonError: e.message, 
+                    textBody: bodyPreview || '(Không thể đọc nội dung phản hồi)' 
+                };
             }
         }
         
@@ -1360,19 +1367,20 @@
                 }
 
                 // Tiếp tục với dữ liệu JSON hợp lệ (Status 200 OK)
+                // Nếu fileData là {}, SHA sẽ là undefined (xảy ra khi file state3s.json rỗng)
                 const currentSha = fileData.sha;
                 
-                if (!currentSha) {
+                if (!currentSha && fileData.message !== 'Not Found') {
                     // Nếu không có SHA, tạo file mới (GitHub API yêu cầu SHA để update)
                     // Ở đây, ta giả định file phải tồn tại.
                     throw new Error("Không tìm thấy SHA (file có thể không tồn tại hoặc lỗi cấu trúc).");
                 }
-
+                
                 // 2. Commit nội dung mới (PUT request)
                 const commitBody = {
                     message: commitMessage,
                     content: base64Content,
-                    sha: currentSha,
+                    sha: currentSha, // Có thể là undefined nếu commit lần đầu (không xảy ra với state3s.json)
                     branch: BRANCH
                 };
 
@@ -1401,9 +1409,12 @@
                 // 3. Xử lý thành công
                 resultElement.classList.remove('hidden');
                 resultElement.classList.add('bg-green-900/50');
-                // Commit result sẽ chứa SHA của commit mới.
-                resultElement.textContent = `✅ COMMIT thành công: ${commitResult.commit.sha.substring(0, 7)}.`;
                 
+                // Dùng SHA từ commitResult.commit.sha nếu có, nếu không (do commitResult là {}), 
+                // báo cáo thành công mà không cần SHA commit mới.
+                const newSha = commitResult.commit ? commitResult.commit.sha.substring(0, 7) : 'Xác nhận thành công';
+                resultElement.textContent = `✅ COMMIT thành công: ${newSha}.`;
+
                 // Tải lại dữ liệu sau khi commit thành công
                 await loadDataFromGitHub();
                 
