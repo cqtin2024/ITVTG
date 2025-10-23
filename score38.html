@@ -105,7 +105,7 @@
                 <svg class="w-8 h-8 md:w-10 md:h-10 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-2">
                     <h1 class="text-lg md:text-3xl font-extrabold text-[var(--text-color)] leading-tight">PICKLEBALL TOURNAMENT MGMT</h1>
-                    <p class="text-xs text-[var(--accent-color)]">Score & Team Update (GitHub Sync) - **v1.7.2 (SF Seeding Validation)**</p>
+                    <p class="text-xs text-[var(--accent-color)]">Score & Team Update (GitHub Sync) - **v1.7.3 (SF Seeding Robustness)**</p>
                     </div>
             </div>
             
@@ -728,27 +728,28 @@
                         // Cập nhật đội đi tiếp (Chỉ áp dụng cho Tứ kết và Bán kết)
                         const winner = match.Wn;
 
-                        // START: ĐIỀU CHỈNH LOGIC PHÂN HẠT BÁN KẾT (W.QF1 vs W.QF3, W.QF2 vs W.QF4)
-                        if (round === 'quarterfinals') {
+                        const sfMatches = tournamentData.semifinals;
+                        
+                        // START: LOGIC PHÂN HẠT BÁN KẾT (W.QF1 vs W.QF3, W.QF2 vs W.QF4)
+                        if (round === 'quarterfinals' && sfMatches && sfMatches.length >= 2) {
                             const qfPos = match.Pos; // 1, 2, 3, 4
-                            const sfMatches = tournamentData.semifinals;
 
-                            if (sfMatches && sfMatches.length >= 2) {
-                                // SF1 (index 0): W.QF1 vs W.QF3
-                                if (qfPos === 1) { // W.QF1 -> SF1 Team A
-                                    sfMatches[0].tA = winner;
-                                } else if (qfPos === 3) { // W.QF3 -> SF1 Team B
-                                    sfMatches[0].tB = winner;
-                                } 
-                                // SF2 (index 1): W.QF2 vs W.QF4
-                                else if (qfPos === 2) { // W.QF2 -> SF2 Team A
-                                    sfMatches[1].tA = winner;
-                                } else if (qfPos === 4) { // W.QF4 -> SF2 Team B
-                                    sfMatches[1].tB = winner;
-                                }
+                            // SF1 (index 0): W.QF1 vs W.QF3
+                            if (qfPos === 1) { // W.QF1 -> SF1 Team A
+                                sfMatches[0].tA = winner;
+                            } else if (qfPos === 3) { // W.QF3 -> SF1 Team B
+                                sfMatches[0].tB = winner;
+                            } 
+                            // SF2 (index 1): W.QF2 vs W.QF4
+                            else if (qfPos === 2) { // W.QF2 -> SF2 Team A
+                                // ĐẢM BẢO TỐI ĐA SỰ ỔN ĐỊNH CHO SF2 TEAM A (W.QF2)
+                                if(sfMatches[1]) sfMatches[1].tA = winner;
+                            } else if (qfPos === 4) { // W.QF4 -> SF2 Team B
+                                // ĐẢM BẢO TỐI ĐA SỰ ỔN ĐỊNH CHO SF2 TEAM B (W.QF4)
+                                if(sfMatches[1]) sfMatches[1].tB = winner;
                             }
                         } 
-                        // END: ĐIỀU CHỈNH LOGIC PHÂN HẠT BÁN KẾT
+                        // END: LOGIC PHÂN HẠT BÁN KẾT
                         
                         // Logic Bán kết -> Chung kết
                         if (round === 'semifinals') {
@@ -768,23 +769,28 @@
                 } else {
                     // Nếu một trong hai team ID là null/undefined, đảm bảo Wn cũng là null
                     match.Wn = null;
+                    match.rU = null;
+
                     // Cần reset đội tiếp theo nếu chưa có đủ đội
                     if (round === 'quarterfinals') {
-                        // QF1 -> SF1.tA
-                        if (match.Pos === 1) tournamentData.semifinals[0].tA = null;
-                        // QF2 -> SF2.tA
-                        if (match.Pos === 2) tournamentData.semifinals[1].tA = null;
-                        // QF3 -> SF1.tB
-                        if (match.Pos === 3) tournamentData.semifinals[0].tB = null;
-                        // QF4 -> SF2.tB
-                        if (match.Pos === 4) tournamentData.semifinals[1].tB = null;
+                        const sfMatches = tournamentData.semifinals;
+                        if (sfMatches && sfMatches.length >= 2) {
+                             // Reset SF1
+                             if (match.Pos === 1) sfMatches[0].tA = null;
+                             if (match.Pos === 3) sfMatches[0].tB = null;
+                             // Reset SF2
+                             if (match.Pos === 2) { 
+                                 if(sfMatches[1]) sfMatches[1].tA = null; // Reset W.QF2 -> SF2.tA
+                             }
+                             if (match.Pos === 4) {
+                                 if(sfMatches[1]) sfMatches[1].tB = null; // Reset W.QF4 -> SF2.tB
+                             }
+                        }
                     } else if (round === 'semifinals') {
-                        // SF1 -> Final.tA
-                        if (match.Pos === 1) tournamentData.final.tA = null;
-                        // SF2 -> Final.tB
-                        if (match.Pos === 2) tournamentData.final.tB = null;
+                        // Reset Final
+                        if (match.Pos === 1 && tournamentData.final) tournamentData.final.tA = null;
+                        if (match.Pos === 2 && tournamentData.final) tournamentData.final.tB = null;
                     }
-                    match.rU = null;
                 }
             });
         }
@@ -1418,7 +1424,7 @@
 
             return `
                 <div class="match-card p-4 rounded-lg border-b-2 ${isFinal ? 'border-red-500 shadow-xl' : ''}">
-                    <div class="text-xs text-gray-500 mb-2 font-semibold">${roundName} ${isFinal ? '' : (matchIndex + 1)} (${match.Pos})</div>
+                    <div class="text-xs text-gray-500 mb-2 font-semibold">${roundName} ${isFinal ? '' : (match.Pos)}</div>
                     
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
