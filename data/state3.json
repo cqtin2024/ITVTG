@@ -403,69 +403,69 @@
     {
       "t": "15:45",
       "c": "S3",
-      "A": "Duy Hưng-Minh Tú",
-      "sA": "11",
-      "B": "Quốc Hùng-Đức Duy",
+      "A": "W.A",
+      "sA": "0",
+      "B": "R.B",
       "sB": "0",
-      "Wn": "Duy Hưng-Minh Tú"
+      "Wn": "W.QF1"
     },
     {
       "t": "15:45",
       "c": "S4",
-      "A": "Hoàng Thanh-Công Phương",
-      "sA": "11",
-      "B": "Tiến Mạnh-Quang Tín",
+      "A": "W.B",
+      "sA": "0",
+      "B": "R.A",
       "sB": "0",
-      "Wn": "Hoàng Thanh-Công Phương"
+      "Wn": "W.QF2"
     },
     {
       "t": "16:00",
       "c": "S5",
-      "A": "Quí Tuấn-Mạnh Hùng",
-      "sA": "11",
-      "B": "Quốc Thịnh-Minh Phương",
+      "A": "W.C",
+      "sA": "0",
+      "B": "R.D",
       "sB": "0",
-      "Wn": "Quí Tuấn-Mạnh Hùng"
+      "Wn": "W.QF3"
     },
     {
       "t": "16:00",
       "c": "S6",
-      "A": "Bá Châu-Hiền Phong",
-      "sA": "11",
-      "B": "Lê Duy-Thanh Vương",
-      "sB": "0",
-      "Wn": "Bá Châu-Hiền Phong"
+      "A": "W.D",
+      "sA": "",
+      "B": "R.C",
+      "sB": "",
+      "Wn": "W.QF4"
     }
   ],
   "semifinals": [
     {
       "t": "16:10",
       "c": "S4",
-      "A": "Duy Hưng-Minh Tú",
-      "sA": "11",
-      "B": "Hoàng Thanh-Công Phương",
+      "A": "W.QF1",
+      "sA": "",
+      "B": "W.QF3",
       "sB": "0",
-      "Wn": "Duy Hưng-Minh Tú"
+      "Wn": "W.SF1"
     },
     {
       "t": "16:25",
       "c": "S5",
-      "A": "Quí Tuấn-Mạnh Hùng",
-      "sA": "11",
-      "B": "Bá Châu-Hiền Phong",
+      "A": "W.QF2",
+      "sA": "0",
+      "B": "W.QF4",
       "sB": "0",
-      "Wn": "Quí Tuấn-Mạnh Hùng"
+      "Wn": "W.SF2"
     }
   ],
   "final": {
     "t": "17:05",
     "c": "S5",
-    "A": "Duy Hưng-Minh Tú",
-    "sA": "11",
-    "B": "Quí Tuấn-Mạnh Hùng",
-    "sB": "9",
-    "Wn": "Duy Hưng-Minh Tú",
-    "rU": "Quí Tuấn-Mạnh Hùng"
+    "A": "W.SF1",
+    "sA": "0",
+    "B": "W.SF2",
+    "sB": "0",
+    "Wn": "",
+    "rU": ""
   },
   "tL": [
     {
