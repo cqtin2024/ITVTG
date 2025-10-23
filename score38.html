@@ -105,7 +105,7 @@
                 <svg class="w-8 h-8 md:w-10 md:h-10 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-2">
                     <h1 class="text-lg md:text-3xl font-extrabold text-[var(--text-color)] leading-tight">PICKLEBALL TOURNAMENT MGMT</h1>
-                    <p class="text-xs text-[var(--accent-color)]">Score & Team Update (GitHub Sync) - **v1.6.8 (Compact)**</p>
+                    <p class="text-xs text-[var(--accent-color)]">Score & Team Update (GitHub Sync) - **v1.6.9 (Auto Commit)**</p>
                 </div>
             </div>
             
@@ -278,7 +278,7 @@
         let currentTab = 'General';
         let startX = 0;
         let endX = 0;
-
+        let needsInitialCommit = true; // Cờ mới: Cần thực hiện tự động commit lần đầu
 
         // =================================================================
         // HÀM CHUNG VÀ TIỆN ÍCH
@@ -401,6 +401,7 @@
                 
                 // 2. Lấy dữ liệu tỉ số (state3s.json). Sẽ trả về {} nếu 404/file rỗng
                 const diffData = await fetchDataFromGitHub(DIFF_DATA_URL);
+                const isDiffDataEmpty = Object.keys(diffData).length === 0;
                 
                 // 3. Hợp nhất
                 tournamentData = mergeData(initialTournamentData, diffData);
@@ -408,6 +409,23 @@
                 // 4. Chạy logic và render
                 runAllLogic(); 
 
+                // 5. Logic Tự động Commit (Chỉ chạy lần đầu và khi state3s.json rỗng/không tồn tại)
+                if (needsInitialCommit && isDiffDataEmpty) {
+                     // Set cờ false ngay lập tức để ngăn chặn vòng lặp vô tận khi tự động reload.
+                     needsInitialCommit = false; 
+                     
+                     // Chỉ gọi commit nếu có thay đổi (tức là sau runAllLogic đã tạo ra diffDataForCommit)
+                     const diffToCommit = window.diffDataForCommit || {};
+                     if (Object.keys(diffToCommit).length > 0) {
+                         // GỌI COMMIT IM LẶNG
+                         await commitQuietly();
+                         return; // Thoát khỏi lần tải hiện tại để lần tải tiếp theo từ commit xử lý hiển thị.
+                     }
+                }
+                
+                needsInitialCommit = false; // Đảm bảo cờ được set false nếu không tự động commit
+
+                // 6. Hiển thị trạng thái thành công cho lần tải cuối cùng
                 statusEl.classList.remove('bg-blue-900/50');
                 statusEl.classList.add('bg-green-900/50');
                 statusEl.textContent = `✅ Sync successful. Version: ${tournamentData.version || 'N/A'}.`;
@@ -429,6 +447,7 @@
             window.diffDataForCommit = {}; 
             document.getElementById('scoreCommitResult').classList.add('hidden');
             document.getElementById('teamCommitResult').classList.add('hidden');
+            needsInitialCommit = true; // Cho phép tự động commit nếu cần
             await loadDataFromGitHub();
         }
         // Đăng ký hàm reSyncStaticData vào window để dùng trong event listener
@@ -1506,8 +1525,6 @@
                 resultElement.textContent = `✅ COMMIT successful: ${newSha}.`;
 
                 // Tải lại dữ liệu sau khi commit thành công
-                // Nếu commit Team data (state3.json), ta cần tải lại để cập nhật tournamentData và initialTournamentData.
-                // Nếu commit Score data (state3s.json), ta cần tải lại để cập nhật tỉ số.
                 await loadDataFromGitHub();
                 
             } catch (err) {
@@ -1526,6 +1543,76 @@
                 }
             }
         }
+        
+        /**
+         * Thực hiện commit score (state3s.json) một cách IM LẶNG (không cập nhật UI nút bấm/kết quả).
+         * Được dùng cho tính năng tự động commit lần đầu.
+         */
+        async function commitQuietly() {
+            // Lấy token và kiểm tra
+            githubToken = localStorage.getItem('githubToken') || '';
+            if (!githubToken) { 
+                console.error("⚠️ Cannot auto-commit: GitHub Token not found.");
+                return; 
+            }
+            
+            const diffData = window.diffDataForCommit || {};
+            if (Object.keys(diffData).length === 0) return; // Không có gì để commit
+
+            const base64Content = jsonToBase64(diffData);
+            const apiUrl = SCORE_API_URL;
+            const commitMessage = 'Auto-commit: Initial tournament results.';
+
+            try {
+                // 1. Lấy SHA hiện tại của file (GET request)
+                const getResponse = await fetch(apiUrl, {
+                    headers: { 'Authorization': `token ${githubToken}` }
+                });
+                
+                let fileData = await safelyParseResponse(getResponse);
+                let currentSha = fileData.sha; 
+                
+                if (getResponse.status === 404) {
+                    currentSha = undefined;
+                    console.warn(`[commitQuietly] File not found (404). Preparing to create new file.`);
+                } else if (!getResponse.ok) {
+                     // Xử lý lỗi nghiêm trọng khác (401, 500,...)
+                    throw new Error(`Error fetching SHA: ${getResponse.status} - ${fileData.message || getResponse.statusText}`);
+                }
+                
+                // 2. Commit nội dung mới (PUT request)
+                const commitBody = {
+                    message: commitMessage,
+                    content: base64Content,
+                    sha: currentSha, 
+                    branch: BRANCH
+                };
+
+                const commitResponse = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(commitBody)
+                });
+                
+                if (!commitResponse.ok) {
+                    let commitResult = await safelyParseResponse(commitResponse);
+                    throw new Error(`Commit API Error: ${commitResponse.status} - ${commitResult.message || commitResponse.statusText}`);
+                }
+                
+                // 3. Thành công -> Tải lại dữ liệu từ GitHub
+                console.log("✅ Initial Auto-Commit successful. Reloading data...");
+                // Gọi lại loadDataFromGitHub. needsInitialCommit đã là false nên sẽ không lặp.
+                await loadDataFromGitHub();
+
+            } catch (err) {
+                console.error(`❌ Initial Auto-Commit failed: ${err.message}`);
+                // Báo cáo lỗi và tiếp tục hiển thị dữ liệu đã tính toán (không bị ảnh hưởng bởi lỗi commit)
+            }
+        }
+
 
         /**
          * Commit tỉ số thay đổi (state3s.json) lên GitHub.
@@ -1539,6 +1626,7 @@
             
             const base64Content = jsonToBase64(diffData);
             
+            // Sử dụng hàm gốc (có cập nhật UI)
             await getShaAndCommit(SCORE_API_URL, base64Content, 'Update scores via web app', 'commitScoreButton', 'scoreCommitResult');
         }
 
@@ -1553,6 +1641,7 @@
             const teamData = initialTournamentData;
             const base64Content = jsonToBase64(teamData);
             
+            // Sử dụng hàm gốc (có cập nhật UI)
             await getShaAndCommit(BASE_API_URL, base64Content, 'Update team data via web app', 'commitTeamButton', 'teamCommitResult');
         }
 
