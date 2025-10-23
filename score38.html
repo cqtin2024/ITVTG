@@ -105,7 +105,7 @@
                 <svg class="w-8 h-8 md:w-10 md:h-10 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-2">
                     <h1 class="text-lg md:text-3xl font-extrabold text-[var(--text-color)] leading-tight">PICKLEBALL TOURNAMENT MGMT</h1>
-                    <p class="text-xs text-[var(--accent-color)]">Score & Team Update (GitHub Sync) - **v1.6.9 (Auto Commit)**</p>
+                    <p class="text-xs text-[var(--accent-color)]">Score & Team Update (GitHub Sync) - **v1.6.9 (QF Seeding Fix)**</p>
                 </div>
             </div>
             
@@ -225,7 +225,7 @@
                 </div>
                 <div class="space-y-1">
                     <label for="scoreApiUrl" class="block text-xs font-medium text-gray-400">SCORE_API_URL (state3s.json)</label>
-                    <input type="text" id="scoreApiUrl" class="text-input w-full p-2 rounded-md text-xs" disabled>
+                    <input type="text" id="scoreApiUrl" class="text-full p-2 rounded-md text-xs" disabled>
                 </div>
                 <div class="space-y-1">
                     <label for="staticDataUrl" class="block text-xs font-medium text-gray-400">STATIC_DATA_URL (Raw state3.json)</label>
@@ -674,10 +674,30 @@
             }
 
             // Chỉ cập nhật các trận Tứ kết
-            tournamentData.quarterfinals.forEach(match => {
-                // Lấy ID đội dựa trên vị trí seeding (pA, pB)
-                const teamAId = getTeamIdByPosition(match.pA);
-                const teamBId = getTeamIdByPosition(match.pB);
+            tournamentData.quarterfinals.forEach((match, index) => {
+                let positionA = match.pA;
+                let positionB = match.pB;
+                
+                // **QUY TẮC PHÂN HẠT TỨ KẾT ĐẶC BIỆT (QF1-QF4)**
+                // Ghi đè vị trí phân hạt dựa trên index để đảm bảo tuân thủ quy tắc chéo
+                if (index === 0) { // QF1
+                    positionA = 'A1'; // W.A
+                    positionB = 'B2'; // R.B
+                } else if (index === 1) { // QF2
+                    positionA = 'B1'; // W.B
+                    positionB = 'A2'; // R.A
+                } else if (index === 2) { // QF3
+                    positionA = 'C1'; // W.C
+                    positionB = 'D2'; // R.D
+                } else if (index === 3) { // QF4
+                    positionA = 'D1'; // W.D
+                    positionB = 'C2'; // R.C
+                }
+                // Nếu có QF khác (>= index 4), nó sẽ tự động dùng pA/pB từ JSON gốc
+
+                // Lấy ID đội dựa trên vị trí seeding đã xác định
+                const teamAId = getTeamIdByPosition(positionA);
+                const teamBId = getTeamIdByPosition(positionB);
                 
                 // Cập nhật tA và tB. Nếu không tìm thấy (TBD), gán null
                 match.tA = teamAId;
