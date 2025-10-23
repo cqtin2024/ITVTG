@@ -883,7 +883,7 @@
             html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
             
             matches.forEach((match, index) => {
-                const teamAId = match.tA;
+                const teamAId = match.tA; // Vòng loại dùng T (ID)
                 const teamBId = match.tB;
                 const matchPos = match.Pos || (index + 1);
                 // Vòng loại vẫn dùng ID, nên ta dùng getTeamNameById
@@ -1251,6 +1251,7 @@
 
         // =================================================================
         // HÀM COMMIT LÊN GITHUB
+        // ĐÃ ĐIỀU CHỈNH: Xóa Accept header để lấy SHA metadata và cải thiện xử lý lỗi JSON
         // =================================================================
 
         /**
@@ -1271,19 +1272,28 @@
             resultElement.classList.remove('bg-red-900/50', 'bg-green-900/50');
 
             try {
-                // 1. Lấy SHA hiện tại của file
+                // 1. Lấy SHA hiện tại của file (ĐÃ FIX: Bỏ Accept header để lấy metadata JSON chứa SHA)
                 const getResponse = await fetch(apiUrl, {
                     headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Accept': 'application/vnd.github.v3.raw'
+                        'Authorization': `token ${githubToken}`
+                        // Bỏ 'Accept': 'application/vnd.github.v3.raw'
                     }
                 });
                 
                 if (!getResponse.ok) {
-                    throw new Error(`Lỗi khi lấy SHA: ${getResponse.statusText} (${getResponse.status})`);
+                    let errorDetails = getResponse.statusText;
+                    try {
+                         // Cố gắng phân tích phản hồi lỗi thành JSON để lấy chi tiết lỗi
+                         const errorJson = await getResponse.json();
+                         errorDetails = errorJson.message || errorDetails;
+                    } catch (e) {
+                         // Bỏ qua nếu response body không phải JSON
+                    }
+                    throw new Error(`Lỗi khi lấy SHA: ${getResponse.status} (${errorDetails})`);
                 }
                 
-                const fileData = await getResponse.json();
+                // Bây giờ getResponse.json() sẽ trả về metadata JSON hợp lệ
+                const fileData = await getResponse.json(); 
                 const currentSha = fileData.sha;
 
                 // 2. Commit nội dung mới
@@ -1304,8 +1314,15 @@
                 });
 
                 if (!commitResponse.ok) {
-                    const errorJson = await commitResponse.json();
-                    throw new Error(`Lỗi API Commit: ${commitResponse.statusText} - ${errorJson.message}`);
+                    let errorDetails = commitResponse.statusText;
+                    try {
+                        // Cố gắng phân tích phản hồi lỗi thành JSON để lấy chi tiết lỗi
+                        const errorJson = await commitResponse.json();
+                        errorDetails = errorJson.message || errorDetails;
+                    } catch (e) {
+                        // Bỏ qua nếu response body không phải JSON
+                    }
+                    throw new Error(`Lỗi API Commit: ${commitResponse.status} - ${errorDetails}`);
                 }
                 
                 // 3. Xử lý thành công
