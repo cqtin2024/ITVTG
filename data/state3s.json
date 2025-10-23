@@ -1,7 +1,7 @@
 {
   "matchesA": [
     {
-      "sA": 1,
+      "sA": 9,
       "sB": 11,
       "Wn": "Quốc Thịnh-Minh Phương"
     },
@@ -39,27 +39,22 @@
   ],
   "quarterfinals": [
     {
-      "sA": 11,
       "sB": 9,
-      "Wn": "Team 3",
+      "Wn": "Team 7",
       "rU": null
     },
     {
-      "sA": 11,
-      "sB": 10,
-      "Wn": "Team 4",
+      "Wn": null,
       "rU": null
     },
     {
-      "sA": 10,
-      "sB": 9,
-      "Wn": "Team 10",
+      "Wn": null,
       "rU": null
     },
     {
       "sA": 0,
-      "sB": 11,
-      "Wn": "Team 16",
+      "sB": 0,
+      "Wn": null,
       "rU": null
     }
   ],
