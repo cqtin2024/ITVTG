@@ -1,7 +1,9 @@
 {
   "matchesA": [
     {
-      "sB": 1
+      "sA": 1,
+      "sB": 11,
+      "Wn": "Quốc Thịnh-Minh Phương"
     },
     {},
     {},
@@ -13,14 +15,14 @@
     {
       "sB": 10
     },
-    {},
+    {
+      "sA": 10,
+      "sB": 11,
+      "Wn": "Viết Tuấn-Quang Dũng"
+    },
     {},
     {},
     {},
     {}
-  ],
-  "final": {
-    "sA": null,
-    "sB": null
-  }
+  ]
 }
