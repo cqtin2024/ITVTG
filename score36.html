@@ -105,7 +105,7 @@
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
                     <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL</h1>
-                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.6.5 (Robust Fetch)**</p>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.6.6 (Seeding Fix)**</p>
                 </div>
             </div>
             
@@ -625,6 +625,43 @@
                 // --- KẾT THÚC FIX V1.6.2 (Reconstruction) ---
             });
         }
+        
+        /**
+         * Lấy đội thắng vòng bảng (A1, B2, v.v...) và điền vào các trận Tứ kết (tA, tB).
+         * [NEW FUNCTION V1.6.6]
+         */
+        function seedKnockoutMatches() {
+            if (!tournamentData || !tournamentData.quarterfinals) return;
+
+            // Hàm Helper để lấy Team ID dựa trên vị trí seeding (ví dụ: 'A1', 'C2')
+            function getTeamIdByPosition(position) {
+                if (!position || position.length < 2) return null;
+                const group = position[0]; // 'A', 'B', 'C', 'D'
+                const rank = parseInt(position.substring(1)); // 1, 2, 3... (1-based index)
+                
+                if (isNaN(rank) || rank <= 0) return null;
+
+                const tableKey = `table${group}`;
+                const groupTable = tournamentData[tableKey];
+                
+                // rank - 1 vì index của mảng groupTable là 0-based
+                if (groupTable && groupTable[rank - 1]) {
+                    return groupTable[rank - 1].T; // Return Team ID (T)
+                }
+                return null;
+            }
+
+            // Chỉ cập nhật các trận Tứ kết
+            tournamentData.quarterfinals.forEach(match => {
+                // Lấy ID đội dựa trên vị trí seeding (pA, pB)
+                const teamAId = getTeamIdByPosition(match.pA);
+                const teamBId = getTeamIdByPosition(match.pB);
+                
+                // Cập nhật tA và tB. Nếu không tìm thấy (TBD), gán null
+                match.tA = teamAId;
+                match.tB = teamBId;
+            });
+        }
 
 
         /**
@@ -660,20 +697,24 @@
                         }
                         
                         if (nextRound) {
+                            // Match.Pos (vị trí trận đấu, ví dụ 1 cho Bán kết 1)
+                            const position = match.Pos; 
+                            
                             if (Array.isArray(nextRound)) {
-                                const nextMatch = nextRound.find(m => m.pA === match.Pos || m.pB === match.Pos);
+                                // Xử lý Tứ kết -> Bán kết (nextRound là mảng)
+                                const nextMatch = nextRound.find(m => m.pA === position || m.pB === position);
                                 if (nextMatch) {
-                                    if (nextMatch.pA === match.Pos) {
+                                    if (nextMatch.pA === position) {
                                         nextMatch.tA = winner;
-                                    } else if (nextMatch.pB === match.Pos) {
+                                    } else if (nextMatch.pB === position) {
                                         nextMatch.tB = winner;
                                     }
                                 }
                             } else { 
-                                // Xử lý Chung kết (là object)
-                                if (match.Pos === 1) { // Bán kết 1
+                                // Xử lý Bán kết -> Chung kết (nextRound là object)
+                                if (position === 1) { // Bán kết 1
                                     nextRound.tA = winner;
-                                } else if (match.Pos === 2) { // Bán kết 2
+                                } else if (position === 2) { // Bán kết 2
                                     nextRound.tB = winner;
                                 }
                             }
@@ -692,10 +733,11 @@
          */
         function runAllLogic() {
             recalculateAndSortGroupTables();
+            seedKnockoutMatches(); // V1.6.6 FIX: Cần chạy seeding trước khi tính toán các vòng loại khác
             updateKnockoutMatches('quarterfinals');
             updateKnockoutMatches('semifinals');
             updateKnockoutMatches('final');
-            renderAllSections();
+            renderAllSections(); 
             updateDiffData(); // Chuẩn bị dữ liệu để commit tỉ số
         }
 
@@ -928,6 +970,7 @@
                 const teamADetails = getTeamDetailById(teamAId);
                 const teamBDetails = getTeamDetailById(teamBId);
 
+                // Sử dụng Tn (Tên rút gọn) để hiển thị
                 const teamAName = teamADetails ? teamADetails.Tn : 'TBD';
                 const teamBName = teamBDetails ? teamBDetails.Tn : 'TBD';
                 
@@ -949,7 +992,7 @@
                 const winnerIconB = isCompleted && match.Wn === teamBId ? '👑' : '';
                 
                 const title = `${roundTitle} ${matchPos}`;
-                // Cập nhật hiển thị để bao gồm chi tiết đội
+                // Hiển thị vị trí seeding (Winner pA/pB) nếu team ID chưa được xác định
                 const teamADisplay = teamAName === 'TBD' ? `(Winner ${match.pA})` : `<div>${teamAName}${teamAExtra}</div>`;
                 const teamBDisplay = teamBName === 'TBD' ? `(Winner ${match.pB})` : `<div>${teamBName}${teamBExtra}</div>`;
                 
@@ -1628,7 +1671,7 @@
                 handleGesture();
             }, { passive: true });
             
-            // Modal button setup (Sử dụng window.reSyncStaticData đã được định nghĩa)
+            // Modal button setup
             document.getElementById('confirmYes').onclick = window.reSyncStaticData;
             document.getElementById('confirmNo').onclick = () => document.getElementById('confirmationBox').classList.add('hidden');
             
