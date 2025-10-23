@@ -32,9 +32,46 @@
       "sB": 11,
       "Wn": "Viết Tuấn-Quang Dũng"
     },
-    {},
+    {
+      "sA": 1,
+      "sB": 11,
+      "Wn": "Minh Thiện-Duy Minh"
+    },
     {},
     {},
     {}
-  ]
+  ],
+  "quarterfinals": [
+    {
+      "sB": 9,
+      "Wn": null,
+      "rU": null
+    },
+    {
+      "Wn": null,
+      "rU": null
+    },
+    {
+      "Wn": null,
+      "rU": null
+    },
+    {
+      "Wn": null,
+      "rU": null
+    }
+  ],
+  "semifinals": [
+    {
+      "Wn": null,
+      "rU": null
+    },
+    {
+      "Wn": null,
+      "rU": null
+    }
+  ],
+  "final": {
+    "Wn": null,
+    "rU": null
+  }
 }
