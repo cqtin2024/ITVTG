@@ -462,6 +462,7 @@
                 // 1. Reset stats for teams in this group
                 const teamStats = {}; // { 'T1': { W: 0, L: 0, Pts: 0, mP: 0 }, ...}
                 groupTable.forEach(team => {
+                    // Dùng team.T (ID) làm key
                     teamStats[team.T] = { W: 0, L: 0, Pts: 0, mP: 0 };
                 });
                 
@@ -474,20 +475,21 @@
                     const teamAId = getTeamIdByTeamName(match.A); // Get ID from Team Name string
                     const teamBId = getTeamIdByTeamName(match.B); // Get ID from Team Name string
                     const winnerName = match.Wn;
-                    const winnerId = winnerName ? getTeamIdByTeamName(winnerName) : null;
+                    // Lấy ID của đội thắng (dùng tên đội)
+                    const winnerId = winnerName ? getTeamIdByTeamName(winnerName) : null; 
                     
-                    if (teamAId && teamBId) {
+                    if (teamAId && teamBId && teamStats[teamAId] && teamStats[teamBId]) {
                          // Cập nhật stats
                          if (winnerId === teamAId) {
-                             if (teamStats[teamAId]) { teamStats[teamAId].W += 1; teamStats[teamAId].Pts += 3; teamStats[teamAId].mP += 1; }
-                             if (teamStats[teamBId]) { teamStats[teamBId].L += 1; teamStats[teamBId].mP += 1; }
+                             teamStats[teamAId].W += 1; teamStats[teamAId].Pts += 3; teamStats[teamAId].mP += 1;
+                             teamStats[teamBId].L += 1; teamStats[teamBId].mP += 1;
                          } else if (winnerId === teamBId) {
-                             if (teamStats[teamBId]) { teamStats[teamBId].W += 1; teamStats[teamBId].Pts += 3; teamStats[teamBId].mP += 1; }
-                             if (teamStats[teamAId]) { teamStats[teamAId].L += 1; teamStats[teamAId].mP += 1; }
-                         } else if (match.sA || match.sB) {
-                              // Trường hợp hòa hoặc chưa tính thắng thua nhưng đã có tỉ số
-                             if (teamStats[teamAId]) { teamStats[teamAId].mP += 1; }
-                             if (teamStats[teamBId]) { teamStats[teamBId].mP += 1; }
+                             teamStats[teamBId].W += 1; teamStats[teamBId].Pts += 3; teamStats[teamBId].mP += 1;
+                             teamStats[teamAId].L += 1; teamStats[teamAId].mP += 1;
+                         } else if (match.sA !== null || match.sB !== null) {
+                              // Trường hợp đã có tỉ số nhưng hòa hoặc chưa tính được Wn
+                             teamStats[teamAId].mP += 1;
+                             teamStats[teamBId].mP += 1;
                          }
                     }
                 });
@@ -509,8 +511,8 @@
                 
                 // 4. Sort the table
                 groupTable.sort((a, b) => {
-                    if (b.W !== a.W) return b.W - a.W;
-                    if (b.Pts !== a.Pts) return b.Pts - a.Pts;
+                    if (b.W !== a.W) return b.W - a.W; // Ưu tiên số trận thắng
+                    if (b.Pts !== a.Pts) return b.Pts - a.Pts; // Sau đó là tổng điểm
                     return 0; 
                 });
                 
