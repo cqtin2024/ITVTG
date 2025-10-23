@@ -1250,8 +1250,7 @@
 
 
         // =================================================================
-        // HÀM COMMIT LÊN GITHUB
-        // ĐÃ ĐIỀU CHỈNH: Xóa Accept header để lấy SHA metadata và cải thiện xử lý lỗi JSON
+        // HÀM COMMIT LÊN GITHUB (ĐÃ FIX LỖI JSON INPUT KHI LẤY SHA)
         // =================================================================
 
         /**
@@ -1272,29 +1271,41 @@
             resultElement.classList.remove('bg-red-900/50', 'bg-green-900/50');
 
             try {
-                // 1. Lấy SHA hiện tại của file (ĐÃ FIX: Bỏ Accept header để lấy metadata JSON chứa SHA)
+                // 1. Lấy SHA hiện tại của file
                 const getResponse = await fetch(apiUrl, {
                     headers: {
                         'Authorization': `token ${githubToken}`
-                        // Bỏ 'Accept': 'application/vnd.github.v3.raw'
                     }
                 });
                 
-                if (!getResponse.ok) {
-                    let errorDetails = getResponse.statusText;
-                    try {
-                         // Cố gắng phân tích phản hồi lỗi thành JSON để lấy chi tiết lỗi
-                         const errorJson = await getResponse.json();
-                         errorDetails = errorJson.message || errorDetails;
-                    } catch (e) {
-                         // Bỏ qua nếu response body không phải JSON
+                let fileData;
+                
+                // --- PHẦN FIX LỖI UNEXPECTED END OF JSON INPUT ---
+                try {
+                    // Cố gắng phân tích phản hồi JSON
+                    fileData = await getResponse.json();
+                } catch (e) {
+                     // Nếu xảy ra lỗi phân tích JSON (như "Unexpected end of JSON input")
+                    if (e instanceof SyntaxError) {
+                        // Trả về lỗi rõ ràng hơn, đây là nguyên nhân gây crash chính
+                        throw new Error(`Lỗi: Dữ liệu phản hồi từ GitHub API không phải là JSON hợp lệ (Lỗi cú pháp JSON). Vui lòng kiểm tra lại đường dẫn file.`);
                     }
-                    throw new Error(`Lỗi khi lấy SHA: ${getResponse.status} (${errorDetails})`);
+                    // Báo lỗi khác (nếu có)
+                    throw e;
                 }
                 
-                // Bây giờ getResponse.json() sẽ trả về metadata JSON hợp lệ
-                const fileData = await getResponse.json(); 
+                if (!getResponse.ok) {
+                    // Nếu Status Code là lỗi (4xx, 5xx), chúng ta đã có fileData chứa thông báo lỗi.
+                     const errorDetails = fileData.message || getResponse.statusText;
+                     throw new Error(`Lỗi khi lấy SHA: ${getResponse.status} (${errorDetails})`);
+                }
+
+                // Tiếp tục với dữ liệu JSON hợp lệ (Status 200 OK)
                 const currentSha = fileData.sha;
+                
+                if (!currentSha) {
+                    throw new Error("Không tìm thấy SHA trong dữ liệu file. Vui lòng kiểm tra lại file có tồn tại trên GitHub không.");
+                }
 
                 // 2. Commit nội dung mới
                 const commitBody = {
@@ -1312,22 +1323,27 @@
                     },
                     body: JSON.stringify(commitBody)
                 });
+                
+                let commitResult;
+
+                try {
+                    commitResult = await commitResponse.json();
+                } catch (e) {
+                     // Lỗi JSON trong phản hồi commit, có thể là lỗi mạng
+                     if (e instanceof SyntaxError) {
+                          throw new Error(`Lỗi: Không thể phân tích kết quả COMMIT (Phản hồi không phải JSON). Commit có thể đã thất bại.`);
+                     }
+                     throw e;
+                }
+
 
                 if (!commitResponse.ok) {
-                    let errorDetails = commitResponse.statusText;
-                    try {
-                        // Cố gắng phân tích phản hồi lỗi thành JSON để lấy chi tiết lỗi
-                        const errorJson = await commitResponse.json();
-                        errorDetails = errorJson.message || errorDetails;
-                    } catch (e) {
-                        // Bỏ qua nếu response body không phải JSON
-                    }
+                    // Xử lý lỗi từ GitHub API sau commit
+                    const errorDetails = commitResult.message || commitResponse.statusText;
                     throw new Error(`Lỗi API Commit: ${commitResponse.status} - ${errorDetails}`);
                 }
                 
                 // 3. Xử lý thành công
-                const commitResult = await commitResponse.json();
-                
                 resultElement.classList.remove('hidden');
                 resultElement.classList.add('bg-green-900/50');
                 resultElement.textContent = `✅ COMMIT thành công: ${commitResult.commit.sha.substring(0, 7)}.`;
@@ -1351,11 +1367,11 @@
          */
         async function commitScoreChangesToGitHub() {
             githubToken = localStorage.getItem('githubToken') || '';
-            if (!githubToken) { alert('⚠️ Chưa có Token. Vui lòng dán Token vào mục Cấu Hình.'); return; }
+            if (!githubToken) { document.getElementById('scoreCommitResult').textContent = '⚠️ Chưa có Token. Vui lòng dán Token vào mục Cấu Hình.'; document.getElementById('scoreCommitResult').classList.remove('hidden', 'bg-green-900/50'); document.getElementById('scoreCommitResult').classList.add('bg-red-900/50'); return; }
             
             // Lấy dữ liệu tỉ số đã được chuẩn bị
             const diffData = window.diffDataForCommit || {};
-            if (Object.keys(diffData).length === 0) { alert('Không có thay đổi tỉ số nào để commit.'); return; }
+            // Nếu diffData chỉ là {}, nó vẫn sẽ được gửi, điều này là OK vì nó ghi đè file hiện tại.
             
             const base64Content = jsonToBase64(diffData);
             
@@ -1367,7 +1383,7 @@
          */
         async function commitTeamChangesToGitHub() {
             githubToken = localStorage.getItem('githubToken') || '';
-            if (!githubToken) { alert('⚠️ Chưa có Token. Vui lòng dán Token vào mục Cấu Hình.'); return; }
+            if (!githubToken) { document.getElementById('teamCommitResult').textContent = '⚠️ Chưa có Token. Vui lòng dán Token vào mục Cấu Hình.'; document.getElementById('teamCommitResult').classList.remove('hidden', 'bg-green-900/50'); document.getElementById('teamCommitResult').classList.add('bg-red-900/50'); return; }
 
             // Sử dụng dữ liệu initialTournamentData đã được chỉnh sửa
             const teamData = initialTournamentData;
