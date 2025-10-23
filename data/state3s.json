@@ -1,70 +1,11 @@
 {
   "matchesA": [
-    {
-      "sA": 9,
-      "sB": 11,
-      "Wn": "Quốc Thịnh-Minh Phương"
-    },
+    {},
     {},
     {},
     {},
     {},
     {}
   ],
-  "matchesC": [
-    {
-      "sA": 6,
-      "sB": 11,
-      "Wn": "Lê Duy-Thanh Vương"
-    },
-    {},
-    {},
-    {},
-    {},
-    {}
-  ],
-  "matchesD": [
-    {
-      "sB": 10
-    },
-    {
-      "sA": 10,
-      "sB": 11,
-      "Wn": "Viết Tuấn-Quang Dũng"
-    },
-    {},
-    {},
-    {},
-    {}
-  ],
-  "quarterfinals": [
-    {
-      "sB": 9,
-      "Wn": null
-    },
-    {
-      "Wn": null
-    },
-    {
-      "Wn": null
-    },
-    {
-      "sA": 0,
-      "sB": 0,
-      "Wn": null
-    }
-  ],
-  "semifinals": [
-    {
-      "sA": 0,
-      "Wn": null
-    },
-    {
-      "Wn": null
-    }
-  ],
-  "final": {
-    "Wn": null,
-    "rU": null
-  }
+ 
 }
