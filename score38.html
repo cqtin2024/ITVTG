@@ -639,7 +639,7 @@
                 // 4. Sort the new table (LUẬT PICKLEBALL: W > Pts > PD > PF)
                 groupTable.sort((a, b) => {
                     if (b.W !== a.W) return b.W - a.W;       // 1. Số trận thắng (W)
-                    if (b.Pts !== a.Pts) return b.Pts - a.Pts; // 2. Tổng điểm (Pts) - Vẫn dùng để xếp hạng
+                    if (b.Pts !== a.Pts) return b.Pts - a.Pts; // 2. Tổng điểm (Pts)
                     if (b.PD !== a.PD) return b.PD - a.PD;   // 3. Hiệu số điểm (Point Differential - PD)
                     if (b.PF !== a.PF) return b.PF - a.PF;   // 4. Tổng điểm ghi được (Points For - PF)
                     return 0; 
@@ -729,38 +729,33 @@
                         // Cập nhật đội đi tiếp (Chỉ áp dụng cho Tứ kết và Bán kết)
                         const winner = match.Wn;
 
-                        // <BẮT ĐẦU ĐIỀU CHỈNH LOGIC PHÂN HẠT TỨ KẾT -> BÁN KẾT>
+                        // Cập nhật thông tin vào vòng tiếp theo
+                        let nextRound;
                         if (round === 'quarterfinals') {
-                            const qfPos = match.Pos; // 1, 2, 3, 4
-                            const sfMatches = tournamentData.semifinals;
-
-                            if (sfMatches && sfMatches.length >= 2) {
-                                // SF1 (index 0): W.QF1 vs W.QF3
-                                if (qfPos === 1) { // W.QF1 -> SF1 Team A
-                                    sfMatches[0].tA = winner;
-                                } else if (qfPos === 3) { // W.QF3 -> SF1 Team B
-                                    sfMatches[0].tB = winner;
-                                } 
-                                // SF2 (index 1): W.QF2 vs W.QF4
-                                else if (qfPos === 2) { // W.QF2 -> SF2 Team A
-                                    sfMatches[1].tA = winner;
-                                } else if (qfPos === 4) { // W.QF4 -> SF2 Team B
-                                    sfMatches[1].tB = winner;
-                                }
-                            }
-                        } 
-                        // <KẾT THÚC ĐIỀU CHỈNH LOGIC PHÂN HẠT TỨ KẾT -> BÁN KẾT>
+                            nextRound = tournamentData.semifinals;
+                        } else if (round === 'semifinals') {
+                            nextRound = tournamentData.final;
+                        }
                         
-                        // Logic Bán kết -> Chung kết
-                        if (round === 'semifinals') {
-                             const nextRound = tournamentData.final;
-                             const position = match.Pos;
+                        if (nextRound) {
+                            // Match.Pos (vị trí trận đấu, ví dụ 1 cho Bán kết 1)
+                            const position = match.Pos;
 
-                            if (nextRound) {
+                            if (Array.isArray(nextRound)) {
+                                // Xử lý Tứ kết -> Bán kết (nextRound là mảng)
+                                const nextMatch = nextRound.find(m => m.pA === position || m.pB === position);
+                                if (nextMatch) {
+                                    if (nextMatch.pA === position) {
+                                        nextMatch.tA = winner;
+                                    } else if (nextMatch.pB === position) {
+                                        nextMatch.tB = winner;
+                                    }
+                                }
+                            } else {
                                 // Xử lý Bán kết -> Chung kết (nextRound là object)
-                                if (position === 1) { // Bán kết 1 (SF1)
+                                if (position === 1) { // Bán kết 1
                                     nextRound.tA = winner;
-                                } else if (position === 2) { // Bán kết 2 (SF2)
+                                } else if (position === 2) { // Bán kết 2
                                     nextRound.tB = winner;
                                 }
                             }
@@ -1332,6 +1327,7 @@
                                         <th class="px-2 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Team</th>
                                         <th class="px-2 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">W</th>
                                         <th class="px-2 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">L</th>
+                                        <th class="px-2 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Pts</th>
                                         <th class="px-2 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">PD</th>
                                         <th class="px-2 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">PF</th>
                                     </tr>
@@ -1348,6 +1344,7 @@
                         <td class="px-2 py-2 whitespace-nowrap text-left text-gray-200">\${team.Tn || team.T || 'N/A'}</td>
                         <td class="px-2 py-2 whitespace-nowrap text-center">\${team.W}</td>
                         <td class="px-2 py-2 whitespace-nowrap text-center">\${team.L}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-center text-[var(--accent-color)]">\${team.Pts}</td>
                         <td class="px-2 py-2 whitespace-nowrap text-center">\${team.PD}</td>
                         <td class="px-2 py-2 whitespace-nowrap text-center">\${team.PF}</td>
                     </tr>
