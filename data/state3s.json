@@ -39,22 +39,27 @@
   ],
   "quarterfinals": [
     {
+      "sA": 11,
       "sB": 9,
-      "Wn": "Team 7",
+      "Wn": "Team 3",
       "rU": null
     },
     {
-      "Wn": null,
+      "sA": 11,
+      "sB": 10,
+      "Wn": "Team 4",
       "rU": null
     },
     {
-      "Wn": null,
+      "sA": 10,
+      "sB": 9,
+      "Wn": "Team 10",
       "rU": null
     },
     {
       "sA": 0,
-      "sB": 0,
-      "Wn": null,
+      "sB": 11,
+      "Wn": "Team 16",
       "rU": null
     }
   ],
