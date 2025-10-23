@@ -39,7 +39,7 @@
   ],
   "quarterfinals": [
     {
-      "sB": null,
+      "sB": 9,
       "Wn": null,
       "rU": null
     },
@@ -52,12 +52,15 @@
       "rU": null
     },
     {
+      "sA": 0,
+      "sB": 0,
       "Wn": null,
       "rU": null
     }
   ],
   "semifinals": [
     {
+      "sA": 0,
       "Wn": null,
       "rU": null
     },
