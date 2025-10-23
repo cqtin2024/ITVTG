@@ -105,7 +105,7 @@
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
                     <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL</h1>
-                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.6.1 (Fix Triệt Để Đồng Bộ)**</p>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.6.2 (Fix Tái Tạo Bảng Xếp Hạng)**</p>
                 </div>
             </div>
             
@@ -463,16 +463,28 @@
                 const matchesKey = `matches${group}`;
                 const tableKey = `table${group}`;
                 const groupMatches = tournamentData[matchesKey] || [];
-                let groupTable = tournamentData[tableKey] || [];
                 
-                // 1. Reset stats for teams in this group
-                const teamStats = {}; // { 'T1': { W: 0, L: 0, Pts: 0, mP: 0 }, ...}
-                groupTable.forEach(team => {
-                    // Dùng team.T (ID) làm key
-                    teamStats[team.T] = { W: 0, L: 0, Pts: 0, mP: 0 };
+                // --- FIX V1.6.2: Tái tạo teamStats dựa trên Matches ---
+                const teamStats = {}; 
+                const teamsInGroupNames = new Set();
+                
+                // 1. Thu thập tất cả các đội tham gia trong Matches
+                groupMatches.forEach(match => {
+                     if (match.A) teamsInGroupNames.add(match.A);
+                     if (match.B) teamsInGroupNames.add(match.B);
                 });
                 
-                // 2. Aggregate stats from matches
+                // 2. Khởi tạo stats cho các đội đã tham gia (dùng ID làm key)
+                teamsInGroupNames.forEach(teamName => {
+                    const teamId = getTeamIdByTeamName(teamName);
+                    if (teamId) {
+                         teamStats[teamId] = { W: 0, L: 0, Pts: 0, mP: 0 };
+                    }
+                });
+                // --- KẾT THÚC FIX V1.6.2 (Initialization) ---
+                
+                
+                // 3. Aggregate stats from matches
                 groupMatches.forEach(match => {
                     // Cập nhật Wn (Tên đội) dựa trên tỉ số sA/sB hiện tại
                     calculateWinner(match, true); 
@@ -487,7 +499,6 @@
                     if (teamAId && teamBId && teamStats[teamAId] && teamStats[teamBId]) {
                          
                          // FIX v1.6.1: Đơn giản hóa điều kiện kiểm tra trận đấu đã được chơi (isMatchPlayed).
-                         // Chỉ cần kiểm tra sA HOẶC sB có khác NULL (nghĩa là có score hợp lệ) hay không.
                          const isMatchPlayed = match.sA !== null || match.sB !== null;
 
                          if (isMatchPlayed) {
@@ -508,22 +519,28 @@
                     }
                 });
                 
-                // 3. Update table with new stats
-                groupTable = groupTable.map(team => {
-                    const stats = teamStats[team.T];
-                    if (stats) {
-                        return { 
-                            ...team, 
-                            W: stats.W, 
-                            L: stats.L, 
-                            Pts: stats.Pts, 
-                            mP: stats.mP 
-                        };
-                    }
-                    return team;
+                // --- FIX V1.6.2: Tái tạo và sắp xếp groupTable mới ---
+                let groupTable = Object.keys(teamStats).map(teamId => {
+                     // Lấy team object gốc từ tL để có các trường khác (Tn, D, aPL, etc.)
+                     const teamOriginal = tournamentData.tL.find(t => t.T === teamId) || {}; 
+                     const stats = teamStats[teamId];
+                     
+                     return {
+                          // Copy các trường gốc và gán các trường cần thiết
+                          ...teamOriginal, 
+                          T: teamId, 
+                          Tn: teamOriginal.Tn, 
+                          D: teamOriginal.Tn, // Dùng Tn làm tên hiển thị trong bảng
+                          
+                          // Thống kê mới
+                          W: stats.W, 
+                          L: stats.L, 
+                          Pts: stats.Pts, 
+                          mP: stats.mP
+                     };
                 });
                 
-                // 4. Sort the table
+                // 4. Sort the new table
                 groupTable.sort((a, b) => {
                     if (b.W !== a.W) return b.W - a.W; // Ưu tiên số trận thắng
                     if (b.Pts !== a.Pts) return b.Pts - a.Pts; // Sau đó là tổng điểm
@@ -532,10 +549,11 @@
                 });
                 
                 tournamentData[tableKey] = groupTable;
+                // --- KẾT THÚC FIX V1.6.2 (Reconstruction) ---
                 
-                // 5. Update team list (tL) D-Tn based on position
-                // Logic cập nhật tên đội D theo vị trí để hiển thị đúng trên bảng xếp hạng (team.D = team.Tn)
-                const sortedTeamIds = groupTable.map(team => team.T);
+                // 5. Update team list (tL) D-Tn based on position (Đã được thực hiện trong quá trình tái tạo table)
+                // LƯU Ý: Phần logic này không cần thiết nữa vì đã gán D=Tn khi tái tạo groupTable
+                /*
                 tournamentData.tL = tournamentData.tL.map(team => {
                     if (sortedTeamIds.includes(team.T)) {
                         // Cập nhật D = Tn theo yêu cầu cũ
@@ -543,6 +561,7 @@
                     }
                     return team;
                 });
+                */
             });
         }
 
@@ -668,11 +687,10 @@
                          const hasDiff = diffArray.some(item => Object.keys(item).length > 0);
                          if (hasDiff) {
                             // Lọc bỏ các {} không cần thiết (chỉ cần các index thay đổi)
-                            finalDiffData = diffArray.map(item => Object.keys(item).length > 0 ? item : undefined).filter(item => item !== undefined);
+                            // finalDiffData = diffArray.map(item => Object.keys(item).length > 0 ? item : undefined).filter(item => item !== undefined);
                             
-                            // NOTE: GitHub API có thể yêu cầu mảng phải có đủ độ dài hoặc các vị trí tương ứng. 
-                            // Để an toàn, ta nên giữ nguyên index:
-                            finalDiffData = diffArray; // Giữ nguyên mảng với các {} để đảm bảo index khớp
+                            // NOTE: Giữ nguyên index:
+                            finalDiffData = diffArray; 
                          }
                     }
 
