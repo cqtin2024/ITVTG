@@ -105,7 +105,7 @@
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
                     <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL</h1>
-                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.6 (Fix Đồng Bộ Tỉ Số)**</p>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.6.1 (Fix Triệt Để Đồng Bộ)**</p>
                 </div>
             </div>
             
@@ -485,8 +485,10 @@
                     const winnerId = winnerName ? getTeamIdByTeamName(winnerName) : null; 
                     
                     if (teamAId && teamBId && teamStats[teamAId] && teamStats[teamBId]) {
-                         // Check if the match has been played (at least one score entered)
-                         const isMatchPlayed = (match.sA !== null && match.sA !== '') || (match.sB !== null && match.sB !== '');
+                         
+                         // FIX v1.6.1: Đơn giản hóa điều kiện kiểm tra trận đấu đã được chơi (isMatchPlayed).
+                         // Chỉ cần kiểm tra sA HOẶC sB có khác NULL (nghĩa là có score hợp lệ) hay không.
+                         const isMatchPlayed = match.sA !== null || match.sB !== null;
 
                          if (isMatchPlayed) {
                             // Cập nhật Matches Played (mP) cho cả hai đội
@@ -1226,7 +1228,7 @@
             const matchesKey = `matches${group}`;
             const field = team === 'A' ? 'sA' : 'sB';
             
-            // Đảm bảo giá trị là số hoặc null (Đã làm lại logic này để robust hơn)
+            // FIX v1.6: Đảm bảo giá trị là số hoặc null
             const cleanedValue = value.trim();
             let scoreValue = null;
             if (cleanedValue !== '') {
@@ -1253,7 +1255,7 @@
              const roundData = tournamentData[round];
              const field = team === 'A' ? 'sA' : 'sB';
              
-             // Đảm bảo giá trị là số hoặc null (Đã làm lại logic này để robust hơn)
+             // FIX v1.6: Đảm bảo giá trị là số hoặc null
              const cleanedValue = value.trim();
              let scoreValue = null;
              if (cleanedValue !== '') {
