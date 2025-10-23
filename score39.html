@@ -327,8 +327,7 @@
                 showStatus('Đang lấy SHA hiện tại của file...', 'info', resultElementId);
 
                 const shaResponse = await fetch(fileUrl + `?ref=${BRANCH}`, {
-                    // ĐÃ ĐIỀU CHỈNH: SỬ DỤNG 'Bearer' THAY VÌ 'token'
-                    headers: { 'Authorization': `Bearer ${pat}` } 
+                    headers: { 'Authorization': `token ${pat}` }
                 });
 
                 if (shaResponse.status === 404) {
@@ -360,8 +359,7 @@
                 const commitResponse = await fetch(fileUrl, {
                     method: 'PUT',
                     headers: { 
-                        // ĐÃ ĐIỀU CHỈNH: SỬ DỤNG 'Bearer' THAY VÌ 'token'
-                        'Authorization': `Bearer ${pat}`,
+                        'Authorization': `token ${pat}`,
                         'Content-Type': 'application/json',
                         'Accept': 'application/vnd.github.v3+json'
                     },
@@ -576,9 +574,17 @@ function mergeUpdates(baseData, diffData) {
             try {
                 // 1. Tải Dữ liệu Gốc (state3.json)
                 const baseResponse = await fetchWithRetry(STATIC_DATA_URL);
-                if (!baseResponse) throw new Error("Không thể tải dữ liệu gốc từ state3.json.");
-                // Sử dụng deep copy để giữ lại bản gốc an toàn
-                baseData = await baseResponse.json(); 
+                if (!baseResponse) throw new Error("Không thể tải dữ liệu gốc từ state3.json. (404 hoặc lỗi mạng)");
+                
+                const baseText = await baseResponse.text();
+                try {
+                    // Cố gắng phân tích JSON
+                    baseData = JSON.parse(baseText); 
+                } catch (e) {
+                    // Bắt lỗi JSON và hiển thị nội dung lỗi
+                    throw new Error(`state3.json không phải là JSON hợp lệ. Nội dung lỗi: "${baseText.substring(0, 50)}..."`);
+                }
+
                 initialTournamentData = JSON.parse(JSON.stringify(baseData)); 
                 
                 loadingMessage.textContent = "Đã tải state3.json. Đang kiểm tra cập nhật (state3s.json)...";
@@ -586,16 +592,21 @@ function mergeUpdates(baseData, diffData) {
                 // 2. Tải Dữ liệu Cập nhật (state3s.json)
                 const diffResponse = await fetchWithRetry(DIFF_DATA_URL);
                 if (diffResponse) {
-                     diffData = await diffResponse.json();
+                     const diffText = await diffResponse.text();
+                     try {
+                        diffData = JSON.parse(diffText);
+                     } catch (e) {
+                         // Bắt lỗi JSON cho state3s.json
+                        throw new Error(`state3s.json không phải là JSON hợp lệ. Nội dung lỗi: "${diffText.substring(0, 50)}..."`);
+                     }
                      // 3. Hợp nhất dữ liệu
-                     // Clone baseData trước khi merge để không làm hỏng dữ liệu gốc
                      let liveData = JSON.parse(JSON.stringify(baseData)); 
                      tournamentData = mergeUpdates(liveData, diffData);
                      loadingMessage.textContent = "Đã hợp nhất dữ liệu thành công từ state3s.json.";
                 } else {
                      // 3. Nếu state3s.json không tồn tại (404), chỉ dùng baseData
                      tournamentData = baseData;
-                     loadingMessage.textContent = "Đã tải dữ liệu gốc (state3.json). Không có file cập nhật state3s.json.";
+                     loadingMessage.textContent = "Đã tải dữ liệu gốc (state3.json). Không tìm thấy file cập nhật state3s.json.";
                 }
 
                 loadingMessage.classList.add('bg-green-900/50');
@@ -608,9 +619,11 @@ function mergeUpdates(baseData, diffData) {
 
             } catch (error) {
                 console.error("LỖI KHÔNG THỂ TẢI DỮ LIỆU TỪ GITHUB:", error);
-                loadingMessage.textContent = "LỖI FATAL: Không thể tải dữ liệu giải đấu từ GitHub.";
+                loadingMessage.textContent = `LỖI FATAL: ${error.message}`;
                 loadingMessage.classList.add('bg-red-900/50');
                 loadingMessage.classList.remove('bg-blue-900/50', 'bg-green-900/50');
+                // Quan trọng: Đặt tournamentData về null/undefined để tránh lỗi TypeError ở các bước sau
+                tournamentData = null; 
             }
         }
 
@@ -692,7 +705,12 @@ function mergeUpdates(baseData, diffData) {
             
             // Re-render Team Management when switching to it to load current data
             if (tabName === 'TeamManagement') {
-                renderTeamManagement(tournamentData.tL);
+                // Thêm kiểm tra tournamentData trước khi truy cập tL để tránh TypeError
+                if (tournamentData && tournamentData.tL) { 
+                    renderTeamManagement(tournamentData.tL);
+                } else {
+                    showStatus('Lỗi: Không thể quản lý đội vì dữ liệu giải đấu chưa được tải thành công.', 'error', 'teamCommitResult');
+                }
             }
         }
 
