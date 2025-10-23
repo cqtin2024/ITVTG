@@ -105,8 +105,8 @@
                 <svg class="w-8 h-8 md:w-10 md:h-10 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-2">
                     <h1 class="text-lg md:text-3xl font-extrabold text-[var(--text-color)] leading-tight">PICKLEBALL TOURNAMENT MGMT</h1>
-                    <p class="text-xs text-[var(--accent-color)]">Score & Team Update (GitHub Sync) - **v1.6.9 (QF Seeding Fix)**</p>
-                </div>
+                    <p class="text-xs text-[var(--accent-color)]">Score & Team Update (GitHub Sync) - **v1.7.1 (Critical Fixes)**</p>
+                    </div>
             </div>
             
             <button id="themeToggle" class="p-2 rounded-full bg-[var(--card-bg)] shadow-md text-[var(--text-color)] hover:bg-[var(--border-color)] transition duration-200">
@@ -261,12 +261,12 @@
         const BRANCH = 'main'; // Tên nhánh
 
         // Base URLs (Không cần thay đổi trừ khi cấu trúc GitHub khác)
-        const BASE_API_URL = \`https://api.github.com/repos/\${REPO_OWNER}/\${REPO_NAME}/contents/data/state3.json\`;
-        const SCORE_API_URL = \`https://api.github.com/repos/\${REPO_OWNER}/\${REPO_NAME}/contents/data/state3s.json\`;
+        const BASE_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/state3.json`;
+        const SCORE_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/state3s.json`;
         
         // Raw Content URLs (Sử dụng để tải dữ liệu)
-        const STATIC_DATA_URL = \`https://raw.githubusercontent.com/\${REPO_OWNER}/\${REPO_NAME}/\${BRANCH}/data/state3.json\`;
-        const DIFF_DATA_URL = \`https://raw.githubusercontent.com/\${REPO_OWNER}/\${REPO_NAME}/\${BRANCH}/data/state3s.json\`;
+        const STATIC_DATA_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/data/state3.json`;
+        const DIFF_DATA_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/data/state3s.json`;
 
 
         // =================================================================
@@ -346,7 +346,6 @@
          */
         function getTeamDetailById(teamId) {
             if (!initialTournamentData || !initialTournamentData.tL) return null;
-            // FIX v1.6.8: Sửa lỗi ReferenceError: t is not defined -> team.T
             return initialTournamentData.tL.find(team => team.T === teamId) || null;
         }
 
@@ -368,11 +367,11 @@
             if (!response.ok) {
                 // Trả về {} nếu file state3s.json không tồn tại (404) để mergeData vẫn chạy
                 if (response.status === 404 && url.includes('state3s.json')) {
-                    console.warn(\`File tỉ số (state3s.json) không tồn tại hoặc bị xóa (404). Sử dụng dữ liệu gốc.\`);
+                    console.warn(`File tỉ số (state3s.json) không tồn tại hoặc bị xóa (404). Sử dụng dữ liệu gốc.`);
                     return {};
                 }
                 // Lỗi chung cho các trường hợp khác (400, 401, 500, hoặc 404 cho state3.json)
-                throw new Error(\`Lỗi tải dữ liệu từ GitHub: \${response.status} \${response.statusText} (\${url})\`);
+                throw new Error(`Lỗi tải dữ liệu từ GitHub: ${response.status} ${response.statusText} (${url})`);
             }
             
             // 2. Thử Parse JSON (Làm cho việc tải dữ liệu Raw ổn định hơn, bỏ qua Content-Type header)
@@ -381,7 +380,7 @@
             } catch (e) {
                  const contentType = response.headers.get("content-type");
                  // Báo cáo lỗi cụ thể nếu không parse được
-                 throw new Error(\`Dữ liệu tải về không thể parse thành JSON. Content-Type được báo cáo: \${contentType}.\`);
+                 throw new Error(`Dữ liệu tải về không thể parse thành JSON. Content-Type được báo cáo: ${contentType}.`);
             }
         }
 
@@ -428,13 +427,13 @@
                 // 6. Hiển thị trạng thái thành công cho lần tải cuối cùng
                 statusEl.classList.remove('bg-blue-900/50');
                 statusEl.classList.add('bg-green-900/50');
-                statusEl.textContent = \`✅ Sync successful. Version: \${tournamentData.version || 'N/A'}.\`;
+                statusEl.textContent = `✅ Sync successful. Version: ${tournamentData.version || 'N/A'}.`;
                 
             } catch (error) {
                 console.error('Lỗi tải/hợp nhất dữ liệu:', error);
                 statusEl.classList.remove('bg-blue-900/50');
                 statusEl.classList.add('bg-red-900/50');
-                statusEl.textContent = \`❌ DATA LOAD ERROR: \${error.message}. Check URL and network connection.\`;
+                statusEl.textContent = `❌ DATA LOAD ERROR: ${error.message}. Check URL and network connection.`;
             }
         }
         
@@ -471,7 +470,7 @@
 
             // 1. Merge group match scores (matchesA-D)
             ['A', 'B', 'C', 'D'].forEach(group => {
-                const matchesKey = \`matches\${group}\`;
+                const matchesKey = `matches${group}`;
                 if (merged[matchesKey] && diffData[matchesKey]) {
                     merged[matchesKey] = merged[matchesKey].map((match, index) => {
                         const diffMatch = diffData[matchesKey][index];
@@ -564,8 +563,8 @@
             const groups = ['A', 'B', 'C', 'D'];
 
             groups.forEach(group => {
-                const matchesKey = \`matches\${group}\`;
-                const tableKey = \`table\${group}\`;
+                const matchesKey = `matches${group}`;
+                const tableKey = `table${group}`;
                 const groupMatches = tournamentData[matchesKey] || [];
                 
                 const teamStats = {}; 
@@ -639,7 +638,7 @@
                 // 4. Sort the new table (LUẬT PICKLEBALL: W > Pts > PD > PF)
                 groupTable.sort((a, b) => {
                     if (b.W !== a.W) return b.W - a.W;       // 1. Số trận thắng (W)
-                    if (b.Pts !== a.Pts) return b.Pts - a.Pts; // 2. Tổng điểm (Pts)
+                    if (b.Pts !== a.Pts) return b.Pts - a.Pts; // 2. Tổng điểm (Pts) - Vẫn dùng để xếp hạng
                     if (b.PD !== a.PD) return b.PD - a.PD;   // 3. Hiệu số điểm (Point Differential - PD)
                     if (b.PF !== a.PF) return b.PF - a.PF;   // 4. Tổng điểm ghi được (Points For - PF)
                     return 0; 
@@ -663,7 +662,7 @@
                 
                 if (isNaN(rank) || rank <= 0) return null;
 
-                const tableKey = \`table\${group}\`;
+                const tableKey = `table${group}`;
                 const groupTable = tournamentData[tableKey];
                 
                 // rank - 1 vì index của mảng groupTable là 0-based
@@ -680,16 +679,17 @@
                 
                 // **QUY TẮC PHÂN HẠT TỨ KẾT ĐẶC BIỆT (QF1-QF4)**
                 // Ghi đè vị trí phân hạt dựa trên index để đảm bảo tuân thủ quy tắc chéo
-                if (index === 0) { // QF1
+                // FIX: Khắc phục SyntaxError bằng cách loại bỏ placeholder "..."
+                if (index === 0) { // QF1 (Pos 1)
                     positionA = 'A1'; // W.A
                     positionB = 'B2'; // R.B
-                } else if (index === 1) { // QF2
+                } else if (index === 1) { // QF2 (Pos 2)
                     positionA = 'B1'; // W.B
                     positionB = 'A2'; // R.A
-                } else if (index === 2) { // QF3
+                } else if (index === 2) { // QF3 (Pos 3)
                     positionA = 'C1'; // W.C
                     positionB = 'D2'; // R.D
-                } else if (index === 3) { // QF4
+                } else if (index === 3) { // QF4 (Pos 4)
                     positionA = 'D1'; // W.D
                     positionB = 'C2'; // R.C
                 }
@@ -729,33 +729,38 @@
                         // Cập nhật đội đi tiếp (Chỉ áp dụng cho Tứ kết và Bán kết)
                         const winner = match.Wn;
 
-                        // Cập nhật thông tin vào vòng tiếp theo
-                        let nextRound;
+                        // <START: ĐIỀU CHỈNH LOGIC PHÂN HẠT BÁN KẾT (W.QF1 vs W.QF3, W.QF2 vs W.QF4)>
                         if (round === 'quarterfinals') {
-                            nextRound = tournamentData.semifinals;
-                        } else if (round === 'semifinals') {
-                            nextRound = tournamentData.final;
-                        }
-                        
-                        if (nextRound) {
-                            // Match.Pos (vị trí trận đấu, ví dụ 1 cho Bán kết 1)
-                            const position = match.Pos;
+                            const qfPos = match.Pos; // 1, 2, 3, 4
+                            const sfMatches = tournamentData.semifinals;
 
-                            if (Array.isArray(nextRound)) {
-                                // Xử lý Tứ kết -> Bán kết (nextRound là mảng)
-                                const nextMatch = nextRound.find(m => m.pA === position || m.pB === position);
-                                if (nextMatch) {
-                                    if (nextMatch.pA === position) {
-                                        nextMatch.tA = winner;
-                                    } else if (nextMatch.pB === position) {
-                                        nextMatch.tB = winner;
-                                    }
+                            if (sfMatches && sfMatches.length >= 2) {
+                                // SF1 (index 0): W.QF1 vs W.QF3
+                                if (qfPos === 1) { // W.QF1 -> SF1 Team A
+                                    sfMatches[0].tA = winner;
+                                } else if (qfPos === 3) { // W.QF3 -> SF1 Team B
+                                    sfMatches[0].tB = winner;
+                                } 
+                                // SF2 (index 1): W.QF2 vs W.QF4
+                                else if (qfPos === 2) { // W.QF2 -> SF2 Team A
+                                    sfMatches[1].tA = winner;
+                                } else if (qfPos === 4) { // W.QF4 -> SF2 Team B
+                                    sfMatches[1].tB = winner;
                                 }
-                            } else {
+                            }
+                        } 
+                        // <END: ĐIỀU CHỈNH LOGIC PHÂN HẠT BÁN KẾT>
+                        
+                        // Logic Bán kết -> Chung kết
+                        if (round === 'semifinals') {
+                             const nextRound = tournamentData.final;
+                             const position = match.Pos;
+
+                            if (nextRound) {
                                 // Xử lý Bán kết -> Chung kết (nextRound là object)
-                                if (position === 1) { // Bán kết 1
+                                if (position === 1) { // Bán kết 1 (SF1)
                                     nextRound.tA = winner;
-                                } else if (position === 2) { // Bán kết 2
+                                } else if (position === 2) { // Bán kết 2 (SF2)
                                     nextRound.tB = winner;
                                 }
                             }
@@ -880,7 +885,7 @@
                 const response = await fetch(apiUrl, {
                     method: 'GET',
                     headers: {
-                        'Authorization': \`token \${token}\`,
+                        'Authorization': `token ${token}`,
                         'Accept': 'application/vnd.github.v3+json'
                     }
                 });
@@ -892,13 +897,13 @@
                 if (!response.ok) {
                     // Lỗi xác thực, giới hạn rate, v.v.
                     const errorData = await response.json();
-                    throw new Error(\`Failed to fetch SHA: \${response.statusText}. Detail: \${errorData.message}\`);
+                    throw new Error(`Failed to fetch SHA: ${response.statusText}. Detail: ${errorData.message}`);
                 }
 
                 const data = await response.json();
                 return data.sha;
             } catch (error) {
-                console.error(\`Error getting SHA for \${apiUrl.includes('state3s.json') ? 'state3s.json' : 'state3.json'}:\`, error.message);
+                console.error(`Error getting SHA for ${apiUrl.includes('state3s.json') ? 'state3s.json' : 'state3.json'}:`, error.message);
                 return null;
             }
         }
@@ -928,7 +933,7 @@
                 const response = await fetch(apiUrl, {
                     method: 'PUT',
                     headers: {
-                        'Authorization': \`token \${token}\`,
+                        'Authorization': `token ${token}`,
                         'Content-Type': 'application/json',
                         'Accept': 'application/vnd.github.v3+json'
                     },
@@ -940,15 +945,15 @@
                 if (!response.ok) {
                     return { 
                         success: false, 
-                        message: \`Commit failed: \${result.message || response.statusText}\`,
+                        message: `Commit failed: ${result.message || response.statusText}`,
                         detail: result.errors ? result.errors.map(e => e.message).join(' | ') : ''
                     };
                 }
 
-                return { success: true, message: \`Commit successful. SHA: \${result.commit.sha.substring(0, 7)}\` };
+                return { success: true, message: `Commit successful. SHA: ${result.commit.sha.substring(0, 7)}` };
 
             } catch (error) {
-                return { success: false, message: \`Network Error: \${error.message}\` };
+                return { success: false, message: `Network Error: ${error.message}` };
             }
         }
         
@@ -977,19 +982,19 @@
             const currentSha = await getFileSha(SCORE_API_URL);
             
             // 2. Commit nội dung mới
-            const message = \`[SCM] Auto-commit scores v\${tournamentData.version || 'N/A'} at \${new Date().toISOString()}\`;
+            const message = `[SCM] Auto-commit scores v${tournamentData.version || 'N/A'} at ${new Date().toISOString()}`;
             const commitResult = await commitToGitHub(SCORE_API_URL, diffData, message, currentSha);
 
             // 3. Xử lý kết quả
             resultEl.classList.remove('bg-blue-900/50', 'bg-red-900/50', 'bg-green-900/50');
             if (commitResult.success) {
                 resultEl.classList.add('bg-green-900/50', 'text-green-300');
-                resultEl.textContent = \`✅ Success: \${commitResult.message}\`;
+                resultEl.textContent = `✅ Success: ${commitResult.message}`;
                 // Sau khi commit thành công, reload để đồng bộ lại dữ liệu gốc/tỉ số
                 await loadDataFromGitHub(); 
             } else {
                 resultEl.classList.add('bg-red-900/50', 'text-red-300');
-                resultEl.textContent = \`❌ ERROR: \${commitResult.message}. \${commitResult.detail || ''}\`;
+                resultEl.textContent = `❌ ERROR: ${commitResult.message}. ${commitResult.detail || ''}`;
                 button.disabled = false; // Bật lại nút nếu commit lỗi
             }
         }
@@ -1027,19 +1032,19 @@
             }
             
             // 2. Commit nội dung mới (OVERWRITE state3.json)
-            const message = \`[TCM] Updated team details v\${tournamentData.version || 'N/A'} at \${new Date().toISOString()}\`;
+            const message = `[TCM] Updated team details v${tournamentData.version || 'N/A'} at ${new Date().toISOString()}`;
             const commitResult = await commitToGitHub(BASE_API_URL, teamDataToCommit, message, currentSha);
 
             // 3. Xử lý kết quả
             resultEl.classList.remove('bg-blue-900/50', 'bg-red-900/50', 'bg-green-900/50');
             if (commitResult.success) {
                 resultEl.classList.add('bg-green-900/50', 'text-green-300');
-                resultEl.textContent = \`✅ Success: \${commitResult.message}. Please RE-SYNC data (Tab Config) to apply changes globally.\`;
+                resultEl.textContent = `✅ Success: ${commitResult.message}. Please RE-SYNC data (Tab Config) to apply changes globally.`;
                 // Sau khi commit thành công, không tự động loadDataFromGitHub để tránh mất tỉ số chưa commit.
                 // Yêu cầu người dùng Re-Sync thủ công.
             } else {
                 resultEl.classList.add('bg-red-900/50', 'text-red-300');
-                resultEl.textContent = \`❌ ERROR: \${commitResult.message}. \${commitResult.detail || ''}\`;
+                resultEl.textContent = `❌ ERROR: ${commitResult.message}. ${commitResult.detail || ''}`;
             }
             button.disabled = false;
         }
@@ -1055,15 +1060,15 @@
             console.log('Auto-committing initial score data...');
 
             const currentSha = await getFileSha(SCORE_API_URL);
-            const message = \`[SCM:AUTO] Initial score commit v\${tournamentData.version || 'N/A'}\`;
+            const message = `[SCM:AUTO] Initial score commit v${tournamentData.version || 'N/A'}`;
             const commitResult = await commitToGitHub(SCORE_API_URL, diffData, message, currentSha);
 
             if (commitResult.success) {
-                console.log(\`✅ Auto-commit successful. SHA: \${commitResult.message}\`);
+                console.log(`✅ Auto-commit successful. SHA: ${commitResult.message}`);
                 // Sau khi commit thành công, TẢI LẠI DỮ LIỆU ĐỂ CÓ SHA MỚI VÀ DỮ LIỆU GỐC
                 await loadDataFromGitHub(); 
             } else {
-                console.error(\`❌ Auto-commit failed: \${commitResult.message}\`);
+                console.error(`❌ Auto-commit failed: ${commitResult.message}`);
             }
         }
 
@@ -1090,71 +1095,71 @@
                 const player2 = teamDetail.P ? teamDetail.P[1] : { name: 'N/A', pL: 'N/A', bY: 'N/A' };
                 
                 // Card chi tiết đội (General Tab)
-                listEl.innerHTML += \`
+                listEl.innerHTML += `
                     <div class="p-3 bg-[var(--card-bg)] rounded-lg shadow-md border border-[var(--border-color)]">
-                        <h3 class="text-lg font-bold text-[var(--accent-color)] mb-2">\${team.Tn} (\${team.T})</h3>
-                        <p class="text-sm text-gray-400 mb-2">Group: <span class="font-semibold text-[var(--group-header-text)]">\${team.G || 'N/A'}</span></p>
+                        <h3 class="text-lg font-bold text-[var(--accent-color)] mb-2">${team.Tn} (${team.T})</h3>
+                        <p class="text-sm text-gray-400 mb-2">Group: <span class="font-semibold text-[var(--group-header-text)]">${team.G || 'N/A'}</span></p>
                         <div class="space-y-1 text-sm">
-                            <p><span class="font-medium">\${player1.name}</span> (Level: \${player1.pL}, YOB: \${player1.bY})</p>
-                            <p><span class="font-medium">\${player2.name}</span> (Level: \${player2.pL}, YOB: \${player2.bY})</p>
+                            <p><span class="font-medium">${player1.name}</span> (Level: ${player1.pL}, YOB: ${player1.bY})</p>
+                            <p><span class="font-medium">${player2.name}</span> (Level: ${player2.pL}, YOB: ${player2.bY})</p>
                         </div>
                     </div>
-                \`;
+                `;
                 
                 // RENDER TẠI TAB 'TEAM MANAGEMENT'
                 const teamMgmtDiv = document.createElement('div');
                 teamMgmtDiv.className = "p-4 bg-[var(--match-bg)] rounded-lg shadow-md border border-[var(--border-color)] space-y-3";
-                teamMgmtDiv.innerHTML = \`
-                    <h4 class="text-xl font-bold text-yellow-500 border-b border-[var(--border-color)] pb-2">\${team.T} - Group: \${team.G || 'N/A'}</h4>
+                teamMgmtDiv.innerHTML = `
+                    <h4 class="text-xl font-bold text-yellow-500 border-b border-[var(--border-color)] pb-2">${team.T} - Group: ${team.G || 'N/A'}</h4>
                     
                     <div>
-                        <label for="Tn-\${team.T}" class="block text-sm font-medium text-gray-400">Team Name (Tn)</label>
-                        <input type="text" id="Tn-\${team.T}" value="\${teamDetail.Tn || ''}" class="text-input w-full p-2 rounded-md mt-1 text-sm" 
-                            onchange="handleTeamDetailChange(this, '\${team.T}', 'Tn')">
+                        <label for="Tn-${team.T}" class="block text-sm font-medium text-gray-400">Team Name (Tn)</label>
+                        <input type="text" id="Tn-${team.T}" value="${teamDetail.Tn || ''}" class="text-input w-full p-2 rounded-md mt-1 text-sm" 
+                            onchange="handleTeamDetailChange(this, '${team.T}', 'Tn')">
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div class="p-3 border border-[var(--border-color)] rounded-lg space-y-2">
-                            <h5 class="font-semibold text-[var(--accent-color)]">Player 1 (\${player1.name})</h5>
+                            <h5 class="font-semibold text-[var(--accent-color)]">Player 1 (${player1.name})</h5>
                             
                             <div>
-                                <label for="P1Name-\${team.T}" class="block text-xs font-medium text-gray-400">Name</label>
-                                <input type="text" id="P1Name-\${team.T}" value="\${player1.name}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
-                                    onchange="handlePlayerDetailChange(this, '\${team.T}', 0, 'name')">
+                                <label for="P1Name-${team.T}" class="block text-xs font-medium text-gray-400">Name</label>
+                                <input type="text" id="P1Name-${team.T}" value="${player1.name}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
+                                    onchange="handlePlayerDetailChange(this, '${team.T}', 0, 'name')">
                             </div>
                             <div>
-                                <label for="P1Level-\${team.T}" class="block text-xs font-medium text-gray-400">Level (pL)</label>
-                                <input type="text" id="P1Level-\${team.T}" value="\${player1.pL}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
-                                    onchange="handlePlayerDetailChange(this, '\${team.T}', 0, 'pL')">
+                                <label for="P1Level-${team.T}" class="block text-xs font-medium text-gray-400">Level (pL)</label>
+                                <input type="text" id="P1Level-${team.T}" value="${player1.pL}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
+                                    onchange="handlePlayerDetailChange(this, '${team.T}', 0, 'pL')">
                             </div>
                             <div>
-                                <label for="P1YOB-\${team.T}" class="block text-xs font-medium text-gray-400">YOB (bY)</label>
-                                <input type="number" id="P1YOB-\${team.T}" value="\${player1.bY}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
-                                    onchange="handlePlayerDetailChange(this, '\${team.T}', 0, 'bY')">
+                                <label for="P1YOB-${team.T}" class="block text-xs font-medium text-gray-400">YOB (bY)</label>
+                                <input type="number" id="P1YOB-${team.T}" value="${player1.bY}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
+                                    onchange="handlePlayerDetailChange(this, '${team.T}', 0, 'bY')">
                             </div>
                         </div>
 
                         <div class="p-3 border border-[var(--border-color)] rounded-lg space-y-2">
-                            <h5 class="font-semibold text-[var(--accent-color)]">Player 2 (\${player2.name})</h5>
+                            <h5 class="font-semibold text-[var(--accent-color)]">Player 2 (${player2.name})</h5>
                             
                             <div>
-                                <label for="P2Name-\${team.T}" class="block text-xs font-medium text-gray-400">Name</label>
-                                <input type="text" id="P2Name-\${team.T}" value="\${player2.name}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
-                                    onchange="handlePlayerDetailChange(this, '\${team.T}', 1, 'name')">
+                                <label for="P2Name-${team.T}" class="block text-xs font-medium text-gray-400">Name</label>
+                                <input type="text" id="P2Name-${team.T}" value="${player2.name}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
+                                    onchange="handlePlayerDetailChange(this, '${team.T}', 1, 'name')">
                             </div>
                             <div>
-                                <label for="P2Level-\${team.T}" class="block text-xs font-medium text-gray-400">Level (pL)</label>
-                                <input type="text" id="P2Level-\${team.T}" value="\${player2.pL}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
-                                    onchange="handlePlayerDetailChange(this, '\${team.T}', 1, 'pL')">
+                                <label for="P2Level-${team.T}" class="block text-xs font-medium text-gray-400">Level (pL)</label>
+                                <input type="text" id="P2Level-${team.T}" value="${player2.pL}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
+                                    onchange="handlePlayerDetailChange(this, '${team.T}', 1, 'pL')">
                             </div>
                             <div>
-                                <label for="P2YOB-\${team.T}" class="block text-xs font-medium text-gray-400">YOB (bY)</label>
-                                <input type="number" id="P2YOB-\${team.T}" value="\${player2.bY}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
-                                    onchange="handlePlayerDetailChange(this, '\${team.T}', 1, 'bY')">
+                                <label for="P2YOB-${team.T}" class="block text-xs font-medium text-gray-400">YOB (bY)</label>
+                                <input type="number" id="P2YOB-${team.T}" value="${player2.bY}" class="text-input w-full p-1 rounded-md mt-1 text-xs"
+                                    onchange="handlePlayerDetailChange(this, '${team.T}', 1, 'bY')">
                             </div>
                         </div>
                     </div>
-                \`;
+                `;
                 mgmtListEl.appendChild(teamMgmtDiv);
             });
         }
@@ -1205,44 +1210,44 @@
          * @returns {string} HTML markup.
          */
         function createGroupMatchMarkup(match, index, group) {
-            const matchId = \`\${group}-\${index}\`;
+            const matchId = `${group}-${index}`;
             const scoreA = match.sA !== null && match.sA !== undefined ? match.sA : '';
             const scoreB = match.sB !== null && match.sB !== undefined ? match.sB : '';
             const isFinished = match.Wn !== null && match.Wn !== undefined;
             const teamAWinner = match.Wn === match.A;
             const teamBWinner = match.Wn === match.B;
             
-            const teamAClasses = \`font-bold \${teamAWinner ? 'text-yellow-500' : ''}\`;
-            const teamBClasses = \`font-bold \${teamBWinner ? 'text-yellow-500' : ''}\`;
+            const teamAClasses = `font-bold ${teamAWinner ? 'text-yellow-500' : ''}`;
+            const teamBClasses = `font-bold ${teamBWinner ? 'text-yellow-500' : ''}`;
             const inputClasses = 'score-input w-10 text-center p-1 rounded-md text-sm';
 
-            return \`
+            return `
                 <div class="match-card flex items-center p-3">
-                    <div class="text-xs text-gray-500 w-8 flex-shrink-0">Match \${index + 1}</div>
+                    <div class="text-xs text-gray-500 w-8 flex-shrink-0">Match ${index + 1}</div>
                     
                     <div class="flex-grow grid grid-cols-2 gap-2 items-center text-sm">
                         
                         <div class="flex items-center justify-end space-x-2">
-                            <span class="\${teamAClasses}">\${match.A}</span>
-                            <input type="number" id="\${matchId}-sA" 
-                                value="\${scoreA}" 
-                                class="\${inputClasses} \${isFinished && teamAWinner ? 'border-yellow-500 border-2' : ''}" 
+                            <span class="${teamAClasses}">${match.A}</span>
+                            <input type="number" id="${matchId}-sA" 
+                                value="${scoreA}" 
+                                class="${inputClasses} ${isFinished && teamAWinner ? 'border-yellow-500 border-2' : ''}" 
                                 min="0" 
-                                oninput="handleScoreInput('\${matchId}', 'sA', '\${group}')">
+                                oninput="handleScoreInput('${matchId}', 'sA', '${group}')">
                         </div>
 
                         <div class="flex items-center justify-start space-x-2">
-                            <input type="number" id="\${matchId}-sB" 
-                                value="\${scoreB}" 
-                                class="\${inputClasses} \${isFinished && teamBWinner ? 'border-yellow-500 border-2' : ''}" 
+                            <input type="number" id="${matchId}-sB" 
+                                value="${scoreB}" 
+                                class="${inputClasses} ${isFinished && teamBWinner ? 'border-yellow-500 border-2' : ''}" 
                                 min="0" 
-                                oninput="handleScoreInput('\${matchId}', 'sB', '\${group}')">
-                            <span class="\${teamBClasses}">\${match.B}</span>
+                                oninput="handleScoreInput('${matchId}', 'sB', '${group}')">
+                            <span class="${teamBClasses}">${match.B}</span>
                         </div>
                     </div>
                     
                 </div>
-            \`;
+            `;
         }
 
         /**
@@ -1250,22 +1255,22 @@
          * @param {string} group - Tên nhóm ('A', 'B', 'C', 'D').
          */
         function renderGroupMatchList(group) {
-            const matchesEl = document.getElementById(\`matches\${group}\`);
-            const matchesKey = \`matches\${group}\`;
+            const matchesEl = document.getElementById(`matches${group}`);
+            const matchesKey = `matches${group}`;
 
             if (!tournamentData || !tournamentData[matchesKey]) {
-                 matchesEl.innerHTML = \`<div class="text-center p-4 text-gray-400">No matches data available for Group \${group}.</div>\`;
+                 matchesEl.innerHTML = `<div class="text-center p-4 text-gray-400">No matches data available for Group ${group}.</div>`;
                  return;
             }
 
-            let html = \`<h3 class="text-xl font-bold text-[var(--accent-color)] mb-3 border-b border-[var(--border-color)] pb-2">Group \${group} Matches</h3>
-                        <div class="space-y-1">\`;
+            let html = `<h3 class="text-xl font-bold text-[var(--accent-color)] mb-3 border-b border-[var(--border-color)] pb-2">Group ${group} Matches</h3>
+                        <div class="space-y-1">`;
 
             tournamentData[matchesKey].forEach((match, index) => {
                 html += createGroupMatchMarkup(match, index, group);
             });
 
-            html += \`</div>\`;
+            html += `</div>`;
             matchesEl.innerHTML = html;
         }
 
@@ -1278,9 +1283,9 @@
         function handleScoreInput(matchId, scoreField, group) {
             const [groupMatchKey, indexStr] = matchId.split('-');
             const index = parseInt(indexStr);
-            const matchesKey = \`matches\${group}\`;
+            const matchesKey = `matches${group}`;
 
-            const inputEl = document.getElementById(\`\${matchId}-\${scoreField}\`);
+            const inputEl = document.getElementById(`${matchId}-${scoreField}`);
             let value = inputEl.value;
 
             // Chuyển đổi rỗng thành null, và đảm bảo là số nguyên
@@ -1308,17 +1313,17 @@
          * @param {string} group - Tên nhóm ('A', 'B', 'C', 'D').
          */
         function renderGroupTable(group) {
-            const tableEl = document.getElementById(\`table\${group}\`);
-            const tableKey = \`table\${group}\`;
+            const tableEl = document.getElementById(`table${group}`);
+            const tableKey = `table${group}`;
             
             if (!tournamentData || !tournamentData[tableKey]) {
-                 tableEl.innerHTML = \`<div class="text-center p-4 text-gray-400">No table data available for Group \${group}.</div>\`;
+                 tableEl.innerHTML = `<div class="text-center p-4 text-gray-400">No table data available for Group ${group}.</div>`;
                  return;
             }
 
             const groupTable = tournamentData[tableKey];
             
-            let html = \`<h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3 border-b border-[var(--border-color)] pb-2">Group \${group} Table</h3>
+            let html = `<h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3 border-b border-[var(--border-color)] pb-2">Group ${group} Table</h3>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-[var(--border-color)] text-sm">
                                 <thead class="bg-[var(--match-bg)]">
@@ -1327,31 +1332,29 @@
                                         <th class="px-2 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Team</th>
                                         <th class="px-2 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">W</th>
                                         <th class="px-2 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">L</th>
-                                        <th class="px-2 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Pts</th>
                                         <th class="px-2 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">PD</th>
                                         <th class="px-2 py-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">PF</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-[var(--border-color)]">\`;
+                                <tbody class="divide-y divide-[var(--border-color)]">`;
 
             groupTable.forEach((team, index) => {
                 const rank = index + 1;
                 const isQualifier = rank <= 2; // Giả sử 2 đội đầu vào vòng loại
                 
-                html += \`
-                    <tr class="\${isQualifier ? 'bg-[var(--card-bg)] font-semibold border-l-4 border-yellow-500' : 'hover:bg-[var(--match-bg)]'}">
-                        <td class="px-2 py-2 whitespace-nowrap text-center text-xs text-gray-400 \${isQualifier ? 'text-yellow-500 font-bold' : ''}">\${rank}</td>
-                        <td class="px-2 py-2 whitespace-nowrap text-left text-gray-200">\${team.Tn || team.T || 'N/A'}</td>
-                        <td class="px-2 py-2 whitespace-nowrap text-center">\${team.W}</td>
-                        <td class="px-2 py-2 whitespace-nowrap text-center">\${team.L}</td>
-                        <td class="px-2 py-2 whitespace-nowrap text-center text-[var(--accent-color)]">\${team.Pts}</td>
-                        <td class="px-2 py-2 whitespace-nowrap text-center">\${team.PD}</td>
-                        <td class="px-2 py-2 whitespace-nowrap text-center">\${team.PF}</td>
+                html += `
+                    <tr class="${isQualifier ? 'bg-[var(--card-bg)] font-semibold border-l-4 border-yellow-500' : 'hover:bg-[var(--match-bg)]'}">
+                        <td class="px-2 py-2 whitespace-nowrap text-center text-xs text-gray-400 ${isQualifier ? 'text-yellow-500 font-bold' : ''}">${rank}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-left text-gray-200">${team.Tn || team.T || 'N/A'}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-center">${team.W}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-center">${team.L}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-center">${team.PD}</td>
+                        <td class="px-2 py-2 whitespace-nowrap text-center">${team.PF}</td>
                     </tr>
-                \`;
+                `;
             });
 
-            html += \`</tbody></table></div>\`;
+            html += `</tbody></table></div>`;
             tableEl.innerHTML = html;
         }
 
@@ -1367,10 +1370,10 @@
             const teamBId = match.tB;
             
             // Tên đội/Placeholder hiển thị
-            const teamAName = teamAId ? getTeamNameById(teamAId) : (match.pA ? \`W.\${match.pA}\` : 'TBD');
-            const teamBName = teamBId ? getTeamNameById(teamBId) : (match.pB ? \`W.\${match.pB}\` : 'TBD');
+            const teamAName = teamAId ? getTeamNameById(teamAId) : (match.pA ? `W.${match.pA}` : 'TBD');
+            const teamBName = teamBId ? getTeamNameById(teamBId) : (match.pB ? `W.${match.pB}` : 'TBD');
 
-            const matchId = \`\${roundName.toLowerCase()}-\${matchIndex}\`;
+            const matchId = `${roundName.toLowerCase()}-${matchIndex}`;
             const scoreA = match.sA !== null && match.sA !== undefined ? match.sA : '';
             const scoreB = match.sB !== null && match.sB !== undefined ? match.sB : '';
             const isFinished = match.Wn !== null && match.Wn !== undefined;
@@ -1380,54 +1383,54 @@
 
             const inputDisabled = !(teamAId && teamBId) ? 'disabled' : ''; // Chỉ cho phép nhập nếu có cả 2 đội
 
-            const winnerText = match.Wn ? \`Winner: \${getTeamNameById(match.Wn)}\` : '';
+            const winnerText = match.Wn ? `Winner: ${getTeamNameById(match.Wn)}` : '';
             const winnerClasses = isFinished ? 'text-yellow-500 font-extrabold' : 'text-gray-500';
 
-            const teamAClasses = \`font-bold \${teamAWinner ? 'text-yellow-500' : ''} \${!teamAId ? 'text-gray-500 italic' : 'text-[var(--text-color)]'}\`;
-            const teamBClasses = \`font-bold \${teamBWinner ? 'text-yellow-500' : ''} \${!teamBId ? 'text-gray-500 italic' : 'text-[var(--text-color)]'}\`;
+            const teamAClasses = `font-bold ${teamAWinner ? 'text-yellow-500' : ''} ${!teamAId ? 'text-gray-500 italic' : 'text-[var(--text-color)]'}`;
+            const teamBClasses = `font-bold ${teamBWinner ? 'text-yellow-500' : ''} ${!teamBId ? 'text-gray-500 italic' : 'text-[var(--text-color)]'}`;
             const inputClasses = 'score-input w-12 text-center p-1 rounded-md text-sm';
             
             // Xử lý chung kết
             const isFinal = roundName === 'Final';
-            const runnerUpText = isFinal && match.rU ? \`Runner-up: \${getTeamNameById(match.rU)}\` : '';
+            const runnerUpText = isFinal && match.rU ? `Runner-up: ${getTeamNameById(match.rU)}` : '';
             const finalResults = isFinal && isFinished ? 
-                \`
+                `
                 <div class="mt-2 pt-2 border-t border-[var(--border-color)] text-xs font-semibold text-center">
-                    <p class="\${winnerClasses}">CHAMPION: \${getTeamNameById(match.Wn)}</p>
-                    <p class="text-gray-400">RUNNER-UP: \${getTeamNameById(match.rU)}</p>
+                    <p class="${winnerClasses}">CHAMPION: ${getTeamNameById(match.Wn)}</p>
+                    <p class="text-gray-400">RUNNER-UP: ${getTeamNameById(match.rU)}</p>
                 </div>
-                \` : '';
+                ` : '';
 
-            return \`
-                <div class="match-card p-4 rounded-lg border-b-2 \${isFinal ? 'border-red-500 shadow-xl' : ''}">
-                    <div class="text-xs text-gray-500 mb-2 font-semibold">\${roundName} \${isFinal ? '' : (matchIndex + 1)} (\${match.Pos})</div>
+            return `
+                <div class="match-card p-4 rounded-lg border-b-2 ${isFinal ? 'border-red-500 shadow-xl' : ''}">
+                    <div class="text-xs text-gray-500 mb-2 font-semibold">${roundName} ${isFinal ? '' : (matchIndex + 1)} (${match.Pos})</div>
                     
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="\${teamAClasses} w-1/2 overflow-hidden whitespace-nowrap text-ellipsis">\${teamAName}</span>
-                            <input type="number" id="\${matchId}-sA" 
-                                value="\${scoreA}" 
-                                class="\${inputClasses} \${isFinished && teamAWinner ? 'border-yellow-500 border-2' : ''}" 
+                            <span class="${teamAClasses} w-1/2 overflow-hidden whitespace-nowrap text-ellipsis">${teamAName}</span>
+                            <input type="number" id="${matchId}-sA" 
+                                value="${scoreA}" 
+                                class="${inputClasses} ${isFinished && teamAWinner ? 'border-yellow-500 border-2' : ''}" 
                                 min="0" 
-                                \${inputDisabled}
-                                oninput="handleKnockoutScoreInput(this, '\${matchId}', 'sA', '\${roundName.toLowerCase()}')">
+                                ${inputDisabled}
+                                oninput="handleKnockoutScoreInput(this, '${matchId}', 'sA', '${roundName.toLowerCase()}')">
                         </div>
                         
                         <div class="flex items-center justify-between">
-                            <span class="\${teamBClasses} w-1/2 overflow-hidden whitespace-nowrap text-ellipsis">\${teamBName}</span>
-                            <input type="number" id="\${matchId}-sB" 
-                                value="\${scoreB}" 
-                                class="\${inputClasses} \${isFinished && teamBWinner ? 'border-yellow-500 border-2' : ''}" 
+                            <span class="${teamBClasses} w-1/2 overflow-hidden whitespace-nowrap text-ellipsis">${teamBName}</span>
+                            <input type="number" id="${matchId}-sB" 
+                                value="${scoreB}" 
+                                class="${inputClasses} ${isFinished && teamBWinner ? 'border-yellow-500 border-2' : ''}" 
                                 min="0" 
-                                \${inputDisabled}
-                                oninput="handleKnockoutScoreInput(this, '\${matchId}', 'sB', '\${roundName.toLowerCase()}')">
+                                ${inputDisabled}
+                                oninput="handleKnockoutScoreInput(this, '${matchId}', 'sB', '${roundName.toLowerCase()}')">
                         </div>
                     </div>
                     
-                    \${finalResults}
+                    ${finalResults}
 
                 </div>
-            \`;
+            `;
         }
 
         /**
@@ -1443,35 +1446,35 @@
 
 
             // 1. Tứ kết
-            let qfHtml = \`<h3 class="text-2xl font-extrabold text-pink-500 mb-4 border-b border-[var(--border-color)] pb-2">Quarterfinals</h3>
-                          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">\`;
+            let qfHtml = `<h3 class="text-2xl font-extrabold text-pink-500 mb-4 border-b border-[var(--border-color)] pb-2">Quarterfinals</h3>
+                          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">`;
             if (tournamentData.quarterfinals && tournamentData.quarterfinals.length > 0) {
                 tournamentData.quarterfinals.forEach((match, index) => {
                     qfHtml += createKnockoutMatchMarkup(match, 'Quarterfinal', index);
                 });
             } else {
-                 qfHtml += \`<div class="md:col-span-2 lg:col-span-4 text-center p-4 text-gray-400">No Quarterfinal matches data available.</div>\`;
+                 qfHtml += `<div class="md:col-span-2 lg:col-span-4 text-center p-4 text-gray-400">No Quarterfinal matches data available.</div>`;
             }
-            qfHtml += \`</div>\`;
+            qfHtml += `</div>`;
             qfEl.innerHTML = qfHtml;
 
             // 2. Bán kết
-            let sfHtml = \`<h3 class="text-2xl font-extrabold text-purple-500 mb-4 border-b border-[var(--border-color)] pt-4 pb-2">Semifinals</h3>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">\`;
+            let sfHtml = `<h3 class="text-2xl font-extrabold text-purple-500 mb-4 border-b border-[var(--border-color)] pt-4 pb-2">Semifinals</h3>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
             if (tournamentData.semifinals && tournamentData.semifinals.length > 0) {
                  tournamentData.semifinals.forEach((match, index) => {
                      sfHtml += createKnockoutMatchMarkup(match, 'Semifinal', index);
                  });
             } else {
-                 sfHtml += \`<div class="md:col-span-2 text-center p-4 text-gray-400">No Semifinal matches data available.</div>\`;
+                 sfHtml += `<div class="md:col-span-2 text-center p-4 text-gray-400">No Semifinal matches data available.</div>`;
             }
-            sfHtml += \`</div>\`;
+            sfHtml += `</div>`;
             sfEl.innerHTML = sfHtml;
 
             // 3. Chung kết (Final Match Section)
-            let finalHtml = \`<h3 class="text-2xl font-extrabold text-red-500 mb-4 border-b border-[var(--border-color)] pt-4 pb-2">Final</h3>
-                            <div class="max-w-md mx-auto">\`;
-            let finalResultHtml = \`<div class="text-center text-lg text-gray-400">Final match not finished.</div>\`;
+            let finalHtml = `<h3 class="text-2xl font-extrabold text-red-500 mb-4 border-b border-[var(--border-color)] pt-4 pb-2">Final</h3>
+                            <div class="max-w-md mx-auto">`;
+            let finalResultHtml = `<div class="text-center text-lg text-gray-400">Final match not finished.</div>`;
 
             if (tournamentData.final) {
                  finalHtml += createKnockoutMatchMarkup(tournamentData.final, 'Final', 0);
@@ -1481,24 +1484,24 @@
                      const championName = getTeamNameById(tournamentData.final.Wn);
                      const runnerUpName = getTeamNameById(tournamentData.final.rU);
                      
-                     finalResultHtml = \`
+                     finalResultHtml = `
                          <div class="space-y-3">
                              <div class="bg-yellow-800/50 p-4 rounded-lg">
                                  <p class="text-xl font-extrabold text-yellow-300">CHAMPION</p>
-                                 <p class="text-3xl font-extrabold text-yellow-100">\${championName}</p>
-                                 <p class="text-xs text-gray-300 mt-1">Score: \${tournamentData.final.sA}-\${tournamentData.final.sB}</p>
+                                 <p class="text-3xl font-extrabold text-yellow-100">${championName}</p>
+                                 <p class="text-xs text-gray-300 mt-1">Score: ${tournamentData.final.sA}-${tournamentData.final.sB}</p>
                              </div>
                              <div class="bg-gray-700/50 p-3 rounded-lg">
                                  <p class="text-lg font-bold text-gray-300">RUNNER-UP</p>
-                                 <p class="text-xl font-bold text-gray-100">\${runnerUpName}</p>
+                                 <p class="text-xl font-bold text-gray-100">${runnerUpName}</p>
                              </div>
                          </div>
-                     \`;
+                     `;
                  }
             } else {
-                 finalHtml += \`<div class="text-center p-4 text-gray-400">No Final match data available.</div>\`;
+                 finalHtml += `<div class="text-center p-4 text-gray-400">No Final match data available.</div>`;
             }
-            finalHtml += \`</div>\`;
+            finalHtml += `</div>`;
             finalEl.innerHTML = finalHtml;
             finalResultsEl.innerHTML = finalResultHtml;
         }
@@ -1582,7 +1585,7 @@
             }
 
             // Thêm class 'active' cho button được chọn
-            const activeButton = document.querySelector(\`.tab-button[data-tab="\${tabId === 'TeamManagement' ? 'TeamMgmt' : tabId}"]\`);
+            const activeButton = document.querySelector(`.tab-button[data-tab="${tabId === 'TeamManagement' ? 'TeamMgmt' : tabId}"]`);
             if (activeButton) {
                 activeButton.classList.add('active');
             }
@@ -1590,6 +1593,8 @@
             currentTab = tabId;
             localStorage.setItem('currentTab', tabId);
         }
+        // Đăng ký hàm switchTab vào window để khắc phục ReferenceError
+        window.switchTab = switchTab; 
         
         /**
          * Xử lý cử chỉ vuốt (swipe) để chuyển tab.
@@ -1680,7 +1685,8 @@
 
             // 2. Chuyển đến tab cuối cùng đã xem
             const savedTab = localStorage.getItem('currentTab') || 'General';
-            switchTab(savedTab);
+            // Không cần gán window.onload thì switchTab vẫn hoạt động vì nó đã được đăng ký ở trên
+            switchTab(savedTab); 
             
             // 3. Tải và ẩn Token (nếu có)
             if (localStorage.getItem('githubToken')) {
