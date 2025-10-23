@@ -105,7 +105,7 @@
                 <svg class="w-8 h-8 md:w-10 md:h-10 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-2">
                     <h1 class="text-lg md:text-3xl font-extrabold text-[var(--text-color)] leading-tight">PICKLEBALL TOURNAMENT MGMT</h1>
-                    <p class="text-xs text-[var(--accent-color)]">Score & Team Update (GitHub Sync) - **v1.7.1 (Critical Fixes)**</p>
+                    <p class="text-xs text-[var(--accent-color)]">Score & Team Update (GitHub Sync) - **v1.7.2 (SF Seeding Validation)**</p>
                     </div>
             </div>
             
@@ -679,7 +679,6 @@
                 
                 // **QUY TẮC PHÂN HẠT TỨ KẾT ĐẶC BIỆT (QF1-QF4)**
                 // Ghi đè vị trí phân hạt dựa trên index để đảm bảo tuân thủ quy tắc chéo
-                // FIX: Khắc phục SyntaxError bằng cách loại bỏ placeholder "..."
                 if (index === 0) { // QF1 (Pos 1)
                     positionA = 'A1'; // W.A
                     positionB = 'B2'; // R.B
@@ -729,7 +728,7 @@
                         // Cập nhật đội đi tiếp (Chỉ áp dụng cho Tứ kết và Bán kết)
                         const winner = match.Wn;
 
-                        // <START: ĐIỀU CHỈNH LOGIC PHÂN HẠT BÁN KẾT (W.QF1 vs W.QF3, W.QF2 vs W.QF4)>
+                        // START: ĐIỀU CHỈNH LOGIC PHÂN HẠT BÁN KẾT (W.QF1 vs W.QF3, W.QF2 vs W.QF4)
                         if (round === 'quarterfinals') {
                             const qfPos = match.Pos; // 1, 2, 3, 4
                             const sfMatches = tournamentData.semifinals;
@@ -749,7 +748,7 @@
                                 }
                             }
                         } 
-                        // <END: ĐIỀU CHỈNH LOGIC PHÂN HẠT BÁN KẾT>
+                        // END: ĐIỀU CHỈNH LOGIC PHÂN HẠT BÁN KẾT
                         
                         // Logic Bán kết -> Chung kết
                         if (round === 'semifinals') {
@@ -769,6 +768,22 @@
                 } else {
                     // Nếu một trong hai team ID là null/undefined, đảm bảo Wn cũng là null
                     match.Wn = null;
+                    // Cần reset đội tiếp theo nếu chưa có đủ đội
+                    if (round === 'quarterfinals') {
+                        // QF1 -> SF1.tA
+                        if (match.Pos === 1) tournamentData.semifinals[0].tA = null;
+                        // QF2 -> SF2.tA
+                        if (match.Pos === 2) tournamentData.semifinals[1].tA = null;
+                        // QF3 -> SF1.tB
+                        if (match.Pos === 3) tournamentData.semifinals[0].tB = null;
+                        // QF4 -> SF2.tB
+                        if (match.Pos === 4) tournamentData.semifinals[1].tB = null;
+                    } else if (round === 'semifinals') {
+                        // SF1 -> Final.tA
+                        if (match.Pos === 1) tournamentData.final.tA = null;
+                        // SF2 -> Final.tB
+                        if (match.Pos === 2) tournamentData.final.tB = null;
+                    }
                     match.rU = null;
                 }
             });
