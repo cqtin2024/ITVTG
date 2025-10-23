@@ -105,7 +105,7 @@
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
                     <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL</h1>
-                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.4 (Fix Lỗi Commit JSON)**</p>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.5 (Fix Lỗi 404/Tạo File)**</p>
                 </div>
             </div>
             
@@ -350,7 +350,7 @@
         function mergeData(baseData, diffData) {
             const merged = JSON.parse(JSON.stringify(baseData)); // Deep copy base
             
-            // Nếu diffData là đối tượng rỗng (do file rỗng) thì vẫn tiếp tục
+            // Nếu diffData là đối tượng rỗng (do file rỗng/404) thì vẫn tiếp tục
             if (!diffData || Object.keys(diffData).length === 0) return merged;
 
             // 1. Merge group match scores (matchesA-D)
@@ -662,12 +662,15 @@
                               finalDiffData = diffArray[0];
                          }
                     } else {
-                        // Vòng bảng/loại là mảng, chỉ giữ lại các phần tử có thay đổi
-                        // Tạo một mảng mới chỉ chứa các phần tử có khác biệt (tức là không phải {})
+                        // Vòng bảng/loại là mảng, chỉ giữ lại các phần tử có khác biệt
                          const hasDiff = diffArray.some(item => Object.keys(item).length > 0);
                          if (hasDiff) {
-                            // Đảm bảo mảng giữ nguyên index bằng cách giữ lại {} cho các trận không đổi
-                            finalDiffData = diffArray;
+                            // Lọc bỏ các {} không cần thiết (chỉ cần các index thay đổi)
+                            finalDiffData = diffArray.map(item => Object.keys(item).length > 0 ? item : undefined).filter(item => item !== undefined);
+                            
+                            // NOTE: GitHub API có thể yêu cầu mảng phải có đủ độ dài hoặc các vị trí tương ứng. 
+                            // Để an toàn, ta nên giữ nguyên index:
+                            finalDiffData = diffArray; // Giữ nguyên mảng với các {} để đảm bảo index khớp
                          }
                     }
 
@@ -703,13 +706,19 @@
 
         /**
          * Tải dữ liệu từ một URL.
-         * [FIX: Đã chỉnh sửa để xử lý lỗi JSON không hợp lệ/file rỗng một cách an toàn]
          * @param {string} url - URL của file JSON.
-         * @returns {Promise<Object>} Dữ liệu JSON hoặc đối tượng rỗng nếu thất bại.
+         * @returns {Promise<Object>} Dữ liệu JSON hoặc đối tượng rỗng nếu thất bại/404.
          */
         async function fetchData(url) {
             try {
                 const response = await fetch(url);
+                
+                if (response.status === 404) {
+                    // Xử lý 404 cho file state3s.json (không tồn tại) một cách an toàn
+                    console.warn(`[fetchData] File không tồn tại (404 Not Found): ${url}`);
+                    return {};
+                }
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -747,7 +756,7 @@
             const baseDataPromise = fetchData(STATIC_DATA_URL); // state3.json
             const diffDataPromise = fetchData(DIFF_DATA_URL); // state3s.json
             
-            // fetchData sẽ trả về {} nếu lỗi
+            // fetchData sẽ trả về {} nếu lỗi hoặc 404
             const [baseData, diffData] = await Promise.all([baseDataPromise, diffDataPromise]);
             
             // Chỉ tiếp tục nếu baseData không phải là đối tượng rỗng (lỗi tải file chính)
@@ -759,10 +768,12 @@
                 runAllLogic(); // Tính toán lại và render
                 
                 document.getElementById('statusMessage').textContent = '✅ Đã tải và hợp nhất dữ liệu thành công.';
-                document.getElementById('statusMessage').classList.remove('bg-blue-900/50', 'text-blue-300');
+                document.getElementById('statusMessage').classList.remove('bg-blue-900/50', 'text-blue-300', 'bg-red-900/50', 'text-red-300');
                 document.getElementById('statusMessage').classList.add('bg-green-900/50', 'text-green-300');
             } else {
                  document.getElementById('statusMessage').textContent = '❌ KHÔNG THỂ tải dữ liệu gốc (state3.json). Vui lòng kiểm tra console.';
+                 document.getElementById('statusMessage').classList.remove('bg-blue-900/50', 'text-blue-300', 'bg-green-900/50', 'text-green-300');
+                 document.getElementById('statusMessage').classList.add('bg-red-900/50', 'text-red-300');
             }
         }
         
@@ -1291,7 +1302,6 @@
         
         /**
          * Cố gắng parse response thành JSON. Nếu thất bại, đọc response thành TEXT để debug.
-         * [FIX: Đã chỉnh sửa để xử lý lỗi Status 200 OK nhưng Body rỗng]
          * @param {Response} response 
          * @returns {Promise<Object|{jsonError: string, textBody: string}>}
          */
@@ -1306,7 +1316,7 @@
                 
                 // 2. Nếu body rỗng, và status là thành công (200/201), coi như thành công và trả về object rỗng
                 if (!responseBodyText.trim() && (response.status === 200 || response.status === 201)) {
-                    console.warn(`[safelyParseResponse] Status ${response.status} OK nhưng Body rỗng. Coi là thành công.`);
+                    console.warn(`[safelyParseResponse] Status ${response.status} OK/Created nhưng Body rỗng. Coi là thành công.`);
                     return {}; 
                 }
 
@@ -1326,6 +1336,7 @@
         
         /**
          * Lấy SHA hiện tại của file và commit nội dung mới.
+         * [FIX: Đã chỉnh sửa để xử lý 404 Not Found (Tạo file mới)]
          * @param {string} apiUrl - URL API GitHub cho file (state3.json hoặc state3s.json).
          * @param {string} base64Content - Nội dung mới đã được mã hóa Base64.
          * @param {string} commitMessage - Tin nhắn commit.
@@ -1350,37 +1361,36 @@
                 });
                 
                 let fileData = await safelyParseResponse(getResponse);
+                let currentSha = fileData.sha; // Lấy SHA hiện tại
 
-                if (!getResponse.ok) {
+                // Xử lý các trạng thái phản hồi GET
+                if (getResponse.status === 404) {
+                    // File không tồn tại (404 Not Found), sẽ tạo mới.
+                    currentSha = undefined;
+                    console.warn(`[getShaAndCommit] File không tồn tại (404 Not Found). Chuẩn bị tạo file mới.`);
+                } else if (!getResponse.ok) {
+                    // Xử lý lỗi nghiêm trọng khác (401, 500,...)
                     let errorDetails;
                     if (fileData.jsonError) {
                         errorDetails = `Lỗi phản hồi (Status ${getResponse.status}): Nội dung KHÔNG phải JSON. Body: "${fileData.textBody}"`;
                     } else {
-                        errorDetails = fileData.message || getResponse.statusText;
+                        // Lỗi từ GitHub API (ví dụ: Bad credentials, validation failed)
+                        errorDetails = fileData.message || getResponse.statusText; 
                     }
                     throw new Error(`Lỗi khi lấy SHA: ${getResponse.status} - ${errorDetails}`);
-                }
-                
-                // --- Kiểm tra nếu 200 OK nhưng JSON lỗi ---
-                if (getResponse.ok && fileData.jsonError) {
+                } else if (getResponse.ok && fileData.jsonError) {
+                    // Xử lý lỗi 200 OK nhưng body không parse được
                     throw new Error(`Lỗi cú pháp JSON Mặc dù Status ${getResponse.status} OK. Body: "${fileData.textBody}"`);
-                }
-
-                // Tiếp tục với dữ liệu JSON hợp lệ (Status 200 OK)
-                // Nếu fileData là {}, SHA sẽ là undefined (xảy ra khi file state3s.json rỗng)
-                const currentSha = fileData.sha;
-                
-                if (!currentSha && fileData.message !== 'Not Found') {
-                    // Nếu không có SHA, tạo file mới (GitHub API yêu cầu SHA để update)
-                    // Ở đây, ta giả định file phải tồn tại.
-                    throw new Error("Không tìm thấy SHA (file có thể không tồn tại hoặc lỗi cấu trúc).");
+                } else if (getResponse.ok && !currentSha) {
+                    // 200 OK nhưng không có SHA (file có thể rỗng hoặc cấu trúc sai)
+                    throw new Error("Không tìm thấy SHA (file có thể rỗng hoặc lỗi cấu trúc).");
                 }
                 
                 // 2. Commit nội dung mới (PUT request)
                 const commitBody = {
                     message: commitMessage,
                     content: base64Content,
-                    sha: currentSha, // Có thể là undefined nếu commit lần đầu (không xảy ra với state3s.json)
+                    sha: currentSha, // undefined để tạo mới, SHA cũ để cập nhật
                     branch: BRANCH
                 };
 
@@ -1406,13 +1416,14 @@
                     throw new Error(`Lỗi API Commit: ${commitResponse.status} - ${errorDetails}`);
                 }
                 
-                // 3. Xử lý thành công
+                // 3. Xử lý thành công (Status 200 OK hoặc 201 Created)
                 resultElement.classList.remove('hidden');
                 resultElement.classList.add('bg-green-900/50');
                 
-                // Dùng SHA từ commitResult.commit.sha nếu có, nếu không (do commitResult là {}), 
+                // Dùng SHA từ commitResult.commit.sha nếu có, nếu không (do commitResult là {} - body rỗng), 
                 // báo cáo thành công mà không cần SHA commit mới.
-                const newSha = commitResult.commit ? commitResult.commit.sha.substring(0, 7) : 'Xác nhận thành công';
+                const newSha = commitResult.commit ? commitResult.commit.sha.substring(0, 7) : 
+                               (commitResponse.status === 201 ? 'Tạo file thành công' : 'Xác nhận thành công');
                 resultElement.textContent = `✅ COMMIT thành công: ${newSha}.`;
 
                 // Tải lại dữ liệu sau khi commit thành công
