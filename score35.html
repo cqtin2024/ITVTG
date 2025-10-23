@@ -194,13 +194,13 @@
 
              <section class="p-4 bg-green-900/20 rounded-lg border-l-4 border-green-500">
                  <h3 class="text-xl font-bold text-green-400 mb-3 flex items-center">
-                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> 2. Cập Nhật Tỉ Số & Commit Lên GitHub (state3s.json) 
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> 2. Export & Commit Tỉ Số Lên GitHub (state3s.json) 
                  </h3>
                  <p class="text-sm text-gray-400 mb-4">
                      Tỉ số mới nhất đang được lưu trữ ở <span id="currentStatus" class="font-bold text-yellow-300">...</span>
                  </p>
                  <button id="commitScoreButton" onclick="commitScoreChangesToGitHub()" class="w-full px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-lg transition duration-300 disabled:opacity-50">
-                     COMMIT TỈ SỐ (Ghi đè state3s.json)
+                     EXPORT & COMMIT TẤT CẢ TỈ SỐ (Ghi đè state3s.json)
                  </button>
                  <div id="scoreCommitResult" class="mt-3 p-3 rounded-lg text-sm font-semibold hidden"></div>
              </section>
@@ -633,17 +633,33 @@
                         });
 
                         if (isDiff) {
+                            // Đảm bảo array có đủ độ dài để index khớp
                             diffArray[index] = diffMatch;
+                        } else {
+                            // Đặt một placeholder nếu không có diff, để đảm bảo index khớp khi cần
+                            diffArray[index] = {};
                         }
                     });
 
-                    // Thêm mảng/đối tượng diff vào diffData nếu có thay đổi
-                    if (diffArray.length > 0) {
-                         // Nếu là mảng
-                         diffData[key] = diffArray;
-                    } else if (key === 'final' && diffArray[0] && Object.keys(diffArray[0]).length > 0) {
-                        // Nếu là đối tượng (chung kết)
-                        diffData[key] = diffArray[0];
+                    // Lọc bỏ placeholder rỗng (diffArray[index] = {})
+                    let finalDiffData;
+                    if (key === 'final') {
+                         // Chung kết là đối tượng, chỉ lấy phần tử đầu tiên nếu nó có thay đổi
+                         if (diffArray[0] && Object.keys(diffArray[0]).length > 0) {
+                              finalDiffData = diffArray[0];
+                         }
+                    } else {
+                        // Vòng bảng/loại là mảng, chỉ giữ lại các phần tử có thay đổi
+                        // Tạo một mảng mới chỉ chứa các phần tử có khác biệt (tức là không phải {})
+                         const hasDiff = diffArray.some(item => Object.keys(item).length > 0);
+                         if (hasDiff) {
+                            // Đảm bảo mảng giữ nguyên index bằng cách giữ lại {} cho các trận không đổi
+                            finalDiffData = diffArray;
+                         }
+                    }
+
+                    if (finalDiffData && Object.keys(finalDiffData).length > 0) {
+                        diffData[key] = finalDiffData;
                     }
                 }
             });
@@ -1309,7 +1325,7 @@
                 e.textContent = `❌ Lỗi commit: ${err.message}`;
             } finally {
                 btn.disabled = false;
-                btn.textContent = (buttonId === 'commitScoreButton') ? 'COMMIT TỈ SỐ (Ghi đè state3s.json)' : 'CẬP NHẬT THÔNG TIN ĐỘI (Ghi đè state3.json)';
+                btn.textContent = (buttonId === 'commitScoreButton') ? 'EXPORT & COMMIT TẤT CẢ TỈ SỐ (Ghi đè state3s.json)' : 'CẬP NHẬT THÔNG TIN ĐỘI (Ghi đè state3.json)';
             }
         }
 
