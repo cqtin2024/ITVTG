@@ -1,65 +1,30 @@
 {
-  "groupA": [
+  "quarterfinals": [
     {
-      "m": 1,
-      "sA": 11,
-      "sB": 8,
-      "Wn": "T1"
+      "Wn": null
     },
     {
-      "m": 2,
-      "sA": 9,
-      "sB": 11,
-      "Wn": "T4"
+      "Wn": null
     },
     {
-      "m": 3,
-      "sA": 11,
-      "sB": 5,
-      "Wn": "T2"
-    }
-  ],
-  "groupB": [
+      "Wn": null
+    },
     {
-      "m": 1,
-      "sA": 11,
-      "sB": 10,
-      "Wn": "T5"
+      "Wn": null
     }
   ],
-  "groupC": [
+  "semifinals": [
     {
-      "m": 4,
-      "sA": 11,
-      "sB": 1,
-      "Wn": "T11"
+      "Wn": null,
+      "rU": null
+    },
+    {
+      "Wn": null,
+      "rU": null
     }
   ],
-  "knockout": {
-    "qf": [
-      {
-        "m": 1,
-        "sA": 11,
-        "sB": 7,
-        "Wn": "WA1"
-      }
-    ],
-    "sf": [
-      {
-        "m": 1,
-        "sA": 11,
-        "sB": 9,
-        "Wn": "WQ1"
-      }
-    ],
-    "final": [
-      {
-        "m": 1,
-        "sA": 10,
-        "sB": 11,
-        "Wn": "WS2",
-        "rU": "WS1"
-      }
-    ]
+  "final": {
+    "Wn": null,
+    "rU": null
   }
 }
