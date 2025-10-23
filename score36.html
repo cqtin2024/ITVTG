@@ -105,7 +105,7 @@
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
                     <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL</h1>
-                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.6.4 (Fix Data Loading)**</p>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.6.5 (Robust Fetch)**</p>
                 </div>
             </div>
             
@@ -352,7 +352,8 @@
         // ------------------------------------------------------------------------
         
         // =================================================================
-        // HÀM TẢI VÀ ĐỒNG BỘ DỮ LIỆU (DATA SYNCHRONIZATION) - BỔ SUNG FIX LỖI loadDataFromGitHub
+        // HÀM TẢI VÀ ĐỒNG BỘ DỮ LIỆU (DATA SYNCHRONIZATION)
+        // [FIX v1.6.5: LÀM RỘNG HƠN VIỆC KIỂM TRA CONTENT-TYPE CHO DỮ LIỆU RAW]
         // =================================================================
 
         /**
@@ -362,19 +363,25 @@
          */
         async function fetchDataFromGitHub(url) {
             const response = await fetch(url);
+            
+            // 1. Kiểm tra HTTP Status Code
             if (!response.ok) {
                 // Trả về {} nếu file state3s.json không tồn tại (404) để mergeData vẫn chạy
                 if (response.status === 404 && url.includes('state3s.json')) {
                     console.warn(`File tỉ số (state3s.json) không tồn tại hoặc bị xóa (404). Sử dụng dữ liệu gốc.`);
                     return {};
                 }
+                // Lỗi chung cho các trường hợp khác (400, 401, 500, hoặc 404 cho state3.json)
                 throw new Error(`Lỗi tải dữ liệu từ GitHub: ${response.status} ${response.statusText} (${url})`);
             }
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                return response.json();
-            } else {
-                throw new Error(`Dữ liệu tải về không phải JSON. Content-Type: ${contentType}`);
+            
+            // 2. Thử Parse JSON (Làm cho việc tải dữ liệu Raw ổn định hơn, bỏ qua Content-Type header)
+            try {
+                return response.json(); 
+            } catch (e) {
+                 const contentType = response.headers.get("content-type");
+                 // Báo cáo lỗi cụ thể nếu không parse được
+                 throw new Error(`Dữ liệu tải về không thể parse thành JSON. Content-Type được báo cáo: ${contentType}.`);
             }
         }
 
@@ -1403,7 +1410,9 @@
                     throw new Error(`Lỗi cú pháp JSON Mặc dù Status ${getResponse.status} OK. Body: "${fileData.textBody}"`);
                 } else if (getResponse.ok && !currentSha) {
                     // 200 OK nhưng không có SHA (file có thể rỗng hoặc cấu trúc sai)
-                    throw new Error("Không tìm thấy SHA (file có thể rỗng hoặc lỗi cấu trúc).");
+                    // Đây là trường hợp hiếm gặp đối với API content
+                    console.warn("Không tìm thấy SHA mặc dù Status OK. Giả định là file mới (currentSha = undefined).");
+                    currentSha = undefined; // Tiếp tục commit như là file mới
                 }
                 
                 // 2. Commit nội dung mới (PUT request)
