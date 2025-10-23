@@ -105,7 +105,7 @@
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
                     <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL</h1>
-                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.6.3 (Fix Chi Tiết Knockout)**</p>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.6.4 (Fix Data Loading)**</p>
                 </div>
             </div>
             
@@ -350,6 +350,86 @@
         }
 
         // ------------------------------------------------------------------------
+        
+        // =================================================================
+        // HÀM TẢI VÀ ĐỒNG BỘ DỮ LIỆU (DATA SYNCHRONIZATION) - BỔ SUNG FIX LỖI loadDataFromGitHub
+        // =================================================================
+
+        /**
+         * Lấy nội dung file JSON thô từ GitHub (RAW Content URL).
+         * @param {string} url - URL RAW content (STATIC_DATA_URL hoặc DIFF_DATA_URL).
+         * @returns {Promise<Object>} JSON object của file.
+         */
+        async function fetchDataFromGitHub(url) {
+            const response = await fetch(url);
+            if (!response.ok) {
+                // Trả về {} nếu file state3s.json không tồn tại (404) để mergeData vẫn chạy
+                if (response.status === 404 && url.includes('state3s.json')) {
+                    console.warn(`File tỉ số (state3s.json) không tồn tại hoặc bị xóa (404). Sử dụng dữ liệu gốc.`);
+                    return {};
+                }
+                throw new Error(`Lỗi tải dữ liệu từ GitHub: ${response.status} ${response.statusText} (${url})`);
+            }
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return response.json();
+            } else {
+                throw new Error(`Dữ liệu tải về không phải JSON. Content-Type: ${contentType}`);
+            }
+        }
+
+        /**
+         * Tải dữ liệu state3.json (gốc) và state3s.json (tỉ số) từ GitHub, sau đó hợp nhất.
+         */
+        async function loadDataFromGitHub() {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = 'Đang tải và hợp nhất dữ liệu từ GitHub...';
+            statusEl.classList.remove('bg-green-900/50', 'bg-red-900/50');
+            statusEl.classList.add('bg-blue-900/50');
+
+            try {
+                // 1. Lấy dữ liệu gốc (state3.json)
+                const baseData = await fetchDataFromGitHub(STATIC_DATA_URL);
+                initialTournamentData = baseData; 
+                
+                // 2. Lấy dữ liệu tỉ số (state3s.json). Sẽ trả về {} nếu 404/file rỗng
+                const diffData = await fetchDataFromGitHub(DIFF_DATA_URL);
+                
+                // 3. Hợp nhất
+                tournamentData = mergeData(initialTournamentData, diffData);
+
+                // 4. Chạy logic và render
+                runAllLogic(); 
+
+                statusEl.classList.remove('bg-blue-900/50');
+                statusEl.classList.add('bg-green-900/50');
+                statusEl.textContent = `✅ Đồng bộ thành công. Phiên bản: ${tournamentData.version || 'N/A'}.`;
+                
+            } catch (error) {
+                console.error('Lỗi tải/hợp nhất dữ liệu:', error);
+                statusEl.classList.remove('bg-blue-900/50');
+                statusEl.classList.add('bg-red-900/50');
+                statusEl.textContent = `❌ LỖI KHÔNG TẢI ĐƯỢC DỮ LIỆU: ${error.message}. Kiểm tra URL và kết nối mạng.`;
+            }
+        }
+        
+        /**
+         * Hàm được gọi khi người dùng muốn Đồng bộ lại (Re-sync) dữ liệu gốc.
+         */
+        async function reSyncStaticData() {
+            document.getElementById('confirmationBox').classList.add('hidden');
+            // Đặt lại dữ liệu tỉ số tạm thời (diffDataForCommit)
+            window.diffDataForCommit = {}; 
+            document.getElementById('scoreCommitResult').classList.add('hidden');
+            document.getElementById('teamCommitResult').classList.add('hidden');
+            await loadDataFromGitHub();
+        }
+        // Đăng ký hàm reSyncStaticData vào window để dùng trong event listener
+        window.reSyncStaticData = reSyncStaticData;
+
+        // =================================================================
+        // HÀM LOGIC GIẢI ĐẤU
+        // =================================================================
 
         /**
          * Hợp nhất dữ liệu tỉ số vào dữ liệu giải đấu chính.
@@ -448,10 +528,6 @@
             }
         }
         
-        // =================================================================
-        // HÀM LOGIC GIẢI ĐẤU
-        // =================================================================
-
         /**
          * Tính toán lại thống kê vòng bảng (W, L, Pts) và sắp xếp.
          */
@@ -1129,7 +1205,7 @@
             renderGroupSection('D');
             renderKnockoutRound('quarterfinals');
             renderKnockoutRound('semifinals');
-            renderFinalMatch(); // <-- FIX V1.6.3: Gọi hàm render Chung kết riêng
+            renderFinalMatch(); 
 
             // Cập nhật URL Cấu hình
             document.getElementById('baseApiUrl').value = BASE_API_URL;
@@ -1543,7 +1619,7 @@
                 handleGesture();
             }, { passive: true });
             
-            // Modal button setup
+            // Modal button setup (Sử dụng window.reSyncStaticData đã được định nghĩa)
             document.getElementById('confirmYes').onclick = window.reSyncStaticData;
             document.getElementById('confirmNo').onclick = () => document.getElementById('confirmationBox').classList.add('hidden');
             
