@@ -1252,7 +1252,7 @@
         // =================================================================
         // HÀM COMMIT LÊN GITHUB (ĐÃ FIX LỖI JSON INPUT KHI LẤY SHA)
         // =================================================================
-
+        
         /**
          * Lấy SHA hiện tại của file và commit nội dung mới.
          * @param {string} apiUrl - URL API GitHub cho file (state3.json hoặc state3s.json).
@@ -1269,45 +1269,69 @@
             const resultElement = document.getElementById(resultElementId);
             resultElement.classList.add('hidden');
             resultElement.classList.remove('bg-red-900/50', 'bg-green-900/50');
+            
+            const MAX_BODY_LENGTH = 150; // Giới hạn độ dài nội dung body hiển thị
+
+            /**
+             * Cố gắng parse response thành JSON. Nếu thất bại, đọc response thành TEXT để debug.
+             * @param {Response} response 
+             * @returns {Promise<Object|{jsonError: string, textBody: string}>}
+             */
+            async function safelyParseResponse(response) {
+                let fileData;
+                let responseBodyText = '';
+
+                try {
+                    fileData = await response.json();
+                    return fileData; // Trả về JSON object nếu thành công
+                } catch (e) {
+                    // Nếu không phải JSON, đọc nó như TEXT để debug
+                    try {
+                        responseBodyText = await response.text();
+                    } catch(textError) {
+                        responseBodyText = '(Không thể đọc nội dung phản hồi)';
+                    }
+                    // Trả về một đối tượng lỗi để xử lý tiếp
+                    return { jsonError: e.message, textBody: responseBodyText.substring(0, MAX_BODY_LENGTH) };
+                }
+            }
+
 
             try {
-                // 1. Lấy SHA hiện tại của file
+                // 1. Lấy SHA hiện tại của file (GET request)
                 const getResponse = await fetch(apiUrl, {
                     headers: {
                         'Authorization': `token ${githubToken}`
                     }
                 });
                 
-                let fileData;
-                
-                // --- PHẦN FIX LỖI UNEXPECTED END OF JSON INPUT ---
-                try {
-                    // Cố gắng phân tích phản hồi JSON
-                    fileData = await getResponse.json();
-                } catch (e) {
-                     // Nếu xảy ra lỗi phân tích JSON (như "Unexpected end of JSON input")
-                    if (e instanceof SyntaxError) {
-                        // Trả về lỗi rõ ràng hơn, đây là nguyên nhân gây crash chính
-                        throw new Error(`Lỗi: Dữ liệu phản hồi từ GitHub API không phải là JSON hợp lệ (Lỗi cú pháp JSON). Vui lòng kiểm tra lại đường dẫn file.`);
+                let fileData = await safelyParseResponse(getResponse);
+
+                if (!getResponse.ok) {
+                    let errorDetails;
+                    if (fileData.jsonError) {
+                        // Lỗi non-JSON khi status là lỗi (4xx, 5xx)
+                        errorDetails = `Lỗi phản hồi (Status ${getResponse.status}): Nội dung KHÔNG phải JSON. Body: "${fileData.textBody}"`;
+                    } else {
+                        // Lỗi JSON hợp lệ (ví dụ: {"message": "Not Found"})
+                        errorDetails = fileData.message || getResponse.statusText;
                     }
-                    // Báo lỗi khác (nếu có)
-                    throw e;
+                    throw new Error(`Lỗi khi lấy SHA: ${getResponse.status} - ${errorDetails}`);
                 }
                 
-                if (!getResponse.ok) {
-                    // Nếu Status Code là lỗi (4xx, 5xx), chúng ta đã có fileData chứa thông báo lỗi.
-                     const errorDetails = fileData.message || getResponse.statusText;
-                     throw new Error(`Lỗi khi lấy SHA: ${getResponse.status} (${errorDetails})`);
+                // --- Kiểm tra nếu 200 OK nhưng JSON lỗi (rất hiếm, nhưng có thể xảy ra khi body rỗng) ---
+                if (getResponse.ok && fileData.jsonError) {
+                    throw new Error(`Lỗi cú pháp JSON Mặc dù Status ${getResponse.status} OK. Body: "${fileData.textBody}"`);
                 }
 
                 // Tiếp tục với dữ liệu JSON hợp lệ (Status 200 OK)
                 const currentSha = fileData.sha;
                 
                 if (!currentSha) {
-                    throw new Error("Không tìm thấy SHA trong dữ liệu file. Vui lòng kiểm tra lại file có tồn tại trên GitHub không.");
+                    throw new Error("Không tìm thấy SHA (file có thể không tồn tại hoặc lỗi cấu trúc).");
                 }
 
-                // 2. Commit nội dung mới
+                // 2. Commit nội dung mới (PUT request)
                 const commitBody = {
                     message: commitMessage,
                     content: base64Content,
@@ -1324,23 +1348,23 @@
                     body: JSON.stringify(commitBody)
                 });
                 
-                let commitResult;
-
-                try {
-                    commitResult = await commitResponse.json();
-                } catch (e) {
-                     // Lỗi JSON trong phản hồi commit, có thể là lỗi mạng
-                     if (e instanceof SyntaxError) {
-                          throw new Error(`Lỗi: Không thể phân tích kết quả COMMIT (Phản hồi không phải JSON). Commit có thể đã thất bại.`);
-                     }
-                     throw e;
-                }
-
+                let commitResult = await safelyParseResponse(commitResponse);
 
                 if (!commitResponse.ok) {
-                    // Xử lý lỗi từ GitHub API sau commit
-                    const errorDetails = commitResult.message || commitResponse.statusText;
+                    let errorDetails;
+                     if (commitResult.jsonError) {
+                         // Lỗi non-JSON sau commit fail
+                         errorDetails = `Lỗi Commit: ${commitResponse.status}. Phản hồi không phải JSON. Body: "${commitResult.textBody}"`;
+                     } else {
+                         // Xử lý lỗi từ GitHub API sau commit
+                         errorDetails = commitResult.message || commitResponse.statusText;
+                     }
                     throw new Error(`Lỗi API Commit: ${commitResponse.status} - ${errorDetails}`);
+                }
+                
+                // Xử lý trường hợp 200 OK nhưng JSON lỗi sau commit (rất hiếm)
+                if (commitResponse.ok && commitResult.jsonError) {
+                    throw new Error(`Lỗi cú pháp JSON sau Commit ${commitResponse.status} OK. Body: "${commitResult.textBody}"`);
                 }
                 
                 // 3. Xử lý thành công
@@ -1356,6 +1380,7 @@
                 e.classList.remove('hidden');
                 e.classList.add('bg-red-900/50');
                 e.textContent = `❌ Lỗi commit: ${err.message}`;
+                console.error("CHI TIẾT LỖI GITHUB API:", err);
             } finally {
                 btn.disabled = false;
                 btn.textContent = (buttonId === 'commitScoreButton') ? 'EXPORT & COMMIT TẤT CẢ TỈ SỐ (Ghi đè state3s.json)' : 'CẬP NHẬT THÔNG TIN ĐỘI (Ghi đè state3.json)';
@@ -1371,7 +1396,6 @@
             
             // Lấy dữ liệu tỉ số đã được chuẩn bị
             const diffData = window.diffDataForCommit || {};
-            // Nếu diffData chỉ là {}, nó vẫn sẽ được gửi, điều này là OK vì nó ghi đè file hiện tại.
             
             const base64Content = jsonToBase64(diffData);
             
