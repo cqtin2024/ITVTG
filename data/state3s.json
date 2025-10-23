@@ -40,33 +40,27 @@
   "quarterfinals": [
     {
       "sB": 9,
-      "Wn": "Team 7",
-      "rU": null
+      "Wn": null
     },
     {
-      "Wn": null,
-      "rU": null
+      "Wn": null
     },
     {
-      "Wn": null,
-      "rU": null
+      "Wn": null
     },
     {
       "sA": 0,
       "sB": 0,
-      "Wn": null,
-      "rU": null
+      "Wn": null
     }
   ],
   "semifinals": [
     {
       "sA": 0,
-      "Wn": null,
-      "rU": null
+      "Wn": null
     },
     {
-      "Wn": null,
-      "rU": null
+      "Wn": null
     }
   ],
   "final": {
