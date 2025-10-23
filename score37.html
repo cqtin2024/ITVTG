@@ -368,7 +368,7 @@
                  }
             });
             
-            // 3. Merge final score
+            // 3. Merge final score (including tA, tB, Wn, rU, co3rd)
             if (merged.final && diffData.final) {
                 merged.final = { ...merged.final, ...diffData.final };
             }
@@ -505,7 +505,6 @@
          * Áp dụng quy tắc hạt giống cho vòng Bán kết: 
          * SF1 (Pos 1) = W.QF1 vs W.QF3
          * SF2 (Pos 2) = W.QF2 vs W.QF4
-         * HÀM NÀY ĐẢM BẢO YÊU CẦU MỚI VỀ SEEDING BÁN KẾT
          */
         function seedSemifinals() {
             if (!tournamentData || !tournamentData.quarterfinals || !tournamentData.semifinals) return;
@@ -558,17 +557,32 @@
                     }
 
                     // 2. Cập nhật đội đi tiếp cho vòng loại trực tiếp (Bán kết -> Chung kết)
-                    if (round === 'semifinals' && match.Wn) {
+                    if (round === 'semifinals' && teamAId && teamBId) {
                         const winner = match.Wn;
+                        const loser = (winner === teamAId) ? teamBId : (winner === teamBId) ? teamAId : null;
                         const finalMatch = tournamentData.final;
                         
-                        // Cập nhật từ Bán kết -> Chung kết
                         if (finalMatch) {
-                            if (match.Pos === 1) { // Bán kết 1 (pos 1) đi vào tA của chung kết
-                                finalMatch.tA = winner;
-                            } else if (match.Pos === 2) { // Bán kết 2 (pos 2) đi vào tB của chung kết
-                                finalMatch.tB = winner;
+                            // Khởi tạo co3rd nếu chưa có (là mảng lưu ID của hai đội hạng ba)
+                            if (!finalMatch.co3rd) {
+                                finalMatch.co3rd = [null, null];
                             }
+                            
+                            // Cập nhật đội đi tiếp vào Chung kết
+                            if (winner) {
+                                if (match.Pos === 1) { // Bán kết 1 (pos 1)
+                                    finalMatch.tA = winner;
+                                    // Thêm đội thua vào danh sách Hạng Ba Đồng Hạng (Index 0)
+                                    if (loser) finalMatch.co3rd[0] = loser;
+                                } else if (match.Pos === 2) { // Bán kết 2 (pos 2)
+                                    finalMatch.tB = winner;
+                                    // Thêm đội thua vào danh sách Hạng Ba Đồng Hạng (Index 1)
+                                    if (loser) finalMatch.co3rd[1] = loser;
+                                }
+                            }
+                            
+                            // Loại bỏ các giá trị null/undefined để đảm bảo mảng chỉ chứa các ID đội đã xác định
+                            finalMatch.co3rd = finalMatch.co3rd.filter(id => id);
                         }
                     }
                 }
@@ -611,13 +625,25 @@
                         const diffMatch = {};
                         let isDiff = false;
                         
-                        // Chỉ commit những field cần thiết
-                        // Thêm tA, tB cho knockout để đảm bảo seeding mới được lưu trong state3s (giúp re-sync chính xác)
-                        const fieldsToCompare = ['sA', 'sB', 'Wn', 'rU', 'tA', 'tB']; 
+                        // Thêm co3rd vào fieldsToCompare
+                        const fieldsToCompare = ['sA', 'sB', 'Wn', 'rU', 'tA', 'tB', 'co3rd']; 
                         
                         fieldsToCompare.forEach(field => {
-                            // So sánh ID (tA, tB, Wn, rU) và Scores (sA, sB)
-                            if (String(currentMatch[field]) !== String(initialMatch[field])) {
+                            if (field === 'co3rd' && key === 'final') {
+                                // So sánh mảng co3rd (Hạng Ba Đồng Hạng)
+                                const currentCo3rd = currentMatch[field] || [];
+                                const initialCo3rd = initialMatch[field] || [];
+                                
+                                // Sắp xếp để so sánh không phụ thuộc vào thứ tự
+                                const currentSorted = [...currentCo3rd].sort();
+                                const initialSorted = [...initialCo3rd].sort();
+
+                                if (JSON.stringify(currentSorted) !== JSON.stringify(initialSorted)) {
+                                     // Store the current value as is (unsorted)
+                                    diffMatch[field] = currentCo3rd; 
+                                    isDiff = true;
+                                }
+                            } else if (String(currentMatch[field]) !== String(initialMatch[field])) {
                                 diffMatch[field] = currentMatch[field];
                                 isDiff = true;
                             }
@@ -736,7 +762,6 @@
 
         /**
          * Render thông tin vòng bảng (bảng xếp hạng và trận đấu).
-         * HÀM NÀY ĐÃ BỎ CỘT PTS THEO YÊU CẦU
          * @param {string} group - Tên bảng ('A', 'B', 'C', 'D').
          */
         function renderGroupSection(group) {
@@ -886,8 +911,11 @@
                      teamADisplay = teamAName === 'TBD' ? `${match.pA}` : teamAName;
                      teamBDisplay = teamBName === 'TBD' ? `${match.pB}` : teamBName;
                 } else if (round === 'semifinals') {
-                     teamADisplay = teamAName === 'TBD' ? `W.QF${match.pA}` : teamAName;
-                     teamBDisplay = teamBName === 'TBD' ? `W.QF${match.pB}` : teamBName;
+                     // Hiển thị W.QF1 vs W.QF3 và W.QF2 vs W.QF4
+                     const pA_display = match.Pos === 1 ? 'W.QF1' : 'W.QF2';
+                     const pB_display = match.Pos === 1 ? 'W.QF3' : 'W.QF4';
+                     teamADisplay = teamAName === 'TBD' ? pA_display : teamAName;
+                     teamBDisplay = teamBName === 'TBD' ? pB_display : teamBName;
                 } else if (round === 'final') {
                      teamADisplay = teamAName === 'TBD' ? `W.SF1` : teamAName;
                      teamBDisplay = teamBName === 'TBD' ? `W.SF2` : teamBName;
@@ -924,7 +952,7 @@
         }
         
         /**
-         * Render thông tin đội vô địch và á quân.
+         * Render thông tin đội vô địch, á quân và hạng ba đồng hạng.
          */
         function renderFinalResults() {
              if (!tournamentData || !tournamentData.final) return;
@@ -932,16 +960,18 @@
              const finalMatch = tournamentData.final;
              const winnerId = finalMatch.Wn;
              const runnerUpId = finalMatch.rU;
+             const co3rdIds = finalMatch.co3rd || []; // Lấy ID đội hạng ba đồng hạng
              
              // Sử dụng getTeamShortNameById để hiển thị Tên rút gọn (Tn)
              const winnerName = getTeamShortNameById(winnerId);
              const runnerUpName = getTeamShortNameById(runnerUpId);
+             const co3rdNames = co3rdIds.map(id => getTeamShortNameById(id)).filter(name => name !== 'TBD');
              
-             let html = ``;
-             
+             let html = `<div class="text-center space-y-4">`;
+
+             // 1. Vô địch & Á quân
              if (winnerName && runnerUpName) {
                  html += `
-                     <div class="text-center space-y-4">
                          <div class="p-6 bg-yellow-900/40 rounded-lg">
                              <p class="text-sm font-semibold text-yellow-300">VÔ ĐỊCH</p>
                              <h3 class="text-4xl font-extrabold text-yellow-400 mt-1">${winnerName} 🥇</h3>
@@ -950,11 +980,25 @@
                              <p class="text-sm font-semibold text-gray-300">Á QUÂN</p>
                              <h3 class="text-4xl font-extrabold text-gray-400 mt-1">${runnerUpName} 🥈</h3>
                          </div>
-                     </div>
                  `;
              } else {
-                 html += `<p class="text-center text-lg text-gray-400">Chưa có kết quả chung cuộc.</p>`;
+                 html += `<p class="text-center text-lg text-gray-400">Chưa có kết quả Chung kết.</p>`;
              }
+             
+             // 2. Hạng Ba Đồng Hạng
+             if (co3rdNames.length > 0) {
+                 html += `
+                     <div class="p-6 bg-green-700/40 rounded-lg">
+                         <p class="text-sm font-semibold text-green-300">HẠNG BA ĐỒNG HẠNG</p>
+                         <h3 class="text-3xl font-extrabold text-green-400 mt-1">${co3rdNames.join(' & ')} 🥉</h3>
+                     </div>
+                 `;
+             } else if (winnerName && runnerUpName) {
+                  // Hiển thị chờ Hạng Ba nếu chung kết xong nhưng co3rd chưa có
+                  html += `<p class="text-center text-sm text-gray-400">Chờ kết quả Hạng Ba Đồng Hạng.</p>`;
+             }
+
+             html += `</div>`;
              
              document.getElementById('finalResults').innerHTML = html;
         }
