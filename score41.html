@@ -135,11 +135,11 @@
         </div>
         
         <div id="TeamManagement" class="tab-content">
-            <h2 class="text-3xl font-extrabold text-blue-500 mb-6 border-b border-[var(--border-color)] pb-2">Quản Lý Thông Tin Đội (Cập nhật `state4s.json`)</h2>
-            <p class="text-sm text-gray-400 mb-4">Điều chỉnh **Tên đội (Tn)**, **Tên người chơi (name)**, **Cấp độ (pL)**, và **Năm sinh (bY)**. Sau khi chỉnh sửa, hãy nhấn **CẬP NHẬT THÔNG TIN** để ghi đè **TOÀN BỘ** `state4s.json` (bao gồm cả tỉ số).</p>
+            <h2 class="text-3xl font-extrabold text-blue-500 mb-6 border-b border-[var(--border-color)] pb-2">Quản Lý Thông Tin Đội (Cập nhật `state3.json`)</h2>
+            <p class="text-sm text-gray-400 mb-4">Điều chỉnh **Tên đội (Tn)**, **Tên người chơi (name)**, **Cấp độ (pL)**, và **Năm sinh (bY)**. Sau khi chỉnh sửa, hãy nhấn **CẬP NHẬT THÔNG TIN** để ghi đè `state3.json`.</p>
             
             <button id="commitTeamButton" onclick="commitTeamChangesToGitHub()" class="w-full md:w-auto px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition duration-300 mb-6 disabled:opacity-50">
-                CẬP NHẬT THÔNG TIN ĐỘI (Ghi đè state4s.json)
+                CẬP NHẬT THÔNG TIN ĐỘI (Ghi đè state3.json)
             </button>
             
             <div id="teamCommitResult" class="mt-3 p-3 rounded-lg text-sm font-semibold hidden"></div>
@@ -196,10 +196,10 @@
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
                     2. Cập Nhật Tỉ Số (Commit) lên state4s.json
                 </h3>
-                <p class="text-gray-400 mb-4">Sử dụng Token đã lưu để commit **TOÀN BỘ** trạng thái hiện tại (bao gồm tỉ số và thông tin đội) lên GitHub. Thao tác này **GHI ĐÈ** `state4s.json`.</p>
+                <p class="text-gray-400 mb-4">Sử dụng Token đã lưu để commit những tỉ số **đã thay đổi** lên GitHub.</p>
                 
                 <button id="commitScoreButton" onclick="commitScoreChangesToGitHub()" class="w-full md:w-auto px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg shadow-lg transition duration-300 mb-4 disabled:opacity-50">
-                    COMMIT TỈ SỐ & DỮ LIỆU (Ghi đè state4s.json)
+                    COMMIT TỈ SỐ ĐÃ THAY ĐỔI
                 </button>
 
                 <div id="scoreCommitResult" class="mt-3 p-3 rounded-lg text-sm font-semibold hidden"></div>
@@ -242,26 +242,20 @@
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
         
-        // Cấu hình mới cho file Dữ liệu Tổng Hợp (MASTER FILE - state4s.json)
-        // Tải và Tải lên đều dùng file này.
-        const MASTER_FILE_PATH = 'data/state4s.json';
-        const MASTER_API_URL = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${MASTER_FILE_PATH}`;
-        const MASTER_DATA_URL = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/${MASTER_FILE_PATH}`;
-
-        // Xóa các tham số cấu hình cũ (state3s.json và state3.json) để đảm bảo chỉ up lên state4s.json
-        /* const SCORE_FILE_PATH = 'data/state3s.json';
+        // Cấu hình cho file Điểm số (diff)
+        const SCORE_FILE_PATH = 'data/state4s.json'; // ĐÃ ĐỔI THÀNH state4s.json
         const SCORE_API_URL = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${SCORE_FILE_PATH}`;
         const DIFF_DATA_URL = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/${SCORE_FILE_PATH}`;
 
+        // Cấu hình cho file Dữ liệu Gốc (Team/Init)
         const BASE_FILE_PATH = 'data/state3.json';
         const BASE_API_URL = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${BASE_FILE_PATH}`;
         const STATIC_DATA_URL = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/${BASE_FILE_PATH}`;
-        */
 
         const BRANCH = 'main';
 
         let tournamentData = null; 
-        let initialTournamentData = null; // Trạng thái gốc (từ state4s.json khi load)
+        let initialTournamentData = null; // Trạng thái gốc (từ state3.json)
         let githubToken = ''; // Lưu token cục bộ
         let startX = 0; 
         let endX = 0;   
@@ -319,7 +313,7 @@
             }
         }
         
-        // Hàm Commit chung cho cả 2 file (state4s.json)
+        // Hàm Commit chung cho cả 2 file (state3s.json và state3.json)
         async function getShaAndCommit(fileUrl, contentBase64, commitMessage, buttonId, resultElementId) {
             const pat = githubToken.trim();
             const commitButton = document.getElementById(buttonId);
@@ -333,7 +327,7 @@
                 showStatus('Đang lấy SHA hiện tại của file...', 'info', resultElementId);
 
                 const shaResponse = await fetch(fileUrl + `?ref=${BRANCH}`, {
-                    headers: { 'Authorization': `token ${pat}` }
+                    headers: { 'Authorization': `Bearer ${pat}` } // ĐÃ ĐỔI SANG Authorization: Bearer
                 });
 
                 if (shaResponse.status === 404) {
@@ -365,7 +359,7 @@
                 const commitResponse = await fetch(fileUrl, {
                     method: 'PUT',
                     headers: { 
-                        'Authorization': `token ${pat}`,
+                        'Authorization': `Bearer ${pat}`, // ĐÃ ĐỔI SANG Authorization: Bearer
                         'Content-Type': 'application/json',
                         'Accept': 'application/vnd.github.v3+json'
                     },
@@ -387,15 +381,61 @@
                 console.error("Lỗi Commit GitHub:", error);
                 showStatus(`LỖI COMMIT: ${error.message}`, 'error', resultElementId);
             } finally {
+                commitButton.textContent = 'COMMIT THAY ĐỔI';
                 // Đặt lại text cụ thể cho từng nút
-                if(buttonId === 'commitScoreButton') commitButton.textContent = 'COMMIT TỈ SỐ & DỮ LIỆU (Ghi đè state4s.json)';
-                if(buttonId === 'commitTeamButton') commitButton.textContent = 'CẬP NHẬT THÔNG TIN ĐỘI (Ghi đè state4s.json)';
+                if(buttonId === 'commitScoreButton') commitButton.textContent = 'COMMIT TỈ SỐ ĐÃ THAY ĐỔI';
+                if(buttonId === 'commitTeamButton') commitButton.textContent = 'CẬP NHẬT THÔNG TIN ĐỘI (Ghi đè state3.json)';
                 commitButton.disabled = false;
             }
         }
         
-        // --- LOGIC CẬP NHẬT ĐIỂM SỐ (state4s.json - Ghi đè toàn bộ) ---
-        // Chức năng này sẽ ghi đè toàn bộ dữ liệu (bao gồm tỉ số và thông tin đội) lên state4s.json
+        // --- LOGIC CẬP NHẬT ĐIỂM SỐ (state4s.json) ---
+
+        function getDiffData() {
+            if (!tournamentData || !initialTournamentData) return null;
+
+            const diffData = {};
+            const rounds = ['matchesA', 'matchesB', 'matchesC', 'matchesD', 'quarterfinals', 'semifinals', 'final'];
+            
+            const compareMatches = (liveMatch, initialMatch) => liveMatch.sA !== initialMatch.sA || liveMatch.sB !== initialMatch.sB;
+
+            rounds.forEach(roundKey => {
+                const liveRound = tournamentData[roundKey];
+                const initialRound = initialTournamentData[roundKey];
+
+                if (!liveRound) return; 
+
+                if (roundKey === 'final') {
+                    const initialFinal = initialRound || { sA: null, sB: null };
+                    if (compareMatches(liveRound, initialFinal)) {
+                        diffData[roundKey] = {
+                            sA: liveRound.sA,
+                            sB: liveRound.sB
+                        };
+                    }
+                    return;
+                }
+                
+                const modifiedMatches = [];
+                liveRound.forEach((liveMatch, index) => {
+                    const initialMatch = initialRound ? initialRound[index] : null;
+
+                    if (initialMatch && compareMatches(liveMatch, initialMatch)) {
+                        modifiedMatches.push({
+                            i: index, 
+                            sA: liveMatch.sA,
+                            sB: liveMatch.sB
+                        });
+                    }
+                });
+
+                if (modifiedMatches.length > 0) {
+                    diffData[roundKey] = modifiedMatches;
+                }
+            });
+            return diffData;
+        }
+
         window.commitScoreChangesToGitHub = async function() {
             githubToken = localStorage.getItem('githubToken') || ''; 
             if (!githubToken || githubToken.trim().length === 0) {
@@ -403,25 +443,21 @@
                 return;
             }
 
-            if (!tournamentData) {
-                 showStatus('Lỗi: Dữ liệu giải đấu chưa được tải.', 'error', 'scoreCommitResult');
-                 return;
-            }
-
-            // Ghi đè toàn bộ dữ liệu (live score, team list, etc.)
-            const base64Content = jsonToBase64(tournamentData); 
-            const commitMessage = 'Update ALL data (scores) via web app (state4s.json)';
+            const diffData = getDiffData();
             
-            await getShaAndCommit(MASTER_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
-            
-            // Sau khi commit thành công, cập nhật lại trạng thái ban đầu để loại bỏ warning "commit"
-            if(document.getElementById('scoreCommitResult').textContent.includes('COMMIT THÀNH CÔNG')) {
-                initialTournamentData = JSON.parse(JSON.stringify(tournamentData));
+            if (Object.keys(diffData).length === 0) {
+                showStatus('Không có thay đổi tỉ số nào được ghi nhận so với dữ liệu gốc.', 'info', 'scoreCommitResult');
+                return;
             }
+            
+            const base64Content = jsonToBase64(diffData);
+            const commitMessage = 'Update match scores via web app (state4s.json)';
+            
+            await getShaAndCommit(SCORE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
         };
 
-        // --- LOGIC CẬP NHẬT THÔNG TIN ĐỘI (state4s.json - Ghi đè toàn bộ) ---
-        // Chức năng này sẽ ghi đè toàn bộ dữ liệu (bao gồm thông tin đội và tỉ số mới nhất) lên state4s.json
+        // --- LOGIC CẬP NHẬT THÔNG TIN ĐỘI (state3.json) ---
+        
         window.commitTeamChangesToGitHub = async function() {
             githubToken = localStorage.getItem('githubToken') || ''; 
             if (!githubToken || githubToken.trim().length === 0) {
@@ -429,28 +465,33 @@
                 return;
             }
 
-            if (!tournamentData) {
-                 showStatus('Lỗi: Dữ liệu giải đấu chưa được tải.', 'error', 'teamCommitResult');
-                 return;
-            }
+            // Lấy toàn bộ dữ liệu hiện tại trong bộ nhớ (đã bao gồm thay đổi team)
+            const fullTeamData = { 
+                tL: tournamentData.tL,
+                matchesA: initialTournamentData.matchesA,
+                matchesB: initialTournamentData.matchesB,
+                matchesC: initialTournamentData.matchesC,
+                matchesD: initialTournamentData.matchesD,
+                quarterfinals: initialTournamentData.quarterfinals,
+                semifinals: initialTournamentData.semifinals,
+                final: initialTournamentData.final,
+                // Giữ lại tất cả các field khác của state3.json nếu có, nhưng chỉ lấy cấu trúc ban đầu của matches/knockout để tránh lỗi
+            };
 
-            // Lấy toàn bộ dữ liệu hiện tại trong bộ nhớ (đã bao gồm thay đổi team VÀ tỉ số mới nhất)
-            const base64Content = jsonToBase64(tournamentData);
-            const commitMessage = 'Update ALL data (teams/scores) via web app (state4s.json)';
+            const base64Content = jsonToBase64(fullTeamData);
+            const commitMessage = 'Update team details and overwrite state3.json via web app';
             
-            // Yêu cầu xác nhận vì thao tác này GHI ĐÈ toàn bộ file state4s.json
-            if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state4s.json trên GitHub. Bạn có chắc chắn không?")) {
+            // Yêu cầu xác nhận vì thao tác này GHI ĐÈ toàn bộ file state3.json
+            if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state3.json trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
                 return;
             }
 
-            await getShaAndCommit(MASTER_API_URL, base64Content, commitMessage, 'commitTeamButton', 'teamCommitResult');
+            await getShaAndCommit(BASE_API_URL, base64Content, commitMessage, 'commitTeamButton', 'teamCommitResult');
             
-            // Sau khi cập nhật state4s.json, cần đồng bộ lại toàn bộ để cập nhật initialTournamentData
-            if(document.getElementById('teamCommitResult').textContent.includes('COMMIT THÀNH CÔNG')) {
-                await loadDataFromGitHub();
-                switchTab('TeamManagement');
-            }
+            // Sau khi cập nhật state3.json, cần đồng bộ lại toàn bộ để cập nhật initialTournamentData
+            await loadDataFromGitHub();
+            switchTab('TeamManagement');
         }
 
         // --- HÀM HỖ TRỢ CHUNG ---
@@ -486,33 +527,74 @@
         }
 
         // --- LOGIC HỢP NHẤT DỮ LIỆU ---
+
         
-        // **HÀM mergeUpdates và getDiffData ĐÃ BỊ LOẠI BỎ**
-        // vì chúng không cần thiết khi chỉ sử dụng 1 file MASTER (state4s.json)
+function mergeUpdates(baseData, diffData) {
+    if (!diffData || !baseData) return baseData;
+
+    const rounds = ['matchesA', 'matchesB', 'matchesC', 'matchesD', 'quarterfinals', 'semifinals', 'final'];
+
+    rounds.forEach(roundKey => {
+        if (!diffData[roundKey]) return;
+
+        if (roundKey === 'final') {
+            if (diffData.final.sA !== undefined) baseData.final.sA = diffData.final.sA;
+            if (diffData.final.sB !== undefined) baseData.final.sB = diffData.final.sB;
+            return;
+        }
+
+        const diffMatches = diffData[roundKey]; 
+        const baseMatches = baseData[roundKey];
+
+        if (baseMatches && Array.isArray(diffMatches)) {
+            diffMatches.forEach(update => {
+                const matchIndex = update.i;
+                if (baseMatches[matchIndex]) {
+                    if (update.sA !== undefined) baseMatches[matchIndex].sA = update.sA;
+                    if (update.sB !== undefined) baseMatches[matchIndex].sB = update.sB;
+                }
+            });
+        }
+    });
+    return baseData;
+}
 
 
         // --- TẢI DỮ LIỆU TỪ GITHUB ---
         
         async function loadDataFromGitHub() {
             const loadingMessage = document.getElementById('statusMessage');
-            loadingMessage.textContent = "Đang tải dữ liệu tổng hợp (state4s.json)...";
+            loadingMessage.textContent = "Đang tải dữ liệu gốc (state3.json)...";
             loadingMessage.classList.remove('hidden', 'bg-red-900/50', 'bg-orange-900/50', 'bg-green-900/50');
             loadingMessage.classList.add('bg-blue-900/50');
 
+            let baseData = null;
+            let diffData = null;
             
             try {
-                // 1. Tải Dữ liệu Tổng Hợp (state4s.json)
-                const masterResponse = await fetchWithRetry(MASTER_DATA_URL); 
-                if (!masterResponse) throw new Error("Không thể tải dữ liệu tổng hợp từ state4s.json (File không tồn tại hoặc lỗi mạng).");
+                // 1. Tải Dữ liệu Gốc (state3.json)
+                const baseResponse = await fetchWithRetry(STATIC_DATA_URL);
+                if (!baseResponse) throw new Error("Không thể tải dữ liệu gốc từ state3.json.");
+                // Sử dụng deep copy để giữ lại bản gốc an toàn
+                baseData = await baseResponse.json(); 
+                initialTournamentData = JSON.parse(JSON.stringify(baseData)); 
                 
-                // Dữ liệu tải về là dữ liệu LIVE
-                tournamentData = await masterResponse.json(); 
-                // Trạng thái ban đầu = trạng thái tải về
-                initialTournamentData = JSON.parse(JSON.stringify(tournamentData)); 
-                
-                loadingMessage.textContent = "Đã tải state4s.json thành công.";
-                
-                // BỎ QUA toàn bộ logic tải và merge diff (state3s.json)
+                loadingMessage.textContent = "Đã tải state3.json. Đang kiểm tra cập nhật (state4s.json)...";
+
+                // 2. Tải Dữ liệu Cập nhật (state4s.json)
+                const diffResponse = await fetchWithRetry(DIFF_DATA_URL);
+                if (diffResponse) {
+                     diffData = await diffResponse.json();
+                     // 3. Hợp nhất dữ liệu
+                     // Clone baseData trước khi merge để không làm hỏng dữ liệu gốc
+                     let liveData = JSON.parse(JSON.stringify(baseData)); 
+                     tournamentData = mergeUpdates(liveData, diffData);
+                     loadingMessage.textContent = "Đã hợp nhất dữ liệu thành công từ state4s.json.";
+                } else {
+                     // 3. Nếu state4s.json không tồn tại (404), chỉ dùng baseData
+                     tournamentData = baseData;
+                     loadingMessage.textContent = "Đã tải dữ liệu gốc (state3.json). Không có file cập nhật state4s.json.";
+                }
 
                 loadingMessage.classList.add('bg-green-900/50');
                 loadingMessage.classList.remove('bg-blue-900/50');
@@ -524,7 +606,7 @@
 
             } catch (error) {
                 console.error("LỖI KHÔNG THỂ TẢI DỮ LIỆU TỪ GITHUB:", error);
-                loadingMessage.textContent = "LỖI FATAL: Không thể tải dữ liệu giải đấu từ GitHub (state4s.json). Vui lòng kiểm tra file.";
+                loadingMessage.textContent = "LỖI FATAL: Không thể tải dữ liệu giải đấu từ GitHub.";
                 loadingMessage.classList.add('bg-red-900/50');
                 loadingMessage.classList.remove('bg-blue-900/50', 'bg-green-900/50');
             }
@@ -801,11 +883,12 @@ function calculateGroupStandings(groupMatches) {
             renderTeams(tournamentData.tL);
             
             // Thông báo
-            showStatus("Thay đổi thông tin đội đã được ghi nhận cục bộ. Nhấn **'CẬP NHẬT THÔNG TIN ĐỘI'** để ghi đè state4s.json.", 'warning', 'teamCommitResult');
+            showStatus("Thay đổi thông tin đội đã được ghi nhận cục bộ. Nhấn **'CẬP NHẬT THÔNG TIN ĐỘI'** để ghi đè state3.json.", 'warning', 'teamCommitResult');
         }
 
 
         function renderStandings(groupName, standings) {
+             // ... (Giữ nguyên hàm renderStandings) ...
              const tableId = `table${groupName}`;
             const tableHtml = `
                 <div class="p-4 rounded-lg shadow-xl h-full bg-[var(--match-bg)] border border-[var(--border-color)]">
@@ -841,6 +924,7 @@ function calculateGroupStandings(groupMatches) {
         }
 
         function renderMatches(id, matches, title, editable = true) {
+            // ... (Giữ nguyên hàm renderMatches) ...
             const listHtml = matches.map((match, index) => {
                 const winnerName = match.A ? match.Wn || 'Chưa có' : 'Đang chờ...';
                 const winnerClass = winnerName === match.A || winnerName === match.B ? 'text-yellow-400 font-bold' : 'text-[var(--text-color)]';
@@ -896,6 +980,7 @@ function calculateGroupStandings(groupMatches) {
 
 
         function renderFinalResults(data) {
+            // ... (Giữ nguyên hàm renderFinalResults) ...
             document.getElementById('finalResults').innerHTML = `
                 <h2 class="text-xl font-extrabold text-yellow-500 mb-4">Kết Quả Chung Cuộc</h2>
                 <div class="space-y-3">
