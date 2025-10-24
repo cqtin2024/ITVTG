@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.2.4</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.2.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.2.4)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.2.5)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync)</p>
                 </div>
             </div>
@@ -247,10 +247,36 @@
                 <div id="configExportResult" class="mt-3 p-3 rounded-lg text-sm font-semibold hidden"></div>
             </section>
             
+             <section class="p-4 bg-[var(--match-bg)] rounded-lg border-l-4 border-red-500">
+                <h3 class="text-xl font-bold text-red-400 mb-3 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    4. Xóa (Reset) Tỉ Số Trận Đấu
+                </h3>
+                <p class="text-gray-400 mb-4">Chọn vòng đấu và nhấn nút để **XÓA TẤT CẢ** tỉ số đã nhập trong vòng đó về trạng thái trống (null).</p>
+                
+                <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-4">
+                    <select id="resetRoundSelector" class="text-input w-full md:w-1/2 p-2 rounded-md">
+                        <option value="">-- Chọn Vòng Đấu --</option>
+                        <option value="A">Vòng Bảng A</option>
+                        <option value="B">Vòng Bảng B</option>
+                        <option value="C">Vòng Bảng C</option>
+                        <option value="D">Vòng Bảng D</option>
+                        <option value="QF">Tứ Kết (QF)</option>
+                        <option value="SF">Bán Kết (SF)</option>
+                        <option value="F">Chung Kết (F)</option>
+                    </select>
+                    
+                    <button onclick="confirmResetScores()" class="w-full md:w-auto px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg transition duration-300 disabled:opacity-50">
+                        XÓA TỈ SỐ ĐÃ CHỌN
+                    </button>
+                </div>
+                <div id="resetResult" class="mt-3 p-3 rounded-lg text-sm font-semibold hidden"></div>
+            </section>
+            
             <section class="p-4 bg-[var(--match-bg)] rounded-lg border-l-4 border-yellow-500">
                  <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3 flex items-center">
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    4. Tùy Chọn Giao Diện & Đồng Bộ Lại
+                    5. Tùy Chọn Giao Diện & Đồng Bộ Lại
                 </h3>
                 <p class="text-[var(--text-color)] mb-4">Bạn có thể chuyển đổi giữa giao diện Sáng/Tối hoặc tải lại trạng thái online mới nhất.</p>
                 <button onclick="document.getElementById('themeToggle').click()" class="md:w-auto px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg shadow-lg transition duration-300 mr-4">
@@ -279,7 +305,7 @@
     <script>
         
         // ==============================================================================================================
-        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.2.4 - Bổ sung Random Score & Rules Enforcement)
+        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.2.5 - Bổ sung Reset Scores)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -347,8 +373,12 @@
             statusElement.style.display = 'block';
 
             // Không ẩn cảnh báo lỗi nhập điểm
-            if (elementId !== 'scoreError' && type !== 'error') {
+            if (elementId !== 'scoreError' && type !== 'error' && elementId !== 'resetResult') {
                 setTimeout(() => statusElement.style.display = 'none', 5000);
+            }
+            // Hiển thị resetResult lâu hơn
+            if (elementId === 'resetResult') {
+                setTimeout(() => statusElement.style.display = 'none', 10000);
             }
         }
         
@@ -433,6 +463,7 @@
             
             const diffData = {};
             
+            // Hàm so sánh tỉ số (để biết đã thay đổi so với initial chưa)
             const compareMatches = (liveMatch, initialMatch) => 
                 liveMatch.sA !== initialMatch.sA || liveMatch.sB !== initialMatch.sB;
 
@@ -445,7 +476,8 @@
                 if (roundKey === 'final') {
                     // Final là một object, không phải array
                     const initialFinal = initialRound || { sA: null, sB: null };
-                    if (liveRound && (liveRound.sA !== null || liveRound.sB !== null) && compareMatches(liveRound, initialFinal)) {
+                    // Nếu tỉ số hiện tại khác initial HOẶC tỉ số hiện tại là null (đã reset)
+                    if (liveRound && (compareMatches(liveRound, initialFinal) || (liveRound.sA === null && liveRound.sB === null && (initialFinal.sA !== null || initialFinal.sB !== null)))) {
                         diffData[roundKey] = {
                             sA: liveRound.sA,
                             sB: liveRound.sB
@@ -458,7 +490,7 @@
                 liveRound.forEach((liveMatch, index) => {
                     const initialMatch = initialRound ? initialRound[index] : null;
 
-                    if (initialMatch && (liveMatch.sA !== null || liveMatch.sB !== null) && compareMatches(liveMatch, initialMatch)) {
+                    if (initialMatch && (compareMatches(liveMatch, initialMatch) || (liveMatch.sA === null && liveMatch.sB === null && (initialMatch.sA !== null || initialMatch.sB !== null)))) {
                         modifiedMatches.push({
                             i: index, 
                             sA: liveMatch.sA,
@@ -489,7 +521,7 @@
             }
             
             const base64Content = jsonToBase64(diffData);
-            const commitMessage = 'Update match scores via web app (state41s.json - V4.2.4)';
+            const commitMessage = 'Update match scores via web app (state41s.json - V4.2.5)';
             
             await getShaAndCommit(SCORE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
         };
@@ -519,7 +551,7 @@
             const commitData = unifyMatches(fullTeamData);
             
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.2.4)';
+            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.2.5)';
             
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -566,7 +598,7 @@
             showStatus('Đã xuất toàn bộ dữ liệu thành công!', 'success', 'configExportResult');
         }
         
-        // --- LOGIC GIẢ LẬP TỈ SỐ (Mới) ---
+        // --- LOGIC GIẢ LẬP TỈ SỐ (Random Score) ---
 
         /**
          * Tạo tỉ số ngẫu nhiên theo luật giới hạn điểm.
@@ -633,6 +665,63 @@
                  showStatus(`Tất cả các trận đấu trong vòng ${roundType} đều đã có kết quả.`, 'info', 'statusMessage');
             }
         };
+        
+        // --- LOGIC XÓA/RESET TỈ SỐ (Mới) ---
+
+        window.confirmResetScores = function() {
+            const roundType = document.getElementById('resetRoundSelector').value;
+            if (!roundType) {
+                return showStatus('Vui lòng chọn một vòng đấu trước khi xóa.', 'warning', 'resetResult');
+            }
+            
+            const roundName = document.getElementById('resetRoundSelector').options[document.getElementById('resetRoundSelector').selectedIndex].text;
+
+            if (confirm(`CẢNH BÁO: Bạn có chắc chắn muốn XÓA TẤT CẢ tỉ số của ${roundName} không? Thao tác này KHÔNG thể hoàn tác! (Bạn cần COMMIT lại để lưu thay đổi lên GitHub.)`)) {
+                resetScoresByRound(roundType);
+            } else {
+                showStatus('Thao tác xóa tỉ số đã bị hủy.', 'info', 'resetResult');
+            }
+        }
+
+        window.resetScoresByRound = function(roundType) {
+            if (!tournamentData) return showStatus('Lỗi: Không có dữ liệu giải đấu.', 'error', 'resetResult');
+
+            let matchesToReset = [];
+
+            if (['A', 'B', 'C', 'D'].includes(roundType)) {
+                matchesToReset = tournamentData[`matches${roundType}`] || [];
+            } else if (roundType === 'QF') {
+                matchesToReset = tournamentData.quarterfinals || [];
+            } else if (roundType === 'SF') {
+                matchesToReset = tournamentData.semifinals || [];
+            } else if (roundType === 'F') {
+                // Final is an object, handle separately
+                if (tournamentData.final) {
+                    matchesToReset = [tournamentData.final];
+                }
+            } else {
+                return showStatus('Lỗi: Loại vòng đấu không hợp lệ.', 'error', 'resetResult');
+            }
+            
+            let resetCount = 0;
+            
+            matchesToReset.forEach(match => {
+                // Chỉ reset nếu có tỉ số
+                if (match.sA !== null || match.sB !== null) {
+                    match.sA = null;
+                    match.sB = null;
+                    match.Wn = null; 
+                    resetCount++;
+                }
+            });
+
+            if (resetCount > 0) {
+                calculateAndRenderAll();
+                showStatus(`Đã xóa thành công ${resetCount} tỉ số trận đấu trong vòng ${roundType}. **Vui lòng nhấn COMMIT TỈ SỐ để lưu thay đổi này lên GitHub.**`, 'success', 'resetResult');
+            } else {
+                showStatus(`Không có tỉ số nào để xóa trong vòng ${roundType}.`, 'info', 'resetResult');
+            }
+        };
 
 
         // --- HÀM HỖ TRỢ CHUNG ---
@@ -690,6 +779,7 @@
                 if (roundKey === 'final') {
                     if (baseData.final && diffData.final.sA !== undefined) baseData.final.sA = diffData.final.sA;
                     if (baseData.final && diffData.final.sB !== undefined) baseData.final.sB = diffData.final.sB;
+                    baseData.final.Wn = getMatchWinner(baseData.final.sA, baseData.final.sB);
                     return;
                 }
 
