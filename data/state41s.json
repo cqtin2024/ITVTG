@@ -1,34 +1,130 @@
 {
-  "matchesD": [
+  "matchesA": [
     {
       "i": 0,
-      "sA": 8,
-      "sB": 11
+      "sA": null,
+      "sB": null
     },
     {
       "i": 1,
-      "sA": 11,
-      "sB": 0
+      "sA": null,
+      "sB": null
     },
     {
       "i": 2,
-      "sA": 11,
-      "sB": 5
+      "sA": null,
+      "sB": null
     },
     {
       "i": 3,
-      "sA": 11,
-      "sB": 3
+      "sA": null,
+      "sB": null
     },
     {
       "i": 4,
-      "sA": 11,
-      "sB": 3
+      "sA": null,
+      "sB": null
     },
     {
       "i": 5,
-      "sA": 9,
-      "sB": 11
+      "sA": null,
+      "sB": null
+    }
+  ],
+  "matchesB": [
+    {
+      "i": 0,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 1,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 2,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 3,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 4,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 5,
+      "sA": null,
+      "sB": null
+    }
+  ],
+  "matchesC": [
+    {
+      "i": 0,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 1,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 2,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 3,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 4,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 5,
+      "sA": null,
+      "sB": null
+    }
+  ],
+  "matchesD": [
+    {
+      "i": 0,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 1,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 2,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 3,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 4,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 5,
+      "sA": null,
+      "sB": null
     }
   ],
   "quarterfinals": [
