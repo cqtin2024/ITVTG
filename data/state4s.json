@@ -9,10 +9,10 @@
       "P": [
         {
           "name": "Từ Duy Hưng",
-          "bY": "1981",
+          "bY": "1995",
           "ph": "09xx-xxx-001",
           "em": "duyhung@example.com",
-          "pL": "2",
+          "pL": 4,
           "gC": "BD_DB",
           "fC": "RR_KO"
         },
@@ -21,7 +21,7 @@
           "bY": "1998",
           "ph": "09xx-xxx-002",
           "em": "minhtu@example.com",
-          "pL": "2.5",
+          "pL": 3,
           "gC": "BD_DB",
           "fC": "RR_KO"
         }
