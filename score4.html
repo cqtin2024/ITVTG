@@ -265,7 +265,7 @@
         const BASE_API_URL = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${BASE_FILE_PATH}`;
         const STATIC_DATA_URL = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/${BASE_FILE_PATH}`;
         
-        // --- BỔ SUNG: Cấu hình cho file Điểm số Vòng Loại (state4s.json) ---
+        // --- Cấu hình cho file Điểm số Vòng Loại (state4s.json) ---
         const FILE_PATH_4S = 'data/state4s.json'; 
         const SCORE4_API_URL = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${FILE_PATH_4S}`;
         // -----------------------------------------------------------------
@@ -584,6 +584,25 @@
             return 'Chưa có';
         }
 
+        // Global function to safely parse the response text for raw GitHub content (state3.json, state3s.json)
+        async function parseGitHubRawContent(response, fileName) {
+            if (!response) return null; // Should be handled by loadDataFromGitHub, but safe check
+            
+            const text = await response.text();
+            if (!text || text.trim().length === 0) {
+                // File rỗng
+                console.warn(`File ${fileName} trống rỗng.`);
+                return null;
+            }
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                // Nếu parsing thất bại (Lỗi cú pháp JSON)
+                throw new Error(`LỖI CÚ PHÁP JSON TRONG FILE ${fileName}: ${e.message}. Vui lòng kiểm tra nội dung file trên GitHub.`);
+            }
+        }
+
+
         // --- LOGIC HỢP NHẤT DỮ LIỆU ---
 
         
@@ -619,7 +638,7 @@ function mergeUpdates(baseData, diffData) {
 }
 
 
-        // --- TẢI DỮ LIỆU TỪ GITHUB ---
+        // --- TẢI DỮ LIỆU TỪ GITHUB (ĐÃ SỬA LỖI JSON PARSE) ---
         
         async function loadDataFromGitHub() {
             const loadingMessage = document.getElementById('statusMessage');
@@ -633,9 +652,13 @@ function mergeUpdates(baseData, diffData) {
             try {
                 // 1. Tải Dữ liệu Gốc (state3.json)
                 const baseResponse = await fetchWithRetry(STATIC_DATA_URL);
-                if (!baseResponse) throw new Error("Không thể tải dữ liệu gốc từ state3.json.");
+                if (!baseResponse) throw new Error("Không thể tải dữ liệu gốc từ state3.json (404 Not Found).");
+                
+                // Sử dụng hàm an toàn để parse JSON (baseData phải tồn tại và hợp lệ)
+                baseData = await parseGitHubRawContent(baseResponse, BASE_FILE_PATH);
+                if (!baseData) throw new Error("DỮ LIỆU GỐC state3.json KHÔNG CÓ NỘI DUNG hoặc không phải JSON hợp lệ. Vui lòng tạo file.");
+                
                 // Sử dụng deep copy để giữ lại bản gốc an toàn
-                baseData = await baseResponse.json(); 
                 initialTournamentData = JSON.parse(JSON.stringify(baseData)); 
                 
                 loadingMessage.textContent = "Đã tải state3.json. Đang kiểm tra cập nhật (state3s.json)...";
@@ -643,22 +666,30 @@ function mergeUpdates(baseData, diffData) {
                 // 2. Tải Dữ liệu Cập nhật Vòng Bảng (state3s.json)
                 const diffResponse = await fetchWithRetry(DIFF_DATA_URL);
                 if (diffResponse) {
-                     diffData = await diffResponse.json();
+                     // Sử dụng hàm an toàn để parse JSON. Mặc định là {} nếu trống
+                     diffData = await parseGitHubRawContent(diffResponse, SCORE_FILE_PATH) || {};
                      loadingMessage.textContent = "Đã hợp nhất dữ liệu từ state3s.json. Đang kiểm tra state4s.json...";
                 } else {
-                     loadingMessage.textContent = "Đã tải dữ liệu gốc. Không có file cập nhật state3s.json. Đang kiểm tra state4s.json...";
+                     diffData = {}; // Mặc định là rỗng nếu 404
+                     loadingMessage.textContent = "Đã tải dữ liệu gốc. Không tìm thấy file cập nhật state3s.json. Đang kiểm tra state4s.json...";
                 }
 
-                // 3. Tải Dữ liệu Cập nhật Vòng Loại (state4s.json)
+                // 3. Tải Dữ liệu Cập nhật Vòng Loại (state4s.json) - Contents API
                 const diff4sResponse = await fetchWithRetry(SCORE4_API_URL);
-                let diff4sData = null;
+                let diff4sData = {}; // Mặc định là rỗng
                 if (diff4sResponse) {
-                    const result = await diff4sResponse.json();
+                    const result = await diff4sResponse.json(); 
                     const contentBase64 = result.content;
                     if (contentBase64) {
                         const contentJson = atob(contentBase64);
-                        diff4sData = JSON.parse(contentJson);
-                        loadingMessage.textContent = "Đã tải và hợp nhất dữ liệu vòng loại từ state4s.json.";
+                        // CHECK: Kiểm tra nội dung sau khi decode có rỗng không trước khi parse
+                        if (contentJson.trim().length > 0) {
+                             diff4sData = JSON.parse(contentJson); 
+                             loadingMessage.textContent = "Đã tải và hợp nhất dữ liệu vòng loại từ state4s.json.";
+                        } else {
+                             diff4sData = {}; // File tồn tại nhưng nội dung trống
+                             loadingMessage.textContent = "Đã tải dữ liệu. File state4s.json tồn tại nhưng trống.";
+                        }
                     }
                 }
                 
@@ -667,7 +698,7 @@ function mergeUpdates(baseData, diffData) {
                 tournamentData = mergeUpdates(liveData, diffData);
                 
                 // Hợp nhất dữ liệu Vòng Loại (state4s.json) vào liveData
-                if (diff4sData) {
+                if (Object.keys(diff4sData).length > 0) {
                     tournamentData.quarterfinals = diff4sData.quarterfinals || tournamentData.quarterfinals;
                     tournamentData.semifinals = diff4sData.semifinals || tournamentData.semifinals;
                     tournamentData.final = diff4sData.final || tournamentData.final;
@@ -689,7 +720,7 @@ function mergeUpdates(baseData, diffData) {
 
             } catch (error) {
                 console.error("LỖI KHÔNG THỂ TẢI DỮ LIỆU TỪ GITHUB:", error);
-                loadingMessage.textContent = "LỖI FATAL: Không thể tải dữ liệu giải đấu từ GitHub.";
+                loadingMessage.innerHTML = `LỖI FATAL: Không thể tải dữ liệu giải đấu từ GitHub. <br> ${error.message}`;
                 loadingMessage.classList.add('bg-red-900/50');
                 loadingMessage.classList.remove('bg-blue-900/50', 'bg-green-900/50');
             }
