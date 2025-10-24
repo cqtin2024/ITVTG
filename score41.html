@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.3</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.3.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.3)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.3.2)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync)</p>
                 </div>
             </div>
@@ -247,7 +247,7 @@
                 <div id="configExportResult" class="mt-3 p-3 rounded-lg text-sm font-semibold hidden"></div>
             </section>
             
-             <section class="p-4 bg-[var(--match-bg)] rounded-lg border-l-4 border-red-500">
+            <section class="p-4 bg-[var(--match-bg)] rounded-lg border-l-4 border-red-500">
                 <h3 class="text-xl font-bold text-red-400 mb-3 flex items-center">
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     4. Xóa (Reset) Tỉ Số Trận Đấu
@@ -305,7 +305,7 @@
     <script>
         
         // ==============================================================================================================
-        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.3 - Stakeholder Release)
+        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.3.2 - FIX TÊN CỘT RANK)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -522,7 +522,7 @@
             }
             
             const base64Content = jsonToBase64(diffData);
-            const commitMessage = 'Update match scores via web app (state41s.json - V4.3)';
+            const commitMessage = 'Update match scores via web app (state41s.json - V4.3.2)';
             
             await getShaAndCommit(SCORE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
         };
@@ -546,6 +546,13 @@
                  aPL: team.aPL, 
                  g: team.g,
                  s: team.s,
+                 // Lấy lại các trường Rank (gR), W, L, mP, GS, GC từ dữ liệu hiện tại nếu nó đã được tính
+                 W: team.W || 0,
+                 L: team.L || 0,
+                 mP: team.mP || 0,
+                 gR: team.gR || 0,
+                 GS: team.GS || 0,
+                 GC: team.GC || 0,
                  P: team.P // P already contains updated name/pL/bY etc.
             }));
 
@@ -553,7 +560,7 @@
             const commitData = unifyMatches(fullTeamData);
             
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.3)';
+            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.3.2)';
             
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -758,13 +765,18 @@
         function getMatchWinner(scoreA, scoreB) {
             const sA = parseInt(scoreA);
             const sB = parseInt(scoreB);
-            if (isNaN(sA) || isNaN(sB)) return null; 
+            if (isNaN(sA) || isNaN(sB) || sA === null || sB === null) return null; 
             if (sA > sB) return 'A';
             if (sB > sA) return 'B';
-            return 'Hòa';
+            return 'Hòa'; // Should not happen in most knockout formats, but included for safety
         }
 
+        // FIX V4.3.1: Đảm bảo trả về đội chính xác hoặc null nếu là placeholder
         function getTeamByT(teamId) {
+            if (!teamId || teamId.endsWith('WN') || teamId.length === 2 && (teamId.startsWith('A') || teamId.startsWith('B') || teamId.startsWith('C') || teamId.startsWith('D'))) {
+                 // Nếu là placeholder (ví dụ: QF1 WN, A1, A2)
+                 return null;
+            }
             return tournamentData.tL.find(t => t.T === teamId);
         }
 
@@ -999,6 +1011,7 @@
             // Assign Rank (gR) and merge back into tournamentData.tL
             standings.forEach((t, index) => {
                 t.gR = index + 1;
+                // FIX V4.3.1: Đảm bảo cập nhật lại team object trong tL
                 const fullTeam = tournamentData.tL.find(ts => ts.T === t.T);
                 if (fullTeam) {
                     fullTeam.W = t.W;
@@ -1024,6 +1037,7 @@
                 const firstPlace = sortedTeams.find(t => t.gR === 1);
                 const secondPlace = sortedTeams.find(t => t.gR === 2);
                 
+                // Sử dụng Team ID (T) hoặc placeholder (A1, B2)
                 winners[group] = {
                     W1: firstPlace ? firstPlace.T : `${group}1`,
                     W2: secondPlace ? secondPlace.T : `${group}2`
@@ -1033,560 +1047,4 @@
             // Cập nhật đội vào QF
             updateKnockoutMatch('QF1', winners.A.W1, winners.B.W2);
             updateKnockoutMatch('QF2', winners.B.W1, winners.A.W2);
-            updateKnockoutMatch('QF3', winners.C.W1, winners.D.W2);
-            updateKnockoutMatch('QF4', winners.D.W1, winners.C.W2);
-        }
-
-        function updateKnockoutMatch(matchCode, teamA, teamB) {
-            let match;
-            const round = matchCode.startsWith('QF') ? tournamentData.quarterfinals : 
-                          matchCode.startsWith('SF') ? tournamentData.semifinals : 
-                          matchCode === 'F' ? tournamentData.final : null;
-
-            if (matchCode === 'F') {
-                match = tournamentData.final; 
-            } else {
-                match = round ? round.find(m => m.Mc === matchCode) : null;
-            }
-
-            if (match) {
-                const isPlaceholderA = match.A.endsWith('WN') || !getTeamByT(match.A);
-                const isPlaceholderB = match.B.endsWith('WN') || !getTeamByT(match.B);
-
-                if (match.sA === null && match.sB === null) {
-                    // Nếu chưa chơi, cập nhật đội
-                    match.A = teamA;
-                    match.B = teamB;
-                } else {
-                     // Nếu đã có tỉ số, chỉ cập nhật placeholder nếu có đội mới
-                     if (isPlaceholderA) { 
-                        match.A = teamA;
-                    }
-                    if (isPlaceholderB) {
-                        match.B = teamB;
-                    }
-                }
-                match.Wn = getMatchWinner(match.sA, match.sB);
-
-                // Cập nhật vòng bán kết và chung kết
-                if (match.Wn && match.Wn !== 'Hòa') {
-                    const winnerId = match.Wn === 'A' ? match.A : match.B;
-                    const winnerPlaceholder = `${matchCode} WN`;
-
-                    if (matchCode.startsWith('QF')) {
-                        const sfMatch = tournamentData.semifinals.find(sf => sf.A === winnerPlaceholder || sf.B === winnerPlaceholder);
-                        if (sfMatch) {
-                            if (sfMatch.A === winnerPlaceholder) sfMatch.A = winnerId;
-                            if (sfMatch.B === winnerPlaceholder) sfMatch.B = winnerId;
-                        }
-                    } else if (matchCode.startsWith('SF')) {
-                        if (tournamentData.final) {
-                             if (tournamentData.final.A === winnerPlaceholder) tournamentData.final.A = winnerId;
-                             if (tournamentData.final.B === winnerPlaceholder) tournamentData.final.B = winnerId;
-                        }
-                    } else if (matchCode === 'F' && match.Wn) {
-                         const winnerTeam = getTeamByT(winnerId);
-                         const finalResultsElement = document.getElementById('finalResults');
-                         if (finalResultsElement) {
-                             finalResultsElement.innerHTML = `
-                                <div class="text-center">
-                                    <p class="text-4xl font-black text-yellow-500 mb-2">🏆 ${winnerTeam ? winnerTeam.Tn : winnerId} 🏆</p>
-                                    <p class="text-lg text-gray-300">Nhà Vô Địch Giải Đấu Pickleball ITVTG Tournament 2025</p>
-                                </div>
-                             `;
-                         }
-                    }
-                } else if (matchCode === 'F' && match.Wn === null) {
-                    // Reset kết quả chung cuộc nếu Final chưa có kết quả
-                    const finalResultsElement = document.getElementById('finalResults');
-                    if (finalResultsElement) {
-                         finalResultsElement.innerHTML = `
-                            <div class="text-center">
-                                <p class="text-4xl font-black text-gray-500 mb-2">Chưa xác định</p>
-                                <p class="text-lg text-gray-500">Nhà Vô Địch Giải Đấu Pickleball ITVTG Tournament 2025</p>
-                            </div>
-                         `;
-                    }
-                }
-            }
-        }
-        
-        async function calculateAndRenderAll() {
-            if (!tournamentData) return;
-
-            // 1. Tính toán bảng xếp hạng vòng bảng 
-            const groups = ['A', 'B', 'C', 'D'];
-            groups.forEach(group => {
-                const matches = tournamentData[`matches${group}`];
-                const standings = calculateStandings(matches, group); 
-                renderMatches(matches, group); 
-                renderTable(standings, group); 
-            });
-
-            // 2. Cập nhật đội vào vòng loại trực tiếp 
-            determineQuarterfinalists();
-            
-            // 3. Cập nhật kết quả Knockout (để đảm bảo nhánh đấu được update)
-            ['QF1', 'QF2', 'QF3', 'QF4'].forEach(mc => {
-                const match = tournamentData.quarterfinals.find(m => m.Mc === mc);
-                if (match) updateKnockoutMatch(match.Mc, match.A, match.B);
-            });
-            
-            ['SF1', 'SF2'].forEach(mc => {
-                const match = tournamentData.semifinals.find(m => m.Mc === mc);
-                if (match) updateKnockoutMatch(match.Mc, match.A, match.B);
-            });
-            
-            // 4. Cập nhật kết quả chung cuộc (dựa trên kết quả F)
-            if (tournamentData.final) {
-                 updateKnockoutMatch('F', tournamentData.final.A, tournamentData.final.B);
-            }
-
-            // 5. Render Knockout
-            renderKnockout();
-
-            // 6. Render Team List & Management (Nếu cần)
-            renderTeamList();
-            renderTeamManagementList();
-        }
-
-        // --- LOGIC RENDER CÁC THÀNH PHẦN ---
-        
-        function handleScoreChange(event, matchCode, teamKey, index) {
-            let matchesArray;
-            let match;
-            
-            // 1. Xác định match object
-            const isGroupMatch = matchCode.startsWith('G');
-            const MAX_SCORE = isGroupMatch ? 11 : 15;
-
-            if (isGroupMatch) matchesArray = tournamentData[`matches${matchCode.charAt(1)}`];
-            else if (matchCode.startsWith('QF')) matchesArray = tournamentData.quarterfinals;
-            else if (matchCode.startsWith('SF')) matchesArray = tournamentData.semifinals;
-            
-            if (matchCode === 'F') {
-                match = tournamentData.final;
-            } else {
-                match = matchesArray ? matchesArray[index] : null;
-            }
-            
-            if (!match) return;
-
-            const inputElement = event.target;
-            const inputValue = inputElement.value.trim();
-            let newScore = inputValue === '' ? null : parseInt(inputValue);
-            
-            // 2. Áp dụng luật giới hạn điểm và kiểm tra giá trị âm
-            if (newScore !== null) {
-                if (newScore < 0) {
-                     newScore = 0;
-                }
-                
-                // Vòng bảng (max 11) hoặc vòng loại (max 15)
-                if (newScore > MAX_SCORE) {
-                    inputElement.value = ''; // Reset input về trống (null)
-                    showStatus(`CẢNH BÁO: Điểm tối đa cho vòng ${isGroupMatch ? 'BẢNG' : 'LOẠI'} là ${MAX_SCORE}. Điểm đã nhập bị xóa.`, 'warning', 'statusMessage');
-                    newScore = null; // Gán lại thành null để không tính vào trận đấu
-                }
-            }
-            
-            // 3. Cập nhật tỉ số
-            match[teamKey] = newScore;
-            
-            // 4. Buộc đội thua về 0 nếu đội thắng đạt điểm tối đa và đội thua chưa có điểm
-            // Luật này hơi phức tạp, tốt nhất là người dùng nên nhập đủ. Tạm thời không tự động buộc về 0.
-
-            const sA = match.sA;
-            const sB = match.sB;
-            
-            if (sA !== null && sB === null && sA === MAX_SCORE) {
-                // Nếu A đạt MAX_SCORE và B chưa có điểm, có thể gợi ý 0
-                // match.sB = 0; // Tạm thời bỏ, để người dùng nhập thủ công
-            } else if (sB !== null && sA === null && sB === MAX_SCORE) {
-                // Tương tự cho B
-                // match.sA = 0; // Tạm thời bỏ, để người dùng nhập thủ công
-            }
-
-            // 5. Cập nhật người thắng cuộc (Wn) và recalculate
-            match.Wn = getMatchWinner(match.sA, match.sB);
-
-            // Cần re-calculate toàn bộ để cập nhật bảng xếp hạng và nhánh Knockout
-            calculateAndRenderAll(); 
-
-            // Sau khi tính toán và render, cập nhật lại giá trị input (chỉ cần thiết nếu có auto-correct score)
-            // Hiện tại không có auto-correct, nên chỉ cần đảm bảo giá trị nhập vào là đúng
-            if (newScore !== null) {
-                inputElement.value = newScore;
-            } else {
-                inputElement.value = '';
-            }
-        }
-
-
-        function renderMatches(matches, group) {
-            const containerId = `matches${group}`;
-            const container = document.getElementById(containerId);
-            if (!container) return;
-
-            let html = `<h3 class="text-xl font-bold mb-4 text-[var(--group-header-text)]">Vòng Bảng ${group} (Matches)</h3>`;
-
-            if (!matches || matches.length === 0) {
-                html += '<p class="text-gray-500">Chưa có trận đấu nào được lên lịch.</p>';
-            } else {
-                matches.forEach((match, index) => {
-                    const teamA = getTeamByT(match.A);
-                    const teamB = getTeamByT(match.B);
-
-                    const winnerNickname = match.Wn === 'A' && teamA ? teamA.Tn : 
-                                           match.Wn === 'B' && teamB ? teamB.Tn : 
-                                           '';
-                    
-                    const teamA_Tn = teamA ? teamA.Tn : match.A;
-                    const teamB_Tn = teamB ? teamB.Tn : match.B;
-                    
-                    const winnerText = match.Wn ? `Thắng: ${winnerNickname}` : 'Chưa kết thúc';
-
-                    html += `
-                        <div class="match-card p-3 mb-3 rounded-lg flex items-center justify-between">
-                            <div class="flex-1 text-left pr-2">
-                                <p class="text-sm font-semibold">${match.Mc} (${match.c})</p>
-                                <p class="text-xs text-gray-400">${match.t || ''}</p>
-                            </div>
-                            <div class="flex-1 text-center font-bold">
-                                <p class="text-lg text-yellow-400">${teamA_Tn}</p>
-                            </div>
-                            <div class="flex-shrink-0 flex items-center space-x-2 mx-4">
-                                <input type="number" value="${match.sA !== null ? match.sA : ''}" 
-                                       onchange="handleScoreChange(event, '${match.Mc}', 'sA', ${index})"
-                                       class="score-input w-12 text-center rounded-md" min="0" max="11">
-                                <span class="font-bold text-lg">vs</span>
-                                <input type="number" value="${match.sB !== null ? match.sB : ''}" 
-                                       onchange="handleScoreChange(event, '${match.Mc}', 'sB', ${index})"
-                                       class="score-input w-12 text-center rounded-md" min="0" max="11">
-                            </div>
-                            <div class="flex-1 text-center font-bold">
-                                <p class="text-lg text-cyan-400">${teamB_Tn}</p>
-                            </div>
-                            <div class="flex-1 text-right pl-2 text-sm text-green-500 font-semibold match-winner">
-                                ${winnerText}
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-            container.innerHTML = html;
-        }
-
-        function renderTable(standings, group) {
-            const container = document.getElementById(`table${group}`);
-            if (!container) return;
-
-            let html = `<h3 class="text-xl font-bold mb-4 text-[var(--group-header-text)]">Bảng Xếp Hạng Group ${group}</h3>`;
-
-            if (!standings || standings.length === 0) {
-                 html += '<p class="text-gray-500">Chưa có dữ liệu bảng xếp hạng.</p>';
-            } else {
-                html += `
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-[var(--border-color)]">
-                            <thead>
-                                <tr class="text-xs font-medium uppercase tracking-wider text-gray-400">
-                                    <th class="px-2 py-3 text-left">Hạng</th>
-                                    <th class="px-3 py-3 text-left">Đội</th>
-                                    <th class="px-3 py-3 text-center">T</th>
-                                    <th class="px-3 py-3 text-center">B</th>
-                                    <th class="px-3 py-3 text-center">HS</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-[var(--border-color)]">
-                `;
-                
-                const sortedStandings = standings.sort((a, b) => a.gR - b.gR);
-
-                sortedStandings.forEach(team => {
-                    const diff = team.GS - team.GC;
-                    const diffClass = diff > 0 ? 'text-green-400' : diff < 0 ? 'text-red-400' : 'text-gray-400';
-                    const rankClass = team.gR <= 2 && team.mP > 0 ? 'text-green-500' : 'text-[var(--accent-color)]';
-                    html += `
-                        <tr class="text-sm font-semibold">
-                            <td class="px-2 py-4 whitespace-nowrap text-lg font-extrabold ${rankClass}">${team.gR || '-'}</td>
-                            <td class="px-3 py-4 whitespace-nowrap">${team.Tn}</td>
-                            <td class="px-3 py-4 whitespace-nowrap text-center text-green-500">${team.W}</td>
-                            <td class="px-3 py-4 whitespace-nowrap text-center text-red-500">${team.L}</td>
-                            <td class="px-3 py-4 whitespace-nowrap text-center ${diffClass}">${diff}</td>
-                        </tr>
-                    `;
-                });
-                html += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            }
-
-            container.innerHTML = html;
-        }
-        
-        function renderKnockout() {
-            const renderKnockoutMatch = (match, index, roundName) => {
-                const teamA = getTeamByT(match.A);
-                const teamB = getTeamByT(match.B);
-                
-                // Hiển thị Tn nếu tìm thấy đội, nếu không hiển thị mã/placeholder
-                const teamA_Tn = teamA ? teamA.Tn : match.A;
-                const teamB_Tn = teamB ? teamB.Tn : match.B;
-
-                const winnerNickname = match.Wn === 'A' && teamA ? teamA.Tn : 
-                                       match.Wn === 'B' && teamB ? teamB.Tn : 
-                                       '';
-                const winnerText = match.Wn ? `Thắng: ${winnerNickname}` : 'Chưa kết thúc';
-                
-                const isFinalRound = match.Mc === 'F' || match.Mc.startsWith('SF') || match.Mc.startsWith('QF');
-                const maxScoreAttr = isFinalRound ? 'max="15"' : 'max="11"'; // Set max score for input
-
-                return `
-                    <div class="match-card p-3 mb-3 rounded-lg flex items-center justify-between">
-                        <div class="flex-1 text-left pr-2">
-                            <p class="text-sm font-semibold text-yellow-400">${match.Mc} (${match.c || 'TBH'})</p>
-                            <p class="text-xs text-gray-400">${match.t || ''}</p>
-                        </div>
-                        <div class="flex-1 text-center font-bold">
-                            <p class="text-lg text-yellow-400">${teamA_Tn}</p>
-                        </div>
-                        <div class="flex-shrink-0 flex items-center space-x-2 mx-4">
-                            <input type="number" value="${match.sA !== null ? match.sA : ''}" 
-                                   onchange="handleScoreChange(event, '${match.Mc}', 'sA', ${index})"
-                                   class="score-input w-12 text-center rounded-md" min="0" ${maxScoreAttr}>
-                            <span class="font-bold text-lg">vs</span>
-                            <input type="number" value="${match.sB !== null ? match.sB : ''}" 
-                                   onchange="handleScoreChange(event, '${match.Mc}', 'sB', ${index})"
-                                   class="score-input w-12 text-center rounded-md" min="0" ${maxScoreAttr}>
-                        </div>
-                        <div class="flex-1 text-center font-bold">
-                            <p class="text-lg text-cyan-400">${teamB_Tn}</p>
-                        </div>
-                        <div class="flex-1 text-right pl-2 text-sm text-green-500 font-semibold match-winner">
-                            ${winnerText}
-                        </div>
-                    </div>
-                `;
-            };
-
-            // Quarterfinals
-            let qfHtml = `<h3 class="text-xl font-bold mb-4 text-orange-400">Tứ Kết (Quarter Finals)</h3>`;
-            tournamentData.quarterfinals.forEach((match, index) => {
-                qfHtml += renderKnockoutMatch(match, index, 'quarterfinals');
-            });
-            document.getElementById('quarterfinals').innerHTML = qfHtml;
-
-            // Semifinals
-            let sfHtml = `<h3 class="text-xl font-bold mb-4 text-pink-400">Bán Kết (Semi Finals)</h3>`;
-            tournamentData.semifinals.forEach((match, index) => {
-                sfHtml += renderKnockoutMatch(match, index, 'semifinals');
-            });
-            document.getElementById('semifinals').innerHTML = sfHtml;
-
-            // Final
-            let finalHtml = `<h3 class="text-xl font-bold mb-4 text-yellow-500">Chung Kết (Final)</h3>`;
-            // Final match doesn't use an index from an array, so pass -1 or a unique identifier.
-            finalHtml += renderKnockoutMatch(tournamentData.final, -1, 'final'); 
-            document.getElementById('finalSection').innerHTML = finalHtml;
-        }
-
-        function renderTeamList() {
-             const container = document.getElementById('teamList');
-             if (!container || !tournamentData || !tournamentData.tL) return;
-
-             let html = '';
-             tournamentData.tL.forEach(team => {
-                 const players = team.P.map(p => `
-                     <li class="text-xs text-gray-400">
-                         ${p.name} (${p.bY}, Lv ${p.pL})
-                     </li>
-                 `).join('');
-
-                 html += `
-                    <div class="p-4 bg-[var(--card-bg)] rounded-lg border border-[var(--border-color)]">
-                        <h4 class="text-xl font-extrabold text-[var(--accent-color)]">${team.Tn} <span class="text-sm font-normal text-gray-400">(${team.g})</span></h4>
-                        <p class="text-sm text-yellow-400 mb-2">Cấp độ TB: ${team.aPL}</p>
-                        <ul class="list-disc list-inside space-y-1">
-                            ${players}
-                        </ul>
-                    </div>
-                 `;
-             });
-             container.innerHTML = html;
-        }
-        
-        function handleTeamDataChange(event, teamT, playerIndex, field) {
-            const team = tournamentData.tL.find(t => t.T === teamT);
-            if (!team) return;
-
-            if (playerIndex === -1) { 
-                team[field] = event.target.value;
-            } else if (playerIndex >= 0) { 
-                const player = team.P[playerIndex];
-                if (field === 'pL') {
-                    const val = event.target.value;
-                    const numVal = parseFloat(val) || 0;
-                    if (numVal < 1.0 || numVal > 5.0) {
-                         showStatus("Cảnh báo: Cấp độ (pL) phải từ 1.0 đến 5.0.", 'warning', 'statusMessage');
-                    }
-                    player[field] = numVal.toFixed(1);
-                } else {
-                    player[field] = event.target.value;
-                }
-            }
-
-             // Recalculate average pick level (aPL)
-            if (field === 'pL') {
-                const totalPL = team.P.reduce((sum, p) => sum + (parseFloat(p.pL) || 0), 0);
-                team.aPL = team.P.length > 0 ? (totalPL / team.P.length).toFixed(1) : 0;
-                const aPLElement = document.getElementById(`aPL-${teamT}`);
-                if(aPLElement) aPLElement.textContent = team.aPL;
-            }
-        }
-        
-        function renderTeamManagementList() {
-            const container = document.getElementById('teamManagementList');
-            if (!container || !tournamentData || !tournamentData.tL) return;
-
-            let html = '';
-            tournamentData.tL.forEach(team => {
-                const groupColor = team.g === 'A' ? 'text-green-500' : team.g === 'B' ? 'text-blue-500' : team.g === 'C' ? 'text-purple-500' : 'text-yellow-500';
-
-                let playersHtml = '';
-                team.P.forEach((player, pIndex) => {
-                    playersHtml += `
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-3 bg-[var(--match-bg)] rounded-lg border border-[var(--border-color)] mb-3">
-                            <div class="col-span-1 md:col-span-2">
-                                <label class="block text-xs font-medium text-gray-400">Tên Người Chơi:</label>
-                                <input type="text" value="${player.name}" 
-                                       onchange="handleTeamDataChange(event, '${team.T}', ${pIndex}, 'name')"
-                                       class="text-input w-full p-2 rounded-md">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-400">Năm Sinh (bY):</label>
-                                <input type="text" value="${player.bY}" 
-                                       onchange="handleTeamDataChange(event, '${team.T}', ${pIndex}, 'bY')"
-                                       class="text-input w-full p-2 rounded-md">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-400">Cấp Độ (pL):</label>
-                                <input type="number" step="0.5" value="${player.pL}" 
-                                       onchange="handleTeamDataChange(event, '${team.T}', ${pIndex}, 'pL')"
-                                       class="text-input w-full p-2 rounded-md" min="1.0" max="5.0">
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += `
-                    <div class="p-6 bg-[var(--card-bg)] rounded-xl shadow-lg border-l-4 border-l-[var(--accent-color)]">
-                        <div class="flex justify-between items-center mb-4 border-b border-[var(--border-color)] pb-3">
-                            <h4 class="text-2xl font-extrabold ${groupColor}">Group ${team.g} - ${team.T}</h4>
-                            <p class="text-lg font-bold text-yellow-400">aPL: <span id="aPL-${team.T}">${team.aPL}</span></p>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-400">Tên Đội Rút Gọn (Tn):</label>
-                            <input type="text" value="${team.Tn}" 
-                                   onchange="handleTeamDataChange(event, '${team.T}', -1, 'Tn')"
-                                   class="text-input w-full p-2 rounded-md text-lg font-bold mt-1">
-                        </div>
-
-                        <h5 class="text-md font-semibold text-[var(--accent-color)] mt-6 mb-3">Thông Tin Người Chơi:</h5>
-                        ${playersHtml}
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-
-        // --- UI & INITIALIZATION ---
-
-        function switchTab(tabId) {
-            const tabs = ['General', 'TeamManagement', 'GroupA', 'GroupB', 'GroupC', 'GroupD', 'Knockout', 'Configuration'];
-            tabs.forEach(id => {
-                const tabElement = document.getElementById(id);
-                const buttonElement = document.querySelector(`[data-tab="${id}"]`);
-                if (tabElement) tabElement.style.display = id === tabId ? 'block' : 'none';
-                if (buttonElement) buttonElement.classList.toggle('active', id === tabId);
-            });
-            localStorage.setItem('activeTab', tabId);
-        }
-
-        function toggleTheme() {
-            const currentTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            applyTheme(newTheme);
-            localStorage.setItem('theme', newTheme);
-        }
-
-        function applyTheme(theme) {
-            document.body.classList.toggle('light-mode', theme === 'light');
-            document.getElementById('sunIcon').classList.toggle('hidden', theme === 'dark');
-            document.getElementById('moonIcon').classList.toggle('hidden', theme === 'light');
-            document.getElementById('currentThemeDisplay').textContent = theme === 'dark' ? 'Tối' : 'Sáng';
-        }
-        
-        function handleGesture() {
-            if (Math.abs(startX - endX) > swipeThreshold) {
-                const currentTab = localStorage.getItem('activeTab') || 'General';
-                const tabs = ['General', 'TeamManagement', 'GroupA', 'GroupB', 'GroupC', 'GroupD', 'Knockout', 'Configuration'];
-                const currentIndex = tabs.indexOf(currentTab);
-
-                if (currentIndex === -1) return;
-
-                if (startX > endX) { // Swipe Left (Next tab)
-                    const nextIndex = (currentIndex + 1) % tabs.length;
-                    switchTab(tabs[nextIndex]);
-                } else if (startX < endX) { // Swipe Right (Previous tab)
-                    const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-                    switchTab(tabs[prevIndex]);
-                }
-            }
-        }
-        
-        function showConfirmationModal() {
-            document.getElementById('confirmationBox').classList.remove('hidden');
-        }
-
-        function initializeApp() {
-            githubToken = localStorage.getItem('githubToken') || '';
-            const savedTheme = localStorage.getItem('theme') || 'dark'; 
-            applyTheme(savedTheme);
-
-            if (githubToken) {
-                 document.getElementById('githubToken').value = '********';
-            }
-
-            // Event listeners for theme toggle
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-            // Event listeners for swipe navigation (on the whole app container)
-            document.getElementById('app').addEventListener('touchstart', (e) => {
-                // Ignore if touching an input field
-                if (e.target.closest('.score-input, .text-input')) return;
-                startX = e.changedTouches[0].screenX;
-            }, { passive: true });
-
-            document.getElementById('app').addEventListener('touchend', (e) => {
-                // Ignore if touching an input field
-                if (e.target.closest('.score-input, .text-input')) return;
-                endX = e.changedTouches[0].screenX;
-                handleGesture();
-            }, { passive: true });
-            
-            // Modal button setup
-            document.getElementById('confirmYes').onclick = window.reSyncStaticData;
-            document.getElementById('confirmNo').onclick = () => document.getElementById('confirmationBox').classList.add('hidden');
-
-            loadDataFromGitHub();
-        }
-
-        window.onload = initializeApp;
-    </script>
-</body>
-</html>
+            updateKnockout
