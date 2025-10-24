@@ -2,33 +2,33 @@
   "matchesD": [
     {
       "i": 0,
-      "sA": null,
-      "sB": null
+      "sA": 8,
+      "sB": 11
     },
     {
       "i": 1,
-      "sA": null,
-      "sB": null
+      "sA": 11,
+      "sB": 0
     },
     {
       "i": 2,
-      "sA": null,
-      "sB": null
+      "sA": 11,
+      "sB": 5
     },
     {
       "i": 3,
-      "sA": null,
-      "sB": null
+      "sA": 11,
+      "sB": 3
     },
     {
       "i": 4,
-      "sA": null,
-      "sB": null
+      "sA": 11,
+      "sB": 3
     },
     {
       "i": 5,
-      "sA": null,
-      "sB": null
+      "sA": 9,
+      "sB": 11
     }
   ],
   "quarterfinals": [
