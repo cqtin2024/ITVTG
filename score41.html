@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.2.1</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.2.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.2.1)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.2.2)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync)</p>
                 </div>
             </div>
@@ -239,7 +239,7 @@
     <script>
         
         // ==============================================================================================================
-        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.2.1 - Fix thiếu khởi tạo thông số bảng xếp hạng)
+        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.2.2 - Fix logic tính toán/render)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -387,6 +387,7 @@
         function getDiffData() {
             if (!tournamentData || !initialTournamentData) return null;
 
+            // Bao gồm tất cả các vòng đấu
             const rounds = ['matchesA', 'matchesB', 'matchesC', 'matchesD', 'quarterfinals', 'semifinals', 'final'];
             
             const diffData = {};
@@ -401,6 +402,7 @@
                 if (!liveRound) return; 
 
                 if (roundKey === 'final') {
+                    // Final là một object, không phải array
                     const initialFinal = initialRound || { sA: null, sB: null };
                     if (liveRound && compareMatches(liveRound, initialFinal)) {
                         diffData[roundKey] = {
@@ -446,7 +448,7 @@
             }
             
             const base64Content = jsonToBase64(diffData);
-            const commitMessage = 'Update match scores via web app (state41s.json - V4.2.1)';
+            const commitMessage = 'Update match scores via web app (state41s.json - V4.2.2)';
             
             await getShaAndCommit(SCORE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
         };
@@ -476,7 +478,7 @@
             const commitData = unifyMatches(fullTeamData);
             
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.2.1)';
+            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.2.2)';
             
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -516,7 +518,7 @@
         function getMatchWinner(scoreA, scoreB) {
             const sA = parseInt(scoreA);
             const sB = parseInt(scoreB);
-            if (isNaN(sA) || isNaN(sB)) return 'Chưa có';
+            if (isNaN(sA) || isNaN(sB)) return null; // Trả về null thay vì 'Chưa có' để đơn giản hóa logic
             if (sA > sB) return 'A';
             if (sB > sA) return 'B';
             return 'Hòa';
@@ -638,7 +640,7 @@
                 // V4.2 FIX: Tách mảng matches thống nhất thành các mảng nhỏ hơn
                 baseData = splitUnifiedMatches(baseData); 
                 
-                // *** V4.2.1 FIX: Khởi tạo các trường xếp hạng bị thiếu (Nếu không có trong JSON gốc) ***
+                // V4.2.1 FIX: Khởi tạo các trường xếp hạng bị thiếu (Nếu không có trong JSON gốc)
                 baseData.tL.forEach(team => {
                     team.W = team.W || 0;
                     team.L = team.L || 0;
@@ -647,7 +649,6 @@
                     team.GS = team.GS || 0; 
                     team.GC = team.GC || 0;
                 });
-                // **********************************************************************************
 
                 initialTournamentData = JSON.parse(JSON.stringify(baseData)); 
                 
@@ -665,7 +666,7 @@
                 // 3. Hợp nhất dữ liệu
                 tournamentData = mergeUpdates(baseData, diffData);
                 
-                // 4. Tính toán và hiển thị
+                // 4. Tính toán và hiển thị lần đầu
                 await calculateAndRenderAll();
                 switchTab(localStorage.getItem('activeTab') || 'General');
 
@@ -710,9 +711,10 @@
             });
 
             matches.forEach(match => {
-                if (match.sA !== null && match.sB !== null) {
-                    const sA = parseInt(match.sA);
-                    const sB = parseInt(match.sB);
+                const sA = parseInt(match.sA);
+                const sB = parseInt(match.sB);
+
+                if (!isNaN(sA) && !isNaN(sB)) {
                     const teamA = match.A;
                     const teamB = match.B;
 
@@ -773,14 +775,18 @@
 
         function determineQuarterfinalists() {
             const groups = ['A', 'B', 'C', 'D'];
-            const winners = {}; // Stores { Group: TeamID }
+            const winners = {}; // Stores { Group: { W1: TeamID, W2: TeamID } }
 
             groups.forEach(group => {
                 // Sử dụng tournamentData.tL đã được cập nhật gR
                 const groupTeams = tournamentData.tL.filter(t => t.g === group);
-                const firstPlace = groupTeams.find(t => t.gR === 1);
-                const secondPlace = groupTeams.find(t => t.gR === 2);
+                // Sắp xếp lại theo gR
+                const sortedTeams = groupTeams.sort((a, b) => a.gR - b.gR);
+
+                const firstPlace = sortedTeams.find(t => t.gR === 1);
+                const secondPlace = sortedTeams.find(t => t.gR === 2);
                 
+                // Đảm bảo trả về placeholder nếu chưa có đội đủ điều kiện
                 winners[group] = {
                     W1: firstPlace ? firstPlace.T : `${group}1`,
                     W2: secondPlace ? secondPlace.T : `${group}2`
@@ -807,16 +813,18 @@
             }
 
             if (match) {
-                // Logic cập nhật tên đội nếu là placeholder hoặc chưa có tỉ số
+                // Logic cập nhật tên đội: CHỈ cập nhật nếu match chưa được chơi hoặc team hiện tại là placeholder
+                const isPlaceholderA = match.A.endsWith('WN') || !getTeamByT(match.A);
+                const isPlaceholderB = match.B.endsWith('WN') || !getTeamByT(match.B);
+
                 if (match.sA === null && match.sB === null) {
                     match.A = teamA;
                     match.B = teamB;
                 } else {
-                     // Nếu có tỉ số rồi, chỉ cập nhật nếu team hiện tại là placeholder
-                    if (match.A.endsWith('WN') || !getTeamByT(match.A)) { 
+                     if (isPlaceholderA) { 
                         match.A = teamA;
                     }
-                    if (match.B.endsWith('WN') || !getTeamByT(match.B)) {
+                    if (isPlaceholderB) {
                         match.B = teamB;
                     }
                 }
@@ -860,41 +868,42 @@
         async function calculateAndRenderAll() {
             if (!tournamentData) return;
 
-            // 1. Tính toán bảng xếp hạng vòng bảng
+            // 1. Tính toán bảng xếp hạng vòng bảng (BẮT BUỘC CHẠY ĐẦU TIÊN)
             const groups = ['A', 'B', 'C', 'D'];
             groups.forEach(group => {
                 const matches = tournamentData[`matches${group}`];
-                // Tính toán và CẬP NHẬT TRỰC TIẾP vào tournamentData.tL
+                // Tính toán và CẬP NHẬT TRỰC TIẾP vào tournamentData.tL (bao gồm gR)
                 const standings = calculateStandings(matches, group); 
-                renderTable(standings, group);
-                renderMatches(matches, group);
+                renderMatches(matches, group); // Render lại để cập nhật người thắng cuộc
+                renderTable(standings, group); // Render bảng xếp hạng theo gR mới
             });
 
-            // 2. Cập nhật đội vào vòng loại trực tiếp
+            // 2. Cập nhật đội vào vòng loại trực tiếp (Dựa trên gR đã tính)
             determineQuarterfinalists();
             
             // 3. Cập nhật kết quả Knockout (để đảm bảo nhánh đấu được update)
             ['QF1', 'QF2', 'QF3', 'QF4'].forEach(mc => {
                 const match = tournamentData.quarterfinals.find(m => m.Mc === mc);
-                if (match && match.Wn) updateKnockoutMatch(match.Mc, match.A, match.B);
+                if (match) updateKnockoutMatch(match.Mc, match.A, match.B);
             });
             
             ['SF1', 'SF2'].forEach(mc => {
                 const match = tournamentData.semifinals.find(m => m.Mc === mc);
-                if (match && match.Wn) updateKnockoutMatch(match.Mc, match.A, match.B);
+                if (match) updateKnockoutMatch(match.Mc, match.A, match.B);
             });
             
             // 4. Cập nhật kết quả chung cuộc (dựa trên kết quả F)
-            updateKnockoutMatch('F', tournamentData.final.A, tournamentData.final.B);
+            if (tournamentData.final) {
+                 updateKnockoutMatch('F', tournamentData.final.A, tournamentData.final.B);
+            }
 
             // 5. Render Knockout
             renderKnockout();
 
-            // 6. Render Team List & Management
+            // 6. Render Team List & Management (Nếu cần)
             renderTeamList();
             renderTeamManagementList();
         }
-
 
         // --- LOGIC RENDER CÁC THÀNH PHẦN ---
         
@@ -902,6 +911,7 @@
             let matchesArray;
             let match;
             
+            // Xác định mảng matches
             if (matchCode.startsWith('GA')) matchesArray = tournamentData.matchesA;
             else if (matchCode.startsWith('GB')) matchesArray = tournamentData.matchesB;
             else if (matchCode.startsWith('GC')) matchesArray = tournamentData.matchesC;
@@ -910,28 +920,45 @@
             else if (matchCode.startsWith('SF')) matchesArray = tournamentData.semifinals;
             
             if (matchCode === 'F') {
-                match = tournamentData.final; // Final is an object, not an array
+                match = tournamentData.final;
             } else {
                 match = matchesArray ? matchesArray[index] : null;
             }
 
             if (match) {
-                // Kiểm tra và ép kiểu sang số nguyên, hoặc null nếu rỗng
                 const inputValue = event.target.value.trim();
-                match[teamKey] = inputValue === '' ? null : parseInt(inputValue);
+                const newScore = inputValue === '' ? null : parseInt(inputValue);
                 
+                // Cập nhật tỉ số mới
+                match[teamKey] = newScore;
+                
+                // V4.2.2 FIX LOGIC: Kiểm tra điều kiện kết thúc trận (11 điểm, đối thủ < 11)
+                const sA = match.sA;
+                const sB = match.sB;
+
+                if (!matchCode.startsWith('QF') && !matchCode.startsWith('SF') && matchCode !== 'F') {
+                    // Áp dụng luật 11 điểm cho vòng bảng
+                    if (sA !== null && sB === null && sA >= 11) {
+                         match.sB = 0; // Buộc đội B = 0 nếu đội A đạt 11 điểm và đội B chưa có điểm
+                    } else if (sB !== null && sA === null && sB >= 11) {
+                         match.sA = 0; // Buộc đội A = 0 nếu đội B đạt 11 điểm và đội A chưa có điểm
+                    }
+                } else {
+                    // Áp dụng luật 11 điểm cho knockout (chỉ khi cả hai đều đã có điểm)
+                    // Hoặc các quy tắc khác cho vòng loại trực tiếp (ví dụ: best of 3/5, nhưng ở đây chỉ là 1 game)
+                }
+
                 // Cập nhật người thắng cuộc (Wn) và recalculate
                 match.Wn = getMatchWinner(match.sA, match.sB);
 
-                // Re-render only the score parts (lightweight update)
-                const teamA = getTeamByT(match.A);
-                const teamB = getTeamByT(match.B);
-                const winnerNickname = match.Wn === 'A' && teamA ? teamA.Tn : 
-                                       match.Wn === 'B' && teamB ? teamB.Tn : 
-                                       '';
-                event.target.closest('.match-card').querySelector('.match-winner').textContent = match.Wn !== 'Chưa có' ? `Thắng: ${winnerNickname}` : '';
+                // Cần re-calculate toàn bộ để cập nhật bảng xếp hạng và nhánh Knockout
+                calculateAndRenderAll(); 
 
-                calculateAndRenderAll(); // Cần re-calculate toàn bộ để cập nhật bảng xếp hạng và nhánh Knockout
+                // Sau khi tính toán và render, cập nhật lại giá trị input nếu có thay đổi (do buộc về 0)
+                if (matchCode.startsWith('G')) {
+                    const currentMatch = tournamentData[`matches${matchCode.charAt(1)}`][index];
+                     event.target.value = currentMatch[teamKey] !== null ? currentMatch[teamKey] : '';
+                }
             }
         }
 
@@ -956,6 +983,8 @@
                     
                     const teamA_Tn = teamA ? teamA.Tn : match.A;
                     const teamB_Tn = teamB ? teamB.Tn : match.B;
+                    
+                    const winnerText = match.Wn ? `Thắng: ${winnerNickname}` : 'Chưa kết thúc';
 
                     html += `
                         <div class="match-card p-3 mb-3 rounded-lg flex items-center justify-between">
@@ -979,7 +1008,7 @@
                                 <p class="text-lg text-cyan-400">${teamB_Tn}</p>
                             </div>
                             <div class="flex-1 text-right pl-2 text-sm text-green-500 font-semibold match-winner">
-                                Thắng: ${winnerNickname}
+                                ${winnerText}
                             </div>
                         </div>
                     `;
@@ -1011,7 +1040,11 @@
                             </thead>
                             <tbody class="divide-y divide-[var(--border-color)]">
                 `;
-                standings.forEach(team => {
+                
+                // V4.2.2 Fix: Sắp xếp standings một lần nữa theo gR trước khi render (chỉ để đảm bảo)
+                const sortedStandings = standings.sort((a, b) => a.gR - b.gR);
+
+                sortedStandings.forEach(team => {
                     const diff = team.GS - team.GC;
                     const diffClass = diff > 0 ? 'text-green-400' : diff < 0 ? 'text-red-400' : 'text-gray-400';
                     html += `
@@ -1046,6 +1079,8 @@
                                        match.Wn === 'B' && teamB ? teamB.Tn : 
                                        '';
                 const containerName = roundName.toLowerCase().replace(/\s/g, '');
+                const winnerText = match.Wn ? `Thắng: ${winnerNickname}` : 'Chưa kết thúc';
+
 
                 return `
                     <div class="match-card p-3 mb-3 rounded-lg flex items-center justify-between">
@@ -1069,7 +1104,7 @@
                             <p class="text-lg text-cyan-400">${teamB_Tn}</p>
                         </div>
                         <div class="flex-1 text-right pl-2 text-sm text-green-500 font-semibold match-winner">
-                            Thắng: ${winnerNickname}
+                            ${winnerText}
                         </div>
                     </div>
                 `;
