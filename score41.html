@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.2.5</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.2.5)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.3)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync)</p>
                 </div>
             </div>
@@ -305,7 +305,7 @@
     <script>
         
         // ==============================================================================================================
-        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.2.5 - Bổ sung Reset Scores)
+        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.3 - Stakeholder Release)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -468,16 +468,16 @@
                 liveMatch.sA !== initialMatch.sA || liveMatch.sB !== initialMatch.sB;
 
             rounds.forEach(roundKey => {
+                if (!tournamentData[roundKey]) return; 
+
                 const liveRound = tournamentData[roundKey];
                 const initialRound = initialTournamentData[roundKey];
-
-                if (!liveRound) return; 
-
+                
+                // Trường hợp đặc biệt: Final (là object)
                 if (roundKey === 'final') {
-                    // Final là một object, không phải array
                     const initialFinal = initialRound || { sA: null, sB: null };
                     // Nếu tỉ số hiện tại khác initial HOẶC tỉ số hiện tại là null (đã reset)
-                    if (liveRound && (compareMatches(liveRound, initialFinal) || (liveRound.sA === null && liveRound.sB === null && (initialFinal.sA !== null || initialFinal.sB !== null)))) {
+                    if (compareMatches(liveRound, initialFinal) || (liveRound.sA === null && liveRound.sB === null && (initialFinal.sA !== null || initialFinal.sB !== null))) {
                         diffData[roundKey] = {
                             sA: liveRound.sA,
                             sB: liveRound.sB
@@ -486,6 +486,7 @@
                     return;
                 }
                 
+                // Trường hợp chung: Vòng bảng và Knockout (là array)
                 const modifiedMatches = [];
                 liveRound.forEach((liveMatch, index) => {
                     const initialMatch = initialRound ? initialRound[index] : null;
@@ -521,7 +522,7 @@
             }
             
             const base64Content = jsonToBase64(diffData);
-            const commitMessage = 'Update match scores via web app (state41s.json - V4.2.5)';
+            const commitMessage = 'Update match scores via web app (state41s.json - V4.3)';
             
             await getShaAndCommit(SCORE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
         };
@@ -535,23 +536,24 @@
                 return;
             }
 
+            // Dùng dữ liệu gốc (initialTournamentData) để tránh commit các trường tính toán từ state41s.json
             const fullTeamData = JSON.parse(JSON.stringify(initialTournamentData));
 
-            // Chỉ cập nhật các trường liên quan đến Team List (tL), loại bỏ các trường tính toán
+            // Chỉ cập nhật các trường liên quan đến Team List (tL) từ dữ liệu hiện tại (tournamentData)
             fullTeamData.tL = tournamentData.tL.map(team => ({
                  T: team.T, 
                  Tn: team.Tn, 
                  aPL: team.aPL, 
                  g: team.g,
                  s: team.s,
-                 P: team.P // Note: P already contains updated name/pL/bY etc.
+                 P: team.P // P already contains updated name/pL/bY etc.
             }));
 
             // FIX CẤU TRÚC V4.2: Gộp mảng match lại thành 'matches' thống nhất trước khi commit BASE file
             const commitData = unifyMatches(fullTeamData);
             
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.2.5)';
+            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.3)';
             
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -560,6 +562,7 @@
 
             await getShaAndCommit(BASE_API_URL, base64Content, commitMessage, 'commitTeamButton', 'teamCommitResult');
             
+            // Sau khi commit thành công, tải lại dữ liệu để đảm bảo đồng bộ
             await loadDataFromGitHub();
             switchTab('TeamManagement');
         }
@@ -635,11 +638,15 @@
                 if (!matchesToSimulate || matchesToSimulate.length === 0) return showStatus(`Không có trận đấu nào trong Bảng ${roundType} để giả lập.`, 'warning', 'statusMessage');
             } else if (roundType === 'Knockout') {
                 // Vòng loại trực tiếp
+                // Lọc bỏ match.final nếu nó là null
+                const finalMatchArray = tournamentData.final ? [tournamentData.final] : [];
+
                 matchesToSimulate = [
                     ...(tournamentData.quarterfinals || []), 
                     ...(tournamentData.semifinals || []), 
-                    tournamentData.final
+                    ...finalMatchArray
                 ].filter(m => m && getTeamByT(m.A) && getTeamByT(m.B)); // Chỉ giả lập trận đã có 2 đội
+                
                 isGroup = false;
                 if (matchesToSimulate.length === 0) return showStatus(`Chưa đủ đội vào Vòng loại để giả lập tỉ số.`, 'warning', 'statusMessage');
             } else {
@@ -1175,6 +1182,7 @@
                      newScore = 0;
                 }
                 
+                // Vòng bảng (max 11) hoặc vòng loại (max 15)
                 if (newScore > MAX_SCORE) {
                     inputElement.value = ''; // Reset input về trống (null)
                     showStatus(`CẢNH BÁO: Điểm tối đa cho vòng ${isGroupMatch ? 'BẢNG' : 'LOẠI'} là ${MAX_SCORE}. Điểm đã nhập bị xóa.`, 'warning', 'statusMessage');
@@ -1186,14 +1194,17 @@
             match[teamKey] = newScore;
             
             // 4. Buộc đội thua về 0 nếu đội thắng đạt điểm tối đa và đội thua chưa có điểm
-            const otherTeamKey = teamKey === 'sA' ? 'sB' : 'sA';
+            // Luật này hơi phức tạp, tốt nhất là người dùng nên nhập đủ. Tạm thời không tự động buộc về 0.
+
             const sA = match.sA;
             const sB = match.sB;
             
             if (sA !== null && sB === null && sA === MAX_SCORE) {
-                match.sB = 0; 
+                // Nếu A đạt MAX_SCORE và B chưa có điểm, có thể gợi ý 0
+                // match.sB = 0; // Tạm thời bỏ, để người dùng nhập thủ công
             } else if (sB !== null && sA === null && sB === MAX_SCORE) {
-                match.sA = 0; 
+                // Tương tự cho B
+                // match.sA = 0; // Tạm thời bỏ, để người dùng nhập thủ công
             }
 
             // 5. Cập nhật người thắng cuộc (Wn) và recalculate
@@ -1202,10 +1213,12 @@
             // Cần re-calculate toàn bộ để cập nhật bảng xếp hạng và nhánh Knockout
             calculateAndRenderAll(); 
 
-            // Sau khi tính toán và render, cập nhật lại giá trị input nếu có thay đổi (do buộc về 0)
-            if (isGroupMatch || matchCode.startsWith('QF') || matchCode.startsWith('SF') || matchCode === 'F') {
-                const updatedMatch = matchCode === 'F' ? tournamentData.final : matchesArray[index];
-                 inputElement.value = updatedMatch[teamKey] !== null ? updatedMatch[teamKey] : '';
+            // Sau khi tính toán và render, cập nhật lại giá trị input (chỉ cần thiết nếu có auto-correct score)
+            // Hiện tại không có auto-correct, nên chỉ cần đảm bảo giá trị nhập vào là đúng
+            if (newScore !== null) {
+                inputElement.value = newScore;
+            } else {
+                inputElement.value = '';
             }
         }
 
@@ -1319,6 +1332,7 @@
                 const teamA = getTeamByT(match.A);
                 const teamB = getTeamByT(match.B);
                 
+                // Hiển thị Tn nếu tìm thấy đội, nếu không hiển thị mã/placeholder
                 const teamA_Tn = teamA ? teamA.Tn : match.A;
                 const teamB_Tn = teamB ? teamB.Tn : match.B;
 
@@ -1374,6 +1388,7 @@
 
             // Final
             let finalHtml = `<h3 class="text-xl font-bold mb-4 text-yellow-500">Chung Kết (Final)</h3>`;
+            // Final match doesn't use an index from an array, so pass -1 or a unique identifier.
             finalHtml += renderKnockoutMatch(tournamentData.final, -1, 'final'); 
             document.getElementById('finalSection').innerHTML = finalHtml;
         }
