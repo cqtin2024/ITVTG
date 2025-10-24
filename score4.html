@@ -409,11 +409,50 @@
                 return;
             }
 
-            // Sử dụng toàn bộ dữ liệu giải đấu hiện tại (đã bao gồm thay đổi team và tỉ số)
-            const liveStateContent = JSON.parse(JSON.stringify(tournamentData));
+            // Tạo bản sao dữ liệu hiện tại để commit
+            let liveStateContent = JSON.parse(JSON.stringify(tournamentData));
+            
+            // Chuyển đổi ngược lại sang cấu trúc JSON mới (Unified 'matches' array)
+            // Lấy tất cả các trận đấu từ các mảng con
+            const allMatches = [
+                ...(liveStateContent.matchesA || []),
+                ...(liveStateContent.matchesB || []),
+                ...(liveStateContent.matchesC || []),
+                ...(liveStateContent.matchesD || []),
+                ...(liveStateContent.quarterfinals || []),
+                ...(liveStateContent.semifinals || []),
+            ];
+            // Thêm trận chung kết
+            if (liveStateContent.final) {
+                allMatches.push(liveStateContent.final);
+            }
+            
+            // Xóa các mảng con cũ và thêm mảng 'matches' thống nhất
+            liveStateContent.matches = allMatches;
+            delete liveStateContent.matchesA;
+            delete liveStateContent.matchesB;
+            delete liveStateContent.matchesC;
+            delete liveStateContent.matchesD;
+            delete liveStateContent.quarterfinals;
+            delete liveStateContent.semifinals;
+            delete liveStateContent.final;
+
+            // Loại bỏ các trường tự tính toán (tableA, B, C, D)
+            delete liveStateContent.tableA;
+            delete liveStateContent.tableB;
+            delete liveStateContent.tableC;
+            delete liveStateContent.tableD;
+            delete liveStateContent.champion;
+            delete liveStateContent.runnerUp;
+            delete liveStateContent.thirdPlace1;
+            delete liveStateContent.thirdPlace2;
+            
+            // Có thể thêm trường teamStandings nếu muốn lưu kết quả xếp hạng đã tính toán
+            // liveStateContent.teamStandings = calculateAllStandings(liveStateContent);
+            // Hiện tại, ta sẽ bỏ qua trường teamStandings để giữ file gọn nhất.
 
             const base64Content = jsonToBase64(liveStateContent);
-            const commitMessage = 'Update tournament live state to state4s.json via web app';
+            const commitMessage = 'Update tournament live state to state4s.json via web app (Unified format)';
             
             // Yêu cầu xác nhận vì thao tác này GHI ĐÈ toàn bộ file state4s.json
             if (!confirm(`CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file ${LIVE_FILE_PATH} trên GitHub. Bạn có chắc chắn không?`)) {
@@ -436,23 +475,14 @@
             }
 
             // Lấy toàn bộ dữ liệu hiện tại trong bộ nhớ (chỉ lấy phần team và giữ lại cấu trúc trận đấu gốc)
-            const fullTeamData = { 
-                tL: tournamentData.tL,
-                matchesA: initialTournamentData.matchesA,
-                matchesB: initialTournamentData.matchesB,
-                matchesC: initialTournamentData.matchesC,
-                matchesD: initialTournamentData.matchesD,
-                quarterfinals: initialTournamentData.quarterfinals,
-                semifinals: initialTournamentData.semifinals,
-                final: initialTournamentData.final,
-                // Giữ lại tất cả các field khác của state4.json nếu có
-                ...Object.fromEntries(Object.entries(initialTournamentData).filter(([key]) => 
-                    !['tL', 'matchesA', 'matchesB', 'matchesC', 'matchesD', 'quarterfinals', 'semifinals', 'final'].includes(key)))
-            };
-
+            let fullTeamData = JSON.parse(JSON.stringify(initialTournamentData));
+            
             // Ghi đè thông tin đội mới vào cấu trúc ban đầu
             fullTeamData.tL = tournamentData.tL; 
 
+            // Cần chuyển đổi ngược lại nếu initialTournamentData đang ở cấu trúc cũ (matchesA, B...) 
+            // hoặc cấu trúc mới (matches, teamStandings). Ta chỉ cần đảm bảo nó có các trường gốc của state4.json.
+            
             const base64Content = jsonToBase64(fullTeamData);
             const commitMessage = 'Update team details and overwrite state4.json via web app';
             
@@ -500,6 +530,38 @@
             if (sB > sA) return 'B';
             return 'Chưa có';
         }
+        
+        /**
+         * Chuyển đổi cấu trúc JSON mới (dùng mảng 'matches' thống nhất) sang cấu trúc cũ 
+         * (dùng matchesA, matchesB, etc.) để phù hợp với logic tính toán và hiển thị hiện tại.
+         */
+        function standardizeDataStructure(data) {
+            if (!data) return null;
+
+            if (data.matches && Array.isArray(data.matches)) {
+                // 1. Split the unified 'matches' array into separate arrays by round code ('r')
+                data.matchesA = data.matches.filter(m => m.r === 'GA');
+                data.matchesB = data.matches.filter(m => m.r === 'GB');
+                data.matchesC = data.matches.filter(m => m.r === 'GC');
+                data.matchesD = data.matches.filter(m => m.r === 'GD');
+                
+                // 2. Map knockout rounds
+                data.quarterfinals = data.matches.filter(m => m.r === 'QF');
+                data.semifinals = data.matches.filter(m => m.r === 'SF');
+                
+                // 3. Map final match (single object)
+                const finalMatch = data.matches.find(m => m.r === 'F');
+                data.final = finalMatch || { "r": "F", "m": 1, "t": "17:05", "c": "S5", "A": "W.SF1", "sA": "0", "B": "W.SF2", "sB": "0", "Wn": "", "rU": "" };
+                
+                // 4. Clean up fields that the rest of the app shouldn't rely on directly
+                delete data.matches;
+                delete data.teamStandings; 
+                delete data.key_legend; // Loại bỏ chú giải key
+            } 
+            // Nếu data đã ở cấu trúc cũ (matchesA, B,...) thì không cần làm gì thêm
+            
+            return data;
+        }
 
         // --- TẢI DỮ LIỆU TỪ GITHUB (Ưu tiên state4s.json) ---
         
@@ -529,8 +591,10 @@
                     throw new Error(`state4.json: Lỗi cú pháp JSON. Vui lòng kiểm tra nội dung file. (${e.message})`); 
                 }
                 
-                // Luôn lưu cấu trúc base data vào initialTournamentData
+                // Luôn lưu cấu trúc base data vào initialTournamentData và chuẩn hóa cấu trúc
                 initialTournamentData = JSON.parse(JSON.stringify(finalBaseData)); 
+                initialTournamentData = standardizeDataStructure(initialTournamentData);
+
 
                 // 2. Tải Dữ liệu Trạng thái Trực Tiếp (state4s.json)
                 const liveResponse = await fetchWithRetry(LIVE_DATA_URL); 
@@ -539,18 +603,18 @@
                      if (liveText && liveText.trim().length >= 2) {
                          try {
                              finalLiveData = JSON.parse(liveText);
-                             tournamentData = finalLiveData;
+                             tournamentData = standardizeDataStructure(finalLiveData);
                              loadingMessage.textContent = "Đã tải thành công trạng thái trực tiếp từ state4s.json.";
                          } catch (e) {
-                             tournamentData = finalBaseData;
+                             tournamentData = initialTournamentData;
                              loadingMessage.textContent = `CẢNH BÁO: state4s.json bị lỗi cú pháp JSON. Đang sử dụng dữ liệu gốc state4.json.`;
                          }
                      } else {
-                         tournamentData = finalBaseData;
+                         tournamentData = initialTournamentData;
                          loadingMessage.textContent = "Không có file trạng thái trực tiếp state4s.json. Đang sử dụng dữ liệu gốc state4.json.";
                      }
                 } else {
-                     tournamentData = finalBaseData;
+                     tournamentData = initialTournamentData;
                      loadingMessage.textContent = "Không có file trạng thái trực tiếp state4s.json. Đang sử dụng dữ liệu gốc state4.json.";
                 }
 
@@ -668,6 +732,7 @@
             const standings = {};
 
             groupMatches.forEach(match => {
+                // Sử dụng Team Nickname (Tn) làm key (trường A/B trong matches)
                 if (!standings[match.A]) standings[match.A] = { D: match.A, W: 0, L: 0, HS: 0, Pts: 0, mP: 0, scoreDiff: 0 };
                 if (!standings[match.B]) standings[match.B] = { D: match.B, W: 0, L: 0, HS: 0, Pts: 0, mP: 0, scoreDiff: 0 };
             });
@@ -994,6 +1059,7 @@
             renderMatches('matchesD', tournamentData.matchesD, 'Vòng Bảng - Bảng D', true);
             renderMatches('quarterfinals', tournamentData.quarterfinals, 'Tứ Kết', true);
             renderMatches('semifinals', tournamentData.semifinals, 'Bán Kết', true);
+            // Lưu ý: final là một object, nhưng renderMatches yêu cầu một array
             renderMatches('finalSection', [tournamentData.final], 'Chung Kết', true);
 
             // 4. Render Final Results
