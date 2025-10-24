@@ -1,0 +1,147 @@
+{
+  "key_legend": {
+    "tL": "Team List (Danh sách đội chi tiết)",
+    "g": "Group (Mã Bảng đấu: A, B, C, D)",
+    "gR": "Group Rank (Vị trí xếp hạng trong bảng)",
+    "T": "Team ID/Primary Name (Mã hệ thống/Tên đội chính)",
+    "Tn": "Nickname (Tên rút gọn - Ghép tên 2 thành viên)",
+    "s": "Seed (Hạt giống - Chưa sử dụng/Đã thêm vào ghi chú)",
+    "aPL": "Average Pick Level (Cấp độ chọn trung bình)",
+    "P": "Players (Người chơi)",
+    "pL": "Pick Level (Cấp độ chọn cá nhân)",
+    "bY": "Birth Year (Năm sinh)",
+    "ph": "Phone (Số điện thoại)",
+    "em": "Email (Thư điện tử)",
+    "gC": "Game Code (Mã môn chơi: PK_DB - Pickleball Đôi)",
+    "fC": "Format Code (Mã thể thức: RR_KO - Vòng tròn + Loại trực tiếp)",
+    "W": "Wins (Số trận thắng)",
+    "L": "Losses (Số trận thua)",
+    "HS": "High Score (Điểm cao nhất)",
+    "Pts": "Points (Điểm số tích lũy)",
+    "mP": "Matches Played (Số trận đã đấu)",
+    "Mc": "Match Code (Mã trận đấu: Ví dụ GA1, QF3, SF1, F)",
+    "t": "Time (Thời gian)",
+    "c": "Court (Sân đấu)",
+    "A": "Team A (Đội A)",
+    "sA": "Score A (Tỉ số Đội A)",
+    "B": "Team B (Đội B)",
+    "sB": "Score B (Tỉ số Đội B)",
+    "Wn": "Winner (Đội thắng)",
+    "rU": "Runner-Up (Đội về nhì)",
+    "teamStandings": "Team Standings (Bảng xếp hạng chung)",
+    "matches": "All Matches (Tất cả các trận đấu)",
+    "name": "Player Name (Tên người chơi - Trong P)",
+    "seed": "Seed/Hạt giống (Trong teamStandings)",
+
+    "TournamentInfo": "Tournament Information (Thông tin Giải đấu)",
+    "TN": "Tournament Name (Tên giải đấu)",
+    "Org": "Organizer (Đơn vị tổ chức)",
+    "LogoL": "Logo Link (Link logo)",
+    "SD": "Start Date (Ngày bắt đầu giải đấu)",
+    "ED": "End Date (Ngày kết thúc giải đấu)",
+    "FTT": "First Match Time (Giờ thi đấu trận đầu tiên)",
+    "VL": "Venue Location (Địa điểm thi đấu)",
+    "MapVL": "Map Venue Link (Link map địa điểm thi đấu)",
+    "GL": "Gala Location (Địa điểm tiệc Gala)",
+    "GT": "Gala Time (Thời gian tiệc Gala)",
+    "MapGL": "Map Gala Link (Link map địa điểm tiệc gala)"
+  },
+
+  "TournamentInfo": {
+    "TN": "Pickleball ITVTG Tournament 2025",
+    "Org": "IT Vũng Tàu Goup",
+    "LogoL": "https://github.com/cqtin2024/ITVTG/blob/main/LogoITGVT01.png",
+    "SD": "26-10-2025",
+    "ED": "26-10-2025",
+    "FTT": "14:00",
+    "VL": "HM Sport - Pickleball & Coffee - 195 Võ Thị Sáu, Vũng Tàu",
+    "MapVL": "https://maps.app.goo.gl/KqqrpVqmVi4uNg7s7",
+    "GL": "Quán nhậu Thống Nhất - 56 Thống Nhất, Vũng Tàu ",
+    "GT": "18:30",
+    "MapGL": "https://maps.app.goo.gl/Zbuo59wSeRsHP6E59"
+  },
+
+  "teamStandings": [
+    { "g": "A", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 4, "T": "Team 9", "Tn": "Duy Hưng-Minh Tú", "seed": "A1" },
+    { "g": "A", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 1, "T": "Team 3", "Tn": "Quốc Thịnh-Minh Phương", "seed": "A2" },
+    { "g": "A", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 3, "T": "Team 11", "Tn": "Minh Chang-Minh Châu", "seed": "A3" },
+    { "g": "A", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 2, "T": "Team 5", "Tn": "Quốc Khánh-Linh Vũ", "seed": "A4" },
+
+    { "g": "B", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 4, "T": "Team 4", "Tn": "Quí Tuấn-Mạnh Hùng", "seed": "B1" },
+    { "g": "B", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 1, "T": "Team 7", "Tn": "Quốc Hùng-Đức Duy", "seed": "B2" },
+    { "g": "B", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 3, "T": "Team 12", "Tn": "Thanh Sơn-Khoa Tiến", "seed": "B3" },
+    { "g": "B", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 2, "T": "Team 1", "Tn": "Quang Tiến-Tất Thành", "seed": "B4" },
+
+    { "g": "C", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 4, "T": "Team 16", "Tn": "Hoàng Thanh-Công Phương", "seed": "C1" },
+    { "g": "C", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 1, "T": "Team 10", "Tn": "Lê Duy-Thanh Vương", "seed": "C2" },
+    { "g": "C", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 3, "T": "Team 14", "Tn": "Văn Cường-Văn Dũng", "seed": "C3" },
+    { "g": "C", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 2, "T": "Team 6", "Tn": "Đông Chu-Ngọc Hùng", "seed": "C4" },
+
+    { "g": "D", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 4, "T": "Team 13", "Tn": "Bá Châu-Hiền Phong", "seed": "D1" },
+    { "g": "D", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 1, "T": "Team 8", "Tn": "Tiến Mạnh-Quang Tín", "seed": "D2" },
+    { "g": "D", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 3, "T": "Team 15", "Tn": "Minh Thiện-Duy Minh", "seed": "D3" },
+    { "g": "D", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 2, "T": "Team 2", "Tn": "Viết Tuấn-Quang Dũng", "seed": "D4" }
+  ],
+
+  "matches": [
+    { "Mc": "GA1", "t": "14:15", "c": "S3", "A": "Duy Hưng-Minh Tú", "sA": "8", "B": "Quốc Thịnh-Minh Phương", "sB": "11", "Wn": "Quốc Thịnh-Minh Phương" },
+    { "Mc": "GA2", "t": "14:15", "c": "S4", "A": "Minh Chang-Minh Châu", "sA": "8", "B": "Quốc Khánh-Linh Vũ", "sB": "11", "Wn": "Quốc Khánh-Linh Vũ" },
+    { "Mc": "GA3", "t": "14:45", "c": "S3", "A": "Duy Hưng-Minh Tú", "sA": "8", "B": "Minh Chang-Minh Châu", "sB": "11", "Wn": "Minh Chang-Minh Châu" },
+    { "Mc": "GA4", "t": "14:45", "c": "S4", "A": "Quốc Thịnh-Minh Phương", "sA": "8", "B": "Quốc Khánh-Linh Vũ", "sB": "11", "Wn": "Quốc Khánh-Linh Vũ" },
+    { "Mc": "GA5", "t": "15:15", "c": "S3", "A": "Duy Hưng-Minh Tú", "sA": "8", "B": "Quốc Khánh-Linh Vũ", "sB": "11", "Wn": "Quốc Khánh-Linh Vũ" },
+    { "Mc": "GA6", "t": "15:15", "c": "S4", "A": "Quốc Thịnh-Minh Phương", "sA": "8", "B": "Minh Chang-Minh Châu", "sB": "11", "Wn": "Minh Chang-Minh Châu" },
+
+    { "Mc": "GB1", "t": "14:30", "c": "S3", "A": "Quí Tuấn-Mạnh Hùng", "sA": "8", "B": "Quốc Hùng-Đức Duy", "sB": "11", "Wn": "Quốc Hùng-Đức Duy" },
+    { "Mc": "GB2", "t": "14:30", "c": "S4", "A": "Thanh Sơn-Khoa Tiến", "sA": "8", "B": "Quang Tiến-Tất Thành", "sB": "11", "Wn": "Quang Tiến-Tất Thành" },
+    { "Mc": "GB3", "t": "15:00", "c": "S3", "A": "Quí Tuấn-Mạnh Hùng", "sA": "8", "B": "Thanh Sơn-Khoa Tiến", "sB": "11", "Wn": "Thanh Sơn-Khoa Tiến" },
+    { "Mc": "GB4", "t": "15:00", "c": "S4", "A": "Quốc Hùng-Đức Duy", "sA": "8", "B": "Quang Tiến-Tất Thành", "sB": "11", "Wn": "Quang Tiến-Tất Thành" },
+    { "Mc": "GB5", "t": "15:30", "c": "S3", "A": "Quí Tuấn-Mạnh Hùng", "sA": "8", "B": "Quang Tiến-Tất Thành", "sB": "11", "Wn": "Quang Tiến-Tất Thành" },
+    { "Mc": "GB6", "t": "15:30", "c": "S4", "A": "Quốc Hùng-Đức Duy", "sA": "8", "B": "Thanh Sơn-Khoa Tiến", "sB": "11", "Wn": "Thanh Sơn-Khoa Tiến" },
+
+    { "Mc": "GC1", "t": "14:15", "c": "S5", "A": "Hoàng Thanh-Công Phương", "sA": "8", "B": "Lê Duy-Thanh Vương", "sB": "11", "Wn": "Lê Duy-Thanh Vương" },
+    { "Mc": "GC2", "t": "14:15", "c": "S6", "A": "Văn Cường-Văn Dũng", "sA": "8", "B": "Đông Chu-Ngọc Hùng", "sB": "11", "Wn": "Đông Chu-Ngọc Hùng" },
+    { "Mc": "GC3", "t": "14:45", "c": "S5", "A": "Hoàng Thanh-Công Phương", "sA": "8", "B": "Văn Cường-Văn Dũng", "sB": "11", "Wn": "Văn Cường-Văn Dũng" },
+    { "Mc": "GC4", "t": "14:45", "c": "S6", "A": "Lê Duy-Thanh Vương", "sA": "8", "B": "Đông Chu-Ngọc Hùng", "sB": "11", "Wn": "Đông Chu-Ngọc Hùng" },
+    { "Mc": "GC5", "t": "15:15", "c": "S5", "A": "Hoàng Thanh-Công Phương", "sA": "8", "B": "Đông Chu-Ngọc Hùng", "sB": "11", "Wn": "Đông Chu-Ngọc Hùng" },
+    { "Mc": "GC6", "t": "15:15", "c": "S6", "A": "Lê Duy-Thanh Vương", "sA": "8", "B": "Văn Cường-Văn Dũng", "sB": "11", "Wn": "Văn Cường-Văn Dũng" },
+
+    { "Mc": "GD1", "t": "14:30", "c": "S5", "A": "Bá Châu-Hiền Phong", "sA": "8", "B": "Tiến Mạnh-Quang Tín", "sB": "11", "Wn": "Tiến Mạnh-Quang Tín" },
+    { "Mc": "GD2", "t": "14:30", "c": "S6", "A": "Minh Thiện-Duy Minh", "sA": "8", "B": "Viết Tuấn-Quang Dũng", "sB": "11", "Wn": "Viết Tuấn-Quang Dũng" },
+    { "Mc": "GD3", "t": "15:00", "c": "S5", "A": "Bá Châu-Hiền Phong", "sA": "8", "B": "Minh Thiện-Duy Minh", "sB": "11", "Wn": "Minh Thiện-Duy Minh" },
+    { "Mc": "GD4", "t": "15:00", "c": "S6", "A": "Tiến Mạnh-Quang Tín", "sA": "8", "B": "Viết Tuấn-Quang Dũng", "sB": "11", "Wn": "Viết Tuấn-Quang Dũng" },
+    { "Mc": "GD5", "t": "15:30", "c": "S5", "A": "Bá Châu-Hiền Phong", "sA": "8", "B": "Viết Tuấn-Quang Dũng", "sB": "11", "Wn": "Viết Tuấn-Quang Dũng" },
+    { "Mc": "GD6", "t": "15:30", "c": "S6", "A": "Tiến Mạnh-Quang Tín", "sA": "8", "B": "Minh Thiện-Duy Minh", "sB": "11", "Wn": "Minh Thiện-Duy Minh" },
+
+    { "Mc": "QF1", "t": "15:45", "c": "S3", "A": "W.A", "sA": "8", "B": "R.B", "sB": "11", "Wn": "R.B" },
+    { "Mc": "QF2", "t": "15:45", "c": "S4", "A": "W.B", "sA": "8", "B": "R.A", "sB": "11", "Wn": "R.A" },
+    { "Mc": "QF3", "t": "16:00", "c": "S5", "A": "W.C", "sA": "8", "B": "R.D", "sB": "11", "Wn": "R.D" },
+    { "Mc": "QF4", "t": "16:00", "c": "S6", "A": "W.D", "sA": "8", "B": "R.C", "sB": "11", "Wn": "R.C" },
+
+    { "Mc": "SF1", "t": "16:10", "c": "S4", "A": "W.QF1", "sA": "8", "B": "W.QF3", "sB": "11", "Wn": "W.QF3" },
+    { "Mc": "SF2", "t": "16:25", "c": "S5", "A": "W.QF2", "sA": "8", "B": "W.QF4", "sB": "11", "Wn": "W.QF4" },
+
+    { "Mc": "F", "t": "17:05", "c": "S5", "A": "W.SF1", "sA": "8", "B": "W.SF2", "sB": "11", "Wn": "W.SF2", "rU": "W.SF1" }
+  ],
+
+  "tL": [
+    { "g": "A", "T": "Team 9", "Tn": "Duy Hưng-Minh Tú", "aPL": 2.5, "s": 0, "P": [ { "name": "Từ Duy Hưng", "bY": "1995", "ph": "09xx-xxx-001", "em": "duyhung@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Trần Nguyễn Minh Tú", "bY": "1998", "ph": "09xx-xxx-002", "em": "minhtu@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "A", "T": "Team 3", "Tn": "Quốc Thịnh-Minh Phương", "aPL": 2.5, "s": 0, "P": [ { "name": "Võ Dương Quốc Thịnh", "bY": "1996", "ph": "09xx-xxx-003", "em": "quocthinh@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Lê Minh Phương", "bY": "1997", "ph": "09xx-xxx-004", "em": "minhphuong@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "A", "T": "Team 11", "Tn": "Minh Chang-Minh Châu", "aPL": 2.5, "s": 0, "P": [ { "name": "Minh Chang", "bY": "2000", "ph": "09xx-xxx-005", "em": "minhchang@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Lê Minh Châu", "bY": "2001", "ph": "09xx-xxx-006", "em": "minhchau@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "A", "T": "Team 5", "Tn": "Quốc Khánh-Linh Vũ", "aPL": 2.5, "s": 0, "P": [ { "name": "Mai Quốc Khánh", "bY": "1993", "ph": "09xx-xxx-007", "em": "quockhanh@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Nguyễn Bá Linh Vũ", "bY": "1994", "ph": "09xx-xxx-008", "em": "linhvua@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+
+    { "g": "B", "T": "Team 4", "Tn": "Quí Tuấn-Mạnh Hùng", "aPL": 2.5, "s": 0, "P": [ { "name": "Trần Quí Tuấn", "bY": "1992", "ph": "09xx-xxx-009", "em": "quytuan@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Hoàng Mạnh Hùng", "bY": "1993", "ph": "09xx-xxx-010", "em": "manhhung@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "B", "T": "Team 7", "Tn": "Quốc Hùng-Đức Duy", "aPL": 2.5, "s": 0, "P": [ { "name": "Nguyễn Quốc Hùng", "bY": "1995", "ph": "09xx-xxx-011", "em": "quochung@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Phạm Đức Duy", "bY": "1996", "ph": "09xx-xxx-012", "em": "ducduy@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "B", "T": "Team 12", "Tn": "Thanh Sơn-Khoa Tiến", "aPL": 2.5, "s": 0, "P": [ { "name": "Đinh Hoàng Thanh Sơn", "bY": "1997", "ph": "09xx-xxx-013", "em": "thanhson@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Trần Đỗ Khoa Tiến", "bY": "1998", "ph": "09xx-xxx-014", "em": "khoatien@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "B", "T": "Team 1", "Tn": "Quang Tiến-Tất Thành", "aPL": 2.5, "s": 0, "P": [ { "name": "Bùi Quang Tiến", "bY": "1995", "ph": "09xx-xxx-015", "em": "quangtien@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Mai Tất Thành", "bY": "1996", "ph": "09xx-xxx-016", "em": "tatthanh@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+
+    { "g": "C", "T": "Team 16", "Tn": "Hoàng Thanh-Công Phương", "aPL": 2.5, "s": 0, "P": [ { "name": "Nguyễn Hoàng Thanh", "bY": "1992", "ph": "09xx-xxx-017", "em": "hoangthanh@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Trần Công Phương", "bY": "1993", "ph": "09xx-xxx-018", "em": "congphuong@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "C", "T": "Team 10", "Tn": "Lê Duy-Thanh Vương", "aPL": 2.5, "s": 0, "P": [ { "name": "Lê Duy", "bY": "1994", "ph": "09xx-xxx-019", "em": "leduy@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Hồ Thanh Vương", "bY": "1995", "ph": "09xx-xxx-020", "em": "thanhvuong@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "C", "T": "Team 14", "Tn": "Văn Cường-Văn Dũng", "aPL": 2.5, "s": 0, "P": [ { "name": "Nguyễn Văn Cường", "bY": "1996", "ph": "09xx-xxx-021", "em": "vancuong@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Đoàn Văn Dũng", "bY": "1997", "ph": "09xx-xxx-022", "em": "vandzung@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "C", "T": "Team 6", "Tn": "Đông Chu-Ngọc Hùng", "aPL": 2.5, "s": 0, "P": [ { "name": "Trần Ngọc Đông Chu", "bY": "1998", "ph": "09xx-xxx-023", "em": "dongchu@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Nguyễn Ngọc Hùng", "bY": "1999", "ph": "09xx-xxx-024", "em": "ngochung@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+
+    { "g": "D", "T": "Team 13", "Tn": "Bá Châu-Hiền Phong", "aPL": 2.5, "s": 0, "P": [ { "name": "Lê Bá Châu", "bY": "1992", "ph": "09xx-xxx-025", "em": "bachau@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Ngô Hiền Phong", "bY": "1993", "ph": "09xx-xxx-026", "em": "hienphong@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "D", "T": "Team 8", "Tn": "Tiến Mạnh-Quang Tín", "aPL": 2.5, "s": 0, "P": [ { "name": "Lại Tiến Mạnh", "bY": "1994", "ph": "09xx-xxx-027", "em": "tienmanh@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Cao Quang Tín", "bY": "1995", "ph": "09xx-xxx-028", "em": "quangtin@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "D", "T": "Team 15", "Tn": "Minh Thiện-Duy Minh", "aPL": 2.5, "s": 0, "P": [ { "name": "Huỳnh Minh Thiện", "bY": "1996", "ph": "09xx-xxx-029", "em": "minhthien@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Nguyễn Duy Minh", "bY": "1997", "ph": "09xx-xxx-030", "em": "duyminh@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] },
+    { "g": "D", "T": "Team 2", "Tn": "Viết Tuấn-Quang Dũng", "aPL": 2.5, "s": 0, "P": [ { "name": "Trần Viết Tuấn", "bY": "1998", "ph": "09xx-xxx-031", "em": "viettuan@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" }, { "name": "Huỳnh Lê Quang Dũng", "bY": "1999", "ph": "09xx-xxx-032", "em": "quangdung@example.com", "pL": 2.5, "gC": "PK_DB", "fC": "RR_KO" } ] }
+  ]
+}
