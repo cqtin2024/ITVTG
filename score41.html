@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.2.2</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.2.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.2.2)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.2.3)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync)</p>
                 </div>
             </div>
@@ -207,10 +207,22 @@
                 <div id="scoreCommitResult" class="mt-3 p-3 rounded-lg text-sm font-semibold hidden"></div>
             </section>
             
+             <section class="p-4 bg-[var(--match-bg)] rounded-lg border-l-4 border-green-500">
+                 <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    3. Xuất Dữ Liệu Giải Đấu (state41.json Format)
+                </h3>
+                <p class="text-[var(--text-color)] mb-4">Tạo và tải về file JSON chứa toàn bộ trạng thái giải đấu hiện tại, bao gồm thông tin đội và tỉ số đã tính toán.</p>
+                <button onclick="exportTournamentData()" class="md:w-auto px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-lg transition duration-300">
+                    TẢI XUỐNG TOÀN BỘ JSON
+                </button>
+                <div id="configExportResult" class="mt-3 p-3 rounded-lg text-sm font-semibold hidden"></div>
+            </section>
+            
             <section class="p-4 bg-[var(--match-bg)] rounded-lg border-l-4 border-yellow-500">
                  <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3 flex items-center">
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    3. Tùy Chọn Giao Diện & Đồng Bộ Lại
+                    4. Tùy Chọn Giao Diện & Đồng Bộ Lại
                 </h3>
                 <p class="text-[var(--text-color)] mb-4">Bạn có thể chuyển đổi giữa giao diện Sáng/Tối hoặc tải lại trạng thái online mới nhất.</p>
                 <button onclick="document.getElementById('themeToggle').click()" class="md:w-auto px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg shadow-lg transition duration-300 mr-4">
@@ -239,7 +251,7 @@
     <script>
         
         // ==============================================================================================================
-        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.2.2 - Fix logic tính toán/render)
+        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.2.3 - Bổ sung Export Full JSON)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -448,7 +460,7 @@
             }
             
             const base64Content = jsonToBase64(diffData);
-            const commitMessage = 'Update match scores via web app (state41s.json - V4.2.2)';
+            const commitMessage = 'Update match scores via web app (state41s.json - V4.2.3)';
             
             await getShaAndCommit(SCORE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
         };
@@ -471,14 +483,14 @@
                  aPL: team.aPL, 
                  g: team.g,
                  s: team.s,
-                 P: team.P
+                 P: team.P // Note: P already contains updated name/pL/bY etc.
             }));
 
             // FIX CẤU TRÚC V4.2: Gộp mảng match lại thành 'matches' thống nhất trước khi commit BASE file
             const commitData = unifyMatches(fullTeamData);
             
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.2.2)';
+            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.2.3)';
             
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -489,6 +501,40 @@
             
             await loadDataFromGitHub();
             switchTab('TeamManagement');
+        }
+        
+        // --- LOGIC XUẤT DỮ LIỆU JSON (Yêu cầu mới) ---
+        window.exportTournamentData = function() {
+            if (!tournamentData) {
+                showStatus('Lỗi: Không có dữ liệu để xuất.', 'error', 'configExportResult');
+                return;
+            }
+
+            // 1. Tạo bản sao của dữ liệu hiện tại
+            let exportData = JSON.parse(JSON.stringify(tournamentData));
+            
+            // 2. Hợp nhất tất cả các trận đấu vào mảng 'matches' duy nhất (đúng định dạng state41.json)
+            exportData = unifyMatches(exportData);
+
+            // 3. Chuẩn bị file JSON
+            const jsonString = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            // 4. Tạo link download
+            const a = document.createElement('a');
+            a.href = url;
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+            a.download = `state41_FULL_EXPORT_${dateStr}.json`; 
+            
+            // 5. Kích hoạt download
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus('Đã xuất toàn bộ dữ liệu thành công!', 'success', 'configExportResult');
         }
 
         // --- HÀM HỖ TRỢ CHUNG ---
@@ -567,7 +613,7 @@
         }
         
         // =========================================================================
-        // V4.2 FIX: Xử lý mảng 'matches' thống nhất
+        // V4.2 FIX: Xử lý mảng 'matches' thống nhất (Quan trọng cho Export)
         // =========================================================================
 
         function splitUnifiedMatches(data) {
@@ -587,6 +633,7 @@
         }
 
         function unifyMatches(data) {
+            // Chỉ chạy nếu các mảng đã được tách (tức là đang ở trạng thái sau khi load/tính toán)
             if (data.matchesA) {
                 const unified = [
                     ...(data.matchesA || []),
@@ -944,8 +991,12 @@
                          match.sA = 0; // Buộc đội A = 0 nếu đội B đạt 11 điểm và đội A chưa có điểm
                     }
                 } else {
-                    // Áp dụng luật 11 điểm cho knockout (chỉ khi cả hai đều đã có điểm)
-                    // Hoặc các quy tắc khác cho vòng loại trực tiếp (ví dụ: best of 3/5, nhưng ở đây chỉ là 1 game)
+                    // Luật 11 điểm 1 ván duy nhất áp dụng cho cả vòng loại trực tiếp (giả định)
+                    if (teamKey === 'sA' && sA !== null && sB === null && sA >= 11) {
+                         match.sB = 0;
+                    } else if (teamKey === 'sB' && sB !== null && sA === null && sB >= 11) {
+                         match.sA = 0;
+                    }
                 }
 
                 // Cập nhật người thắng cuộc (Wn) và recalculate
