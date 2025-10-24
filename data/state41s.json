@@ -1,9 +1,72 @@
 {
+  "matchesD": [
+    {
+      "i": 0,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 1,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 2,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 3,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 4,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 5,
+      "sA": null,
+      "sB": null
+    }
+  ],
   "quarterfinals": [
     {
       "i": 0,
-      "sA": 10,
-      "sB": "11"
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 1,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 2,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 3,
+      "sA": null,
+      "sB": null
     }
-  ]
+  ],
+  "semifinals": [
+    {
+      "i": 0,
+      "sA": null,
+      "sB": null
+    },
+    {
+      "i": 1,
+      "sA": null,
+      "sB": null
+    }
+  ],
+  "final": {
+    "sA": null,
+    "sB": null
+  }
 }
