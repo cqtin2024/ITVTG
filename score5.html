@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V5.0</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V5.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V5.0)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V5.1)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync)</p>
                 </div>
             </div>
@@ -313,7 +313,7 @@
     <script>
         
         // ==============================================================================================================
-        // GITHUB API CONFIGURATION & CORE DATA (V5.0)
+        // GITHUB API CONFIGURATION & CORE DATA (V5.1 - Cập nhật logic hiển thị tên đội trong vòng bảng)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -748,7 +748,7 @@
             if(finalMatch) updateMatchWinner(finalMatch);
         }
 
-        // --- LOGIC XẾP HẠNG CHUNG CUỘC (V5.0) ---
+        // --- LOGIC XẾP HẠNG CHUNG CUỘC (V5.1) ---
 
         /**
          * Lấy tên đội (Tn) từ Team ID (T)
@@ -1038,13 +1038,19 @@
                     const teamA = data.tL.find(t => t.T === match.teamA);
                     const teamB = data.tL.find(t => t.T === match.teamB);
                     const statusClass = match.sA !== null && match.sB !== null ? 'border-l-4 border-green-500' : 'border-l-4 border-gray-500';
+                    
+                    // START: Logic cập nhật để tránh undefined/null
+                    const teamAName = teamA ? teamA.Tn : (match.teamA ? match.teamA : 'Chưa xác định');
+                    const teamBName = teamB ? teamB.Tn : (match.teamB ? match.teamB : 'Chưa xác định');
+                    // END: Logic cập nhật
+                    
 
                     matchHtml += `
                         <div class="match-card p-3 rounded-xl shadow flex items-center justify-between ${statusClass}">
                             <div class="flex-shrink-0 text-sm font-semibold text-gray-500 w-12">${match.Mc}</div>
                             
                             <div class="flex-grow flex items-center justify-between mx-4 space-x-2">
-                                <span class="font-bold text-right truncate w-28 md:w-40">${teamA ? teamA.Tn : match.teamA}</span>
+                                <span class="font-bold text-right truncate w-28 md:w-40">${teamAName}</span>
                                 
                                 <div class="flex items-center space-x-1">
                                     ${renderScoreInput(`matches${group}`, index, 'A', match.sA)}
@@ -1052,7 +1058,7 @@
                                     ${renderScoreInput(`matches${group}`, index, 'B', match.sB)}
                                 </div>
                                 
-                                <span class="font-bold text-left truncate w-28 md:w-40">${teamB ? teamB.Tn : match.teamB}</span>
+                                <span class="font-bold text-left truncate w-28 md:w-40">${teamBName}</span>
                             </div>
                             
                             <div class="flex-shrink-0 text-xs font-semibold text-gray-500 w-12 text-right">Court ${match.c}</div>
@@ -1074,6 +1080,7 @@
                 const matchTitle = roundKey === 'final' ? 'Chung Kết' : roundKey === 'semifinals' ? `Bán Kết ${index+1}` : `Tứ Kết ${index+1}`;
                 const statusClass = match.sA !== null && match.sB !== null ? 'border-l-4 border-yellow-500' : 'border-l-4 border-gray-500';
                 const winnerName = match.winner ? getTeamName(match.winner) : 'Chưa xác định';
+                // TBA (To Be Announced) được giữ lại cho vòng loại vì là tên đội sẽ được xác định sau
                 const teamAName = match.teamA ? (teamA ? teamA.Tn : match.teamA) : 'TBA';
                 const teamBName = match.teamB ? (teamB ? teamB.Tn : match.teamB) : 'TBA';
 
@@ -1246,6 +1253,56 @@
             
             return unifiedData;
         }
+        
+        /**
+         * Lấy dữ liệu tỉ số chênh lệch (diff) giữa trạng thái hiện tại và trạng thái ban đầu (state41.json)
+         * @returns {object} Dữ liệu chỉ chứa các tỉ số đã thay đổi
+         */
+        function getDiffData() {
+            const diff = {};
+            
+            const rounds = ['matchesA', 'matchesB', 'matchesC', 'matchesD', 'quarterfinals', 'semifinals'];
+
+            // Lấy dữ liệu vòng đấu (base: từ state41.json đã tách, current: từ tournamentData)
+            const initialData = splitMatches(initialTournamentData); 
+
+            rounds.forEach(roundKey => {
+                const currentMatches = tournamentData[roundKey];
+                const initialMatches = initialData[roundKey];
+                
+                if (Array.isArray(currentMatches) && Array.isArray(initialMatches)) {
+                    const diffRound = [];
+                    currentMatches.forEach((currentMatch, index) => {
+                        const initialMatch = initialMatches[index];
+                        // Nếu tỉ số khác nhau hoặc một trong hai là null (và đã được nhập)
+                        if (currentMatch.sA !== initialMatch.sA || currentMatch.sB !== initialMatch.sB) {
+                            diffRound.push({
+                                i: index, // Lưu index để update trong file state41s.json
+                                sA: currentMatch.sA,
+                                sB: currentMatch.sB
+                            });
+                        }
+                    });
+
+                    if (diffRound.length > 0) {
+                        diff[roundKey] = diffRound;
+                    }
+                }
+            });
+
+            // Xử lý trận chung kết riêng (Final)
+            if (tournamentData.final && initialData.final) {
+                if (tournamentData.final.sA !== initialData.final.sA || tournamentData.final.sB !== initialData.final.sB) {
+                    diff.final = {
+                        sA: tournamentData.final.sA,
+                        sB: tournamentData.final.sB
+                    };
+                }
+            }
+            
+            return diff;
+        }
+
 
         // --- COMMIT LOGIC ---
 
@@ -1264,7 +1321,7 @@
             }
             
             const base64Content = jsonToBase64(diffData);
-            const commitMessage = 'Update match scores via web app (state41s.json - V5.0)';
+            const commitMessage = 'Update match scores via web app (state41s.json - V5.1)';
             
             await getShaAndCommit(SCORE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
         };
@@ -1293,13 +1350,14 @@
                  gR: team.gR || 0,
                  GS: team.GS || 0,
                  GC: team.GC || 0, 
+                 Pts: team.Pts || 0, // Thêm Pts
                  P: team.P // P already contains updated name/pL/bY etc.
             }));
 
             // Gộp mảng match lại thành 'matches' thống nhất trước khi commit BASE file
             const commitData = unifyMatches(fullTeamData);
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update team details and overwrite state41.json via web app (V5.0)';
+            const commitMessage = 'Update team details and overwrite state41.json via web app (V5.1)';
 
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -1320,8 +1378,27 @@
             }
             // 1. Tạo bản sao của dữ liệu hiện tại
             let exportData = JSON.parse(JSON.stringify(tournamentData));
+            
+            // Lọc lại dữ liệu đội để tránh các trường tạm thời không cần thiết
+            exportData.tL = exportData.tL.map(team => ({
+                 T: team.T, 
+                 Tn: team.Tn, 
+                 aPL: team.aPL, 
+                 g: team.g,
+                 s: team.s,
+                 W: team.W || 0,
+                 L: team.L || 0,
+                 mP: team.mP || 0,
+                 gR: team.gR || 0,
+                 GS: team.GS || 0,
+                 GC: team.GC || 0, 
+                 Pts: team.Pts || 0,
+                 P: team.P
+            }));
+
             // 2. Hợp nhất tất cả các trận đấu vào mảng 'matches' duy nhất (đúng định dạng state41.json)
             exportData = unifyMatches(exportData);
+            
             // 3. Chuẩn bị file JSON
             const jsonString = JSON.stringify(exportData, null, 2);
             const blob = new Blob([jsonString], { type: 'application/json' });
@@ -1561,12 +1638,12 @@
 
             // Event listeners for swipe navigation (on the whole app container)
             document.getElementById('app').addEventListener('touchstart', (e) => {
-                if (e.target.closest('.score-input, .text-input')) return;
+                 if (e.target.closest('.score-input, .text-input')) return;
                 startX = e.changedTouches[0].screenX;
             }, { passive: true });
 
             document.getElementById('app').addEventListener('touchend', (e) => {
-                if (e.target.closest('.score-input, .text-input')) return;
+                 if (e.target.closest('.score-input, .text-input')) return;
                 endX = e.changedTouches[0].screenX;
                 handleGesture();
             }, { passive: true });
