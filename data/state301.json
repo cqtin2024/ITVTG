@@ -39,6 +39,19 @@
     "semifinals": "Semifinals Matches (Các trận Bán kết)",
     "final": "Final Match (Trận Chung kết)"
   },
+    "TournamentInfo": {
+    "TN": "Pickleball ITVTG Tournament 2025",
+    "Org": "IT Vũng Tàu Goup",
+    "LogoL": "https://github.com/cqtin2024/ITVTG/blob/main/LogoITGVT01.png",
+    "SD": "26-10-2025",
+    "ED": "26-10-2025",
+    "FTT": "14:00",
+    "VL": "HM Sport - Pickleball & Coffee - 195 Võ Thị Sáu, Vũng Tàu",
+    "MapVL": "https://maps.app.goo.gl/KqqrpVqmVi4uNg7s7",
+    "GL": "Quán nhậu Thống Nhất - 56 Thống Nhất, Vũng Tàu ",
+    "GT": "18:30",
+    "MapGL": "https://maps.app.goo.gl/Zbuo59wSeRsHP6E59"
+  },
   "tableA": [
     {
       "D": "Duy Hưng-Minh Tú",
