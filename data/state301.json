@@ -92,116 +92,116 @@
   ],
   "tableB": [
     {
-      "D": "Quí Tuấn-Mạnh Hùng",
-      "W": 3,
+      "D": "Quang Tiến-Tất Thành",
+      "W": 0,
       "L": 0,
-      "HS": "11",
-      "Pts": 9,
-      "mP": 3,
-      "scoreDiff": 33
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
+    },
+    {
+      "D": "Quí Tuấn-Mạnh Hùng",
+      "W": 0,
+      "L": 0,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
     },
     {
       "D": "Quốc Hùng-Đức Duy",
-      "W": 2,
-      "L": 1,
-      "HS": "11",
-      "Pts": 6,
-      "mP": 3,
-      "scoreDiff": 11
+      "W": 0,
+      "L": 0,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
     },
     {
       "D": "Thanh Sơn-Khoa Tiến",
-      "W": 1,
-      "L": 2,
-      "HS": "11",
-      "Pts": 3,
-      "mP": 3,
-      "scoreDiff": -11
-    },
-    {
-      "D": "Quang Tiến-Tất Thành",
       "W": 0,
-      "L": 3,
+      "L": 0,
       "HS": "0",
       "Pts": 0,
-      "mP": 3,
-      "scoreDiff": -33
+      "mP": 0,
+      "scoreDiff": 0
     }
   ],
   "tableC": [
     {
-      "D": "Hoàng Thanh-Công Phương",
-      "W": 3,
+      "D": "Đông Chu-Ngọc Hùng",
+      "W": 0,
       "L": 0,
-      "HS": "11",
-      "Pts": 9,
-      "mP": 3,
-      "scoreDiff": 33
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
+    },
+    {
+      "D": "Hoàng Thanh-Công Phương",
+      "W": 0,
+      "L": 0,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
     },
     {
       "D": "Lê Duy-Thanh Vương",
-      "W": 2,
-      "L": 1,
-      "HS": "11",
-      "Pts": 6,
-      "mP": 3,
-      "scoreDiff": 11
+      "W": 0,
+      "L": 0,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
     },
     {
       "D": "Văn Cường-Văn Dũng",
-      "W": 1,
-      "L": 2,
-      "HS": "11",
-      "Pts": 3,
-      "mP": 3,
-      "scoreDiff": -11
-    },
-    {
-      "D": "Đông Chu-Ngọc Hùng",
       "W": 0,
-      "L": 3,
+      "L": 0,
       "HS": "0",
       "Pts": 0,
-      "mP": 3,
-      "scoreDiff": -33
+      "mP": 0,
+      "scoreDiff": 0
     }
   ],
   "tableD": [
     {
       "D": "Bá Châu-Hiền Phong",
-      "W": 3,
+      "W": 0,
       "L": 0,
-      "HS": "11",
-      "Pts": 9,
-      "mP": 3,
-      "scoreDiff": 33
-    },
-    {
-      "D": "Tiến Mạnh-Quang Tín",
-      "W": 2,
-      "L": 1,
-      "HS": "11",
-      "Pts": 6,
-      "mP": 3,
-      "scoreDiff": 11
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
     },
     {
       "D": "Minh Thiện-Duy Minh",
-      "W": 1,
-      "L": 2,
-      "HS": "11",
-      "Pts": 3,
-      "mP": 3,
-      "scoreDiff": -11
+      "W": 0,
+      "L": 0,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
+    },
+    {
+      "D": "Tiến Mạnh-Quang Tín",
+      "W": 0,
+      "L": 0,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
     },
     {
       "D": "Viết Tuấn-Quang Dũng",
       "W": 0,
-      "L": 3,
+      "L": 0,
       "HS": "0",
       "Pts": 0,
-      "mP": 3,
-      "scoreDiff": -33
+      "mP": 0,
+      "scoreDiff": 0
     }
   ],
   "matchesA": [
@@ -265,55 +265,55 @@
       "t": "14:30",
       "c": "S3",
       "A": "Quí Tuấn-Mạnh Hùng",
-      "sA": "11",
+      "sA": "0",
       "B": "Quốc Hùng-Đức Duy",
       "sB": "0",
-      "Wn": "Quí Tuấn-Mạnh Hùng"
+      "Wn": "Chưa có"
     },
     {
       "t": "14:30",
       "c": "S4",
       "A": "Thanh Sơn-Khoa Tiến",
-      "sA": "11",
+      "sA": "0",
       "B": "Quang Tiến-Tất Thành",
       "sB": "0",
-      "Wn": "Thanh Sơn-Khoa Tiến"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:00",
       "c": "S3",
       "A": "Quí Tuấn-Mạnh Hùng",
-      "sA": "11",
+      "sA": "0",
       "B": "Thanh Sơn-Khoa Tiến",
       "sB": "0",
-      "Wn": "Quí Tuấn-Mạnh Hùng"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:00",
       "c": "S4",
       "A": "Quốc Hùng-Đức Duy",
-      "sA": "11",
+      "sA": "0",
       "B": "Quang Tiến-Tất Thành",
       "sB": "0",
-      "Wn": "Quốc Hùng-Đức Duy"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:30",
       "c": "S3",
       "A": "Quí Tuấn-Mạnh Hùng",
-      "sA": "11",
+      "sA": "0",
       "B": "Quang Tiến-Tất Thành",
       "sB": "0",
-      "Wn": "Quí Tuấn-Mạnh Hùng"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:30",
       "c": "S4",
       "A": "Quốc Hùng-Đức Duy",
-      "sA": "11",
+      "sA": "0",
       "B": "Thanh Sơn-Khoa Tiến",
       "sB": "0",
-      "Wn": "Quốc Hùng-Đức Duy"
+      "Wn": "Chưa có"
     }
   ],
   "matchesC": [
@@ -321,55 +321,55 @@
       "t": "14:15",
       "c": "S5",
       "A": "Hoàng Thanh-Công Phương",
-      "sA": "11",
+      "sA": "0",
       "B": "Lê Duy-Thanh Vương",
       "sB": "0",
-      "Wn": "Hoàng Thanh-Công Phương"
+      "Wn": "Chưa có"
     },
     {
       "t": "14:15",
       "c": "S6",
       "A": "Văn Cường-Văn Dũng",
-      "sA": "11",
+      "sA": "0",
       "B": "Đông Chu-Ngọc Hùng",
       "sB": "0",
-      "Wn": "Văn Cường-Văn Dũng"
+      "Wn": "Chưa có"
     },
     {
       "t": "14:45",
       "c": "S5",
       "A": "Hoàng Thanh-Công Phương",
-      "sA": "11",
+      "sA": "0",
       "B": "Văn Cường-Văn Dũng",
       "sB": "0",
-      "Wn": "Hoàng Thanh-Công Phương"
+      "Wn": "Chưa có"
     },
     {
       "t": "14:45",
       "c": "S6",
       "A": "Lê Duy-Thanh Vương",
-      "sA": "11",
+      "sA": "0",
       "B": "Đông Chu-Ngọc Hùng",
       "sB": "0",
-      "Wn": "Lê Duy-Thanh Vương"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:15",
       "c": "S5",
       "A": "Hoàng Thanh-Công Phương",
-      "sA": "11",
+      "sA": "0",
       "B": "Đông Chu-Ngọc Hùng",
       "sB": "0",
-      "Wn": "Hoàng Thanh-Công Phương"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:15",
       "c": "S6",
       "A": "Lê Duy-Thanh Vương",
-      "sA": "11",
+      "sA": "0",
       "B": "Văn Cường-Văn Dũng",
       "sB": "0",
-      "Wn": "Lê Duy-Thanh Vương"
+      "Wn": "Chưa có"
     }
   ],
   "matchesD": [
@@ -377,55 +377,55 @@
       "t": "14:30",
       "c": "S5",
       "A": "Bá Châu-Hiền Phong",
-      "sA": "11",
+      "sA": "0",
       "B": "Tiến Mạnh-Quang Tín",
       "sB": "0",
-      "Wn": "Bá Châu-Hiền Phong"
+      "Wn": "Chưa có"
     },
     {
       "t": "14:30",
       "c": "S6",
       "A": "Minh Thiện-Duy Minh",
-      "sA": "11",
+      "sA": "0",
       "B": "Viết Tuấn-Quang Dũng",
       "sB": "0",
-      "Wn": "Minh Thiện-Duy Minh"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:00",
       "c": "S5",
       "A": "Bá Châu-Hiền Phong",
-      "sA": "11",
+      "sA": "0",
       "B": "Minh Thiện-Duy Minh",
       "sB": "0",
-      "Wn": "Bá Châu-Hiền Phong"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:00",
       "c": "S6",
       "A": "Tiến Mạnh-Quang Tín",
-      "sA": "11",
+      "sA": "0",
       "B": "Viết Tuấn-Quang Dũng",
       "sB": "0",
-      "Wn": "Tiến Mạnh-Quang Tín"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:30",
       "c": "S5",
       "A": "Bá Châu-Hiền Phong",
-      "sA": "11",
+      "sA": "0",
       "B": "Viết Tuấn-Quang Dũng",
       "sB": "0",
-      "Wn": "Bá Châu-Hiền Phong"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:30",
       "c": "S6",
       "A": "Tiến Mạnh-Quang Tín",
-      "sA": "11",
+      "sA": "0",
       "B": "Minh Thiện-Duy Minh",
       "sB": "0",
-      "Wn": "Tiến Mạnh-Quang Tín"
+      "Wn": "Chưa có"
     }
   ],
   "quarterfinals": [
@@ -433,24 +433,24 @@
       "t": "15:45",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "11",
-      "B": "Quốc Hùng-Đức Duy",
+      "sA": "0",
+      "B": "Quí Tuấn-Mạnh Hùng",
       "sB": "0",
-      "Wn": "Duy Hưng-Minh Tú"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:45",
       "c": "S4",
-      "A": "Hoàng Thanh-Công Phương",
+      "A": "Đông Chu-Ngọc Hùng",
       "sA": "0",
-      "B": "Tiến Mạnh-Quang Tín",
-      "sB": "11",
-      "Wn": "Tiến Mạnh-Quang Tín"
+      "B": "Minh Thiện-Duy Minh",
+      "sB": "0",
+      "Wn": "Chưa có"
     },
     {
       "t": "16:00",
       "c": "S5",
-      "A": "Quí Tuấn-Mạnh Hùng",
+      "A": "Quang Tiến-Tất Thành",
       "sA": "0",
       "B": "Quốc Thịnh-Minh Phương",
       "sB": "0",
@@ -460,9 +460,9 @@
       "t": "16:00",
       "c": "S6",
       "A": "Bá Châu-Hiền Phong",
-      "sA": "",
-      "B": "Lê Duy-Thanh Vương",
-      "sB": "",
+      "sA": "0",
+      "B": "Hoàng Thanh-Công Phương",
+      "sB": "0",
       "Wn": "Chưa có"
     }
   ],
@@ -470,9 +470,9 @@
     {
       "t": "16:10",
       "c": "S4",
-      "A": "Duy Hưng-Minh Tú",
+      "A": "Chưa có",
       "sA": "",
-      "B": "Tiến Mạnh-Quang Tín",
+      "B": "Chưa có",
       "sB": "0",
       "Wn": "Chưa có"
     },
