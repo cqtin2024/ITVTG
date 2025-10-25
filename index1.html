@@ -279,7 +279,8 @@
       <button onclick="goToSection(1)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">QUARTER</button>
       <button onclick="goToSection(2)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">FINAL</button>
       <button onclick="goToSection(3)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">TEAM</button>
-      <button onclick="goToSection(4)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">INFO</button> </div>
+      <button onclick="goToSection(4)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">INFO</button>
+    </div>
   </div>
 
   <main id="main-content-wrapper" class="overflow-hidden">
@@ -308,7 +309,8 @@
         </div>
       </section>
       
-      <section class="swipe-section" id="info"> <div class='bg-white p-4 rounded-xl shadow-md'>
+      <section class="swipe-section" id="info">
+        <div class='bg-white p-4 rounded-xl shadow-md'>
           <h3 class='text-lg font-bold text-green-700 mb-3 text-center'>TOURNAMENT INFORMATION</h3>
           <p class='text-sm text-gray-600'>Loading information...</p>
         </div>
@@ -360,7 +362,7 @@
 
 
     function goToSection(index) {
-      currentIndex = Math.max(0, Math.min(4, index)); // ĐÃ CẬP NHẬT: max index là 4 (0, 1, 2, 3, 4)
+      currentIndex = Math.max(0, Math.min(4, index));
       updateTabs();
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -385,8 +387,7 @@
       document.querySelectorAll('#tab-controls button').forEach((btn, i) => {
         btn.classList.remove('active-primary', 'active-accent');
         if (i === currentIndex) {
-          // Tab TEAM (index 3) và INFO (index 4) dùng active-accent
-          btn.classList.add(i >= 3 ? 'active-accent' : 'active-primary'); // ĐÃ CẬP NHẬT: i >= 3
+          btn.classList.add(i >= 3 ? 'active-accent' : 'active-primary');
         }
       });
     }
@@ -412,7 +413,7 @@
         cachedTeamList = data.tL || [];
         
         // Gộp dữ liệu giả lập info vào data
-        data.tournamentInfo = MOCK_TOURNAMENT_INFO; // ĐÃ THÊM: Gán info
+        data.tournamentInfo = MOCK_TOURNAMENT_INFO; 
         
         renderData(data);
       } catch (err) {
@@ -426,7 +427,7 @@
         icon.classList.add('status-error'); // Hiển thị icon lỗi
         
         // Vẫn gán info để hiển thị ngay cả khi các tab khác lỗi
-        renderData({ tournamentInfo: MOCK_TOURNAMENT_INFO }); // ĐÃ CẬP NHẬT
+        renderData({ tournamentInfo: MOCK_TOURNAMENT_INFO, tL: cachedTeamList }); 
       }
     }
 
@@ -442,13 +443,10 @@
       renderQuarterfinals(data.quarterfinals);
       renderKnockout(data.semifinals, data.final);
       renderPlayers(data.tL); 
-      renderInfo(data.tournamentInfo); // ĐÃ THÊM
+      renderInfo(data.tournamentInfo); 
       goToSection(currentIndex); 
     }
     
-    // ... (Các hàm renderRounds, renderTable, renderMatchList, renderQuarterfinals, renderKnockout, renderPlayers giữ nguyên)
-    // ... (Giữ nguyên các hàm render đã có ở file gốc tại đây)
-
     function renderRounds(data) {
         const c = document.getElementById('rounds');
         if (!data || !data.tableA) {
@@ -628,15 +626,17 @@
                         <div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>`;
             
             teamsByGroup[group].forEach(team => {
-                const p1Name = team.P[0] || '';
-                const p2Name = team.P[1] || '';
+                const p1Name = team.P[0] || 'N/A';
+                const p2Name = team.P[1] || 'N/A';
                 const combinedName = `${getLastTwoWords(p1Name)} & ${getLastTwoWords(p2Name)}`; 
-
-                html += `<div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-                            <div class='text-sm font-semibold text-red-700'>${combinedName}</div>
-                            <div class='text-xs text-gray-600'>ID: ${team.T} | Group: ${team.g}</div>
-                            <div class='text-xs mt-2 text-gray-700'>1. ${p1Name}</div>
-                            <div class='text-xs text-gray-700'>2. ${p2Name}</div>
+                
+                // MÃ HIỂN THỊ ĐÃ CẬP NHẬT
+                html += `<div class='team-card border-l-4 border-primary p-3 rounded-lg bg-blue-50/50 shadow-sm'>
+                            <div class='text-md font-bold text-primary'>${combinedName}</div>
+                            <div class='text-xs text-gray-600 mb-2'>ID: ${team.T} | Group: ${team.g}</div>
+                            
+                            <div class='text-sm text-header-bg font-semibold'>1. ${p1Name}</div>
+                            <div class='text-sm text-header-bg font-semibold'>2. ${p2Name}</div>
                          </div>`;
             });
 
@@ -645,7 +645,6 @@
         c.innerHTML = html;
     }
     
-    // HÀM MỚI: Render Tournament Info
     function renderInfo(info) {
         const c = document.getElementById('info');
         if (!info) {
