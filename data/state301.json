@@ -55,39 +55,39 @@
   "tableA": [
     {
       "D": "Duy Hưng-Minh Tú",
-      "W": 3,
+      "W": 0,
       "L": 0,
-      "HS": "11",
-      "Pts": 9,
-      "mP": 3,
-      "scoreDiff": 33
-    },
-    {
-      "D": "Quốc Thịnh-Minh Phương",
-      "W": 2,
-      "L": 1,
-      "HS": "11",
-      "Pts": 6,
-      "mP": 3,
-      "scoreDiff": 11
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
     },
     {
       "D": "Minh Chang-Minh Châu",
-      "W": 1,
-      "L": 2,
-      "HS": "11",
-      "Pts": 3,
-      "mP": 3,
-      "scoreDiff": -11
+      "W": 0,
+      "L": 0,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
     },
     {
       "D": "Quốc Khánh-Linh Vũ",
       "W": 0,
-      "L": 3,
+      "L": 0,
       "HS": "0",
       "Pts": 0,
-      "mP": 3,
-      "scoreDiff": -33
+      "mP": 0,
+      "scoreDiff": 0
+    },
+    {
+      "D": "Quốc Thịnh-Minh Phương",
+      "W": 0,
+      "L": 0,
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
     }
   ],
   "tableB": [
@@ -209,55 +209,55 @@
       "t": "14:15",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "11",
+      "sA": "0",
       "B": "Quốc Thịnh-Minh Phương",
       "sB": "0",
-      "Wn": "Duy Hưng-Minh Tú"
+      "Wn": "Chưa có"
     },
     {
       "t": "14:15",
       "c": "S4",
       "A": "Minh Chang-Minh Châu",
-      "sA": "11",
+      "sA": "0",
       "B": "Quốc Khánh-Linh Vũ",
       "sB": "0",
-      "Wn": "Minh Chang-Minh Châu"
+      "Wn": "Chưa có"
     },
     {
       "t": "14:45",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "11",
+      "sA": "0",
       "B": "Minh Chang-Minh Châu",
       "sB": "0",
-      "Wn": "Duy Hưng-Minh Tú"
+      "Wn": "Chưa có"
     },
     {
       "t": "14:45",
       "c": "S4",
       "A": "Quốc Thịnh-Minh Phương",
-      "sA": "11",
+      "sA": "0",
       "B": "Quốc Khánh-Linh Vũ",
       "sB": "0",
-      "Wn": "Quốc Thịnh-Minh Phương"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:15",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "11",
+      "sA": "0",
       "B": "Quốc Khánh-Linh Vũ",
       "sB": "0",
-      "Wn": "Duy Hưng-Minh Tú"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:15",
       "c": "S4",
       "A": "Quốc Thịnh-Minh Phương",
-      "sA": "11",
+      "sA": "0",
       "B": "Minh Chang-Minh Châu",
       "sB": "0",
-      "Wn": "Quốc Thịnh-Minh Phương"
+      "Wn": "Chưa có"
     }
   ],
   "matchesB": [
@@ -452,7 +452,7 @@
       "c": "S5",
       "A": "Quang Tiến-Tất Thành",
       "sA": "0",
-      "B": "Quốc Thịnh-Minh Phương",
+      "B": "Minh Chang-Minh Châu",
       "sB": "0",
       "Wn": "Chưa có"
     },
@@ -506,7 +506,7 @@
       "P": [
         {
           "name": "Từ Duy Hưng",
-          "bY": "1995",
+          "bY": "19",
           "ph": "09xx-xxx-001",
           "em": "duyhung@example.com",
           "pL": 4,
@@ -515,7 +515,7 @@
         },
         {
           "name": "Trần Nguyễn Minh Tú",
-          "bY": "1998",
+          "bY": "0",
           "ph": "09xx-xxx-002",
           "em": "minhtu@example.com",
           "pL": 3,
@@ -533,7 +533,7 @@
       "P": [
         {
           "name": "Võ Dương Quốc Thịnh",
-          "bY": "1996",
+          "bY": "0",
           "ph": "09xx-xxx-003",
           "em": "quocthinh@example.com",
           "pL": 3,
@@ -542,7 +542,7 @@
         },
         {
           "name": "Lê Minh Phương",
-          "bY": "1997",
+          "bY": "19",
           "ph": "09xx-xxx-004",
           "em": "minhphuong@example.com",
           "pL": 4,
@@ -560,7 +560,7 @@
       "P": [
         {
           "name": "Minh Chang",
-          "bY": "2000",
+          "bY": "19",
           "ph": "09xx-xxx-005",
           "em": "minhchang@example.com",
           "pL": 2,
@@ -569,7 +569,7 @@
         },
         {
           "name": "Lê Minh Châu",
-          "bY": "2001",
+          "bY": "19",
           "ph": "09xx-xxx-006",
           "em": "minhchau@example.com",
           "pL": 2,
@@ -587,7 +587,7 @@
       "P": [
         {
           "name": "Mai Quốc Khánh",
-          "bY": "1993",
+          "bY": "19",
           "ph": "09xx-xxx-007",
           "em": "quockhanh@example.com",
           "pL": 5,
@@ -596,7 +596,7 @@
         },
         {
           "name": "Nguyễn Bá Linh Vũ",
-          "bY": "1994",
+          "bY": "19",
           "ph": "09xx-xxx-008",
           "em": "linhvua@example.com",
           "pL": 4,
@@ -614,7 +614,7 @@
       "P": [
         {
           "name": "Trần Quí Tuấn",
-          "bY": "1992",
+          "bY": "19",
           "ph": "09xx-xxx-009",
           "em": "quytuan@example.com",
           "pL": 3,
@@ -623,7 +623,7 @@
         },
         {
           "name": "Hoàng Mạnh Hùng",
-          "bY": "1993",
+          "bY": "19",
           "ph": "09xx-xxx-010",
           "em": "manhhung@example.com",
           "pL": 3,
@@ -668,7 +668,7 @@
       "P": [
         {
           "name": "Đinh Hoàng Thanh Sơn",
-          "bY": "1997",
+          "bY": "19",
           "ph": "09xx-xxx-013",
           "em": "thanhson@example.com",
           "pL": 3,
@@ -677,7 +677,7 @@
         },
         {
           "name": "Trần Đỗ Khoa Tiến",
-          "bY": "1998",
+          "bY": "19",
           "ph": "09xx-xxx-014",
           "em": "khoatien@example.com",
           "pL": 3,
@@ -695,19 +695,19 @@
       "P": [
         {
           "name": "Bùi Quang Tiến",
-          "bY": "1995",
+          "bY": "19",
           "ph": "09xx-xxx-015",
           "em": "quangtien@example.com",
-          "pL": 4,
+          "pL": "3",
           "gC": "BD_DB",
           "fC": "RR_KO"
         },
         {
           "name": "Mai Tất Thành",
-          "bY": "1996",
+          "bY": "19",
           "ph": "09xx-xxx-016",
           "em": "tatthanh@example.com",
-          "pL": 4,
+          "pL": "3",
           "gC": "BD_DB",
           "fC": "RR_KO"
         }
@@ -722,7 +722,7 @@
       "P": [
         {
           "name": "Nguyễn Hoàng Thanh",
-          "bY": "1992",
+          "bY": "19",
           "ph": "09xx-xxx-017",
           "em": "hoangthanh@example.com",
           "pL": 3,
@@ -731,7 +731,7 @@
         },
         {
           "name": "Trần Công Phương",
-          "bY": "1993",
+          "bY": "19",
           "ph": "09xx-xxx-018",
           "em": "congphuong@example.com",
           "pL": 3,
@@ -749,7 +749,7 @@
       "P": [
         {
           "name": "Lê Duy",
-          "bY": "1994",
+          "bY": "19",
           "ph": "09xx-xxx-019",
           "em": "leduy@example.com",
           "pL": 3,
@@ -758,7 +758,7 @@
         },
         {
           "name": "Hồ Thanh Vương",
-          "bY": "1995",
+          "bY": "19",
           "ph": "09xx-xxx-020",
           "em": "thanhvuong@example.com",
           "pL": 4,
@@ -776,7 +776,7 @@
       "P": [
         {
           "name": "Nguyễn Văn Cường",
-          "bY": "1996",
+          "bY": "19",
           "ph": "09xx-xxx-021",
           "em": "vancuong@example.com",
           "pL": 4,
@@ -785,7 +785,7 @@
         },
         {
           "name": "Đoàn Văn Dũng",
-          "bY": "1997",
+          "bY": "19",
           "ph": "09xx-xxx-022",
           "em": "vandzung@example.com",
           "pL": 4,
@@ -803,7 +803,7 @@
       "P": [
         {
           "name": "Trần Ngọc Đông Chu",
-          "bY": "1998",
+          "bY": "19",
           "ph": "09xx-xxx-023",
           "em": "dongchu@example.com",
           "pL": 4,
@@ -812,7 +812,7 @@
         },
         {
           "name": "Nguyễn Ngọc Hùng",
-          "bY": "1999",
+          "bY": "19",
           "ph": "09xx-xxx-024",
           "em": "ngochung@example.com",
           "pL": 4,
@@ -830,7 +830,7 @@
       "P": [
         {
           "name": "Lê Bá Châu",
-          "bY": "1992",
+          "bY": "19",
           "ph": "09xx-xxx-025",
           "em": "bachau@example.com",
           "pL": 3,
@@ -839,7 +839,7 @@
         },
         {
           "name": "Ngô Hiền Phong",
-          "bY": "1993",
+          "bY": "19",
           "ph": "09xx-xxx-026",
           "em": "hienphong@example.com",
           "pL": 3,
@@ -857,7 +857,7 @@
       "P": [
         {
           "name": "Lại Tiến Mạnh",
-          "bY": "1994",
+          "bY": "19",
           "ph": "09xx-xxx-027",
           "em": "tienmanh@example.com",
           "pL": 4,
@@ -866,7 +866,7 @@
         },
         {
           "name": "Cao Quang Tín",
-          "bY": "1995",
+          "bY": "19",
           "ph": "09xx-xxx-028",
           "em": "quangtin@example.com",
           "pL": 4,
@@ -884,7 +884,7 @@
       "P": [
         {
           "name": "Huỳnh Minh Thiện",
-          "bY": "1996",
+          "bY": "19",
           "ph": "09xx-xxx-029",
           "em": "minhthien@example.com",
           "pL": 3,
@@ -893,7 +893,7 @@
         },
         {
           "name": "Nguyễn Duy Minh",
-          "bY": "1997",
+          "bY": "19",
           "ph": "09xx-xxx-030",
           "em": "duyminh@example.com",
           "pL": 4,
@@ -911,7 +911,7 @@
       "P": [
         {
           "name": "Trần Viết Tuấn",
-          "bY": "1998",
+          "bY": "19",
           "ph": "09xx-xxx-031",
           "em": "viettuan@example.com",
           "pL": 3,
@@ -920,7 +920,7 @@
         },
         {
           "name": "Huỳnh Lê Quang Dũng",
-          "bY": "1999",
+          "bY": "19",
           "ph": "09xx-xxx-032",
           "em": "quangdung@example.com",
           "pL": 4,
