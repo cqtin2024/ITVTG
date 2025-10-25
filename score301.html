@@ -1167,6 +1167,13 @@ function calculateGroupStandings(groupMatches) {
             const matchIndex = parseInt(input.getAttribute('data-match-index'));
             const team = input.getAttribute('data-team');
             
+            // *** MỆNH ĐỀ BẢO VỆ ĐÃ BỔ SUNG để khắc phục lỗi Null/NaN
+            if (!roundKey || isNaN(matchIndex)) {
+                console.error("Lỗi: Không tìm thấy thuộc tính trận đấu cần thiết trên input. Bỏ qua thay đổi.");
+                return; 
+            }
+            // ***
+
             if (!tournamentData) {
                 console.error("Lỗi: Dữ liệu giải đấu chưa được tải.");
                 return;
