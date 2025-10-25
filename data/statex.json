@@ -17,32 +17,32 @@
     {
       "g": "A",
       "W": 0,
-      "L": 1,
+      "L": 0,
       "HS": "11",
       "Pts": 0,
-      "mP": 1,
+      "mP": 0,
       "gR": 4,
       "T": "Team 9",
       "Tn": "Duy Hưng-Minh Tú",
       "seed": "A1",
-      "gS": 2,
-      "gA": 11,
-      "gD": -9
+      "gS": 0,
+      "gA": 0,
+      "gD": 0
     },
     {
       "g": "A",
-      "W": 1,
+      "W": 0,
       "L": 0,
       "HS": "11",
-      "Pts": 3,
-      "mP": 1,
+      "Pts": 0,
+      "mP": 0,
       "gR": 1,
       "T": "Team 3",
       "Tn": "Quốc Thịnh-Minh Phương",
       "seed": "A2",
-      "gS": 11,
-      "gA": 2,
-      "gD": 9
+      "gS": 0,
+      "gA": 0,
+      "gD": 0
     },
     {
       "g": "A",
@@ -261,10 +261,10 @@
       "t": "14:15",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": 2,
+      "sA": 0,
       "B": "Quốc Thịnh-Minh Phương",
-      "sB": 11,
-      "Wn": "Quốc Thịnh-Minh Phương"
+      "sB": 0,
+      "Wn": ""
     },
     {
       "Mc": "GA2",
