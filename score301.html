@@ -348,6 +348,7 @@
                 showStatus('Đang lấy SHA hiện tại của file...', 'info', resultElementId);
 
                 const shaResponse = await fetch(fileUrl + `?ref=${BRANCH}`, {
+                    // Header chỉ dùng Authorization là đủ cho GET
                     headers: { 'Authorization': `Bearer ${pat}` }
                 });
 
@@ -380,7 +381,10 @@
                 const commitResponse = await fetch(fileUrl, {
                     method: 'PUT',
                     headers: { 
-                        'Authorization': `Bearer ${pat}` // ĐÃ ĐIỀU CHỈNH THEO YÊU CẦU: Chỉ dùng Authorization
+                        // KHẮC PHỤC LỖI COMMIT: Phải có Content-Type cho PUT với JSON body
+                        'Authorization': `Bearer ${pat}`,   
+                        'Content-Type': 'application/json', 
+                        'Accept': 'application/vnd.github+json' 
                     },
                     body: JSON.stringify(payload)
                 });
