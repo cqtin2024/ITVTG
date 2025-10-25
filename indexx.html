@@ -1,1 +1,473 @@
 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pickleball ITVTG Tournament 2025</title>
+    <!-- Tải Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Thiết lập Font Inter --><style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+        /* Custom CSS cho tab vuốt ngang */
+        .tab-content-container {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* For Firefox */
+        }
+        .tab-content-container::-webkit-scrollbar {
+            display: none; /* For Chrome, Safari, and Opera */
+        }
+        .tab-pane {
+            flex-shrink: 0;
+            scroll-snap-align: start;
+        }
+    </style>
+    <!-- Thiết lập cấu hình Tailwind --><script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-itvtg': '#001f3f', // Navy Blue - Xanh Navy
+                        'secondary-itvtg': '#a0b3c7', // Light Gray-Blue - Xanh Xám Nhạt
+                        'winner': '#ef4444', /* Red for winner */
+                        'bg-card': '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <div id="app" class="flex flex-col flex-1 max-w-4xl mx-auto w-full shadow-lg bg-white">
+        <!-- Header --><header class="bg-primary-itvtg text-white p-4 shadow-md sticky top-0 z-10">
+            <div class="flex items-center justify-center mb-2">
+                <img src="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/LogoITGVT01.png" alt="Tournament Logo" class="h-10 w-auto mr-3">
+                <h1 id="tournament-title" class="text-xl md:text-2xl font-bold">Đang tải...</h1>
+            </div>
+            <p id="tournament-org" class="text-sm text-center opacity-80"></p>
+        </header>
+
+        <!-- Nav Tabs --><nav class="sticky top-24 bg-white shadow-inner z-10"> <!-- Điều chỉnh top để tránh logo --><div id="tab-nav" class="flex overflow-x-auto whitespace-nowrap border-b border-gray-200">
+                <!-- Tabs will be inserted here by JS --></div>
+        </nav>
+
+        <!-- Main Content Area --><div id="tab-content-container" class="tab-content-container flex flex-1 w-full">
+            <!-- Tab Panes will be inserted here by JS --></div>
+
+        <!-- Message Box for loading/errors --><div id="message-box" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white p-6 rounded-xl shadow-2xl text-center">
+                <p id="message-text" class="text-lg font-semibold text-gray-800">Đang tải dữ liệu...</p>
+                <div id="spinner" class="mt-4 animate-spin rounded-full h-8 w-8 border-b-2 border-primary-itvtg mx-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DATA_URL = "https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/statex.json";
+        let tournamentData = {};
+        const tabs = ["Info", "Group A", "Group B", "Group C", "Group D", "Final"];
+
+        const tabNav = document.getElementById('tab-nav');
+        const tabContentContainer = document.getElementById('tab-content-container');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+        const spinner = document.getElementById('spinner');
+
+        // Hàm hiển thị thông báo
+        function showMessage(text, isError = false) {
+            messageText.textContent = text;
+            spinner.classList.toggle('hidden', isError);
+            messageBox.classList.remove('hidden');
+        }
+
+        // Hàm ẩn thông báo
+        function hideMessage() {
+            messageBox.classList.add('hidden');
+        }
+
+        // Hàm tải dữ liệu
+        async function loadData() {
+            showMessage("Đang tải dữ liệu giải đấu...");
+            try {
+                // Tải dữ liệu từ GitHub
+                const response = await fetch(DATA_URL);
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP: ${response.status}`);
+                }
+                tournamentData = await response.json();
+                console.log("Dữ liệu đã tải:", tournamentData);
+                renderApp();
+                hideMessage();
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu:", error);
+                showMessage(`Lỗi: Không thể tải dữ liệu. Vui lòng kiểm tra console. (${error.message})`, true);
+            }
+        }
+
+        // Hàm tạo cấu trúc tab và nội dung
+        function createTabs() {
+            tabNav.innerHTML = '';
+            tabContentContainer.innerHTML = '';
+            
+            tabs.forEach((tabName, index) => {
+                // 1. Tạo nút Tab Navigation
+                const button = document.createElement('button');
+                const isActive = index === 0;
+                button.textContent = tabName;
+                button.setAttribute('data-tab', tabName);
+                button.className = `px-6 py-3 font-medium text-sm md:text-base transition-all duration-300 rounded-t-lg
+                                   ${isActive ? 'text-primary-itvtg border-b-4 border-primary-itvtg bg-secondary-itvtg/20' : 'text-gray-600 hover:bg-gray-100'}`;
+                button.onclick = () => switchTab(tabName);
+                tabNav.appendChild(button);
+
+                // 2. Tạo nội dung Tab Pane
+                const pane = document.createElement('div');
+                pane.id = `pane-${tabName.replace(/\s/g, '-')}`;
+                pane.className = `tab-pane w-full p-4 md:p-6 transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0 h-0 p-0 hidden'}`;
+                pane.style.width = '100%'; // Đảm bảo chiếm đủ chiều rộng để vuốt
+                pane.style.minHeight = '100%';
+                tabContentContainer.appendChild(pane);
+            });
+
+            // Sau khi tạo xong, cuộn đến tab đầu tiên
+            tabContentContainer.scrollLeft = 0;
+            // Dùng requestAnimationFrame để đảm bảo đã render xong
+            requestAnimationFrame(() => updateContent('Info')); 
+        }
+
+        // Hàm chuyển tab
+        let activeTab = 'Info';
+        function switchTab(tabName) {
+            if (activeTab === tabName) return;
+
+            // Cập nhật nút Nav
+            document.querySelectorAll('#tab-nav button').forEach(btn => {
+                const isActive = btn.getAttribute('data-tab') === tabName;
+                btn.className = `px-6 py-3 font-medium text-sm md:text-base transition-all duration-300 rounded-t-lg
+                                 ${isActive ? 'text-primary-itvtg border-b-4 border-primary-itvtg bg-secondary-itvtg/20' : 'text-gray-600 hover:bg-gray-100'}`;
+            });
+
+            // Cập nhật nội dung Pane (dùng class hidden/show để đảm bảo vuốt ngang hoạt động)
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                const isActive = pane.id === `pane-${tabName.replace(/\s/g, '-')}`;
+                pane.classList.toggle('opacity-100', isActive);
+                pane.classList.toggle('opacity-0', !isActive);
+                pane.classList.toggle('hidden', !isActive);
+                pane.classList.toggle('p-4', isActive);
+                pane.classList.toggle('p-6', isActive);
+                pane.classList.toggle('h-0', !isActive);
+            });
+
+            // Xử lý cuộn ngang
+            const targetPane = document.getElementById(`pane-${tabName.replace(/\s/g, '-')}`);
+            if (targetPane) {
+                targetPane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            activeTab = tabName;
+            updateContent(tabName);
+        }
+
+        // Hàm cập nhật nội dung cho tab được chọn
+        function updateContent(tabName) {
+            const pane = document.getElementById(`pane-${tabName.replace(/\s/g, '-')}`);
+            if (!pane || pane.innerHTML.trim() !== "") return; // Không render lại nếu đã có nội dung
+
+            switch (tabName) {
+                case 'Info':
+                    pane.innerHTML = renderInfoTab(tournamentData.TournamentInfo, tournamentData.teamStandings);
+                    break;
+                case 'Group A':
+                case 'Group B':
+                case 'Group C':
+                case 'Group D':
+                    const groupKey = tabName.split(' ')[1];
+                    pane.innerHTML = renderGroupTab(groupKey, tournamentData.teamStandings, tournamentData.matches);
+                    break;
+                case 'Final':
+                    pane.innerHTML = renderFinalTab(tournamentData.matches);
+                    break;
+            }
+        }
+        
+        // =========================================================================
+        // HÀM RENDER NỘI DUNG TỪNG TAB
+        // =========================================================================
+
+        function formatTime(time) {
+            if (!time) return 'N/A';
+            // Chuyển đổi định dạng 14:00 thành 14h00
+            return time.replace(':', 'h');
+        }
+
+        // --- RENDER INFO TAB ---
+        function renderInfoTab(info, teams) {
+            if (!info || !teams) return '<p class="text-center text-red-500">Dữ liệu thông tin giải đấu không đầy đủ.</p>';
+
+            const totalTeams = teams.length;
+            const totalWins = teams.reduce((sum, t) => sum + t.W, 0);
+            const totalLosses = teams.reduce((sum, t) => sum + t.L, 0);
+            const totalMatchesPlayed = teams.reduce((sum, t) => sum + t.mP, 0) / 2; // Mỗi trận đấu được tính 2 lần (cho 2 đội)
+            const highestScore = Math.max(...teams.map(t => parseInt(t.HS || '0')).filter(n => !isNaN(n)));
+
+            let html = `
+                <div class="space-y-6">
+                    <!-- Thông tin Tổng hợp --><div class="bg-primary-itvtg text-white p-4 rounded-xl shadow-md">
+                        <h2 class="text-xl font-bold mb-3">Thông tin Giải đấu</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            <p><strong>Tên Giải:</strong> ${info.TN}</p>
+                            <p><strong>Ban Tổ Chức:</strong> ${info.Org}</p>
+                            <p><strong>Ngày Khởi Tranh:</strong> ${info.SD}</p>
+                            <p><strong>Thời gian Khai mạc:</strong> ${formatTime(info.FTT)}</p>
+                            <p><strong>Địa điểm Thi đấu:</strong> 
+                                <a href="${info.MapVL}" target="_blank" class="underline hover:text-secondary-itvtg transition-colors">${info.VL}</a>
+                            </p>
+                            <p><strong>Tiệc Gala Dinner:</strong> 
+                                <a href="${info.MapGL}" target="_blank" class="underline hover:text-secondary-itvtg transition-colors">${info.GL}</a> (Thời gian: ${formatTime(info.GT)})
+                            </p>
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Thông số Tổng hợp Giải đấu --><div class="bg-bg-card p-4 rounded-xl shadow-md border border-gray-100">
+                        <h2 class="text-lg font-bold text-primary-itvtg mb-3">Thống kê Tổng hợp</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                            <div class="p-2 bg-gray-50 rounded-lg">
+                                <p class="text-2xl font-bold text-primary-itvtg">${totalTeams}</p>
+                                <p class="text-xs text-gray-500">Tổng số Đội</p>
+                            </div>
+                            <div class="p-2 bg-gray-50 rounded-lg">
+                                <p class="text-2xl font-bold text-primary-itvtg">${totalMatchesPlayed}</p>
+                                <p class="text-xs text-gray-500">Số Trận đã đấu</p>
+                            </div>
+                            <div class="p-2 bg-gray-50 rounded-lg">
+                                <p class="text-2xl font-bold text-primary-itvtg">${totalWins + totalLosses}</p>
+                                <p class="text-xs text-gray-500">Tổng số Set đã đấu</p>
+                            </div>
+                            <div class="p-2 bg-gray-50 rounded-lg">
+                                <p class="text-2xl font-bold text-primary-itvtg">${highestScore}</p>
+                                <p class="text-xs text-gray-500">Điểm cao nhất mỗi set</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danh sách Đội và Người chơi --><div class="bg-bg-card p-4 rounded-xl shadow-md border border-gray-100">
+                        <h2 class="text-lg font-bold text-primary-itvtg mb-3">Danh sách Đội (${totalTeams} Đội)</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            ${teams.map(team => `
+                                <div class="flex justify-between items-center p-3 bg-white border border-gray-200 rounded-lg hover:shadow-sm transition-shadow">
+                                    <span class="font-semibold text-gray-800">${team.T}</span>
+                                    <span class="text-sm text-gray-600">${team.Tn}</span>
+                                    <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-secondary-itvtg text-primary-itvtg">${team.g}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        // --- RENDER GROUP TAB (A, B, C, D) ---
+        function renderGroupTab(group, teams, matches) {
+            const groupTeams = teams.filter(t => t.g === group);
+            // Sắp xếp: Pts giảm dần -> gD giảm dần -> gS giảm dần -> gA tăng dần
+            groupTeams.sort((a, b) => {
+                if (b.Pts !== a.Pts) return b.Pts - a.Pts;
+                if (b.gD !== a.gD) return b.gD - a.gD;
+                if (b.gS !== a.gS) return b.gS - a.gS;
+                return a.gA - b.gA;
+            });
+
+            const groupMatches = matches.filter(m => m.Mc.startsWith(`G${group}`));
+
+            let html = `
+                <div class="space-y-6">
+                    <h2 class="text-2xl font-bold text-primary-itvtg text-center">Bảng ${group}</h2>
+
+                    <!-- Bảng Xếp Hạng --><div class="bg-bg-card p-4 rounded-xl shadow-md border border-gray-100 overflow-x-auto">
+                        <h3 class="text-lg font-semibold mb-3 border-b pb-2">Bảng Xếp Hạng</h3>
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">H.</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đội (Người chơi)</th>
+                                    <th class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">W</th>
+                                    <th class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">L</th>
+                                    <th class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Pts</th>
+                                    <th class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">gD</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                ${groupTeams.map((team, index) => `
+                                    <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                                        <td class="px-2 py-3 whitespace-nowrap text-center font-bold">${index + 1}</td>
+                                        <td class="px-6 py-3 whitespace-nowrap">
+                                            <span class="font-semibold block">${team.T}</span>
+                                            <span class="text-xs text-gray-500">${team.Tn}</span>
+                                        </td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-center">${team.W}</td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-center">${team.L}</td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-center font-bold text-primary-itvtg">${team.Pts}</td>
+                                        <td class="px-3 py-3 whitespace-nowrap text-center">${team.gD}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Danh sách Trận Đấu --><div class="bg-bg-card p-4 rounded-xl shadow-md border border-gray-100 space-y-4">
+                        <h3 class="text-lg font-semibold border-b pb-2">Lịch thi đấu và Kết quả</h3>
+                        ${groupMatches.map(match => {
+                            const teamAIsWinner = match.Wn === match.A;
+                            const teamBIsWinner = match.Wn === match.B;
+                            const statusColor = match.Wn ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700';
+                            const statusText = match.Wn ? 'Đã Xong' : 'Chưa đấu';
+                            
+                            return `
+                                <div class="p-3 border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                                    <div class="flex justify-between items-center mb-2 pb-2 border-b border-dashed">
+                                        <span class="text-sm font-medium text-gray-500">${match.Mc} (${match.c})</span>
+                                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${statusColor}">${statusText}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <!-- Đội A --><div class="w-1/2 pr-2 ${teamAIsWinner ? 'font-bold text-winner' : 'text-gray-700'}">
+                                            ${match.A}
+                                        </div>
+                                        <!-- Tỉ số --><div class="w-1/4 text-center font-extrabold text-base">
+                                            ${match.sA || 0} - ${match.sB || 0}
+                                        </div>
+                                        <!-- Đội B --><div class="w-1/2 pl-2 text-right ${teamBIsWinner ? 'font-bold text-winner' : 'text-gray-700'}">
+                                            ${match.B}
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 text-center mt-2">Thời gian: ${formatTime(match.t)}</p>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        // --- RENDER FINAL TAB ---
+        function renderFinalTab(matches) {
+            const finalMatches = matches.filter(m => m.Mc.startsWith('QF') || m.Mc.startsWith('SF') || m.Mc === 'F');
+
+            const getMatchInfo = (matchCode) => {
+                if (matchCode.startsWith('W.') || matchCode.startsWith('R.') || matchCode.startsWith('L.')) {
+                    // Đây là placeholder (người thắng/thua trận trước)
+                    return matchCode.replace('W.', 'Người thắng ').replace('R.', 'Á quân ').replace('L.', 'Người thua ');
+                }
+                // Đây là tên đội/người chơi
+                const team = tournamentData.teamStandings.find(t => t.Tn === matchCode);
+                return team ? team.Tn : matchCode;
+            }
+
+            const renderFinalMatch = (match) => {
+                const teamA = getMatchInfo(match.A);
+                const teamB = getMatchInfo(match.B);
+                const matchName = {
+                    'QF': 'Tứ Kết',
+                    'SF': 'Bán Kết',
+                    'F': 'Chung Kết'
+                }[match.Mc.substring(0, 2)] || 'Vòng Chung Kết';
+                
+                const teamAIsWinner = match.Wn === match.A || (match.Wn && match.A.startsWith('W.') && match.Wn === getMatchInfo(match.A));
+                const teamBIsWinner = match.Wn === match.B || (match.Wn && match.B.startsWith('W.') && match.Wn === getMatchInfo(match.B));
+                const statusColor = match.Wn ? 'bg-red-100 text-red-700' : 'bg-indigo-100 text-indigo-700';
+                const statusText = match.Wn ? 'Đã Xong' : 'Chưa đấu';
+                
+                return `
+                    <div class="p-4 border border-primary-itvtg/30 rounded-xl shadow-md space-y-3 bg-white">
+                        <div class="flex justify-between items-center pb-2 border-b border-primary-itvtg/20">
+                            <h4 class="font-bold text-base text-primary-itvtg">${matchName} - ${match.Mc}</h4>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${statusColor}">${statusText}</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <!-- Đội A --><div class="w-2/5 ${teamAIsWinner ? 'font-bold text-winner' : 'text-gray-700'}">
+                                ${teamA}
+                            </div>
+                            <!-- Tỉ số --><div class="w-1/5 text-center font-extrabold text-lg text-primary-itvtg">
+                                ${match.sA || 0} - ${match.sB || 0}
+                            </div>
+                            <!-- Đội B --><div class="w-2/5 text-right ${teamBIsWinner ? 'font-bold text-winner' : 'text-gray-700'}">
+                                ${teamB}
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 text-center">Sân: ${match.c} | Thời gian: ${formatTime(match.t)}</p>
+                        ${match.rU ? `<p class="text-xs text-gray-500 text-center font-medium mt-1">Tranh Hạng Ba: ${match.rU.replace('L.SF1', 'Thua BK1').replace('L.SF2', 'Thua BK2')}</p>` : ''}
+                        
+                    </div>
+                `;
+            }
+
+            let html = `
+                <div class="space-y-6">
+                    <h2 class="text-2xl font-bold text-primary-itvtg text-center mb-4">Vòng Chung Kết</h2>
+                    
+                    <h3 class="text-xl font-bold text-gray-700 border-l-4 border-primary-itvtg pl-3 mb-3">Tứ Kết</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${finalMatches.filter(m => m.Mc.startsWith('QF')).map(renderFinalMatch).join('')}
+                    </div>
+
+                    <h3 class="text-xl font-bold text-gray-700 border-l-4 border-primary-itvtg pl-3 pt-4 mb-3">Bán Kết</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${finalMatches.filter(m => m.Mc.startsWith('SF')).map(renderFinalMatch).join('')}
+                    </div>
+
+                    <h3 class="text-xl font-bold text-gray-700 border-l-4 border-primary-itvtg pl-3 pt-4 mb-3">Chung Kết</h3>
+                    <div class="max-w-md mx-auto">
+                        ${finalMatches.filter(m => m.Mc === 'F').map(renderFinalMatch).join('')}
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        // =========================================================================
+        // KHỞI TẠO ỨNG DỤNG
+        // =========================================================================
+
+        window.onload = loadData;
+
+        // Hàm chính để render ứng dụng
+        function renderApp() {
+            if (tournamentData.TournamentInfo) {
+                document.getElementById('tournament-title').textContent = tournamentData.TournamentInfo.TN || 'Giải đấu';
+                document.getElementById('tournament-org').textContent = `Tổ chức bởi: ${tournamentData.TournamentInfo.Org || 'N/A'}`;
+            }
+            createTabs();
+            // Cập nhật nội dung cho tab đầu tiên (Info)
+            updateContent('Info'); 
+        }
+
+        // Thêm tính năng vuốt ngang cho tab content (cho trải nghiệm mobile)
+        tabContentContainer.addEventListener('scroll', () => {
+            const scrollLeft = tabContentContainer.scrollLeft;
+            const width = tabContentContainer.offsetWidth;
+            const tabIndex = Math.round(scrollLeft / width);
+            
+            // Tìm tên tab tương ứng với chỉ mục cuộn
+            const newTabName = tabs[tabIndex];
+            if (newTabName && newTabName !== activeTab) {
+                // Sử dụng hàm switchTab mà không cuộn lần nữa
+                activeTab = newTabName;
+                document.querySelectorAll('#tab-nav button').forEach(btn => {
+                    const isActive = btn.getAttribute('data-tab') === newTabName;
+                    btn.className = `px-6 py-3 font-medium text-sm md:text-base transition-all duration-300 rounded-t-lg
+                                     ${isActive ? 'text-primary-itvtg border-b-4 border-primary-itvtg bg-secondary-itvtg/20' : 'text-gray-600 hover:bg-gray-100'}`;
+                });
+                updateContent(newTabName);
+            }
+        });
+    </script>
+</body>
+</html>
