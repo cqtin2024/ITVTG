@@ -1,6 +1,16 @@
 {
-  "message": "Cập nhật toàn bộ dữ liệu từ webapp",
-  "lastUpdated": "2025-10-25T14:25:13.603Z",
-  "updatedBy": "Pickleball WebApp (Full Overwrite)",
-  "demo": "Đây là ví dụ dữ liệu, bạn sẽ thay bằng tournamentData thực tế."
+  "matchesC": [
+    {
+      "i": 0,
+      "sA": "10",
+      "sB": "11"
+    }
+  ],
+  "quarterfinals": [
+    {
+      "i": 3,
+      "sA": "8",
+      "sB": "13"
+    }
+  ]
 }
