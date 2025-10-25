@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V6.0 - Auto Commit (FIXED)</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V6.1 - Synchronization Fixed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V6.0 - FIXED)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V6.1 - FIXED)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Auto Sync)</p>
                 </div>
             </div>
@@ -313,7 +313,7 @@
     <script>
         
         // ==============================================================================================================
-        // GITHUB API CONFIGURATION & CORE DATA (V6.0 - Auto Commit)
+        // GITHUB API CONFIGURATION & CORE DATA (V6.1 - Synchronization Fixed)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -329,6 +329,7 @@
         const BASE_DATA_URL = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/${BASE_FILE_PATH}`;
 
         const BRANCH = 'main';
+        const DEBOUNCE_DELAY = 1500; // 1.5 giây trễ cho auto-commit
 
         let tournamentData = null; // Dữ liệu trạng thái hiện tại (bao gồm cả tính toán)
         let initialBaseData = null; // Dữ liệu từ state41.json gốc (Template)
@@ -336,9 +337,25 @@
         let startX = 0; 
         let endX = 0;  
         const swipeThreshold = 75; 
+        let debounceTimer; 
         
         // Hàm chuyển đổi JSON sang Base64
         const jsonToBase64 = (json) => btoa(unescape(encodeURIComponent(JSON.stringify(json, null, 2))));
+        
+        // --- DEBOUNCE UTILITY (Ngăn commit liên tục) ---
+        /**
+         * Hàm tiện ích Debounce. Đảm bảo hàm chỉ được gọi sau khi không có cuộc gọi nào khác trong `delay` ms.
+         * @param {function} func - Hàm cần trì hoãn
+         * @param {number} delay - Độ trễ (ms)
+         */
+        function debounce(func, delay) {
+            return function(...args) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    func.apply(this, args);
+                }, delay);
+            };
+        }
         
         // --- CHỨC NĂNG TƯƠNG TÁC GITHUB CHUNG ---
 
@@ -390,7 +407,19 @@
             }
         }
         
-        async function getShaAndCommit(fileUrl, contentBase64, commitMessage, buttonId, resultElementId, currentSha) {
+        /**
+         * Core logic for committing content to GitHub API (PUT method).
+         * Includes logic for getting SHA and handling retry on 422 (Stale SHA).
+         * @param {string} fileUrl - API URL for the file.
+         * @param {string} contentBase64 - Content in Base64 format.
+         * @param {string} commitMessage - Message for the commit.
+         * @param {string} buttonId - ID of the button to disable (for manual commit).
+         * @param {string} resultElementId - ID of the element to show status in.
+         * @param {string} currentSha - The known SHA for the file. Can be null for initial commit.
+         * @param {boolean} isAutoCommit - Flag to indicate if it's an auto-commit.
+         * @param {boolean} isRetryAttempt - Flag to prevent infinite retry loop.
+         */
+        async function getShaAndCommit(fileUrl, contentBase64, commitMessage, buttonId, resultElementId, currentSha, isAutoCommit = false, isRetryAttempt = false) {
             const pat = githubToken.trim();
             const commitButton = document.getElementById(buttonId);
             
@@ -399,16 +428,16 @@
 
             if(isManualCommit) {
                 commitButton.disabled = true;
-                commitButton.textContent = 'Đang tiến hành...';
+                commitButton.textContent = isRetryAttempt ? 'Đang thử lại...' : 'Đang tiến hành...';
             } else {
-                 showStatus('Đang tự động đồng bộ (Auto-Commit) lên GitHub...', 'info', 'statusMessage');
+                 showStatus(isRetryAttempt ? 'Đang thử lại Auto-Sync...' : 'Đang tự động đồng bộ (Auto-Commit) lên GitHub...', isRetryAttempt ? 'warning' : 'info', 'statusMessage');
             }
             
-            let sha = currentSha; // Bắt đầu với SHA được truyền vào (nếu có)
+            let sha = currentSha;
             
             try {
-                // Nếu không có SHA được truyền vào, TẢI SHA MỚI (chỉ cần thiết cho manual commit)
-                if (!sha) {
+                // Nếu không có SHA được truyền vào HOẶC đây là lần thử lại, TẢI SHA MỚI
+                if (!sha || isRetryAttempt) {
                     if(isManualCommit) showStatus('Đang lấy SHA hiện tại của file...', 'info', resultElementId);
 
                     const shaResponse = await fetch(fileUrl + `?ref=${BRANCH}`, {
@@ -417,6 +446,7 @@
 
                     if (shaResponse.status === 404) {
                         if(isManualCommit) showStatus('File chưa tồn tại trên nhánh, sẽ tạo mới.', 'info', resultElementId);
+                        sha = null; // Đảm bảo SHA là null khi tạo mới
                     } else if (shaResponse.status === 401) {
                         const errorJson = await shaResponse.json();
                         throw new Error(`401 Unauthorized: ${errorJson.message || 'Token không hợp lệ hoặc thiếu quyền "repo".'}`);
@@ -426,11 +456,11 @@
                     } else {
                         const data = await shaResponse.json();
                         sha = data.sha;
-                        if(isManualCommit) showStatus(`Đã lấy SHA file thành công. SHA: ${sha.substring(0, 10)}...`, 'info', resultElementId);
+                        if(isManualCommit && !isRetryAttempt) showStatus(`Đã lấy SHA file thành công. SHA: ${sha.substring(0, 10)}...`, 'info', resultElementId);
                     }
                 }
                 
-                if(isManualCommit) commitButton.textContent = 'Đang Commit (PUT)...';
+                if(isManualCommit) commitButton.textContent = isRetryAttempt ? 'Đang Retry Commit (PUT)...' : 'Đang Commit (PUT)...';
                 
                 const payload = {
                     message: commitMessage,
@@ -451,7 +481,17 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (commitResponse.status === 401) {
+                if (commitResponse.status === 422 && !isRetryAttempt) {
+                    // LỖI STALE SHA: Tự động thử lại
+                    const errorData = await commitResponse.json();
+                    console.warn(`Lỗi 422 Stale SHA. Thử lại lần 1: ${errorData.message}`);
+                    if(isAutoCommit) showStatus('Lỗi Stale SHA (422) - Dữ liệu đã thay đổi trên GitHub. Đang thử lại...', 'warning', 'statusMessage');
+                    if(isManualCommit) showStatus('Lỗi Stale SHA (422) - Thử lại lần 1...', 'warning', resultElementId);
+                    
+                    // Gọi lại chính nó với cờ isRetryAttempt = true. SHA sẽ được lấy lại trong lần gọi này.
+                    return getShaAndCommit(fileUrl, contentBase64, commitMessage, buttonId, resultElementId, null, isAutoCommit, true); 
+                }
+                 else if (commitResponse.status === 401) {
                     const errorJson = await commitResponse.json();
                     throw new Error(`401 Unauthorized: ${errorJson.message || 'Token không hợp lệ hoặc thiếu quyền "repo". Vui lòng kiểm tra lại Token của bạn.'}`);
                 } else if (!commitResponse.ok) {
@@ -625,10 +665,11 @@
                 
                 // 5. Commit lần đầu nếu chưa có active file (404)
                 if (isInitialCommitNeeded) {
-                     await autoCommitActiveState('Initial sync from state41.json to state41s.json (V6.0)', true); // Commit lần đầu
+                     // Dùng hàm non-debounced cho lần commit đầu
+                     await _coreCommitLogic('Initial sync from state41.json to state41s.json (V6.1)', true); 
                 }
                 
-                showStatus('Đã tải và xử lý dữ liệu thành công! (V6.0)', 'success', 'statusMessage');
+                showStatus('Đã tải và xử lý dữ liệu thành công! (V6.1)', 'success', 'statusMessage');
                 switchTab('General'); 
 
             } catch (error) {
@@ -638,21 +679,21 @@
         }
         
         /**
-         * Tự động COMMIT toàn bộ trạng thái hiện tại lên state41s.json
+         * Logic cốt lõi để COMMIT. Được gọi bởi cả hàm Debounced và Initial Commit.
          * @param {string} commitMessage - Thông điệp commit
          * @param {boolean} isInitialCommit - Commit lần đầu (không cần token check)
          */
-        window.autoCommitActiveState = async function(commitMessage, isInitialCommit = false) {
+        async function _coreCommitLogic(commitMessage, isInitialCommit = false) {
             if (!isInitialCommit) {
                 githubToken = localStorage.getItem('githubToken') || ''; 
                 if (!githubToken || githubToken.trim().length === 0) {
-                    showStatus('CẢNH BÁO: Auto-Commit bị bỏ qua. Vui lòng nhập và lưu GitHub Token.', 'warning', 'statusMessage');
-                    return;
+                    // Cảnh báo nhưng không return, để hàm debounced wrapper có thể hiển thị cảnh báo
+                    return false; 
                 }
             }
 
             // Bỏ qua nếu dữ liệu không tồn tại
-            if (!tournamentData) return; 
+            if (!tournamentData) return false; 
 
             // Chuẩn bị dữ liệu (unify và loại bỏ các trường tính toán VÀ metadata)
             const commitData = unifyAndCleanData(tournamentData);
@@ -663,48 +704,28 @@
             const base64Content = jsonToBase64(commitData);
             
             // Sử dụng một ID ảo cho nút COMMIT để hàm getShaAndCommit không vô hiệu hóa nút thật
-            await getShaAndCommit(ACTIVE_API_URL, base64Content, commitMessage, 'autoCommitPlaceholder', 'statusMessage', currentSha);
+            await getShaAndCommit(
+                ACTIVE_API_URL, 
+                base64Content, 
+                commitMessage, 
+                'autoCommitPlaceholder', // ID ảo
+                'statusMessage', 
+                currentSha, 
+                true // isAutoCommit = true
+            );
+            return true;
         }
-
 
         /**
-         * Xử lý dữ liệu sau khi tải: Tính toán, Cập nhật vòng loại và Render UI
-         * @param {object} data - Dữ liệu giải đấu đã hợp nhất tỉ số
+         * Public Debounced Function for Auto-Commit (Scores/Teams update).
          */
-        function processDataAndRender(data) {
-            tournamentData = data;
-            
-            // [FIX] Safety check to prevent map errors if core data is missing/invalid
-            if (!data || !data.tL || !Array.isArray(data.tL)) {
-                 showStatus('Lỗi: Dữ liệu tL (Team List) bị thiếu hoặc không hợp lệ. Không thể xử lý và render.', 'error', 'statusMessage');
-                 return;
-            }
-            
-            // 1. Tính toán Bảng xếp hạng Vòng bảng
-            data.tL = data.tL.map(team => calculateTeamStats(team, data));
-            
-            // 2. Sắp xếp và cập nhật gR
-            ['A', 'B', 'C', 'D'].forEach(group => {
-                const groupTeams = data.tL.filter(t => t.g === group);
-                const sorted = calculateStandings(groupTeams);
-                sorted.forEach((team, index) => {
-                    const originalTeam = data.tL.find(t => t.T === team.T);
-                    // Cập nhật các trường tính toán (rank, stats) trên team gốc
-                    Object.assign(originalTeam, team); 
-                    originalTeam.gR = index + 1; // 1st, 2nd, 3rd, 4th
-                });
-            });
+        window.autoCommitActiveState = debounce(async (commitMessage) => {
+             const canCommit = await _coreCommitLogic(commitMessage, false);
+             if(!canCommit) {
+                  showStatus('CẢNH BÁO: Auto-Commit bị bỏ qua. Vui lòng nhập và lưu GitHub Token.', 'warning', 'statusMessage');
+             }
+        }, DEBOUNCE_DELAY);
 
-            // 3. Cập nhật vòng Loại Trực Tiếp (QF, SF, F)
-            updateKnockoutBrackets(data);
-
-            // 4. Render UI
-            renderGeneralTab(data);
-            renderTeamManagementTab(data);
-            ['A', 'B', 'C', 'D'].forEach(g => renderGroupTab(g, data));
-            renderKnockoutTab(data);
-            initializeMatchListeners(); // Thiết lập lại listeners sau khi render
-        }
 
         // --- CORE CALCULATION LOGIC ---
         
@@ -858,7 +879,7 @@
             if(finalMatch) updateMatchWinner(finalMatch);
         }
 
-        // --- LOGIC XẾP HẠNG CHUNG CUỘC (V6.0) ---
+        // --- LOGIC XẾP HẠNG CHUNG CUỘC (V6.1) ---
 
         /**
          * Lấy tên đội (Tn) từ Team ID (T)
@@ -957,7 +978,6 @@
         }
         
         function renderFinalResults(ranks) {
-            // ... (Hàm này giữ nguyên)
             const finalResultsEl = document.getElementById('finalResults');
             const thirdPlaceResultsEl = document.getElementById('thirdPlaceResults');
             
@@ -1183,7 +1203,6 @@
 
         // RENDER: Knockout Tab
         window.renderKnockoutTab = function(data) {
-            // ... (Hàm này giữ nguyên)
             // --- Helper to render a match block ---
             const renderMatchBlock = (roundKey, index, match) => {
                 const teamA = data.tL.find(t => t.T === match.teamA);
@@ -1293,9 +1312,9 @@
             // Xử lý lại dữ liệu và render lại toàn bộ
             processDataAndRender(tournamentData);
             
-            // Tự động COMMIT (Auto-Save)
-            autoCommitActiveState('Auto update scores and recalculate ranks/knockout (V6.0)');
-            showStatus('Tỉ số đã được cập nhật cục bộ và đang tự động đồng bộ lên GitHub...', 'warning', 'statusMessage');
+            // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
+            autoCommitActiveState('Auto update scores and recalculate ranks/knockout (V6.1)');
+            showStatus('Tỉ số đã được cập nhật cục bộ và đang chờ đồng bộ (Debounced)...', 'info', 'statusMessage');
         }
 
         /**
@@ -1305,9 +1324,9 @@
             const team = tournamentData.tL.find(t => t.T === teamId);
             if (team) {
                 team[field] = value;
-                // Tự động COMMIT (Auto-Save)
-                autoCommitActiveState('Auto update team nickname (Tn) (V6.0)');
-                showStatus('Thông tin đội đã được cập nhật cục bộ và đang tự động đồng bộ lên GitHub...', 'warning', 'statusMessage');
+                // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
+                autoCommitActiveState('Auto update team nickname (Tn) (V6.1)');
+                showStatus('Thông tin đội đã được cập nhật cục bộ và đang chờ đồng bộ (Debounced)...', 'info', 'statusMessage');
                 // Render lại để cập nhật Tn trên toàn bộ giao diện
                 processDataAndRender(tournamentData);
             }
@@ -1340,9 +1359,9 @@
                 // Render lại tab Team Management để cập nhật aPL và trạng thái
                 renderTeamManagementTab(tournamentData); 
                 
-                // Tự động COMMIT (Auto-Save)
-                autoCommitActiveState('Auto update player details (name, pL, bY) (V6.0)');
-                showStatus('Thông tin người chơi đã được cập nhật cục bộ và đang tự động đồng bộ lên GitHub...', 'warning', 'statusMessage');
+                // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
+                autoCommitActiveState('Auto update player details (name, pL, bY) (V6.1)');
+                showStatus('Thông tin người chơi đã được cập nhật cục bộ và đang chờ đồng bộ (Debounced)...', 'info', 'statusMessage');
             }
         }
 
@@ -1357,7 +1376,7 @@
                 return;
             }
 
-            const commitMessage = 'Manual sync of active state (state41s.json - V6.0)';
+            const commitMessage = 'Manual sync of active state (state41s.json - V6.1)';
             
             // Chuẩn bị dữ liệu (unify và loại bỏ các trường tính toán VÀ metadata)
             const commitData = unifyAndCleanData(tournamentData);
@@ -1365,7 +1384,8 @@
             
             const base64Content = jsonToBase64(commitData);
             
-            await getShaAndCommit(ACTIVE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult', currentSha);
+            // Dùng getShaAndCommit non-auto-commit
+            await getShaAndCommit(ACTIVE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult', currentSha, false);
         };
 
         // Nút "LƯU THÔNG TIN ĐỘI VÀO GỐC (`state41.json`) - THAO TÁC NGUY HIỂM!"
@@ -1404,7 +1424,7 @@
             // Gộp mảng match lại thành 'matches' thống nhất trước khi commit BASE file
             const commitData = unifyMatches(fullBaseData);
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update base team details and overwrite state41.json via web app (V6.0)';
+            const commitMessage = 'Update base team details and overwrite state41.json via web app (V6.1)';
 
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json (Template gốc) trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -1419,7 +1439,7 @@
                 baseSha = data.sha;
              }
 
-            await getShaAndCommit(BASE_API_URL, base64Content, commitMessage, 'commitTeamToBaseButton', 'teamCommitResult', baseSha);
+            await getShaAndCommit(BASE_API_URL, base64Content, commitMessage, 'commitTeamToBaseButton', 'teamCommitResult', baseSha, false);
             
             // Sau khi commit thành công, tải lại dữ liệu để đảm bảo đồng bộ
             await loadDataFromGitHub();
@@ -1530,8 +1550,8 @@
                 
                 // Xử lý lại dữ liệu và render lại toàn bộ
                 processDataAndRender(tournamentData);
-                // Tự động COMMIT (Auto-Save)
-                autoCommitActiveState('Auto commit simulated scores (Knockout - V6.0)');
+                // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
+                autoCommitActiveState('Auto commit simulated scores (Knockout - V6.1)');
                 return;
             }
 
@@ -1550,8 +1570,8 @@
             
             // Xử lý lại dữ liệu và render lại toàn bộ
             processDataAndRender(tournamentData);
-            // Tự động COMMIT (Auto-Save)
-            autoCommitActiveState(`Auto commit simulated scores (Group ${roundType} - V6.0)`);
+            // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
+            autoCommitActiveState(`Auto commit simulated scores (Group ${roundType} - V6.1)`);
         }
         
         window.confirmResetScores = function() {
@@ -1596,16 +1616,15 @@
             processDataAndRender(tournamentData);
             document.getElementById('resetRoundSelector').value = '';
             
-            // Tự động COMMIT (Auto-Save)
-            autoCommitActiveState(`Auto commit score reset for ${roundType} (V6.0)`);
-            showStatus(`Đã XÓA TẤT CẢ tỉ số của Vòng ${roundType} thành công và đang tự động đồng bộ.`, 'success', 'resetResult');
+            // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
+            autoCommitActiveState(`Auto commit score reset for ${roundType} (V6.1)`);
+            showStatus(`Đã XÓA TẤT CẢ tỉ số của Vòng ${roundType} thành công và đang chờ đồng bộ (Debounced).`, 'success', 'resetResult');
             switchTab('Configuration');
         }
 
 
         // --- THEME & NAVIGATION ---
         function applyTheme(theme) {
-             // ... (Hàm này giữ nguyên)
             const body = document.body;
             body.classList.remove('light-mode');
             if (theme === 'light') {
@@ -1621,7 +1640,6 @@
         }
 
         window.toggleTheme = function() {
-            // ... (Hàm này giữ nguyên)
             const currentTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             localStorage.setItem('theme', newTheme);
@@ -1629,7 +1647,6 @@
         }
 
         window.switchTab = function(tabName) {
-            // ... (Hàm này giữ nguyên)
             document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
             const targetTab = document.getElementById(tabName);
             if(targetTab) targetTab.style.display = 'block';
@@ -1645,7 +1662,6 @@
         }
 
         function handleGesture() {
-             // ... (Hàm này giữ nguyên)
             const diffX = endX - startX;
             if (Math.abs(diffX) > swipeThreshold) {
                 const tabs = ['General', 'TeamManagement', 'GroupA', 'GroupB', 'GroupC', 'GroupD', 'Knockout', 'Configuration'];
@@ -1665,12 +1681,10 @@
         }
 
         window.showConfirmationModal = function() {
-             // ... (Hàm này giữ nguyên)
             document.getElementById('confirmationBox').classList.remove('hidden');
         }
 
         window.reSyncStaticData = function() {
-            // ... (Hàm này giữ nguyên)
             document.getElementById('confirmationBox').classList.add('hidden');
             loadDataFromGitHub();
         }
