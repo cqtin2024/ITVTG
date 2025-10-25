@@ -79,22 +79,22 @@
   ],
   "tableB": [
     {
-      "D": "Quí Tuấn-Mạnh Hùng",
+      "D": "Quốc Hùng-Đức Duy",
       "W": 3,
       "L": 0,
       "HS": "11",
       "Pts": 9,
       "mP": 3,
-      "scoreDiff": 33
+      "scoreDiff": 23
     },
     {
-      "D": "Quốc Hùng-Đức Duy",
+      "D": "Quí Tuấn-Mạnh Hùng",
       "W": 2,
       "L": 1,
       "HS": "11",
       "Pts": 6,
       "mP": 3,
-      "scoreDiff": 11
+      "scoreDiff": 21
     },
     {
       "D": "Thanh Sơn-Khoa Tiến",
@@ -252,10 +252,10 @@
       "t": "14:30",
       "c": "S3",
       "A": "Quí Tuấn-Mạnh Hùng",
-      "sA": "11",
+      "sA": "10",
       "B": "Quốc Hùng-Đức Duy",
-      "sB": "0",
-      "Wn": "Quí Tuấn-Mạnh Hùng"
+      "sB": "11",
+      "Wn": "Quốc Hùng-Đức Duy"
     },
     {
       "t": "14:30",
@@ -421,7 +421,7 @@
       "c": "S3",
       "A": "Quốc Thịnh-Minh Phương",
       "sA": "0",
-      "B": "Quốc Hùng-Đức Duy",
+      "B": "Quí Tuấn-Mạnh Hùng",
       "sB": "0",
       "Wn": "Chưa có"
     },
@@ -437,7 +437,7 @@
     {
       "t": "16:00",
       "c": "S5",
-      "A": "Quí Tuấn-Mạnh Hùng",
+      "A": "Quốc Hùng-Đức Duy",
       "sA": "0",
       "B": "Duy Hưng-Minh Tú",
       "sB": "0",
