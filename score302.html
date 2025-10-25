@@ -21,14 +21,14 @@
         
         /* Light Mode Overrides */
         .light-mode {
-            --bg-color: #f9fafb; /* Gray-50 */
-            --text-color: #111827; /* Gray-900 */
+            --bg-color: #f9fafb; /* Gray-50 (Nền trắng) */
+            --text-color: #1E3A8A; /* Navy Blue Text (Chữ xanh navy) */
             --card-bg: #ffffff;
             --border-color: #e5e7eb; /* Gray-200 */
-            --accent-color: #0ea5e9; /* Sky-500 (Màu xanh nước biển sáng) */
-            --match-bg: #f3f4f6; /* Gray-100 */
+            --accent-color: #2563EB; /* Dark Blue Accent (Màu nhấn xanh đậm) */
+            --match-bg: #f3f4f6; /* Gray-100 (Nền phụ off-white) */
             --input-bg: #ffffff;
-            --group-header-text: #2563eb; /* Blue-600 (Tông xanh đậm hơn cho tiêu đề) */
+            --group-header-text: #3B82F6; /* Blue-500 (Màu tiêu đề nhóm xanh dương) */
         }
 
         body {
@@ -153,17 +153,17 @@
             <div id="matchesA" class="lg:col-span-2"></div>
         </div>
 
-        <div id="GroupB" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div id="GroupB" class="tab-content grid grid-cols-1 lg:col-span-3 gap-6">
             <div id="tableB" class="lg:col-span-1"></div>
             <div id="matchesB" class="lg:col-span-2"></div>
         </div>
 
-        <div id="GroupC" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div id="GroupC" class="tab-content grid grid-cols-1 lg:col-span-3 gap-6">
             <div id="tableC" class="lg:col-span-1"></div>
             <div id="matchesC" class="lg:col-span-2"></div>
         </div>
 
-        <div id="GroupD" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div id="GroupD" class="tab-content grid grid-cols-1 lg:col-span-3 gap-6">
             <div id="tableD" class="lg:col-span-1"></div>
             <div id="matchesD" class="lg:col-span-2"></div>
         </div>
@@ -1039,7 +1039,8 @@ function calculateGroupStandings(groupMatches) {
             const listHtml = matches.map((match, index) => {
                 const winnerName = match.A ? match.Wn || 'Chưa có' : 'Đang chờ...';
                 const winnerClass = winnerName === match.A || winnerName === match.B ? 'text-yellow-400 font-bold' : 'text-[var(--text-color)]';
-                const winnerBg = winnerName === match.A || winnerName === match.B ? 'bg-green-700/20' : 'bg-[var(--match-bg)]';
+                // ĐÃ SỬA: Thay bg-green-700/20 thành bg-blue-700/20 cho tông màu sáng xanh dương
+                const winnerBg = winnerName === match.A || winnerName === match.B ? 'bg-blue-700/20' : 'bg-[var(--match-bg)]';
                 const disabled = !editable || match.A.includes('[') || match.B.includes('[') || match.A === 'Chưa có' || match.B === 'Chưa có';
 
                 return `
