@@ -410,7 +410,7 @@
         updateKnockoutParticipants();
     }
     
-    // 2. Recalculate Group Standings
+    // 2. Recalculate Group Standings (Tính W, L, PF, PA, PD, gR)
     function recalculateGroupStandings() {
         const groupStats = {};
 
@@ -528,7 +528,7 @@
         });
     }
 
-    // 4. Manual Score Update
+    // 4. Manual Score Update (Đã điều chỉnh để lưu tab hiện tại và render lại)
     function updateMatchScore(mc, sA, sB) {
         const match = tournamentState.matches.find(m => m.Mc === mc);
         if (!match) {
@@ -553,17 +553,27 @@
             return false;
         }
 
-        // Recalculate if it's a group match
+        // --- Bắt đầu logic recalculate và re-render theo yêu cầu ---
+        
+        // 1. Lấy tab hiện tại (để restore sau khi render lại toàn bộ)
+        const currentActiveTab = document.querySelector('.tab-content.active').id; 
+
+        // 2. Tính toán lại Group Standings (W, L, PF, PA, PD, GRank)
         if (match.r.startsWith('G')) {
             recalculateGroupStandings();
         }
         
-        // Always update Knockout participants to propagate changes
+        // 3. Cập nhật các đội vào vòng Knockout (chắc chắn luôn được gọi)
         updateKnockoutParticipants();
         
-        // Re-render UI
+        // 4. Re-render UI
         renderApp();
-        showModal("Success", `Updated score for match ${mc}: ${match.A} ${sA} - ${sB} ${match.B}. Winner: ${match.Wn}.`, false);
+        
+        // 5. Restore tab hiện tại để người dùng không bị chuyển sang tab Info
+        changeTab(currentActiveTab);
+
+        // Thông báo thành công và xác nhận Standings đã được cập nhật
+        showModal("Success", `Updated score for match ${mc}: ${match.A} ${sA} - ${sB} ${match.B}. Winner: ${match.Wn}. Standings recalculated and updated.`, false);
         return true;
     }
 
@@ -647,6 +657,7 @@
     // Render Group Tab (A, B, C, D)
     function renderGroupTab(groupCode) {
         const tabElement = document.getElementById(`group-${groupCode.toLowerCase()}`);
+        // Sắp xếp các đội theo GRank đã tính toán
         const groupTeams = tournamentState.teamStandings.filter(t => t.g === groupCode).sort((a, b) => a.GRank - b.GRank);
         const groupMatches = tournamentState.matches.filter(m => m.r === `G${groupCode}`).sort((a, b) => a.Mc.localeCompare(b.Mc));
 
@@ -823,6 +834,8 @@
         const roundCode = document.getElementById('random-round-select').value;
         const roundsToUpdate = roundCode === 'ALL' ? ['GA', 'GB', 'GC', 'GD', 'QF', 'SF', 'F'] : [roundCode];
         let updatedCount = 0;
+        
+        const currentActiveTab = document.querySelector('.tab-content.active').id; 
 
         const executeRandomUpdate = (r) => {
             const matchesInRound = tournamentState.matches.filter(m => m.r === r);
@@ -875,6 +888,7 @@
         updateKnockoutParticipants();
         
         renderApp();
+        changeTab(currentActiveTab); // Restore tab
         showModal("Randomization Complete", `Successfully generated and updated ${updatedCount} matches in round(s) ${roundCode}.`, false);
     };
 
@@ -890,6 +904,8 @@
             () => {
                 let resetCount = 0;
                 
+                const currentActiveTab = document.querySelector('.tab-content.active').id; 
+
                 // Reset in order F -> SF -> QF -> GD -> GA (reverse dependency)
                 const sortedRounds = ['F', 'SF', 'QF', 'GD', 'GC', 'GB', 'GA'];
                 sortedRounds.forEach(r => {
@@ -923,6 +939,7 @@
                 updateKnockoutParticipants();
                 
                 renderApp();
+                changeTab(currentActiveTab); // Restore tab
                 showModal("Reset Complete", `Successfully cleared scores for ${resetCount} matches in round(s) ${roundCode}.`, false);
             }
         );
