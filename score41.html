@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.3.6 - FIX RE-RENDER</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.3.7 - FIX LOGIC XẾP HẠNG</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.3.6)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.3.7)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync)</p>
                 </div>
             </div>
@@ -311,7 +311,7 @@
     <script>
         
         // ==============================================================================================================
-        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.3.6 - FIX RE-RENDER)
+        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.3.7 - FIX LOGIC XẾP HẠNG)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -528,7 +528,7 @@
             }
             
             const base64Content = jsonToBase64(diffData);
-            const commitMessage = 'Update match scores via web app (state41s.json - V4.3.6)'; // Version updated
+            const commitMessage = 'Update match scores via web app (state41s.json - V4.3.7)'; // Version updated
             
             await getShaAndCommit(SCORE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
         };
@@ -593,7 +593,7 @@
             // FIX CẤU TRÚC V4.2: Gộp mảng match lại thành 'matches' thống nhất trước khi commit BASE file
             const commitData = unifyMatches(fullTeamData);
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.3.6)'; // Version updated
+            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.3.7)'; // Version updated
 
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -607,7 +607,7 @@
             switchTab('TeamManagement');
         }
 
-        // --- HÀM TIỆN ÍCH CHO TÍNH TOÁN V4.3.6 ---
+        // --- HÀM TIỆN ÍCH CHO TÍNH TOÁN V4.3.7 ---
         
         /**
          * Hàm tiện ích để xác định roundKey từ matchCode
@@ -661,33 +661,40 @@
                 const homeTeam = getTeamByT(match.tA); // Dùng tA (Team ID)
                 const awayTeam = getTeamByT(match.tB); // Dùng tB (Team ID)
                 
-                if (match.sA !== null && match.sB !== null && homeTeam && awayTeam) {
+                // --- ĐIỀU KIỆN CẬP NHẬT (FIX V4.3.7) ---
+                const WIN_SCORE = 11; // Luật chơi Pickleball Vòng Bảng (giả định)
+
+                // CHỈ XỬ LÝ KHI: 
+                // 1. Cả hai tỉ số đã được nhập (sA !== null && sB !== null)
+                // 2. VÀ có đội đạt điểm thắng (sA >= WIN_SCORE HOẶC sB >= WIN_SCORE)
+                if (match.sA !== null && match.sB !== null && (match.sA >= WIN_SCORE || match.sB >= WIN_SCORE) && homeTeam && awayTeam) {
                     const scoreA = match.sA;
                     const scoreB = match.sB;
-                    const WIN_SCORE = 11; // Giả định luật chơi Pickleball Vòng Bảng
 
                     // Cập nhật Matches Played
                     homeTeam.mP += 1;
                     awayTeam.mP += 1;
                     
-                    // Cập nhật Game Scores
+                    // Cập nhật Game Scores (Luôn cập nhật GS/GC nếu đã nhập đủ điểm)
                     homeTeam.GS += scoreA;
                     homeTeam.GC += scoreB;
                     awayTeam.GS += scoreB;
                     awayTeam.GC += scoreA;
                     
-                    if (scoreA > scoreB && scoreA >= WIN_SCORE) {
-                        // Home thắng
+                    if (scoreA > scoreB) {
+                        // Home thắng (đã đảm bảo sA >= WIN_SCORE do điều kiện if chính)
                         homeTeam.W += 1;
                         awayTeam.L += 1;
                         homeTeam.Pts += 3; // Giả định 3 điểm cho 1 trận thắng
-                    } else if (scoreB > scoreA && scoreB >= WIN_SCORE) {
-                        // Away thắng
+                    } else if (scoreB > scoreA) {
+                        // Away thắng (đã đảm bảo sB >= WIN_SCORE do điều kiện if chính)
                         awayTeam.W += 1;
                         homeTeam.L += 1;
                         awayTeam.Pts += 3;
-                    }
+                    } 
+                    // Nếu hòa: không cộng W/L
                 }
+                // --- KẾT THÚC ĐIỀU KIỆN CẬP NHẬT ---
             });
 
             // 3. Tính toán Game Difference
@@ -759,7 +766,7 @@
         }
 
         /**
-         * Hàm xử lý khi tỉ số được thay đổi trên giao diện (FIXED LOGIC V4.3.6)
+         * Hàm xử lý khi tỉ số được thay đổi trên giao diện (FIXED LOGIC V4.3.7)
          * Đã gộp logic Tái tính toán và Tái hiển thị để đảm bảo đồng bộ UI/UX.
          */
         window.handleScoreChange = function(event) {
@@ -771,6 +778,11 @@
 
             // --- BƯỚC 1: Cập nhật trạng thái Tỉ số cục bộ ---
             const roundKey = getRoundKeyFromMatchCode(matchCode);
+            let groupCode = null;
+            if (matchCode.startsWith('G')) {
+                groupCode = matchCode.charAt(1); 
+            }
+
             if (roundKey && tournamentData && tournamentData[roundKey]) {
                 const isFinal = roundKey === 'final';
                 let match;
@@ -792,7 +804,8 @@
             }
 
 
-            // --- BƯỚC 2: TÁI TÍNH TOÁN VÀ TÁI HIỂN THỊ TOÀN BỘ (FIX V4.3.6) ---
+            // --- BƯỚC 2: TÁI TÍNH TOÁN VÀ TÁI HIỂN THỊ TOÀN BỘ (FIX V4.3.7) ---
+            // Luôn gọi tính toán vì cần cập nhật GS/GC và kiểm tra điều kiện thắng/thua
             
             // 1. Luôn tính toán lại tất cả Bảng xếp hạng Vòng Bảng
             if (window.calculateAllData) {
@@ -807,8 +820,7 @@
             // 3. Tái hiển thị các thành phần thay đổi
             
             // Nếu là trận Vòng Bảng, cập nhật Bảng xếp hạng và trận đấu của Bảng đó
-            if (matchCode.startsWith('G')) { 
-                const groupCode = matchCode.charAt(1); 
+            if (groupCode) { 
                 if (window.renderGroupStandingTable) {
                     window.renderGroupStandingTable(groupCode);
                 }
@@ -916,6 +928,7 @@
             `;
             
             groupMatches.forEach(match => {
+                // Kiểm tra điều kiện hoàn thành trận đấu theo luật Pickleball Vòng Bảng (>=11 điểm)
                 const isCompleted = match.sA !== null && match.sB !== null && (match.sA >= 11 || match.sB >= 11);
                 
                 // *** LOGIC CẬP NHẬT V4.3.5 ***
@@ -1083,7 +1096,8 @@
             
             const getWinner = (match) => {
                 // Giả định 15 điểm là điểm thắng cho Knockout
-                if (match && match.sA !== null && match.sB !== null && (match.sA >= 15 || match.sB >= 15)) {
+                const WIN_SCORE = 15;
+                if (match && match.sA !== null && match.sB !== null && (match.sA >= WIN_SCORE || match.sB >= WIN_SCORE)) {
                     const winnerT = match.sA > match.sB ? match.tA : match.tB;
                     const winnerTn = match.sA > match.sB ? match.A : match.B;
                     return { T: winnerT, Tn: winnerTn };
@@ -1136,9 +1150,11 @@
                 let html = `<h3 class="text-xl font-bold text-red-400 mb-3">${title}</h3><div class="space-y-4">`;
 
                 matches = Array.isArray(matches) ? matches : (matches ? [matches] : []);
+                const WIN_SCORE = 15; // Luật Knockout
 
                 matches.forEach(match => {
-                    const isCompleted = match.sA !== null && match.sB !== null && (match.sA >= (isFinal ? 15 : 15) || match.sB >= (isFinal ? 15 : 15));
+                    // Kiểm tra điều kiện hoàn thành trận đấu theo luật Knockout (>=15 điểm)
+                    const isCompleted = match.sA !== null && match.sB !== null && (match.sA >= WIN_SCORE || match.sB >= WIN_SCORE);
                     
                     // *** LOGIC CẬP NHẬT V4.3.5 ***
                     const homeTeamName = getDisplayName(match, 'A');
@@ -1199,23 +1215,22 @@
             if (!tournamentData || !container) return;
             
             const finalMatch = tournamentData.final;
+            const WIN_SCORE = 15; 
             
-            if (finalMatch && finalMatch.sA !== null && finalMatch.sB !== null) {
-                const WIN_SCORE = 15; 
-                if (finalMatch.sA >= WIN_SCORE || finalMatch.sB >= WIN_SCORE) {
-                    const winnerT = finalMatch.sA > finalMatch.sB ? finalMatch.tA : finalMatch.tB;
-                    const winnerTeam = getTeamByT(winnerT);
-                    
-                    if (winnerTeam) {
-                         container.innerHTML = `
-                            <div class="text-center">
-                                <p class="text-5xl font-black text-yellow-500 mb-2">${winnerTeam.Tn.toUpperCase()}</p>
-                                <p class="text-lg text-yellow-300">Nhà Vô Địch Giải Đấu Pickleball ITVTG Tournament 2025</p>
-                                <p class="text-sm text-gray-400 mt-2">Tỉ số chung kết: ${finalMatch.sA} - ${finalMatch.sB}</p>
-                            </div>
-                         `;
-                         return;
-                    }
+            if (finalMatch && finalMatch.sA !== null && finalMatch.sB !== null && (finalMatch.sA >= WIN_SCORE || finalMatch.sB >= WIN_SCORE)) {
+                
+                const winnerT = finalMatch.sA > finalMatch.sB ? finalMatch.tA : finalMatch.tB;
+                const winnerTeam = getTeamByT(winnerT);
+                
+                if (winnerTeam) {
+                     container.innerHTML = `
+                        <div class="text-center">
+                            <p class="text-5xl font-black text-yellow-500 mb-2">${winnerTeam.Tn.toUpperCase()}</p>
+                            <p class="text-lg text-yellow-300">Nhà Vô Địch Giải Đấu Pickleball ITVTG Tournament 2025</p>
+                            <p class="text-sm text-gray-400 mt-2">Tỉ số chung kết: ${finalMatch.sA} - ${finalMatch.sB}</p>
+                        </div>
+                     `;
+                     return;
                 }
             }
             // Mặc định
@@ -1310,7 +1325,7 @@
 
             matchesToSimulate.forEach(match => {
                 const WIN_SCORE = isGroup ? 11 : 15;
-                // Chỉ giả lập cho các trận chưa có tỉ số hoặc đang có tỉ số khác WIN_SCORE
+                // Chỉ giả lập cho các trận chưa có tỉ số hoàn chỉnh
                 if (match.sA === null || match.sB === null || (match.sA < WIN_SCORE && match.sB < WIN_SCORE)) {
                     if (match.tA !== 'TBD' && match.tB !== 'TBD') {
                         const newScore = getSimulatedScore(isGroup);
@@ -1616,12 +1631,6 @@
 
             // Event listeners for theme toggle
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-            // Thêm Event Listener cho tất cả ô nhập tỉ số
-            // Lưu ý: Đã xóa phần thêm listener cố định vì nó đã được thêm trong HTML oninput
-            // document.querySelectorAll('.score-input').forEach(input => {
-            //     input.addEventListener('input', window.handleScoreChange); 
-            // });
             
             // Event listeners for swipe navigation (on the whole app container)
             document.getElementById('app').addEventListener('touchstart', (e) => {
