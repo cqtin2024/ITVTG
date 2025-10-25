@@ -390,7 +390,7 @@
             }
         }
         
-        async function getShaAndCommit(fileUrl, contentBase64, commitMessage, buttonId, resultElementId) {
+        async function getShaAndCommit(fileUrl, contentBase64, commitMessage, buttonId, resultElementId, currentSha) {
             const pat = githubToken.trim();
             const commitButton = document.getElementById(buttonId);
             
@@ -404,28 +404,30 @@
                  showStatus('Đang tự động đồng bộ (Auto-Commit) lên GitHub...', 'info', 'statusMessage');
             }
             
-            let sha = null;
+            let sha = currentSha; // Bắt đầu với SHA được truyền vào (nếu có)
             
             try {
-                if(isManualCommit) showStatus('Đang lấy SHA hiện tại của file...', 'info', resultElementId);
+                // Nếu không có SHA được truyền vào, TẢI SHA MỚI (chỉ cần thiết cho manual commit)
+                if (!sha) {
+                    if(isManualCommit) showStatus('Đang lấy SHA hiện tại của file...', 'info', resultElementId);
 
-                const shaResponse = await fetch(fileUrl + `?ref=${BRANCH}`, {
-                    headers: { 'Authorization': `Bearer ${pat}` } 
-                });
+                    const shaResponse = await fetch(fileUrl + `?ref=${BRANCH}`, {
+                        headers: { 'Authorization': `Bearer ${pat}` } 
+                    });
 
-                if (shaResponse.status === 404) {
-                    if(isManualCommit) showStatus('File chưa tồn tại trên nhánh, sẽ tạo mới.', 'info', resultElementId);
-                    else console.log(`[Auto-Commit] File ${fileUrl} chưa tồn tại, sẽ tạo mới.`);
-                } else if (shaResponse.status === 401) {
-                    const errorJson = await shaResponse.json();
-                    throw new Error(`401 Unauthorized: ${errorJson.message || 'Token không hợp lệ hoặc thiếu quyền "repo".'}`);
-                } else if (!shaResponse.ok) {
-                    const errorJson = await shaResponse.json();
-                    throw new Error(`Lỗi API khi lấy SHA: ${shaResponse.status} - ${errorJson.message || shaResponse.statusText}`);
-                } else {
-                    const data = await shaResponse.json();
-                    sha = data.sha;
-                    if(isManualCommit) showStatus(`Đã lấy SHA file thành công. SHA: ${sha.substring(0, 10)}...`, 'info', resultElementId);
+                    if (shaResponse.status === 404) {
+                        if(isManualCommit) showStatus('File chưa tồn tại trên nhánh, sẽ tạo mới.', 'info', resultElementId);
+                    } else if (shaResponse.status === 401) {
+                        const errorJson = await shaResponse.json();
+                        throw new Error(`401 Unauthorized: ${errorJson.message || 'Token không hợp lệ hoặc thiếu quyền "repo".'}`);
+                    } else if (!shaResponse.ok) {
+                        const errorJson = await shaResponse.json();
+                        throw new Error(`Lỗi API khi lấy SHA: ${shaResponse.status} - ${errorJson.message || shaResponse.statusText}`);
+                    } else {
+                        const data = await shaResponse.json();
+                        sha = data.sha;
+                        if(isManualCommit) showStatus(`Đã lấy SHA file thành công. SHA: ${sha.substring(0, 10)}...`, 'info', resultElementId);
+                    }
                 }
                 
                 if(isManualCommit) commitButton.textContent = 'Đang Commit (PUT)...';
@@ -533,6 +535,9 @@
                     return cleanTeam;
                 });
             }
+            
+            // [FIXED] Bước quan trọng: Loại bỏ trường metadata khỏi dữ liệu commit
+            delete cleanData.metadata;
             
             return cleanData;
         }
@@ -649,22 +654,16 @@
             // Bỏ qua nếu dữ liệu không tồn tại
             if (!tournamentData) return; 
 
-            // Chuẩn bị dữ liệu (unify và loại bỏ các trường tính toán)
+            // Chuẩn bị dữ liệu (unify và loại bỏ các trường tính toán VÀ metadata)
             const commitData = unifyAndCleanData(tournamentData);
             
-            // Thêm SHA vào payload
+            // Lấy SHA CŨ từ dữ liệu in-memory để dùng cho API commit
             const currentSha = tournamentData.metadata?.sha;
-            if (currentSha) {
-                commitData.metadata = { sha: currentSha }; 
-            } else {
-                 // Xóa metadata nếu không có SHA để tránh lỗi commit
-                 delete commitData.metadata;
-            }
 
             const base64Content = jsonToBase64(commitData);
             
             // Sử dụng một ID ảo cho nút COMMIT để hàm getShaAndCommit không vô hiệu hóa nút thật
-            await getShaAndCommit(ACTIVE_API_URL, base64Content, commitMessage, 'autoCommitPlaceholder', 'statusMessage');
+            await getShaAndCommit(ACTIVE_API_URL, base64Content, commitMessage, 'autoCommitPlaceholder', 'statusMessage', currentSha);
         }
 
 
@@ -869,7 +868,8 @@
         function getTeamName(teamId) {
             if (!tournamentData || !tournamentData.tL) return teamId;
             const team = tournamentData.tL.find(t => t.T === teamId);
-            return team ? team.Tn : teamId;
+            // Trả về Tn (Nickname) nếu tìm thấy, ngược lại trả về teamId (hoặc 'Chưa xác định' nếu teamId là null)
+            return team ? team.Tn : (teamId || 'Chưa xác định'); 
         }
         
         /**
@@ -1093,7 +1093,6 @@
 
         // RENDER: Group Tab (Table & Matches)
         window.renderGroupTab = function(group, data) {
-            // ... (Hàm này giữ nguyên logic hiển thị tên đội và bảng xếp hạng)
             const groupTeams = data.tL.filter(t => t.g === group);
             const sortedTeams = calculateStandings(groupTeams);
             const matches = data[`matches${group}`];
@@ -1148,13 +1147,12 @@
                 `;
                 
                 safeMatches.forEach((match, index) => {
-                    const teamA = data.tL.find(t => t.T === match.teamA);
-                    const teamB = data.tL.find(t => t.T === match.teamB);
-                    const statusClass = match.sA !== null && match.sB !== null ? 'border-l-4 border-green-500' : 'border-l-4 border-gray-500';
                     
-                    // Logic cập nhật để tránh undefined/null
-                    const teamAName = teamA ? teamA.Tn : (match.teamA ? match.teamA : 'Chưa xác định');
-                    const teamBName = teamB ? teamB.Tn : (match.teamB ? match.teamB : 'Chưa xác định');
+                    // [FIXED] Sử dụng hàm getTeamName để đảm bảo luôn lấy Tn (Tên rút gọn)
+                    const teamAName = getTeamName(match.teamA);
+                    const teamBName = getTeamName(match.teamB);
+
+                    const statusClass = match.sA !== null && match.sB !== null ? 'border-l-4 border-green-500' : 'border-l-4 border-gray-500';
                     
 
                     matchHtml += `
@@ -1361,18 +1359,13 @@
 
             const commitMessage = 'Manual sync of active state (state41s.json - V6.0)';
             
-            // Chuẩn bị dữ liệu (unify và loại bỏ các trường tính toán)
+            // Chuẩn bị dữ liệu (unify và loại bỏ các trường tính toán VÀ metadata)
             const commitData = unifyAndCleanData(tournamentData);
             const currentSha = tournamentData.metadata?.sha;
-            if (currentSha) {
-                commitData.metadata = { sha: currentSha }; 
-            } else {
-                 delete commitData.metadata;
-            }
             
             const base64Content = jsonToBase64(commitData);
             
-            await getShaAndCommit(ACTIVE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
+            await getShaAndCommit(ACTIVE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult', currentSha);
         };
 
         // Nút "LƯU THÔNG TIN ĐỘI VÀO GỐC (`state41.json`) - THAO TÁC NGUY HIỂM!"
@@ -1418,7 +1411,15 @@
                 return;
             }
 
-            await getShaAndCommit(BASE_API_URL, base64Content, commitMessage, 'commitTeamToBaseButton', 'teamCommitResult');
+            // Lấy SHA của BASE file
+             const shaResponse = await fetch(BASE_API_URL + `?ref=${BRANCH}`);
+             let baseSha = null;
+             if (shaResponse.ok) {
+                const data = await shaResponse.json();
+                baseSha = data.sha;
+             }
+
+            await getShaAndCommit(BASE_API_URL, base64Content, commitMessage, 'commitTeamToBaseButton', 'teamCommitResult', baseSha);
             
             // Sau khi commit thành công, tải lại dữ liệu để đảm bảo đồng bộ
             await loadDataFromGitHub();
