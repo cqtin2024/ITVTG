@@ -380,9 +380,8 @@
                 const commitResponse = await fetch(fileUrl, {
                     method: 'PUT',
                     headers: { 
-                        'Authorization': `token ${pat}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/vnd.github.v3+json'
+                        'Authorization': `Bearer ${pat}`,   
+                        'Accept': 'application/vnd.github+json'  
                     },
                     body: JSON.stringify(payload)
                 });
