@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cập nhật Dữ liệu Giải đấu Pickleball ITVTG 2025</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 20px; }
+        .tournament-info div { margin-bottom: 10px; }
+        .matches-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .matches-table th, .matches-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .matches-table th { background-color: #3498db; color: white; cursor: pointer; }
+        .matches-table tr:nth-child(even) { background-color: #f9f9f9; }
+        .matches-table tr:hover { background-color: #f1f1f1; }
+        .match-group-header { background-color: #2ecc71 !important; color: white; text-align: center !important; font-weight: bold; }
+        input[type="number"] { width: 60px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        .update-button { background-color: #e74c3c; color: white; border: none; padding: 8px 15px; text-align: center; text-decoration: none; display: inline-block; font-size: 14px; margin: 4px 2px; cursor: pointer; border-radius: 4px; transition: background-color 0.3s; }
+        .update-button:hover { background-color: #c0392b; }
+        .winner-cell { font-weight: bold; color: #27ae60; }
+        .score-input-container { display: flex; align-items: center; justify-content: space-between; }
+        .score-input-container > * { margin: 0 5px; }
+    </style>
+</head>
+<body>
+
+<div id="app" class="container">
+    <h1>{{ tournament.TN }}</h1>
+    <p>Giải đấu do **{{ tournament.Org }}** tổ chức.</p>
+
+    <div class="tournament-info">
+        <h2>Thông Tin Chung</h2>
+        <div>**Thời gian:** {{ tournament.SD }} - {{ tournament.ED }} | Bắt đầu lúc {{ tournament.FTT }}</div>
+        <div>**Địa điểm thi đấu:** {{ tournament.VL }} (<a :href="tournament.MapVL" target="_blank">Xem bản đồ</a>)</div>
+        <div>**Gala Dinner:** {{ tournament.GL }} | Lúc {{ tournament.GT }} (<a :href="tournament.MapGL" target="_blank">Xem bản đồ</a>)</div>
+    </div>
+
+    <hr>
+
+    <h2>Bảng Xếp Hạng Chung (Đang chờ cập nhật)</h2>
+    <p>Bảng xếp hạng sẽ được cập nhật sau khi các trận đấu vòng bảng có kết quả.</p>
+
+    <hr>
+
+    <h2>Tất Cả Các Trận Đấu</h2>
+    <table class="matches-table">
+        <thead>
+            <tr>
+                <th>Mã Trận</th>
+                <th>Thời gian</th>
+                <th>Sân</th>
+                <th>Đội A</th>
+                <th>Tỷ số A</th>
+                <th>Đội B</th>
+                <th>Tỷ số B</th>
+                <th>Đội Thắng</th>
+                <th>Cập nhật</th>
+            </tr>
+        </thead>
+        <tbody>
+            <template v-for="(match, index) in matches" :key="index">
+                <tr v-if="index === 0 || match.Mc.substring(0, 2) !== matches[index-1].Mc.substring(0, 2)">
+                    <td colspan="9" class="match-group-header">
+                        {{ getMatchGroupName(match.Mc) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>{{ match.Mc }}</td>
+                    <td>{{ match.t }}</td>
+                    <td>{{ match.c }}</td>
+                    <td>{{ match.A }}</td>
+                    <td>
+                        <input type="number" v-model.number="match.sA" min="0" :disabled="match.Mc.includes('F')" />
+                    </td>
+                    <td>{{ match.B }}</td>
+                    <td>
+                        <input type="number" v-model.number="match.sB" min="0" :disabled="match.Mc.includes('F')" />
+                    </td>
+                    <td :class="{'winner-cell': match.Wn !== ''}">
+                        {{ match.Wn === '' ? 'Đang đấu...' : match.Wn }}
+                    </td>
+                    <td>
+                        <button class="update-button" @click="updateMatch(match)">Cập Nhật</button>
+                    </td>
+                </tr>
+            </template>
+        </tbody>
+    </table>
+    
+    <p style="margin-top: 30px;">*Lưu ý: Chức năng cập nhật điểm số trực tiếp trên web app demo này không thay đổi dữ liệu JSON gốc vĩnh viễn, chỉ thay đổi dữ liệu trong phiên làm việc hiện tại.</p>
+
+</div>
+
+<script>
+    const { createApp, ref, computed } = Vue
+
+    const tournamentData = {
+        "key_legend": { /* ... (Omitted for brevity in JS) ... */ },
+        "TournamentInfo": {
+            "TN": "Pickleball ITVTG Tournament 2025",
+            "Org": "IT Vũng Tàu Goup",
+            "LogoL": "https://github.com/cqtin2024/ITVTG/blob/main/LogoITGVT01.png",
+            "SD": "26-10-2025",
+            "ED": "26-10-2025",
+            "FTT": "14:00",
+            "VL": "HM Sport - Pickleball & Coffee - 195 Võ Thị Sáu, Vũng Tàu",
+            "MapVL": "https://maps.app.goo.gl/KqqrpVqmVi4uNg7s7",
+            "GL": "Quán nhậu Thống Nhất - 56 Thống Nhất, Vũng Tàu ",
+            "GT": "18:30",
+            "MapGL": "https://maps.app.goo.gl/Zbuo59wSeRsHP6E59"
+        },
+        "teamStandings": [
+            { "g": "A", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 4, "T": "Team 9", "Tn": "Duy Hưng-Minh Tú", "seed": "A1" },
+            { "g": "A", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 1, "T": "Team 3", "Tn": "Quốc Thịnh-Minh Phương", "seed": "A2" },
+            { "g": "A", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 3, "T": "Team 11", "Tn": "Minh Chang-Minh Châu", "seed": "A3" },
+            { "g": "A", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 2, "T": "Team 5", "Tn": "Quốc Khánh-Linh Vũ", "seed": "A4" },
+            { "g": "B", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 4, "T": "Team 4", "Tn": "Quí Tuấn-Mạnh Hùng", "seed": "B1" },
+            { "g": "B", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 1, "T": "Team 7", "Tn": "Quốc Hùng-Đức Duy", "seed": "B2" },
+            { "g": "B", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 3, "T": "Team 12", "Tn": "Thanh Sơn-Khoa Tiến", "seed": "B3" },
+            { "g": "B", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 2, "T": "Team 1", "Tn": "Quang Tiến-Tất Thành", "seed": "B4" },
+            { "g": "C", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 4, "T": "Team 16", "Tn": "Hoàng Thanh-Công Phương", "seed": "C1" },
+            { "g": "C", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 1, "T": "Team 10", "Tn": "Lê Duy-Thanh Vương", "seed": "C2" },
+            { "g": "C", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 3, "T": "Team 14", "Tn": "Văn Cường-Văn Dũng", "seed": "C3" },
+            { "g": "C", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 2, "T": "Team 6", "Tn": "Đông Chu-Ngọc Hùng", "seed": "C4" },
+            { "g": "D", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 4, "T": "Team 13", "Tn": "Bá Châu-Hiền Phong", "seed": "D1" },
+            { "g": "D", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 1, "T": "Team 8", "Tn": "Tiến Mạnh-Quang Tín", "seed": "D2" },
+            { "g": "D", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 3, "T": "Team 15", "Tn": "Minh Thiện-Duy Minh", "seed": "D3" },
+            { "g": "D", "W": 0, "L": 0, "HS": "11", "Pts": 0, "mP": 0, "gR": 2, "T": "Team 2", "Tn": "Viết Tuấn-Quang Dũng", "seed": "D4" }
+        ],
+        "matches": [
+            { "Mc": "GA1", "t": "14:15", "c": "S3", "A": "Duy Hưng-Minh Tú", "sA": 0, "B": "Quốc Thịnh-Minh Phương", "sB": 0, "Wn": "" },
+            { "Mc": "GA2", "t": "14:15", "c": "S4", "A": "Minh Chang-Minh Châu", "sA": 0, "B": "Quốc Khánh-Linh Vũ", "sB": 0, "Wn": "" },
+            { "Mc": "GA3", "t": "14:45", "c": "S3", "A": "Duy Hưng-Minh Tú", "sA": 0, "B": "Minh Chang-Minh Châu", "sB": 0, "Wn": "" },
+            { "Mc": "GA4", "t": "14:45", "c": "S4", "A": "Quốc Thịnh-Minh Phương", "sA": 0, "B": "Quốc Khánh-Linh Vũ", "sB": 0, "Wn": "" },
+            { "Mc": "GA5", "t": "15:15", "c": "S3", "A": "Duy Hưng-Minh Tú", "sA": 0, "B": "Quốc Khánh-Linh Vũ", "sB": 0, "Wn": "" },
+            { "Mc": "GA6", "t": "15:15", "c": "S4", "A": "Quốc Thịnh-Minh Phương", "sA": 0, "B": "Minh Chang-Minh Châu", "sB": 0, "Wn": "" },
+            { "Mc": "GB1", "t": "14:30", "c": "S3", "A": "Quí Tuấn-Mạnh Hùng", "sA": 0, "B": "Quốc Hùng-Đức Duy", "sB": 0, "Wn": "" },
+            { "Mc": "GB2", "t": "14:30", "c": "S4", "A": "Thanh Sơn-Khoa Tiến", "sA": 0, "B": "Quang Tiến-Tất Thành", "sB": 0, "Wn": "" },
+            { "Mc": "GB3", "t": "15:00", "c": "S3", "A": "Quí Tuấn-Mạnh Hùng", "sA": 0, "B": "Thanh Sơn-Khoa Tiến", "sB": 0, "Wn": "" },
+            { "Mc": "GB4", "t": "15:00", "c": "S4", "A": "Quốc Hùng-Đức Duy", "sA": 0, "B": "Quang Tiến-Tất Thành", "sB": 0, "Wn": "" },
+            { "Mc": "GB5", "t": "15:30", "c": "S3", "A": "Quí Tuấn-Mạnh Hùng", "sA": 0, "B": "Quang Tiến-Tất Thành", "sB": 0, "Wn": "" },
+            { "Mc": "GB6", "t": "15:30", "c": "S4", "A": "Quốc Hùng-Đức Duy", "sA": 0, "B": "Thanh Sơn-Khoa Tiến", "sB": 0, "Wn": "" },
+            { "Mc": "GC1", "t": "14:15", "c": "S5", "A": "Hoàng Thanh-Công Phương", "sA": 0, "B": "Lê Duy-Thanh Vương", "sB": 0, "Wn": "" },
+            { "Mc": "GC2", "t": "14:15", "c": "S6", "A": "Văn Cường-Văn Dũng", "sA": 0, "B": "Đông Chu-Ngọc Hùng", "sB": 0, "Wn": "" },
+            { "Mc": "GC3", "t": "14:45", "c": "S5", "A": "Hoàng Thanh-Công Phương", "sA": 0, "B": "Văn Cường-Văn Dũng", "sB": 0, "Wn": "" },
+            { "Mc": "GC4", "t": "14:45", "c": "S6", "A": "Lê Duy-Thanh Vương", "sA": 0, "B": "Đông Chu-Ngọc Hùng", "sB": 0, "Wn": "" },
+            { "Mc": "GC5", "t": "15:15", "c": "S5", "A": "Hoàng Thanh-Công Phương", "sA": 0, "B": "Đông Chu-Ngọc Hùng", "sB": 0, "Wn": "" },
+            { "Mc": "GC6", "t": "15:15", "c": "S6", "A": "Lê Duy-Thanh Vương", "sA": 0, "B": "Văn Cường-Văn Dũng", "sB": 0, "Wn": "" },
+            { "Mc": "GD1", "t": "14:30", "c": "S5", "A": "Bá Châu-Hiền Phong", "sA": 0, "B": "Tiến Mạnh-Quang Tín", "sB": 0, "Wn": "" },
+            { "Mc": "GD2", "t": "14:30", "c": "S6", "A": "Minh Thiện-Duy Minh", "sA": 0, "B": "Viết Tuấn-Quang Dũng", "sB": 0, "Wn": "" },
+            { "Mc": "GD3", "t": "15:00", "c": "S5", "A": "Bá Châu-Hiền Phong", "sA": 0, "B": "Minh Thiện-Duy Minh", "sB": 0, "Wn": "" },
+            { "Mc": "GD4", "t": "15:00", "c": "S6", "A": "Tiến Mạnh-Quang Tín", "sA": 0, "B": "Viết Tuấn-Quang Dũng", "sB": 0, "Wn": "" },
+            { "Mc": "GD5", "t": "15:30", "c": "S5", "A": "Bá Châu-Hiền Phong", "sA": 0, "B": "Viết Tuấn-Quang Dũng", "sB": 0, "Wn": "" },
+            { "Mc": "GD6", "t": "15:30", "c": "S6", "A": "Tiến Mạnh-Quang Tín", "sA": 0, "B": "Minh Thiện-Duy Minh", "sB": 0, "Wn": "" },
+            // Vòng Loại Trực Tiếp
+            { "Mc": "QF1", "t": "15:45", "c": "S3", "A": "W.A", "sA": 0, "B": "R.B", "sB": 0, "Wn": "R.B" },
+            { "Mc": "QF2", "t": "15:45", "c": "S4", "A": "W.B", "sA": 0, "B": "R.A", "sB": 0, "Wn": "R.A" },
+            { "Mc": "QF3", "t": "16:00", "c": "S5", "A": "W.C", "sA": 0, "B": "R.D", "sB": 0, "Wn": "R.D" },
+            { "Mc": "QF4", "t": "16:00", "c": "S6", "A": "W.D", "sA": 0, "B": "R.C", "sB": 0, "Wn": "R.C" },
+            { "Mc": "SF1", "t": "16:10", "c": "S4", "A": "W.QF1", "sA": 0, "B": "W.QF3", "sB": 0, "Wn": "W.QF3" },
+            { "Mc": "SF2", "t": "16:25", "c": "S5", "A": "W.QF2", "sA": 0, "B": "W.QF4", "sB": 0, "Wn": "W.QF4" },
+            { "Mc": "F", "t": "17:05", "c": "S5", "A": "W.SF1", "sA": 0, "B": "W.SF2", "sB": 0, "Wn": "W.SF2", "rU": "W.SF1" }
+        ],
+        "tL": [ /* ... (Omitted for brevity in JS) ... */ ]
+    };
+
+    // Chuyển đổi điểm số về dạng số cho dễ xử lý trong JS
+    tournamentData.matches.forEach(match => {
+        match.sA = parseInt(match.sA);
+        match.sB = parseInt(match.sB);
+    });
+
+    createApp({
+        setup() {
+            // Sử dụng ref để dữ liệu có thể phản ứng (reactive) với Vue
+            const tournament = ref(tournamentData.TournamentInfo);
+            const matches = ref(tournamentData.matches);
+            const standings = ref(tournamentData.teamStandings);
+            const teamList = ref(tournamentData.tL);
+            
+            // Hàm lấy tên đội thắng
+            const getWinner = (match) => {
+                const scoreA = match.sA;
+                const scoreB = match.sB;
+                // Giả định: Đội có điểm cao hơn sẽ thắng. Nếu bằng nhau (0-0), chưa có kết quả.
+                if (scoreA > scoreB) {
+                    return match.A;
+                } else if (scoreB > scoreA) {
+                    return match.B;
+                } else {
+                    return ""; // Chưa có kết quả
+                }
+            };
+            
+            // Hàm lấy tên nhóm trận đấu
+            const getMatchGroupName = (mc) => {
+                const prefix = mc.substring(0, 2);
+                if (prefix.startsWith('G')) return `Vòng Bảng - Bảng ${mc.substring(1, 2)}`;
+                switch(prefix) {
+                    case 'QF': return 'Vòng Tứ Kết';
+                    case 'SF': return 'Vòng Bán Kết';
+                    case 'F': return 'Trận Chung Kết';
+                    default: return 'Khác';
+                }
+            };
+
+            // Hàm cập nhật trận đấu
+            const updateMatch = (match) => {
+                // Đảm bảo điểm số là số và không âm
+                match.sA = Math.max(0, parseInt(match.sA));
+                match.sB = Math.max(0, parseInt(match.sB));
+
+                // 1. Cập nhật đội thắng (Wn)
+                const winnerName = getWinner(match);
+                match.Wn = winnerName;
+
+                // 2. Cập nhật các trận tiếp theo (Nếu là vòng loại trực tiếp)
+                if (match.Mc.startsWith('QF') || match.Mc.startsWith('SF')) {
+                    updateKnockoutMatches(match, winnerName);
+                }
+
+                // Cảnh báo (Trong môi trường thực, cần xử lý logic cập nhật Bảng Xếp Hạng phức tạp hơn)
+                alert(`Đã cập nhật tỷ số trận ${match.Mc}: ${match.A} (${match.sA}) - ${match.B} (${match.sB}). Đội thắng: ${match.Wn === '' ? 'Chưa xác định' : match.Wn}`);
+            };
+            
+            // Hàm logic cập nhật các trận vòng loại trực tiếp
+            const updateKnockoutMatches = (currentMatch, winnerName) => {
+                let nextMatches = [];
+                let isWinnerA = winnerName === currentMatch.A;
+                let isWinnerB = winnerName === currentMatch.B;
+
+                // Logic đơn giản để xác định đội đi tiếp (W.Mc / R.Mc)
+                const winnerRef = `W.${currentMatch.Mc}`;
+                const runnerUpRef = `R.${currentMatch.Mc}`;
+                
+                let advanceTeam = winnerName;
+                let eliminatedTeam = winnerName === currentMatch.A ? currentMatch.B : currentMatch.A;
+
+                if (currentMatch.Mc.startsWith('QF')) {
+                    nextMatches = matches.value.filter(m => m.Mc.startsWith('SF'));
+                } else if (currentMatch.Mc.startsWith('SF')) {
+                    nextMatches = matches.value.filter(m => m.Mc === 'F');
+                }
+                
+                nextMatches.forEach(nextMatch => {
+                    // Cập nhật đội A
+                    if (nextMatch.A === winnerRef) {
+                        nextMatch.A = advanceTeam;
+                    }
+                    // Cập nhật đội B
+                    if (nextMatch.B === winnerRef) {
+                        nextMatch.B = advanceTeam;
+                    }
+                    // Cập nhật Đội về nhì (Chỉ cho trận Chung kết)
+                    if (nextMatch.Mc === 'F' && nextMatch.rU === winnerRef) {
+                        // Trong trường hợp này, đội thua ở trận SF là đội đi tiếp vào rU (Á Quân) của F
+                        // Tuy nhiên, theo logic JSON, rU của F là đội thua trận F, không phải đội thua trận SF
+                        // Cần logic đầy đủ hơn để xác định đội đi tiếp vào các vị trí 3-4 (nếu có)
+                    }
+
+                    // Cập nhật đội Á quân của trận Chung kết (rU)
+                    if (currentMatch.Mc === 'SF1') {
+                        const loserSF1 = winnerName === currentMatch.A ? currentMatch.B : currentMatch.A;
+                        const matchForThird = matches.value.find(m => m.Mc === '3R' /* Giả định có trận tranh hạng 3 */);
+                        // Logic cho trận tranh hạng 3
+                    }
+                    
+                    if (currentMatch.Mc.startsWith('QF')) {
+                        // Xác định đội Á quân (R) cho các trận Tứ kết
+                        const groupChar = currentMatch.Mc.charAt(2);
+                        const nextSFMatch = nextMatches.find(m => m.A.includes('QF') || m.B.includes('QF'));
+                        
+                        // Cần logic đầy đủ để thay thế W.A/R.B bằng tên đội thực
+                        // Ví dụ: Tìm đội thắng (W.A) và đội về nhì (R.B) từ Bảng Xếp Hạng (teamStandings)
+                        // Bỏ qua phần này trong demo đơn giản để tránh quá phức tạp.
+                    }
+                });
+            };
+
+            return {
+                tournament,
+                matches,
+                standings,
+                updateMatch,
+                getMatchGroupName,
+                getWinner
+            }
+        }
+    }).mount('#app')
+</script>
+
+</body>
+</html>
