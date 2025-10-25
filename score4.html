@@ -348,7 +348,7 @@
                 showStatus('Đang lấy SHA hiện tại của file...', 'info', resultElementId);
 
                 const shaResponse = await fetch(fileUrl + `?ref=${BRANCH}`, {
-                    headers: { 'Authorization': `token ${pat}` }
+                    headers: { 'Authorization': `Bearer ${pat}` }
                 });
 
                 if (shaResponse.status === 404) {
