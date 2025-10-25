@@ -4,43 +4,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cập nhật Dữ liệu Giải đấu Pickleball ITVTG 2025</title>
+    <!-- Thư viện Vue.js 3 - Dùng CDN để đơn giản -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 20px; }
-        .tournament-info div { margin-bottom: 10px; }
-        .matches-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .matches-table th, .matches-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        .matches-table th { background-color: #3498db; color: white; cursor: pointer; }
+        /* Sử dụng Tailwind-like classes để làm cho giao diện hiện đại hơn */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --text-color: #333;
+            --bg-light: #f4f4f9;
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-color); margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: var(--primary-color); border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 20px; font-weight: 700; }
+        .tournament-info div { margin-bottom: 8px; font-size: 0.95rem; }
+
+        /* Bảng xếp hạng và Trận đấu */
+        .standings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .standings-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .standings-card h3 { margin: 0; padding: 12px; background-color: var(--secondary-color); color: white; border-bottom: none; }
+
+        .standings-table, .matches-table { width: 100%; border-collapse: collapse; }
+        .standings-table th, .standings-table td { padding: 8px 10px; text-align: left; font-size: 0.9rem; }
+        .matches-table th, .matches-table td { border: 1px solid #ddd; padding: 10px 12px; text-align: left; font-size: 0.9rem; }
+        
+        .standings-table th { background-color: #34495e; color: white; }
+        .standings-table tr:nth-child(even) { background-color: #f9f9f9; }
+        .standings-table tr:hover { background-color: #f1f1f1; }
+        .rank-cell { font-weight: bold; width: 40px; text-align: center; }
+
+        /* Bảng Trận đấu */
+        .matches-table th { background-color: var(--primary-color); color: white; }
         .matches-table tr:nth-child(even) { background-color: #f9f9f9; }
         .matches-table tr:hover { background-color: #f1f1f1; }
-        .match-group-header { background-color: #2ecc71 !important; color: white; text-align: center !important; font-weight: bold; }
-        input[type="number"] { width: 60px; padding: 5px; border: 1px solid #ccc; border-radius: 4px; }
-        .update-button { background-color: #e74c3c; color: white; border: none; padding: 8px 15px; text-align: center; text-decoration: none; display: inline-block; font-size: 14px; margin: 4px 2px; cursor: pointer; border-radius: 4px; transition: background-color 0.3s; }
-        .update-button:hover { background-color: #c0392b; }
-        .winner-cell { font-weight: bold; color: #27ae60; }
-        .score-input-container { display: flex; align-items: center; justify-content: space-between; }
-        .score-input-container > * { margin: 0 5px; }
+        .match-group-header { background-color: #2c3e50 !important; color: white; text-align: center !important; font-weight: bold; }
+        
+        input[type="number"] { width: 50px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+        .update-button { 
+            background-color: var(--danger-color); color: white; border: none; padding: 6px 12px; 
+            font-size: 0.85rem; cursor: pointer; border-radius: 6px; transition: all 0.3s; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .update-button:hover { background-color: #c0392b; transform: translateY(-1px); }
+        .winner-cell { font-weight: bold; color: var(--secondary-color); }
+        .loser-cell { color: var(--danger-color); opacity: 0.7; }
+
+        /* Error/Message Box Styling (Thay thế alert()) */
+        .message-box {
+            position: fixed; top: 20px; right: 20px;
+            background-color: #f8d7da; color: #721c24;
+            border: 1px solid #f5c6cb; border-radius: 8px;
+            padding: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 400px; z-index: 1000;
+            opacity: 0; transition: opacity 0.5s, transform 0.5s;
+            transform: translateY(-20px);
+        }
+        .message-box.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .message-box button {
+            float: right; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #721c24;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .matches-table th, .matches-table td { padding: 8px; font-size: 0.8rem; }
+            .standings-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
 <div id="app" class="container">
+    <div v-if="errorMessage" class="message-box" :class="{ 'show': isErrorVisible }">
+        <button @click="hideErrorMessage">&times;</button>
+        <strong>Thông Báo:</strong>
+        <p v-html="errorMessage"></p>
+    </div>
+
     <h1>{{ tournament.TN }}</h1>
-    <p>Giải đấu do **{{ tournament.Org }}** tổ chức.</p>
+    <p>Giải đấu do **{{ tournament.Org }}** tổ chức. Hãy cập nhật điểm số để xem bảng xếp hạng thay đổi!</p>
 
     <div class="tournament-info">
         <h2>Thông Tin Chung</h2>
         <div>**Thời gian:** {{ tournament.SD }} - {{ tournament.ED }} | Bắt đầu lúc {{ tournament.FTT }}</div>
         <div>**Địa điểm thi đấu:** {{ tournament.VL }} (<a :href="tournament.MapVL" target="_blank">Xem bản đồ</a>)</div>
         <div>**Gala Dinner:** {{ tournament.GL }} | Lúc {{ tournament.GT }} (<a :href="tournament.MapGL" target="_blank">Xem bản đồ</a>)</div>
+        <p style="font-weight: bold; color: var(--secondary-color); margin-top: 10px;">
+            Dữ liệu trận đấu đang được lưu trữ cục bộ (Local Storage). Tự động lưu mỗi 15 giây.
+        </p>
     </div>
 
     <hr>
 
-    <h2>Bảng Xếp Hạng Chung (Đang chờ cập nhật)</h2>
-    <p>Bảng xếp hạng sẽ được cập nhật sau khi các trận đấu vòng bảng có kết quả.</p>
+    <h2>🏆 Bảng Xếp Hạng Vòng Bảng</h2>
+    <div class="standings-grid">
+        <div class="standings-card" v-for="(group, groupName) in groupedStandings" :key="groupName">
+            <h3>Bảng {{ groupName }}</h3>
+            <table class="standings-table">
+                <thead>
+                    <tr>
+                        <th class="rank-cell">#</th>
+                        <th>Đội (Tên rút gọn)</th>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>Pts</th>
+                        <th>+/-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(team, index) in group" :key="team.T">
+                        <td class="rank-cell">{{ index + 1 }}</td>
+                        <td>{{ team.Tn }}</td>
+                        <td>{{ team.W }}</td>
+                        <td>{{ team.L }}</td>
+                        <td>{{ team.Pts }}</td>
+                        <td>{{ team.gD }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <hr>
 
@@ -61,6 +149,7 @@
         </thead>
         <tbody>
             <template v-for="(match, index) in matches" :key="index">
+                <!-- Phân biệt vòng bảng và loại trực tiếp bằng header group -->
                 <tr v-if="index === 0 || match.Mc.substring(0, 2) !== matches[index-1].Mc.substring(0, 2)">
                     <td colspan="9" class="match-group-header">
                         {{ getMatchGroupName(match.Mc) }}
@@ -71,34 +160,48 @@
                     <td>{{ match.Mc }}</td>
                     <td>{{ match.t }}</td>
                     <td>{{ match.c }}</td>
-                    <td>{{ match.A }}</td>
+                    <td :class="{'winner-cell': match.Wn === match.A, 'loser-cell': match.Wn === match.B}">{{ match.A }}</td>
                     <td>
-                        <input type="number" v-model.number="match.sA" min="0" :disabled="match.Mc.includes('F')" />
+                        <!-- Ràng buộc nhập liệu: min="0", max sẽ do JS xử lý -->
+                        <input type="number" v-model.number="match.sA" min="0" :max="match.Mc.startsWith('G') || match.Mc.startsWith('QF') ? 11 : 15" />
                     </td>
-                    <td>{{ match.B }}</td>
+                    <td :class="{'winner-cell': match.Wn === match.B, 'loser-cell': match.Wn === match.A}">{{ match.B }}</td>
                     <td>
-                        <input type="number" v-model.number="match.sB" min="0" :disabled="match.Mc.includes('F')" />
+                        <!-- Ràng buộc nhập liệu: min="0", max sẽ do JS xử lý -->
+                        <input type="number" v-model.number="match.sB" min="0" :max="match.Mc.startsWith('G') || match.Mc.startsWith('QF') ? 11 : 15" />
                     </td>
                     <td :class="{'winner-cell': match.Wn !== ''}">
                         {{ match.Wn === '' ? 'Đang đấu...' : match.Wn }}
                     </td>
                     <td>
-                        <button class="update-button" @click="updateMatch(match)">Cập Nhật</button>
+                        <!-- Cho phép cập nhật tất cả các vòng -->
+                        <button 
+                            class="update-button" 
+                            @click="updateMatch(match)"
+                        >
+                            Lưu
+                        </button>
                     </td>
                 </tr>
             </template>
         </tbody>
     </table>
     
-    <p style="margin-top: 30px;">*Lưu ý: Chức năng cập nhật điểm số trực tiếp trên web app demo này không thay đổi dữ liệu JSON gốc vĩnh viễn, chỉ thay đổi dữ liệu trong phiên làm việc hiện tại.</p>
+    <p style="margin-top: 30px; font-size: 0.85rem; color: #7f8c8d;">
+        *Lưu ý về ràng buộc điểm số:
+        <br>- **Vòng Bảng & Tứ Kết (GAx, QFx):** Đội thắng phải ghi 11 điểm, đội thua tối đa 10 điểm (11-x, x&le;10).
+        <br>- **Bán Kết & Chung Kết (SFx, F):** Đội thắng phải ghi 15 điểm, đội thua tối đa 14 điểm (15-x, x&le;14).
+        <br>- Hệ thống sẽ tự động cập nhật Bảng Xếp Hạng Vòng Bảng sau mỗi lần bạn nhấn nút 'Lưu'.
+    </p>
 
 </div>
 
 <script>
-    const { createApp, ref, computed } = Vue
+    const { createApp, ref, computed, onMounted } = Vue
 
+    // Dữ liệu JSON ban đầu
     const tournamentData = {
-        "key_legend": { /* ... (Omitted for brevity in JS) ... */ },
+        "key_legend": { /* ... */ },
         "TournamentInfo": {
             "TN": "Pickleball ITVTG Tournament 2025",
             "Org": "IT Vũng Tàu Goup",
@@ -155,45 +258,221 @@
             { "Mc": "GD4", "t": "15:00", "c": "S6", "A": "Tiến Mạnh-Quang Tín", "sA": 0, "B": "Viết Tuấn-Quang Dũng", "sB": 0, "Wn": "" },
             { "Mc": "GD5", "t": "15:30", "c": "S5", "A": "Bá Châu-Hiền Phong", "sA": 0, "B": "Viết Tuấn-Quang Dũng", "sB": 0, "Wn": "" },
             { "Mc": "GD6", "t": "15:30", "c": "S6", "A": "Tiến Mạnh-Quang Tín", "sA": 0, "B": "Minh Thiện-Duy Minh", "sB": 0, "Wn": "" },
-            // Vòng Loại Trực Tiếp
-            { "Mc": "QF1", "t": "15:45", "c": "S3", "A": "W.A", "sA": 0, "B": "R.B", "sB": 0, "Wn": "R.B" },
-            { "Mc": "QF2", "t": "15:45", "c": "S4", "A": "W.B", "sA": 0, "B": "R.A", "sB": 0, "Wn": "R.A" },
-            { "Mc": "QF3", "t": "16:00", "c": "S5", "A": "W.C", "sA": 0, "B": "R.D", "sB": 0, "Wn": "R.D" },
-            { "Mc": "QF4", "t": "16:00", "c": "S6", "A": "W.D", "sA": 0, "B": "R.C", "sB": 0, "Wn": "R.C" },
-            { "Mc": "SF1", "t": "16:10", "c": "S4", "A": "W.QF1", "sA": 0, "B": "W.QF3", "sB": 0, "Wn": "W.QF3" },
-            { "Mc": "SF2", "t": "16:25", "c": "S5", "A": "W.QF2", "sA": 0, "B": "W.QF4", "sB": 0, "Wn": "W.QF4" },
-            { "Mc": "F", "t": "17:05", "c": "S5", "A": "W.SF1", "sA": 0, "B": "W.SF2", "sB": 0, "Wn": "W.SF2", "rU": "W.SF1" }
+            // Vòng Loại Trực Tiếp (đã được làm cho phép nhập liệu)
+            { "Mc": "QF1", "t": "15:45", "c": "S3", "A": "W.A", "sA": 0, "B": "R.B", "sB": 0, "Wn": "" },
+            { "Mc": "QF2", "t": "15:45", "c": "S4", "A": "W.B", "sA": 0, "B": "R.A", "sB": 0, "Wn": "" },
+            { "Mc": "QF3", "t": "16:00", "c": "S5", "A": "W.C", "sA": 0, "B": "R.D", "sB": 0, "Wn": "" },
+            { "Mc": "QF4", "t": "16:00", "c": "S6", "A": "W.D", "sA": 0, "B": "R.C", "sB": 0, "Wn": "" },
+            { "Mc": "SF1", "t": "16:10", "c": "S4", "A": "W.QF1", "sA": 0, "B": "W.QF3", "sB": 0, "Wn": "" },
+            { "Mc": "SF2", "t": "16:25", "c": "S5", "A": "W.QF2", "sA": 0, "B": "W.QF4", "sB": 0, "Wn": "" },
+            { "Mc": "F", "t": "17:05", "c": "S5", "A": "W.SF1", "sA": 0, "B": "W.SF2", "sB": 0, "Wn": "", "rU": "L.SF1/L.SF2" }
         ],
-        "tL": [ /* ... (Omitted for brevity in JS) ... */ ]
+        "tL": [ /* ... */ ]
     };
 
-    // Chuyển đổi điểm số về dạng số cho dễ xử lý trong JS
-    tournamentData.matches.forEach(match => {
-        match.sA = parseInt(match.sA);
-        match.sB = parseInt(match.sB);
-    });
+    // Hàm tiện ích để hiển thị lỗi (thay thế alert)
+    let errorTimeout;
+    const showErrorMessage = (message) => {
+        // Hàm này hoạt động độc lập (được lấy trong setupState)
+        const appElement = document.getElementById('app');
+        if (!appElement || !appElement.__vue_app__) return;
+        
+        const app = appElement.__vue_app__.component.setupState;
+        
+        clearTimeout(errorTimeout);
+        
+        // Cập nhật nội dung và hiển thị
+        app.errorMessage.value = message;
+        app.isErrorVisible.value = true;
+        
+        // Tự động ẩn sau 15 giây (cho phép đọc thông báo dài)
+        errorTimeout = setTimeout(() => {
+            app.isErrorVisible.value = false;
+        }, 15000);
+    };
+
+
+    // HÀM QUẢN LÝ DỮ LIỆU CỤC BỘ (LOCAL STORAGE)
+    const LOCAL_STORAGE_KEY = 'itvtg_pickleball_matches';
+
+    const loadMatchesFromStorage = () => {
+        const storedMatches = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (storedMatches) {
+            try {
+                const loaded = JSON.parse(storedMatches);
+                // Đảm bảo scores là số nguyên
+                loaded.forEach(match => {
+                    match.sA = parseInt(match.sA) || 0;
+                    match.sB = parseInt(match.sB) || 0;
+                });
+                console.log('✅ Đã tải dữ liệu trận đấu từ Local Storage.');
+                return loaded;
+            } catch (e) {
+                console.error('Lỗi khi tải dữ liệu từ Local Storage:', e);
+                return null;
+            }
+        }
+        return null;
+    };
+
+    const saveMatchesToStorage = (currentMatches) => {
+        try {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(currentMatches));
+            console.log('✅ Đã lưu dữ liệu trận đấu vào Local Storage.');
+        } catch (e) {
+            console.error('Lỗi khi lưu dữ liệu vào Local Storage:', e);
+        }
+    };
+    
+    // HÀM GỬI DỮ LIỆU REMOTE (CÓ CẢNH BÁO VỀ PAT)
+    const sendDataToRemoteServer = (data) => {
+        const remoteUrl = 'https://github.com/cqtin2024/ITVTG/blob/main/data/statex.json';
+        const warningMessage = `
+            <div style="color: #721c24; font-weight: bold; background-color: #f8d7da; padding: 5px; border-radius: 4px;">
+                CẢNH BÁO CẬP NHẬT REMOTE
+            </div>
+            <p style="margin-top: 10px;">
+                Dữ liệu đã **LƯU THÀNH CÔNG VÀO LOCAL STORAGE** trên trình duyệt của bạn.
+            </p>
+            <p>
+                Tuy nhiên, không thể cập nhật trực tiếp file trên GitHub (${remoteUrl}) bằng JavaScript frontend. 
+                Điều này đòi hỏi phải **sử dụng Personal Access Token (PAT)** để xác thực và vượt qua chính sách **CORS**.
+            </p>
+            <p style="color: #e74c3c;">
+                **GIẢI PHÁP:** Bạn cần thiết lập một **Dịch Vụ Backend Trung Gian** (như Firebase Functions, Netlify Functions, hoặc một API server) để server đó sử dụng PAT và ghi dữ liệu lên GitHub một cách an toàn.
+            </p>
+        `;
+        
+        showErrorMessage(warningMessage);
+        console.warn('CẢNH BÁO: Cập nhật GitHub thất bại. Cần API trung gian để sử dụng PAT.');
+        
+        // Logic gọi API server trung gian để ghi dữ liệu sẽ nằm ở đây (nếu có)
+    };
+
+
+    // Tải dữ liệu ban đầu
+    const initialMatches = loadMatchesFromStorage();
+    if (initialMatches) {
+         // Nếu có dữ liệu trong local storage, sử dụng nó.
+         tournamentData.matches = initialMatches;
+    } else {
+        // Nếu không, chuẩn bị dữ liệu mặc định ban đầu
+        tournamentData.matches.forEach(match => {
+            match.sA = parseInt(match.sA) || 0;
+            match.sB = parseInt(match.sB) || 0;
+        });
+    }
+
+
+    // Hàm logic tính toán Bảng Xếp Hạng
+    const calculateStandings = (matches, initialStandings) => {
+        const standingsMap = new Map();
+        initialStandings.forEach(team => {
+            standingsMap.set(team.Tn, {
+                ...team,
+                W: 0, 
+                L: 0, 
+                Pts: 0, 
+                mP: 0,
+                gS: 0, 
+                gA: 0, 
+                gD: 0  
+            });
+        });
+
+        // Chỉ xử lý các trận đấu vòng bảng (GAx, GBx, GCx, GDx)
+        matches.forEach(match => {
+            if (match.Mc.startsWith('G')) {
+                const teamA = standingsMap.get(match.A);
+                const teamB = standingsMap.get(match.B);
+                
+                // Bỏ qua nếu chưa có kết quả (0-0)
+                if (match.sA === 0 && match.sB === 0) return;
+
+                if (teamA && teamB) {
+                    teamA.mP++;
+                    teamB.mP++;
+                    
+                    // Cập nhật điểm ghi được/thủng lưới
+                    teamA.gS += match.sA;
+                    teamA.gA += match.sB;
+                    teamB.gS += match.sB;
+                    teamB.gA += match.sA;
+
+                    if (match.sA > match.sB) {
+                        // A thắng
+                        teamA.W++;
+                        teamB.L++;
+                        teamA.Pts += 3; // 3 điểm cho đội thắng (giả định thể thức)
+                    } else if (match.sB > match.sA) {
+                        // B thắng
+                        teamB.W++;
+                        teamA.L++;
+                        teamB.Pts += 3; // 3 điểm cho đội thắng
+                    } 
+                    // Không có trường hợp hoà trong validation mới
+                }
+            }
+        });
+
+        // Tính toán Hiệu số bàn thắng thua
+        standingsMap.forEach(team => {
+            team.gD = team.gS - team.gA;
+        });
+
+        // Gom nhóm và sắp xếp
+        const grouped = {};
+        standingsMap.forEach(team => {
+            const groupName = team.g;
+            if (!grouped[groupName]) {
+                grouped[groupName] = [];
+            }
+            grouped[groupName].push(team);
+        });
+
+        // Sắp xếp từng nhóm: Pts -> gD -> Tên đội (tăng dần)
+        for (const groupName in grouped) {
+            grouped[groupName].sort((a, b) => {
+                if (b.Pts !== a.Pts) return b.Pts - a.Pts; // Điểm số (giảm dần)
+                if (b.gD !== a.gD) return b.gD - a.gD;     // Hiệu số (giảm dần)
+                return a.Tn.localeCompare(b.Tn);          // Tên đội (tăng dần)
+            });
+        }
+        
+        return grouped;
+    };
+
 
     createApp({
         setup() {
-            // Sử dụng ref để dữ liệu có thể phản ứng (reactive) với Vue
             const tournament = ref(tournamentData.TournamentInfo);
             const matches = ref(tournamentData.matches);
             const standings = ref(tournamentData.teamStandings);
-            const teamList = ref(tournamentData.tL);
             
-            // Hàm lấy tên đội thắng
-            const getWinner = (match) => {
-                const scoreA = match.sA;
-                const scoreB = match.sB;
-                // Giả định: Đội có điểm cao hơn sẽ thắng. Nếu bằng nhau (0-0), chưa có kết quả.
-                if (scoreA > scoreB) {
-                    return match.A;
-                } else if (scoreB > scoreA) {
-                    return match.B;
-                } else {
-                    return ""; // Chưa có kết quả
-                }
+            // State cho hộp thoại lỗi/thông báo
+            const errorMessage = ref('');
+            const isErrorVisible = ref(false);
+            
+            // Hàm ẩn thông báo lỗi
+            const hideErrorMessage = () => {
+                isErrorVisible.value = false;
+                errorMessage.value = '';
             };
+
+
+            // Tự động lưu vào Local Storage mỗi 15 giây
+            onMounted(() => {
+                setInterval(() => {
+                    saveMatchesToStorage(matches.value);
+                    sendDataToRemoteServer(matches.value); // Gửi cảnh báo
+                }, 15000); // 15 giây
+            });
+            
+            // Dữ liệu tính toán Bảng Xếp Hạng (Computed)
+            const groupedStandings = computed(() => {
+                // Tự động tính toán lại mỗi khi matches.value thay đổi
+                return calculateStandings(matches.value, standings.value);
+            });
             
             // Hàm lấy tên nhóm trận đấu
             const getMatchGroupName = (mc) => {
@@ -207,86 +486,107 @@
                 }
             };
 
-            // Hàm cập nhật trận đấu
+
+            // HÀM CẬP NHẬT TRẬN ĐẤU (KÈM RÀNG BUỘC MỚI)
             const updateMatch = (match) => {
-                // Đảm bảo điểm số là số và không âm
-                match.sA = Math.max(0, parseInt(match.sA));
-                match.sB = Math.max(0, parseInt(match.sB));
-
-                // 1. Cập nhật đội thắng (Wn)
-                const winnerName = getWinner(match);
-                match.Wn = winnerName;
-
-                // 2. Cập nhật các trận tiếp theo (Nếu là vòng loại trực tiếp)
-                if (match.Mc.startsWith('QF') || match.Mc.startsWith('SF')) {
-                    updateKnockoutMatches(match, winnerName);
-                }
-
-                // Cảnh báo (Trong môi trường thực, cần xử lý logic cập nhật Bảng Xếp Hạng phức tạp hơn)
-                alert(`Đã cập nhật tỷ số trận ${match.Mc}: ${match.A} (${match.sA}) - ${match.B} (${match.sB}). Đội thắng: ${match.Wn === '' ? 'Chưa xác định' : match.Wn}`);
-            };
-            
-            // Hàm logic cập nhật các trận vòng loại trực tiếp
-            const updateKnockoutMatches = (currentMatch, winnerName) => {
-                let nextMatches = [];
-                let isWinnerA = winnerName === currentMatch.A;
-                let isWinnerB = winnerName === currentMatch.B;
-
-                // Logic đơn giản để xác định đội đi tiếp (W.Mc / R.Mc)
-                const winnerRef = `W.${currentMatch.Mc}`;
-                const runnerUpRef = `R.${currentMatch.Mc}`;
+                // Đảm bảo điểm số là số nguyên không âm
+                const scoreA = Math.max(0, parseInt(match.sA) || 0);
+                const scoreB = Math.max(0, parseInt(match.sB) || 0);
                 
-                let advanceTeam = winnerName;
-                let eliminatedTeam = winnerName === currentMatch.A ? currentMatch.B : currentMatch.A;
+                // 1. Xác định ràng buộc
+                const prefix = match.Mc.substring(0, 2);
+                let winScore, loseMax;
+                let maxOverall;
+                let matchType = '';
 
-                if (currentMatch.Mc.startsWith('QF')) {
-                    nextMatches = matches.value.filter(m => m.Mc.startsWith('SF'));
-                } else if (currentMatch.Mc.startsWith('SF')) {
-                    nextMatches = matches.value.filter(m => m.Mc === 'F');
+                if (prefix.startsWith('G') || prefix === 'QF') {
+                    // Vòng Bảng & Tứ Kết (0-11)
+                    winScore = 11;
+                    loseMax = 10;
+                    maxOverall = 11;
+                    matchType = 'Vòng Bảng/Tứ Kết';
+                } else if (prefix === 'SF' || prefix === 'F') {
+                    // Bán Kết & Chung Kết (0-15)
+                    winScore = 15;
+                    loseMax = 14;
+                    maxOverall = 15;
+                    matchType = 'Bán Kết/Chung Kết';
+                } else {
+                    // Trận đấu không xác định
+                    winScore = Infinity; loseMax = Infinity; maxOverall = Infinity;
+                    matchType = 'Không xác định';
                 }
                 
-                nextMatches.forEach(nextMatch => {
-                    // Cập nhật đội A
-                    if (nextMatch.A === winnerRef) {
-                        nextMatch.A = advanceTeam;
-                    }
-                    // Cập nhật đội B
-                    if (nextMatch.B === winnerRef) {
-                        nextMatch.B = advanceTeam;
-                    }
-                    // Cập nhật Đội về nhì (Chỉ cho trận Chung kết)
-                    if (nextMatch.Mc === 'F' && nextMatch.rU === winnerRef) {
-                        // Trong trường hợp này, đội thua ở trận SF là đội đi tiếp vào rU (Á Quân) của F
-                        // Tuy nhiên, theo logic JSON, rU của F là đội thua trận F, không phải đội thua trận SF
-                        // Cần logic đầy đủ hơn để xác định đội đi tiếp vào các vị trí 3-4 (nếu có)
+                // Cập nhật lại giá trị input đã được đảm bảo là số nguyên không âm
+                match.sA = scoreA;
+                match.sB = scoreB;
+                
+                // 2. Kiểm tra tính hợp lệ
+                let isValid = true;
+                let winner = '';
+                let winnerScore = 0;
+                let loserScore = 0;
+                let message = '';
+
+                // Kiểm tra phạm vi điểm số chung
+                if (scoreA > maxOverall || scoreB > maxOverall) {
+                    message = `Lỗi: Điểm số cho trận **${matchType}** (${match.Mc}) phải nằm trong khoảng 0 đến ${maxOverall}.`;
+                    isValid = false;
+                } else if (scoreA === scoreB) {
+                    // Trường hợp hòa
+                    message = `Lỗi: Tỉ số **Hoà** (${scoreA}-${scoreB}) không hợp lệ cho thể thức loại trực tiếp của Pickleball.`;
+                    isValid = false; 
+                } else {
+                    // Xác định đội thắng/thua
+                    if (scoreA > scoreB) {
+                        winner = match.A;
+                        winnerScore = scoreA;
+                        loserScore = scoreB;
+                    } else { // scoreB > scoreA
+                        winner = match.B;
+                        winnerScore = scoreB;
+                        loserScore = scoreA;
                     }
 
-                    // Cập nhật đội Á quân của trận Chung kết (rU)
-                    if (currentMatch.Mc === 'SF1') {
-                        const loserSF1 = winnerName === currentMatch.A ? currentMatch.B : currentMatch.A;
-                        const matchForThird = matches.value.find(m => m.Mc === '3R' /* Giả định có trận tranh hạng 3 */);
-                        // Logic cho trận tranh hạng 3
+                    // Kiểm tra ràng buộc điểm thắng/thua theo luật
+                    if (winnerScore !== winScore || loserScore > loseMax) {
+                        message = `Lỗi: Tỉ số không hợp lệ cho trận **${matchType}** (${match.Mc}). Tỉ số thắng **phải là ${winScore}** và tỉ số thua **tối đa là ${loseMax}**. Tỉ số nhập: ${scoreA}-${scoreB}.`;
+                        isValid = false;
                     }
+                }
+                
+                if (isValid) {
+                    // Hợp lệ: Cập nhật Wn, lưu trữ
+                    match.Wn = winner;
                     
-                    if (currentMatch.Mc.startsWith('QF')) {
-                        // Xác định đội Á quân (R) cho các trận Tứ kết
-                        const groupChar = currentMatch.Mc.charAt(2);
-                        const nextSFMatch = nextMatches.find(m => m.A.includes('QF') || m.B.includes('QF'));
-                        
-                        // Cần logic đầy đủ để thay thế W.A/R.B bằng tên đội thực
-                        // Ví dụ: Tìm đội thắng (W.A) và đội về nhì (R.B) từ Bảng Xếp Hạng (teamStandings)
-                        // Bỏ qua phần này trong demo đơn giản để tránh quá phức tạp.
-                    }
-                });
+                    message = `✅ Đã cập nhật tỷ số trận ${match.Mc}: ${match.A} (${match.sA}) - ${match.B} (${match.sB}). Đội thắng: ${match.Wn}.`;
+                    console.log(message);
+                    
+                    // Lưu vào Local Storage (và tự động gửi cảnh báo remote)
+                    saveMatchesToStorage(matches.value);
+                    sendDataToRemoteServer(matches.value); 
+
+                } else {
+                    // Không hợp lệ: Giữ nguyên Wn và báo lỗi
+                    match.Wn = ''; 
+                    console.error(message.replace(/<[^>]*>?/gm, '')); // Log không HTML
+                    
+                    showErrorMessage(message);
+                }
+                
+                // Kích hoạt tính toán lại Bảng Xếp Hạng
             };
 
             return {
                 tournament,
                 matches,
                 standings,
+                groupedStandings, 
                 updateMatch,
                 getMatchGroupName,
-                getWinner
+                errorMessage,
+                isErrorVisible,
+                hideErrorMessage
             }
         }
     }).mount('#app')
