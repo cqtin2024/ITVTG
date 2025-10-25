@@ -55,9 +55,9 @@
       "T": "Team 11",
       "Tn": "Minh Chang-Minh Châu",
       "seed": "A3",
-      "gS": 90,
+      "gS": 11,
       "gA": 5,
-      "gD": 85
+      "gD": 6
     },
     {
       "g": "A",
@@ -71,8 +71,8 @@
       "Tn": "Quốc Khánh-Linh Vũ",
       "seed": "A4",
       "gS": 5,
-      "gA": 90,
-      "gD": -85
+      "gA": 11,
+      "gD": -6
     },
     {
       "g": "B",
@@ -271,7 +271,7 @@
       "t": "14:15",
       "c": "S4",
       "A": "Minh Chang-Minh Châu",
-      "sA": 90,
+      "sA": 11,
       "B": "Quốc Khánh-Linh Vũ",
       "sB": 5,
       "Wn": "Minh Chang-Minh Châu"
