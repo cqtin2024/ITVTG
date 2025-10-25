@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.3.4 - FULL FUNCTIONAL</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.3.5 - FULL FUNCTIONAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.3.4)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.3.5)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync)</p>
                 </div>
             </div>
@@ -311,7 +311,7 @@
     <script>
         
         // ==============================================================================================================
-        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.3.4 - FULL FUNCTIONAL)
+        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.3.5 - FULL FUNCTIONAL)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -528,7 +528,7 @@
             }
             
             const base64Content = jsonToBase64(diffData);
-            const commitMessage = 'Update match scores via web app (state41s.json - V4.3.4)'; // Version updated
+            const commitMessage = 'Update match scores via web app (state41s.json - V4.3.5)'; // Version updated
             
             await getShaAndCommit(SCORE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
         };
@@ -593,7 +593,7 @@
             // FIX CẤU TRÚC V4.2: Gộp mảng match lại thành 'matches' thống nhất trước khi commit BASE file
             const commitData = unifyMatches(fullTeamData);
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.3.4)'; // Version updated
+            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.3.5)'; // Version updated
 
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -607,7 +607,7 @@
             switchTab('TeamManagement');
         }
 
-        // --- HÀM TIỆN ÍCH CHO TÍNH TOÁN V4.3.4 ---
+        // --- HÀM TIỆN ÍCH CHO TÍNH TOÁN V4.3.5 ---
         
         /**
          * Hàm tiện ích để xác định roundKey từ matchCode
@@ -630,6 +630,7 @@
          * Lấy thông tin đội bằng Team ID (T)
          */
         function getTeamByT(teamId) {
+            // Team ID (T) được sử dụng để tra cứu W/L/Pts
             return tournamentData.tL.find(team => team.T === teamId);
         }
         
@@ -657,8 +658,8 @@
 
             // 2. Tính toán kết quả từng trận
             groupMatches.forEach(match => {
-                const homeTeam = getTeamByT(match.tA);
-                const awayTeam = getTeamByT(match.tB);
+                const homeTeam = getTeamByT(match.tA); // Dùng tA (Team ID)
+                const awayTeam = getTeamByT(match.tB); // Dùng tB (Team ID)
                 
                 if (match.sA !== null && match.sB !== null && homeTeam && awayTeam) {
                     const scoreA = match.sA;
@@ -728,8 +729,33 @@
         }
         
         // =========================================================================
-        // PHẦN SỬA LỖI V4.3.3: Tái tính toán và Re-render Bảng xếp hạng sau khi nhập tỉ số
+        // PHẦN SỬA LỖI V4.3.5: Ưu tiên hiển thị Nickname (Tn) và Match Name (A/B)
         // =========================================================================
+        
+        /**
+         * Lấy tên đội để hiển thị trên giao diện.
+         * Ưu tiên 1: Tên trong trường A/B của match object (tên đầy đủ user cung cấp).
+         * Ưu tiên 2: Nickname (Tn) của đội tìm được bằng Team ID (tA/tB).
+         * Ưu tiên 3: Team ID (tA/tB) hoặc TBD.
+         */
+        function getDisplayName(match, teamSide) {
+            const matchName = teamSide === 'A' ? match.A : match.B;
+            const teamId = teamSide === 'A' ? match.tA : match.tB;
+
+            // 1. Nếu match object có trường A/B (Nickname/Tên đầy đủ) thì sử dụng nó
+            if (matchName && matchName !== 'TBD') {
+                return matchName;
+            }
+            
+            // 2. Nếu không có A/B, tìm Nickname (Tn) qua Team ID (tA/tB)
+            const team = getTeamByT(teamId);
+            if (team && team.Tn) {
+                return team.Tn;
+            }
+
+            // 3. Trả về Team ID hoặc TBD
+            return teamId || 'TBD';
+        }
 
         /**
          * Hàm xử lý khi tỉ số được thay đổi trên giao diện
@@ -804,7 +830,7 @@
         };
 
 
-        // --- LOGIC HIỂN THỊ (RENDER) (BỔ SUNG V4.3.4) ---
+        // --- LOGIC HIỂN THỊ (RENDER) (BỔ SUNG V4.3.5) ---
         
         /**
          * BỔ SUNG: Hiển thị danh sách đội (Team List) cho tab General
@@ -888,8 +914,12 @@
             
             groupMatches.forEach(match => {
                 const isCompleted = match.sA !== null && match.sB !== null && (match.sA >= 11 || match.sB >= 11);
-                const homeTeamName = getTeamByT(match.tA)?.Tn || match.tA;
-                const awayTeamName = getTeamByT(match.tB)?.Tn || match.tB;
+                
+                // *** LOGIC CẬP NHẬT V4.3.5 ***
+                const homeTeamName = getDisplayName(match, 'A');
+                const awayTeamName = getDisplayName(match, 'B');
+                // *** END LOGIC V4.3.5 ***
+
                 const winnerClassA = isCompleted && match.sA > match.sB ? 'font-bold text-green-400' : 'text-[var(--text-color)]';
                 const winnerClassB = isCompleted && match.sB > match.sA ? 'font-bold text-green-400' : 'text-[var(--text-color)]';
 
@@ -994,7 +1024,6 @@
          */
         window.updateKnockoutBrackets = function() {
             // Giả định logic phức tạp của Knockout được xử lý ở đây
-            // Ở V4.3.4, chúng ta chỉ cần đảm bảo hàm này được gọi để cho phép logic Knockout (nếu có) hoạt động.
             
             if (!tournamentData) return;
             const teams = tournamentData.tL;
@@ -1008,7 +1037,6 @@
                     const winnerT = qfMatch.sA > qfMatch.sB ? qfMatch.tA : qfMatch.tB;
                     // Logic gán người thắng vào SF
                     // Vòng này cần mã mapping (ví dụ: QF1 winner -> SF1 team A)
-                    // Vì không có mã mapping, ta bỏ qua logic gán cụ thể, chỉ đảm bảo tính toán tổng thể diễn ra.
                 }
             });
 
@@ -1029,8 +1057,12 @@
 
                 matches.forEach(match => {
                     const isCompleted = match.sA !== null && match.sB !== null && (match.sA >= (isFinal ? 15 : 15) || match.sB >= (isFinal ? 15 : 15));
-                    const homeTeamName = getTeamByT(match.tA)?.Tn || (match.tA === 'TBD' ? 'TBD' : match.tA);
-                    const awayTeamName = getTeamByT(match.tB)?.Tn || (match.tB === 'TBD' ? 'TBD' : match.tB);
+                    
+                    // *** LOGIC CẬP NHẬT V4.3.5 ***
+                    const homeTeamName = getDisplayName(match, 'A');
+                    const awayTeamName = getDisplayName(match, 'B');
+                    // *** END LOGIC V4.3.5 ***
+
                     const winnerClassA = isCompleted && match.sA > match.sB ? 'font-bold text-yellow-400' : 'text-[var(--text-color)]';
                     const winnerClassB = isCompleted && match.sB > match.sA ? 'font-bold text-yellow-400' : 'text-[var(--text-color)]';
                     
