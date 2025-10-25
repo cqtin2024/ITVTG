@@ -16,63 +16,63 @@
   "teamStandings": [
     {
       "g": "A",
-      "W": 1,
+      "W": 0,
       "L": 0,
       "HS": "11",
-      "Pts": 3,
-      "mP": 1,
+      "Pts": 0,
+      "mP": 0,
       "gR": 4,
       "T": "Team 9",
       "Tn": "Duy Hưng-Minh Tú",
       "seed": "A1",
-      "gS": 11,
-      "gA": 9,
-      "gD": 2
+      "gS": 0,
+      "gA": 0,
+      "gD": 0
     },
     {
       "g": "A",
       "W": 0,
-      "L": 1,
+      "L": 0,
       "HS": "11",
       "Pts": 0,
-      "mP": 1,
+      "mP": 0,
       "gR": 1,
       "T": "Team 3",
       "Tn": "Quốc Thịnh-Minh Phương",
       "seed": "A2",
-      "gS": 9,
-      "gA": 11,
-      "gD": -2
+      "gS": 0,
+      "gA": 0,
+      "gD": 0
     },
     {
       "g": "A",
       "W": 0,
-      "L": 1,
+      "L": 0,
       "HS": "11",
       "Pts": 0,
-      "mP": 1,
+      "mP": 0,
       "gR": 3,
       "T": "Team 11",
       "Tn": "Minh Chang-Minh Châu",
       "seed": "A3",
-      "gS": 9,
-      "gA": 11,
-      "gD": -2
+      "gS": 0,
+      "gA": 0,
+      "gD": 0
     },
     {
       "g": "A",
-      "W": 1,
+      "W": 0,
       "L": 0,
       "HS": "11",
-      "Pts": 3,
-      "mP": 1,
+      "Pts": 0,
+      "mP": 0,
       "gR": 2,
       "T": "Team 5",
       "Tn": "Quốc Khánh-Linh Vũ",
       "seed": "A4",
-      "gS": 11,
-      "gA": 9,
-      "gD": 2
+      "gS": 0,
+      "gA": 0,
+      "gD": 0
     },
     {
       "g": "B",
@@ -263,18 +263,18 @@
       "A": "Duy Hưng-Minh Tú",
       "sA": 11,
       "B": "Quốc Thịnh-Minh Phương",
-      "sB": 9,
-      "Wn": "Duy Hưng-Minh Tú"
+      "sB": 0,
+      "Wn": ""
     },
     {
       "Mc": "GA2",
       "t": "14:15",
       "c": "S4",
       "A": "Minh Chang-Minh Châu",
-      "sA": 9,
+      "sA": 0,
       "B": "Quốc Khánh-Linh Vũ",
-      "sB": 11,
-      "Wn": "Quốc Khánh-Linh Vũ"
+      "sB": 0,
+      "Wn": ""
     },
     {
       "Mc": "GA3",
