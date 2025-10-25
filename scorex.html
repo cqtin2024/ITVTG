@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ITVTG Pickleball Tournament 2025</title>
+    <title>ITVTG Pickleball Tournament Manager</title>
     <!-- Tải Tailwind CSS để styling và responsive -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -13,17 +13,42 @@
         .tab-button.active { background-color: #0d9488; color: white; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .score-input { width: 4rem; text-align: center; font-weight: bold; }
-        .group-match-row .team-a-name, .group-match-row .team-b-name { cursor: pointer; }
-        .winning-team { font-weight: bold; color: #059669; }
-        /* Tùy chỉnh cho mobile: Cuộn ngang bảng và ưu tiên hiển thị dọc */
+        
+        /* Global table settings for Standings */
         .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 100%; min-width: 600px; border-collapse: collapse; }
-        th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid #e5e7eb; white-space: nowrap; }
+        th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid #e5e7eb; }
         
+        /* Tùy chỉnh ĐẶC BIỆT cho bảng Match Results để vừa màn hình nhỏ */
+        .match-table th, .match-table td {
+            padding: 6px 3px; /* Giảm padding tối đa */
+            font-size: 0.8rem; /* Giảm font size cho mobile */
+            white-space: normal; /* Cho phép xuống dòng */
+            word-break: break-word; /* Đảm bảo từ dài bị cắt nếu cần */
+            vertical-align: middle;
+        }
+
+        /* Thu gọn ô nhập điểm */
+        .score-input { 
+            width: 3.2rem; /* Thu gọn chiều rộng input */
+            text-align: center; 
+            font-weight: bold; 
+            padding: 2px;
+            font-size: 0.8rem;
+        }
+
+        /* Điều chỉnh cho tên đội để xuống 2 dòng */
+        .match-table .team-a-name, .match-table .team-b-name, .match-table .match-winner-name {
+            min-width: 60px; /* Đảm bảo đủ không gian cho 2 dòng tên ngắn */
+            line-height: 1.2;
+        }
+
+        /* Desktop view: Revert to standard padding/width */
         @media (min-width: 768px) {
             table { min-width: 100%; }
-            th, td { padding: 12px 10px; }
+            th, td { padding: 12px 10px; font-size: 1rem; }
+            .match-table th, .match-table td { padding: 8px 6px; font-size: 1rem; }
+            .score-input { width: 4rem; padding: 4px; font-size: 1rem; }
         }
     </style>
 </head>
@@ -31,19 +56,19 @@
 
     <!-- HEADER -->
     <header class="text-center py-4 bg-white shadow-md rounded-lg mb-4">
-        <h1 class="text-2xl md:text-3xl font-bold text-teal-700">🏆 Pickleball ITVTG Tournament 2025 🏆</h1>
-        <p class="text-sm text-gray-600 mt-1">Quản lý và Cập nhật Kết quả Giải đấu</p>
+        <h1 class="text-2xl md:text-3xl font-bold text-teal-700">🏆 ITVTG Pickleball Tournament 2025 Manager 🏆</h1>
+        <p class="text-sm text-gray-600 mt-1">Results & Standings Dashboard</p>
     </header>
 
     <!-- NAVIGATION TABS -->
     <div class="flex flex-wrap justify-center space-x-1 space-y-1 md:space-x-2 p-2 bg-gray-100 rounded-lg mb-4">
-        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow active" data-tab="info">Thông tin chung</button>
-        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="group-a">Bảng A</button>
-        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="group-b">Bảng B</button>
-        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="group-c">Bảng C</button>
-        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="group-d">Bảng D</button>
-        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="final">Vòng Chung kết</button>
-        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="config">Cấu hình & Xuất</button>
+        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow active" data-tab="info">Info</button>
+        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="group-a">Group A</button>
+        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="group-b">Group B</button>
+        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="group-c">Group C</button>
+        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="group-d">Group D</button>
+        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="final">Final Round</button>
+        <button class="tab-button p-2 md:px-4 md:py-2 text-sm font-medium rounded-lg text-teal-700 bg-white shadow" data-tab="config">Config</button>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -51,32 +76,32 @@
 
         <!-- 1. INFO TAB -->
         <div id="info" class="tab-content active">
-            <h2 class="text-xl font-semibold mb-3 text-teal-600">Thông Tin Giải đấu & Thống Kê</h2>
+            <h2 class="text-xl font-semibold mb-3 text-teal-600">Tournament Info & Statistics</h2>
             <div id="tournament-details" class="space-y-2 text-gray-700 text-sm md:text-base mb-6 border p-3 rounded-lg bg-teal-50/50">
-                <!-- Được điền bởi JS -->
+                <!-- Populated by JS -->
             </div>
             
-            <h3 class="text-lg font-semibold mb-4 text-teal-600">Thống Kê Giải Thưởng</h3>
+            <h3 class="text-lg font-semibold mb-4 text-teal-600">Awards Summary</h3>
             <div id="trophy-display" class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <!-- CHAMPION -->
                 <div class="p-3 bg-yellow-100/70 border-l-4 border-yellow-500 rounded-lg shadow-md">
-                    <p class="text-sm font-semibold text-yellow-700">🥇 Vô địch (Champion)</p>
-                    <p id="champion-team" class="text-lg font-bold text-yellow-800 mt-1">[Chưa xác định]</p>
+                    <p class="text-sm font-semibold text-yellow-700">🥇 Champion</p>
+                    <p id="champion-team" class="text-lg font-bold text-yellow-800 mt-1">[TBD]</p>
                 </div>
                 <!-- RUNNER-UP -->
                 <div class="p-3 bg-gray-100/70 border-l-4 border-gray-500 rounded-lg shadow-md">
-                    <p class="text-sm font-semibold text-gray-700">🥈 Á quân (Runner-Up)</p>
-                    <p id="runnerup-team" class="text-lg font-bold text-gray-800 mt-1">[Chưa xác định]</p>
+                    <p class="text-sm font-semibold text-gray-700">🥈 Runner-Up</p>
+                    <p id="runnerup-team" class="text-lg font-bold text-gray-800 mt-1">[TBD]</p>
                 </div>
                 <!-- THIRD PLACE 1 -->
                 <div class="p-3 bg-amber-100/70 border-l-4 border-amber-500 rounded-lg shadow-md">
-                    <p class="text-sm font-semibold text-amber-700">🥉 Đồng hạng Ba 1</p>
-                    <p id="third-place-1-team" class="text-lg font-bold text-amber-800 mt-1">[Chưa xác định]</p>
+                    <p class="text-sm font-semibold text-amber-700">🥉 Third Place 1</p>
+                    <p id="third-place-1-team" class="text-lg font-bold text-amber-800 mt-1">[TBD]</p>
                 </div>
                 <!-- THIRD PLACE 2 -->
                 <div class="p-3 bg-amber-100/70 border-l-4 border-amber-500 rounded-lg shadow-md">
-                    <p class="text-sm font-semibold text-amber-700">🥉 Đồng hạng Ba 2</p>
-                    <p id="third-place-2-team" class="text-lg font-bold text-amber-800 mt-1">[Chưa xác định]</p>
+                    <p class="text-sm font-semibold text-amber-700">🥉 Third Place 2</p>
+                    <p id="third-place-2-team" class="text-lg font-bold text-amber-800 mt-1">[TBD]</p>
                 </div>
             </div>
         </div>
@@ -89,7 +114,7 @@
 
         <!-- 3. FINAL TAB -->
         <div id="final" class="tab-content">
-            <h2 class="text-xl font-semibold mb-4 text-teal-600">Vòng Chung Kết (Tứ kết, Bán kết, Chung kết)</h2>
+            <h2 class="text-xl font-semibold mb-4 text-teal-600">Final Rounds (QF, SF, F)</h2>
             <div id="final-knockout-matches">
                 <!-- Knockout rounds will be rendered here -->
             </div>
@@ -97,72 +122,72 @@
 
         <!-- 4. CONFIG TAB -->
         <div id="config" class="tab-content">
-            <h2 class="text-xl font-semibold mb-4 text-teal-600">Cấu hình & Công cụ Quản lý</h2>
+            <h2 class="text-xl font-semibold mb-4 text-teal-600">Configuration & Management Tools</h2>
 
-            <!-- Tự động Cập nhật / Random -->
+            <!-- Automatic Update / Random -->
             <div class="p-4 border rounded-lg mb-6 bg-blue-50/50">
-                <h3 class="text-lg font-semibold mb-3 text-blue-700">Tự động Cập nhật Kết quả (Random)</h3>
-                <p class="text-sm text-gray-600 mb-3">Tạo kết quả ngẫu nhiên hợp lệ (11 vs &lt; 11) cho tất cả các trận đấu trong vòng đã chọn.</p>
+                <h3 class="text-lg font-semibold mb-3 text-blue-700">Automatic Score Randomization</h3>
+                <p class="text-sm text-gray-600 mb-3">Generates valid random scores (11 vs &lt; 11) for all matches in the selected round(s).</p>
                 <select id="random-round-select" class="p-2 border rounded-md mr-3 mb-3 w-full md:w-auto">
-                    <option value="GA">Vòng Bảng A</option>
-                    <option value="GB">Vòng Bảng B</option>
-                    <option value="GC">Vòng Bảng C</option>
-                    <option value="GD">Vòng Bảng D</option>
-                    <option value="QF">Tứ kết</option>
-                    <option value="SF">Bán kết</option>
-                    <option value="F">Chung kết</option>
-                    <option value="ALL">Tất cả các vòng</option>
+                    <option value="GA">Group A</option>
+                    <option value="GB">Group B</option>
+                    <option value="GC">Group C</option>
+                    <option value="GD">Group D</option>
+                    <option value="QF">Quarter Finals (QF)</option>
+                    <option value="SF">Semi Finals (SF)</option>
+                    <option value="F">Final (F)</option>
+                    <option value="ALL">All Rounds</option>
                 </select>
                 <button onclick="randomizeScores()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 w-full md:w-auto">
-                    Kích hoạt Random & Cập nhật
+                    Randomize & Update
                 </button>
             </div>
 
-            <!-- Xóa Kết quả / Reset -->
+            <!-- Reset Scores -->
             <div class="p-4 border rounded-lg mb-6 bg-red-50/50">
-                <h3 class="text-lg font-semibold mb-3 text-red-700">Xóa Kết quả & Tính toán lại</h3>
-                <p class="text-sm text-gray-600 mb-3">Xóa kết quả (Scores, Wn) cho tất cả các trận đấu trong vòng đã chọn và tính toán lại BXH.</p>
+                <h3 class="text-lg font-semibold mb-3 text-red-700">Reset Scores & Recalculate</h3>
+                <p class="text-sm text-gray-600 mb-3">Clears results (Scores, Winner) for matches in the selected round(s) and recalculates standings.</p>
                 <select id="reset-round-select" class="p-2 border rounded-md mr-3 mb-3 w-full md:w-auto">
-                    <option value="F">Chung kết</option>
-                    <option value="SF">Bán kết</option>
-                    <option value="QF">Tứ kết</option>
-                    <option value="GD">Vòng Bảng D</option>
-                    <option value="GC">Vòng Bảng C</option>
-                    <option value="GB">Vòng Bảng B</option>
-                    <option value="GA">Vòng Bảng A</option>
-                    <option value="ALL">Tất cả các vòng</option>
+                    <option value="F">Final (F)</option>
+                    <option value="SF">Semi Finals (SF)</option>
+                    <option value="QF">Quarter Finals (QF)</option>
+                    <option value="GD">Group D</option>
+                    <option value="GC">Group C</option>
+                    <option value="GB">Group B</option>
+                    <option value="GA">Group A</option>
+                    <option value="ALL">All Rounds</option>
                 </select>
                 <button onclick="resetScores()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 w-full md:w-auto">
-                    Xóa kết quả & Reset
+                    Reset Scores & Recalc
                 </button>
             </div>
             
-            <!-- Xuất Dữ liệu CSV -->
+            <!-- Export Data CSV -->
             <div class="p-4 border rounded-lg mb-6 bg-green-50/50">
-                <h3 class="text-lg font-semibold mb-3 text-green-700">Xuất Dữ liệu (CSV)</h3>
-                <p class="text-sm text-gray-600 mb-3">Tải về dữ liệu giải đấu hiện tại dưới dạng tệp CSV.</p>
+                <h3 class="text-lg font-semibold mb-3 text-green-700">Export Data (CSV)</h3>
+                <p class="text-sm text-gray-600 mb-3">Download current tournament data as CSV files.</p>
                 <button onclick="exportData('tL')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 mb-2 mr-2 w-full md:w-auto">
-                    Xuất Danh sách Đội & Người chơi
+                    Export Team List & Players
                 </button>
                 <button onclick="exportData('matches')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 mb-2 mr-2 w-full md:w-auto">
-                    Xuất Tất cả Trận đấu
+                    Export All Match Results
                 </button>
                 <button onclick="exportData('teamStandings')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 mb-2 w-full md:w-auto">
-                    Xuất Bảng xếp hạng Vòng Bảng
+                    Export Group Standings
                 </button>
             </div>
             
-            <!-- Chức năng GitHub Save (Cần Backend) -->
+            <!-- GitHub Save Functionality (Simulated) -->
             <div class="p-4 border rounded-lg bg-yellow-50/50">
-                <h3 class="text-lg font-semibold mb-3 text-yellow-700">Lưu Dữ liệu lên GitHub</h3>
-                <p class="text-sm text-red-600 mb-3 font-semibold">⚠ Lưu ý: Chức năng lưu trực tiếp lên GitHub cần có Backend Server và API Token. Chức năng này sẽ chỉ mô phỏng việc lưu và hiển thị JSON.</p>
-                <label for="github-token" class="block text-sm font-medium text-gray-700">GitHub Personal Access Token:</label>
-                <input type="password" id="github-token" class="p-2 border rounded-md w-full my-2" placeholder="Nhập token GitHub...">
+                <h3 class="text-lg font-semibold mb-3 text-yellow-700">GitHub Save Simulation</h3>
+                <p class="text-sm text-red-600 mb-3 font-semibold">⚠ Note: Direct GitHub save requires a Backend Server. This function only simulates the process and displays the JSON output.</p>
+                <label for="github-token" class="block text-sm font-medium text-gray-700">GitHub Personal Access Token (Simulated):</label>
+                <input type="password" id="github-token" class="p-2 border rounded-md w-full my-2" placeholder="Enter GitHub token (optional for simulation)...">
                 <button onclick="saveToGithub()" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 w-full md:w-auto">
-                    Simulate Lưu JSON
+                    Simulate Save JSON
                 </button>
                 <p id="github-message" class="mt-3 text-sm"></p>
-                <textarea id="output-json" class="mt-4 w-full h-40 p-2 text-xs border rounded-md bg-gray-50" readonly placeholder="JSON đầu ra để lưu..."></textarea>
+                <textarea id="output-json" class="mt-4 w-full h-40 p-2 text-xs border rounded-md bg-gray-50" readonly placeholder="Output JSON ready for saving..."></textarea>
             </div>
 
         </div>
@@ -171,29 +196,29 @@
     <!-- GLOBAL MODAL (CUSTOM ALERT/CONFIRM) -->
     <div id="modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center p-4 z-50">
         <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-sm">
-            <h3 id="modal-title" class="text-lg font-bold mb-3 text-teal-700">Thông báo</h3>
+            <h3 id="modal-title" class="text-lg font-bold mb-3 text-teal-700">Notification</h3>
             <p id="modal-content" class="text-gray-700 mb-4"></p>
             <div class="flex justify-end space-x-3">
-                <button id="modal-cancel-btn" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 hidden">Hủy</button>
-                <button id="modal-ok-btn" class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">Đồng ý</button>
+                <button id="modal-cancel-btn" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 hidden">Cancel</button>
+                <button id="modal-ok-btn" class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">OK</button>
             </div>
         </div>
     </div>
 
     <script>
-    // --- DỮ LIỆU JSON GỐC (EMBEDDED) ---
+    // --- INITIAL EMBEDDED JSON DATA (VIETNAMESE content preserved) ---
     const initialData = {
-      "key_legend": { /* ... (Dữ liệu ban đầu) ... */ },
+      "key_legend": { /* ... (Initial data) ... */ },
       "TournamentInfo": {
         "TN": "Pickleball ITVTG Tournament 2025",
-        "Org": "IT Vũng Tàu Goup",
+        "Org": "IT Vung Tau Goup",
         "LogoL": "https://github.com/cqtin2024/ITVTG/blob/main/LogoITGVT01.png",
         "SD": "26-10-2025",
         "ED": "26-10-2025",
         "FTT": "14:00",
-        "VL": "HM Sport - Pickleball & Coffee - 195 Võ Thị Sáu, Vũng Tàu",
+        "VL": "HM Sport - Pickleball & Coffee - 195 Vo Thi Sau, Vung Tau",
         "MapVL": "https://maps.app.goo.gl/KqqrpVqmVi4uNg7s7",
-        "GL": "Quán nhậu Thống Nhất - 56 Thống Nhất, Vũng Tàu ",
+        "GL": "Quan nhau Thong Nhat - 56 Thong Nhat, Vung Tau",
         "GT": "18:30",
         "MapGL": "https://maps.app.goo.gl/Zbuo59wSeRsHP6E59"
       },
@@ -264,7 +289,7 @@
         // FINAL
         { "Mc": "F", "r": "F", "t": "17:05", "c": "S5", "A": "W.SF1", "sA": "0", "B": "W.SF2", "sB": "0", "Wn": "", "rU": "" }
       ],
-      "tL": [ /* ... (Dữ liệu ban đầu) ... */ ]
+      "tL": [ /* ... (Initial data) ... */ ]
     };
 
     // --- GLOBAL STATE ---
@@ -282,6 +307,10 @@
         const modal = document.getElementById('modal');
         const okBtn = document.getElementById('modal-ok-btn');
         const cancelBtn = document.getElementById('modal-cancel-btn');
+
+        // Translate button text to English
+        okBtn.textContent = isConfirm ? 'Confirm' : 'OK';
+        cancelBtn.textContent = 'Cancel';
 
         okBtn.onclick = () => {
             modal.classList.add('hidden');
@@ -318,7 +347,7 @@
             let line = '';
             for (let index in array[i]) {
                 if (line != '') line += ',';
-                // Xử lý giá trị có chứa dấu phẩy
+                // Handle values containing commas
                 let value = array[i][index];
                 if (typeof value === 'object' && value !== null) {
                     value = JSON.stringify(value).replace(/"/g, '""');
@@ -335,7 +364,7 @@
 
     // Download CSV file
     function downloadCSV(csv, filename) {
-        const csvFile = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" }); // Thêm BOM cho UTF-8
+        const csvFile = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" }); // Add BOM for UTF-8
         const downloadLink = document.createElement("a");
         downloadLink.download = filename;
         downloadLink.href = window.URL.createObjectURL(csvFile);
@@ -354,28 +383,28 @@
             TEAMS_BY_SEED[team.seed] = team.Tn;
         });
 
-        // Đảm bảo tất cả các trận đấu vòng bảng có r (Round Code)
+        // Ensure all group matches have 'r' (Round Code)
         tournamentState.matches.forEach(match => {
             if (match.Mc.startsWith('G') && !match.r) {
                 match.r = match.Mc.substring(0, 2);
             }
         });
 
-        // Tính toán lại BXH ban đầu (hoặc sau khi reset)
+        // Recalculate standings initially
         recalculateGroupStandings();
         updateKnockoutParticipants();
     }
     
-    // 2. Tính toán lại BXH Vòng Bảng
+    // 2. Recalculate Group Standings
     function recalculateGroupStandings() {
         const groupStats = {};
 
-        // Khởi tạo stats cho tất cả các đội
+        // Initialize stats for all teams
         tournamentState.tL.forEach(team => {
             groupStats[team.Tn] = { W: 0, L: 0, PF: 0, PA: 0, Pts: 0, mP: 0, HS: 0 };
         });
 
-        // Tính điểm từ các trận đấu vòng bảng
+        // Calculate points from group matches
         const groupMatches = tournamentState.matches.filter(m => m.r.startsWith('G'));
         groupMatches.forEach(match => {
             const teamA = match.A;
@@ -383,7 +412,7 @@
             const sA = parseInt(match.sA);
             const sB = parseInt(match.sB);
 
-            if (!groupStats[teamA] || !groupStats[teamB] || match.Wn === "") return; // Bỏ qua nếu chưa có kết quả
+            if (!groupStats[teamA] || !groupStats[teamB] || match.Wn === "") return; // Skip if no result
 
             groupStats[teamA].mP++;
             groupStats[teamB].mP++;
@@ -405,7 +434,7 @@
             }
         });
 
-        // Cập nhật và xếp hạng (theo W, sau đó PD, sau đó PF)
+        // Update and Rank (by Pts, then PD, then PF)
         ['A', 'B', 'C', 'D'].forEach(groupCode => {
             let teamsInGroup = tournamentState.teamStandings.filter(t => t.g === groupCode);
 
@@ -414,7 +443,7 @@
                 if (stats) {
                     team.W = stats.W;
                     team.L = stats.L;
-                    team.Pts = stats.Pts;
+                    team.Pts = stats.Pts; // Giữ lại Pts cho việc sắp xếp
                     team.mP = stats.mP;
                     team.PF = stats.PF;
                     team.PA = stats.PA;
@@ -423,20 +452,20 @@
                 }
             });
 
-            // Sắp xếp theo: Pts (Giảm dần), PD (Giảm dần), PF (Giảm dần)
+            // Sort by: Pts (Desc), PD (Desc), PF (Desc)
             teamsInGroup.sort((a, b) => {
                 if (b.Pts !== a.Pts) return b.Pts - a.Pts;
                 if (b.PD !== a.PD) return b.PD - a.PD;
                 return b.PF - a.PF;
             });
 
-            // Cập nhật Group Rank
+            // Update Group Rank
             teamsInGroup.forEach((team, index) => {
                 team.GRank = index + 1;
             });
         });
 
-        // Sắp xếp lại tournamentState.teamStandings theo Group và Rank
+        // Sort the entire array by Group and Rank
         tournamentState.teamStandings.sort((a, b) => {
             if (a.g < b.g) return -1;
             if (a.g > b.g) return 1;
@@ -444,14 +473,14 @@
         });
     }
 
-    // 3. Cập nhật đội tham gia vòng loại trực tiếp
+    // 3. Update Knockout Participants
     function updateKnockoutParticipants() {
         const getTeamByRank = (group, rank) => {
             const team = tournamentState.teamStandings.find(t => t.g === group && t.GRank === rank);
-            return team ? team.Tn : `W.${group}` === 'W.' + group ? `W.${group}` : `R.${group}`;
+            return team ? team.Tn : (rank === 1 ? `W.${group}` : `R.${group}`);
         };
 
-        const groupWinners = {
+        const groupParticipants = {
             'W.A': getTeamByRank('A', 1), 'R.A': getTeamByRank('A', 2),
             'W.B': getTeamByRank('B', 1), 'R.B': getTeamByRank('B', 2),
             'W.C': getTeamByRank('C', 1), 'R.C': getTeamByRank('C', 2),
@@ -461,36 +490,34 @@
         const knockoutMatches = tournamentState.matches.filter(m => ['QF', 'SF', 'F'].includes(m.r));
 
         knockoutMatches.forEach(match => {
-            let teamA = match.A;
-            let teamB = match.B;
-
-            // Vòng Tứ kết (QF)
+            // QF Setup
             if (match.r === 'QF') {
-                match.A = groupWinners[match.A] || match.A;
-                match.B = groupWinners[match.B] || match.B;
+                match.A = groupParticipants[match.A] || match.A;
+                match.B = groupParticipants[match.B] || match.B;
             }
 
-            // Vòng Bán kết (SF) và Chung kết (F)
-            if (['SF', 'F'].includes(match.r) && match.A.startsWith('W.QF') || match.A.startsWith('W.SF')) {
+            // SF and Final Setup (Replace placeholders with winners)
+            if (['SF', 'F'].includes(match.r) && (match.A.startsWith('W.QF') || match.A.startsWith('W.SF'))) {
                 const winnerA = tournamentState.matches.find(m => m.Mc === match.A.substring(2))?.Wn || match.A;
                 const winnerB = tournamentState.matches.find(m => m.Mc === match.B.substring(2))?.Wn || match.B;
                 
-                match.A = winnerA;
-                match.B = winnerB;
+                // Only update if the winner is a real team name, not a placeholder
+                if (!winnerA.startsWith('W.')) match.A = winnerA;
+                if (!winnerB.startsWith('W.')) match.B = winnerB;
             }
 
-            // Cập nhật người thua ở trận Chung kết cho Á quân
-            if (match.r === 'F' && match.Wn && match.rU) {
+            // Update Runner-Up for Final match
+            if (match.r === 'F' && match.Wn) {
                 match.rU = match.Wn === match.A ? match.B : match.A;
             }
         });
     }
 
-    // 4. Cập nhật Tỉ số Trận đấu Thủ công
+    // 4. Manual Score Update
     function updateMatchScore(mc, sA, sB) {
         const match = tournamentState.matches.find(m => m.Mc === mc);
         if (!match) {
-            showModal("Lỗi Cập nhật", `Không tìm thấy Mã Trận ${mc}. Vui lòng kiểm tra lại.`, false);
+            showModal("Update Error", `Match Code ${mc} not found. Please check again.`, false);
             return false;
         }
 
@@ -498,45 +525,45 @@
         sB = parseInt(sB);
 
         // Validation: Winner score = 11, Loser score < 11
-        if (sA === 11 && sB < 11) {
+        if (sA === 11 && sB >= 0 && sB < 11) {
             match.sA = sA.toString();
             match.sB = sB.toString();
             match.Wn = match.A;
-        } else if (sB === 11 && sA < 11) {
+        } else if (sB === 11 && sA >= 0 && sA < 11) {
             match.sA = sA.toString();
             match.sB = sB.toString();
             match.Wn = match.B;
         } else {
-            showModal("Lỗi Tỉ số", `Tỉ số không hợp lệ (${sA}-${sB}). Tỉ số phải là 11 - X (với X < 11).`, false);
+            showModal("Score Error", `Invalid score (${sA}-${sB}). Score must be 11 - X (where X < 11).`, false);
             return false;
         }
 
-        // Nếu là trận vòng bảng, tính toán lại BXH
+        // Recalculate if it's a group match
         if (match.r.startsWith('G')) {
             recalculateGroupStandings();
         }
         
-        // Luôn cập nhật lại người tham gia vòng Knockout để đảm bảo tính toán tiếp theo
+        // Always update Knockout participants to propagate changes
         updateKnockoutParticipants();
         
-        // Render lại giao diện
+        // Re-render UI
         renderApp();
-        showModal("Thành công", `Đã cập nhật tỉ số trận ${mc}: ${match.A} ${sA} - ${sB} ${match.B}. Người thắng: ${match.Wn}.`, false);
+        showModal("Success", `Updated score for match ${mc}: ${match.A} ${sA} - ${sB} ${match.B}. Winner: ${match.Wn}.`, false);
         return true;
     }
 
-    // 5. Tính toán kết quả Chung cuộc (Vô địch, Á quân, Giải Ba)
+    // 5. Calculate Final Results (Champion, Runner-up, Third Place)
     function calculateFinalResults() {
         const finalMatch = tournamentState.matches.find(m => m.r === 'F');
         const sfMatches = tournamentState.matches.filter(m => m.r === 'SF');
 
         const results = {
-            champion: finalMatch?.Wn || "[Chưa xác định]",
-            runnerUp: finalMatch?.rU || "[Chưa xác định]",
+            champion: finalMatch?.Wn || "[TBD]",
+            runnerUp: finalMatch?.rU || "[TBD]",
             thirdPlace: []
         };
         
-        // Tìm 2 đội thua Bán kết (giải Ba đồng hạng)
+        // Find 2 Semi-Final losers (Shared Third Place)
         sfMatches.forEach(match => {
             if (match.Wn && match.A !== match.Wn) {
                 results.thirdPlace.push(match.A);
@@ -546,8 +573,8 @@
             }
         });
 
-        // Xóa trùng lặp (nếu có lỗi logic)
-        results.thirdPlace = [...new Set(results.thirdPlace)].filter(t => t.startsWith('W.QF') === false);
+        // Filter out placeholders if any SF match hasn't determined the winner yet
+        results.thirdPlace = [...new Set(results.thirdPlace)].filter(t => !t.startsWith('W.'));
         
         return results;
     }
@@ -555,7 +582,7 @@
 
     // --- RENDERING FUNCTIONS ---
 
-    // Chuyển Tab
+    // Change Tab
     function changeTab(targetTabId) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.getElementById(targetTabId).classList.add('active');
@@ -571,56 +598,64 @@
         });
     }
 
-    // Render Tab Info
+    // Render Info Tab
     function renderInfoTab() {
         const info = tournamentState.TournamentInfo;
         const totalTeams = tournamentState.tL.length;
         const detailsHtml = `
-            <p><span class="font-bold">Giải đấu:</span> ${info.TN}</p>
-            <p><span class="font-bold">Số đội tham gia:</span> ${totalTeams} đội</p>
-            <p><span class="font-bold">Ngày & Thời gian:</span> ${info.SD} - ${info.ED} (${info.FTT})</p>
-            <p><span class="font-bold">Địa điểm thi đấu:</span> <a href="${info.MapVL}" target="_blank" class="text-blue-500 hover:underline">${info.VL}</a></p>
-            <p><span class="font-bold">Địa điểm Gala:</span> <a href="${info.MapGL}" target="_blank" class="text-blue-500 hover:underline">${info.GL}</a> (${info.GT})</p>
+            <p><span class="font-bold">Tournament:</span> ${info.TN}</p>
+            <p><span class="font-bold">Total Teams:</span> ${totalTeams} teams</p>
+            <p><span class="font-bold">Date & Time:</span> ${info.SD} - ${info.ED} (${info.FTT})</p>
+            <p><span class="font-bold">Venue:</span> <a href="${info.MapVL}" target="_blank" class="text-blue-500 hover:underline">${info.VL}</a></p>
+            <p><span class="font-bold">Gala Dinner:</span> <a href="${info.MapGL}" target="_blank" class="text-blue-500 hover:underline">${info.GL}</a> (${info.GT})</p>
         `;
         document.getElementById('tournament-details').innerHTML = detailsHtml;
 
-        // Render kết quả chung cuộc
+        // Render final results
         const finalResults = calculateFinalResults();
         document.getElementById('champion-team').textContent = finalResults.champion;
-        document.getElementById('runnerup-team').textContent = finalResults.runnerUp;
-        document.getElementById('third-place-1-team').textContent = finalResults.thirdPlace[0] || "[Chưa xác định]";
-        document.getElementById('third-place-2-team').textContent = finalResults.thirdPlace[1] || "[Chưa xác định]";
+        
+        // If champion is not determined, runner-up is also TBD
+        if (finalResults.champion === "[TBD]") {
+            document.getElementById('runnerup-team').textContent = "[TBD]";
+        } else {
+            // Find Runner-up based on Final match result
+            const finalMatch = tournamentState.matches.find(m => m.r === 'F');
+            const runnerUpName = finalMatch.Wn === finalMatch.A ? finalMatch.B : finalMatch.A;
+            document.getElementById('runnerup-team').textContent = runnerUpName;
+        }
+        
+        document.getElementById('third-place-1-team').textContent = finalResults.thirdPlace[0] || "[TBD]";
+        document.getElementById('third-place-2-team').textContent = finalResults.thirdPlace[1] || "[TBD]";
     }
 
-    // Render Tab Group (A, B, C, D)
+    // Render Group Tab (A, B, C, D)
     function renderGroupTab(groupCode) {
         const tabElement = document.getElementById(`group-${groupCode.toLowerCase()}`);
         const groupTeams = tournamentState.teamStandings.filter(t => t.g === groupCode).sort((a, b) => a.GRank - b.GRank);
         const groupMatches = tournamentState.matches.filter(m => m.r === `G${groupCode}`).sort((a, b) => a.Mc.localeCompare(b.Mc));
 
-        let html = `<h2 class="text-xl font-semibold mb-4 text-teal-600">Bảng ${groupCode}</h2>`;
+        let html = `<h2 class="text-xl font-semibold mb-4 text-teal-600">Group ${groupCode}</h2>`;
 
-        // 1. Bảng xếp hạng
-        html += `<h3 class="text-lg font-medium mb-2 text-gray-700">Bảng xếp hạng</h3>`;
+        // 1. Standings Table
+        html += `<h3 class="text-lg font-medium mb-2 text-gray-700">Group Standings</h3>`;
         html += `<div class="table-wrapper mb-6"><table class="text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden">
                     <thead class="bg-teal-500 text-white">
                         <tr>
-                            <th class="rounded-tl-lg">Hạng</th>
-                            <th>Tên Đội</th>
-                            <th>Thắng</th>
-                            <th>Thua</th>
-                            <th>PF (Được)</th>
-                            <th>PA (Mất)</th>
-                            <th class="rounded-tr-lg">PD (Hiệu số)</th>
+                            <th class="rounded-tl-lg">Rank</th>
+                            <th>Team Name (Tn)</th>
+                            <th>W</th>
+                            <th>L</th>
+                            <th>PF</th>
+                            <th>PA</th>
+                            <th class="rounded-tr-lg">PD</th>
                         </tr>
                     </thead><tbody>`;
         
         groupTeams.forEach(team => {
-            const teamInfo = tournamentState.tL.find(t => t.Tn === team.Tn);
-            const teamId = teamInfo ? teamInfo.T : team.T;
             html += `<tr class="hover:bg-gray-50 transition duration-100">
                         <td class="font-bold text-center">${team.GRank}</td>
-                        <td title="${teamId}">${team.Tn}</td>
+                        <td>${team.Tn}</td>
                         <td class="text-center">${team.W}</td>
                         <td class="text-center">${team.L}</td>
                         <td class="text-center">${team.PF}</td>
@@ -630,16 +665,16 @@
         });
         html += `</tbody></table></div>`;
 
-        // 2. Bảng trận đấu & Cập nhật
-        html += `<h3 class="text-lg font-medium mb-2 text-gray-700">Kết quả trận đấu & Cập nhật</h3>`;
-        html += `<div class="table-wrapper"><table class="text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden">
+        // 2. Match Results & Update (Sử dụng class match-table cho CSS tối ưu mobile)
+        html += `<h3 class="text-lg font-medium mb-2 text-gray-700">Match Results & Update</h3>`;
+        html += `<div class="table-wrapper"><table class="match-table text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden">
                     <thead class="bg-gray-700 text-white">
                         <tr>
-                            <th>Match & Mc</th>
-                            <th>TG</th>
-                            <th>Sân</th>
-                            <th colspan="3" class="text-center">Tỉ số & Cập nhật</th>
-                            <th>Thắng</th>
+                            <th>Mc</th>
+                            <th>Time</th>
+                            <th>Court</th>
+                            <th colspan="3" class="text-center">Score & Update</th>
+                            <th>Winner</th>
                             <th></th>
                         </tr>
                     </thead><tbody>`;
@@ -653,15 +688,15 @@
                         <td>${match.t}</td>
                         <td>${match.c}</td>
                         <td class="team-a-name ${isWinnerA ? 'winning-team' : ''}">${match.A}</td>
-                        <td class="score-input-cell">
-                            <input type="number" min="0" max="11" value="${match.sA}" class="score-input p-1 border rounded-md" data-team="A">
-                            <span class="mx-1">-</span>
-                            <input type="number" min="0" max="11" value="${match.sB}" class="score-input p-1 border rounded-md" data-team="B">
+                        <td class="score-input-cell flex items-center justify-center space-x-1">
+                            <input type="number" min="0" max="11" value="${match.sA}" class="score-input border rounded-md" data-team="A">
+                            <span class="font-bold">-</span>
+                            <input type="number" min="0" max="11" value="${match.sB}" class="score-input border rounded-md" data-team="B">
                         </td>
                         <td class="team-b-name ${isWinnerB ? 'winning-team' : ''}">${match.B}</td>
                         <td class="match-winner-name text-center font-bold text-teal-600">${match.Wn || '...'}</td>
                         <td>
-                            <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-2 rounded-md transition duration-150">Cập nhật</button>
+                            <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-2 rounded-md transition duration-150">Update</button>
                         </td>
                     </tr>`;
         });
@@ -670,27 +705,27 @@
         tabElement.innerHTML = html;
     }
 
-    // Render Tab Final (QF, SF, F)
+    // Render Final Tab (QF, SF, F)
     function renderFinalTab() {
         const tabElement = document.getElementById('final-knockout-matches');
         const knockoutMatches = tournamentState.matches.filter(m => ['QF', 'SF', 'F'].includes(m.r));
         
         let html = '';
-        const rounds = { 'QF': 'Tứ kết', 'SF': 'Bán kết', 'F': 'Chung kết' };
+        const rounds = { 'QF': 'Quarter Finals', 'SF': 'Semi Finals', 'F': 'Final' };
 
         Object.keys(rounds).forEach(roundCode => {
             const matchesInRound = knockoutMatches.filter(m => m.r === roundCode).sort((a, b) => a.Mc.localeCompare(b.Mc));
             
             if (matchesInRound.length > 0) {
                 html += `<h3 class="text-lg font-medium my-4 p-2 bg-gray-100 border-l-4 border-teal-500 text-gray-700">${rounds[roundCode]}</h3>`;
-                html += `<div class="table-wrapper mb-6"><table class="text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden">
+                html += `<div class="table-wrapper mb-6"><table class="match-table text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden">
                             <thead class="bg-teal-500 text-white">
                                 <tr>
                                     <th>Mc</th>
-                                    <th>TG</th>
-                                    <th>Sân</th>
-                                    <th colspan="3" class="text-center">Trận đấu & Cập nhật Tỉ số</th>
-                                    <th>Thắng</th>
+                                    <th>Time</th>
+                                    <th>Court</th>
+                                    <th colspan="3" class="text-center">Match Teams & Score Update</th>
+                                    <th>Winner</th>
                                     <th></th>
                                 </tr>
                             </thead><tbody>`;
@@ -704,15 +739,15 @@
                                 <td>${match.t}</td>
                                 <td>${match.c}</td>
                                 <td class="team-a-name ${isWinnerA ? 'winning-team' : ''}">${match.A}</td>
-                                <td class="score-input-cell">
-                                    <input type="number" min="0" max="11" value="${match.sA}" class="score-input p-1 border rounded-md" data-team="A">
-                                    <span class="mx-1">-</span>
-                                    <input type="number" min="0" max="11" value="${match.sB}" class="score-input p-1 border rounded-md" data-team="B">
+                                <td class="score-input-cell flex items-center justify-center space-x-1">
+                                    <input type="number" min="0" max="11" value="${match.sA}" class="score-input border rounded-md" data-team="A">
+                                    <span class="font-bold">-</span>
+                                    <input type="number" min="0" max="11" value="${match.sB}" class="score-input border rounded-md" data-team="B">
                                 </td>
                                 <td class="team-b-name ${isWinnerB ? 'winning-team' : ''}">${match.B}</td>
                                 <td class="match-winner-name text-center font-bold text-teal-600">${match.Wn || '...'}</td>
                                 <td>
-                                    <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-2 rounded-md transition duration-150">Cập nhật</button>
+                                    <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-2 rounded-md transition duration-150">Update</button>
                                 </td>
                             </tr>`;
                 });
@@ -724,12 +759,12 @@
         tabElement.innerHTML = html;
     }
 
-    // Hàm tổng hợp Render
+    // Overall Render Function
     function renderApp() {
-        // Cập nhật các danh sách đội cho vòng loại
+        // Update teams for knockout rounds
         updateKnockoutParticipants();
 
-        // Render tất cả các tab cần dữ liệu động
+        // Render all dynamic tabs
         renderInfoTab();
         renderGroupTab('A');
         renderGroupTab('B');
@@ -741,7 +776,7 @@
 
     // --- EVENT HANDLERS ---
 
-    // Xử lý Cập nhật thủ công (khi bấm nút "Cập nhật" trong bảng)
+    // Manual Update Handler
     window.handleManualUpdate = (mc) => {
         const row = document.querySelector(`tr[data-mc="${mc}"]`);
         const sA = row.querySelector('input[data-team="A"]').value;
@@ -750,7 +785,7 @@
         updateMatchScore(mc, sA, sB);
     };
 
-    // Xử lý Cập nhật Ngẫu nhiên
+    // Randomize Scores Handler
     window.randomizeScores = () => {
         const roundCode = document.getElementById('random-round-select').value;
         const roundsToUpdate = roundCode === 'ALL' ? ['GA', 'GB', 'GC', 'GD', 'QF', 'SF', 'F'] : [roundCode];
@@ -760,22 +795,22 @@
             const matchesInRound = tournamentState.matches.filter(m => m.r === r);
 
             matchesInRound.forEach(match => {
-                // Chỉ random nếu chưa có kết quả (hoặc đội chưa được xác định ở vòng KO)
+                // Only random if no result yet (or teams are still placeholders in KO)
                 if (match.Wn === "" || match.A.startsWith('W.') || match.B.startsWith('R.')) {
                     
-                    // Xác định lại đội tham gia nếu cần (quan trọng cho QF, SF, F)
+                    // Re-determine participants if needed (crucial for QF, SF, F)
                     updateKnockoutParticipants();
                     
-                    // Kiểm tra lại sau khi updateKnockoutParticipants
+                    // Re-check after updateKnockoutParticipants
                     if (match.A.startsWith('W.') || match.B.startsWith('R.')) return;
 
-                    // Tạo tỉ số ngẫu nhiên hợp lệ (11 vs X < 11)
+                    // Generate valid random score (11 vs X < 11)
                     let scoreA, scoreB;
-                    // Lựa chọn đội thắng ngẫu nhiên
-                    if (Math.random() < 0.5) { // A thắng
+                    // Randomly choose winner
+                    if (Math.random() < 0.5) { // A wins
                         scoreA = 11;
                         scoreB = Math.floor(Math.random() * 11); // 0-10
-                    } else { // B thắng
+                    } else { // B wins
                         scoreB = 11;
                         scoreA = Math.floor(Math.random() * 11); // 0-10
                     }
@@ -790,7 +825,7 @@
             return updatedCount;
         };
 
-        // Random theo thứ tự: GA -> GD -> QF -> SF -> F để đảm bảo dữ liệu vòng sau là hợp lệ
+        // Random in order: GA -> GD -> QF -> SF -> F
         const sortedRounds = ['GA', 'GB', 'GC', 'GD', 'QF', 'SF', 'F'];
         sortedRounds.forEach(r => {
             if (roundsToUpdate.includes(r)) {
@@ -798,31 +833,31 @@
             }
         });
 
-        // Sau khi random, cần tính toán lại BXH vòng bảng (nếu có cập nhật)
+        // After randomizing, recalculate group standings (if updated)
         if (roundsToUpdate.some(r => r.startsWith('G'))) {
             recalculateGroupStandings();
         }
         
-        // Cập nhật lại người tham gia vòng loại (ràng buộc W.QF1, W.SF1...)
+        // Update knockout participants again
         updateKnockoutParticipants();
         
         renderApp();
-        showModal("Hoàn tất Random", `Đã tạo kết quả ngẫu nhiên và cập nhật ${updatedCount} trận đấu trong vòng ${roundCode}.`, false);
+        showModal("Randomization Complete", `Successfully generated and updated ${updatedCount} matches in round(s) ${roundCode}.`, false);
     };
 
-    // Xử lý Reset Tỉ số
+    // Reset Scores Handler
     window.resetScores = () => {
         const roundCode = document.getElementById('reset-round-select').value;
         const roundsToReset = roundCode === 'ALL' ? ['F', 'SF', 'QF', 'GD', 'GC', 'GB', 'GA'] : [roundCode];
 
         showModal(
-            "Xác nhận Reset", 
-            `Bạn có chắc chắn muốn XÓA kết quả của tất cả các trận đấu thuộc vòng ${roundCode} và tính toán lại? Hành động này không thể hoàn tác!`, 
+            "Confirm Reset", 
+            `Are you sure you want to CLEAR the results for all matches in ${roundCode} and recalculate? This action cannot be undone.`, 
             true, 
             () => {
                 let resetCount = 0;
                 
-                // Reset theo thứ tự F -> SF -> QF -> GD -> GA để đảm bảo luồng logic
+                // Reset in order F -> SF -> QF -> GD -> GA (reverse dependency)
                 const sortedRounds = ['F', 'SF', 'QF', 'GD', 'GC', 'GB', 'GA'];
                 sortedRounds.forEach(r => {
                     if (roundsToReset.includes(r)) {
@@ -836,12 +871,9 @@
                     }
                 });
 
-                // Reset các đội vòng loại về placeholder ban đầu nếu vòng bảng bị reset
+                // Reset knockout teams to initial placeholders if group stage is reset
                 if (roundsToReset.some(r => r.startsWith('G')) || roundCode === 'ALL') {
                      tournamentState.matches.filter(m => m.r === 'QF').forEach(match => {
-                        const groupLetterA = match.Mc.charAt(2) === '1' || match.Mc.charAt(2) === '2' ? 'A' : 'C'; // QF1, QF2: A vs B/ C vs D
-                        const groupLetterB = match.Mc.charAt(2) === '1' || match.Mc.charAt(2) === '2' ? 'B' : 'D'; 
-
                         if (match.Mc === 'QF1') { match.A = 'W.A'; match.B = 'R.B'; }
                         if (match.Mc === 'QF2') { match.A = 'W.B'; match.B = 'R.A'; }
                         if (match.Mc === 'QF3') { match.A = 'W.C'; match.B = 'R.D'; }
@@ -849,21 +881,21 @@
                     });
                 }
                 
-                // Tính toán lại BXH vòng bảng (nếu cần)
+                // Recalculate group standings (if needed)
                 if (roundsToReset.some(r => r.startsWith('G'))) {
                     recalculateGroupStandings();
                 }
 
-                // Cập nhật lại người tham gia vòng loại
+                // Update knockout participants
                 updateKnockoutParticipants();
                 
                 renderApp();
-                showModal("Hoàn tất Reset", `Đã xóa kết quả và reset ${resetCount} trận đấu trong vòng ${roundCode}.`, false);
+                showModal("Reset Complete", `Successfully cleared scores for ${resetCount} matches in round(s) ${roundCode}.`, false);
             }
         );
     };
 
-    // Xử lý Xuất Dữ liệu CSV
+    // Export Data CSV Handler
     window.exportData = (dataType) => {
         let data, filename, headers;
         
@@ -883,14 +915,14 @@
             data = tournamentState.matches;
             filename = 'all_matches_results.csv';
         } else if (dataType === 'teamStandings') {
-            // Lấy các trường đã tính toán
+            // Use calculated fields
             data = tournamentState.teamStandings.map(s => ({
                 'Group': s.g,
                 'Rank': s.GRank,
                 'Nickname': s.Tn,
-                'Wins': s.W,
-                'Losses': s.L,
-                'Points': s.Pts,
+                'W': s.W,
+                'L': s.L,
+                'Pts': s.Pts,
                 'Played': s.mP,
                 'PF': s.PF,
                 'PA': s.PA,
@@ -905,30 +937,30 @@
         downloadCSV(csv, filename);
     };
 
-    // Xử lý GitHub Save (Giả lập)
+    // GitHub Save Simulation Handler
     window.saveToGithub = () => {
         const messageElement = document.getElementById('github-message');
         const outputJsonElement = document.getElementById('output-json');
         
-        // Tạo JSON đầu ra (toàn bộ state)
+        // Create final JSON (entire state)
         const finalJson = JSON.stringify(tournamentState, null, 2);
         outputJsonElement.value = finalJson;
         
-        // Do không thể gọi API GitHub trực tiếp từ frontend mà không có CORS/Server/Token, chúng ta chỉ mô phỏng
+        // Simulation logic
         const token = document.getElementById('github-token').value.trim();
 
         if (!token) {
-            messageElement.textContent = "⚠ Vui lòng dán JSON này vào file data/statex.json trên GitHub. Chức năng lưu tự động cần Token và Backend.";
+            messageElement.textContent = "⚠ Paste this JSON into the data/statex.json file on GitHub. Automated saving requires a Token and Backend.";
             messageElement.classList.remove('text-green-600', 'text-red-600');
             messageElement.classList.add('text-yellow-600', 'font-bold');
             outputJsonElement.focus();
             outputJsonElement.select();
-            showModal("Mô phỏng Lưu", "Do giới hạn bảo mật, bạn cần tự dán nội dung JSON đã xuất ra vào file trên GitHub.", false);
+            showModal("Save Simulation", "Due to security limits, you must manually paste the exported JSON content into the file on GitHub.", false);
             return;
         }
 
-        // Nếu có token (chỉ là mô phỏng thành công cho người dùng thấy)
-        messageElement.textContent = "✅ Mô phỏng thành công! JSON đã được tạo. Nếu có Backend thực tế, nó sẽ được đẩy lên GitHub.";
+        // If token is present (simulated success for user feedback)
+        messageElement.textContent = "✅ Simulation successful! JSON created. If a real Backend were connected, it would now be pushed to GitHub.";
         messageElement.classList.remove('text-yellow-600', 'text-red-600');
         messageElement.classList.add('text-green-600', 'font-bold');
         outputJsonElement.focus();
@@ -940,20 +972,20 @@
     // --- INITIALIZATION ---
 
     document.addEventListener('DOMContentLoaded', () => {
-        // 1. Khởi tạo dữ liệu và tính toán ban đầu
+        // 1. Initialize data and initial calculations
         initializeState();
 
-        // 2. Render UI lần đầu
+        // 2. Render UI for the first time
         renderApp();
         
-        // 3. Thiết lập Event Listener cho Tabs
+        // 3. Set up Event Listener for Tabs
         document.querySelectorAll('.tab-button').forEach(button => {
             button.addEventListener('click', (e) => {
                 changeTab(e.target.getAttribute('data-tab'));
             });
         });
         
-        // Đặt tab mặc định là Info
+        // Set default tab to Info
         changeTab('info');
     });
 
