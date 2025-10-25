@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V6.2 - Data Model Fixed</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V6.3 - Bug Fixes & Refinements</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V6.2 - DATA MODEL FIXED)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V6.3 - BUG FIXES)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Auto Sync)</p>
                 </div>
             </div>
@@ -313,7 +313,7 @@
     <script>
         
         // ==============================================================================================================
-        // GITHUB API CONFIGURATION & CORE DATA (V6.2 - Data Model Fixed)
+        // GITHUB API CONFIGURATION & CORE DATA (V6.3 - Bug Fixes & Refinements)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -331,7 +331,7 @@
         const BRANCH = 'main';
         const DEBOUNCE_DELAY = 1500; // 1.5 giây trễ cho auto-commit
 
-        // MÔ HÌNH DỮ LIỆU MỚI (V6.2)
+        // MÔ HÌNH DỮ LIỆU MỚI (V6.3)
         let runtimeState = null; // Trạng thái chính: Dữ liệu gốc + Tính toán + Metadata SHA
         let initialBaseData = null; // Dữ liệu từ state41.json gốc (Template)
         let uiData = {}; // Dữ liệu đã được tách/chuẩn bị cho UI (ví dụ: matchesA, semifinals)
@@ -413,20 +413,11 @@
         /**
          * Core logic for committing content to GitHub API (PUT method).
          * Includes logic for getting SHA and handling retry on 422 (Stale SHA).
-         * @param {string} fileUrl - API URL for the file.
-         * @param {string} contentBase64 - Content in Base64 format.
-         * @param {string} commitMessage - Message for the commit.
-         * @param {string} buttonId - ID of the button to disable (for manual commit).
-         * @param {string} resultElementId - ID of the element to show status in.
-         * @param {string} currentSha - The known SHA for the file. Can be null for initial commit.
-         * @param {boolean} isAutoCommit - Flag to indicate if it's an auto-commit.
-         * @param {boolean} isRetryAttempt - Flag to prevent infinite retry loop.
          */
         async function getShaAndCommit(fileUrl, contentBase64, commitMessage, buttonId, resultElementId, currentSha, isAutoCommit = false, isRetryAttempt = false) {
             const pat = githubToken.trim();
             const commitButton = document.getElementById(buttonId);
             
-            // Chỉ vô hiệu hóa và hiển thị trạng thái cho các nút COMMIT THỦ CÔNG
             const isManualCommit = (buttonId === 'commitScoreButton' || buttonId === 'commitTeamToBaseButton');
 
             if(isManualCommit) {
@@ -439,7 +430,6 @@
             let sha = currentSha;
             
             try {
-                // Nếu không có SHA được truyền vào HOẶC đây là lần thử lại, TẢI SHA MỚI
                 if (!sha || isRetryAttempt) {
                     if(isManualCommit) showStatus('Đang lấy SHA hiện tại của file...', 'info', resultElementId);
 
@@ -449,7 +439,7 @@
 
                     if (shaResponse.status === 404) {
                         if(isManualCommit) showStatus('File chưa tồn tại trên nhánh, sẽ tạo mới.', 'info', resultElementId);
-                        sha = null; // Đảm bảo SHA là null khi tạo mới
+                        sha = null; 
                     } else if (shaResponse.status === 401) {
                         const errorJson = await shaResponse.json();
                         throw new Error(`401 Unauthorized: ${errorJson.message || 'Token không hợp lệ hoặc thiếu quyền "repo".'}`);
@@ -491,7 +481,6 @@
                     if(isAutoCommit) showStatus('Lỗi Stale SHA (422) - Dữ liệu đã thay đổi trên GitHub. Đang thử lại...', 'warning', 'statusMessage');
                     if(isManualCommit) showStatus('Lỗi Stale SHA (422) - Thử lại lần 1...', 'warning', resultElementId);
                     
-                    // Gọi lại chính nó với cờ isRetryAttempt = true. SHA sẽ được lấy lại trong lần gọi này.
                     return getShaAndCommit(fileUrl, contentBase64, commitMessage, buttonId, resultElementId, null, isAutoCommit, true); 
                 }
                  else if (commitResponse.status === 401) {
@@ -504,7 +493,7 @@
 
                 const result = await commitResponse.json();
                 
-                // Cập nhật lại SHA mới cho lần commit tiếp theo (quan trọng cho auto-commit)
+                // Cập nhật lại SHA mới cho lần commit tiếp theo
                 if (runtimeState && runtimeState.metadata) {
                     runtimeState.metadata.sha = result.content.sha;
                 }
@@ -531,8 +520,6 @@
         
         /**
          * Hợp nhất các mảng vòng đấu riêng thành mảng 'matches' chung (ĐƯỢC GỌI TRƯỚC KHI COMMIT)
-         * @param {object} data - Dữ liệu giải đấu với các trường vòng đấu riêng biệt
-         * @returns {object} Dữ liệu với mảng 'matches' đã hợp nhất
          */
         function unifyMatches(data) {
             const unifiedData = JSON.parse(JSON.stringify(data));
@@ -557,30 +544,23 @@
         
         /**
          * Chuẩn hóa dữ liệu trước khi COMMIT để tạo ra Core Data sạch.
-         * Loại bỏ các trường tính toán tạm thời (W, L, gR, mP, Pts, GS, GC) KHÔNG cần lưu trữ.
-         * Loại bỏ trường metadata.
-         * @param {object} data - Dữ liệu giải đấu hiện tại (runtimeState)
-         * @returns {object} Dữ liệu sạch sẵn sàng để commit (Core Data)
          */
         function unifyAndCleanData(data) {
-            // Bước 1: Hợp nhất các mảng match về mảng 'matches' chung
             const tempCommitData = unifyMatches(data);
             
-            // Bước 2: Loại bỏ trường metadata
             delete tempCommitData.metadata;
             
-            // Bước 3: Loại bỏ các trường tính toán (temporary computed fields) trong tL
             if (tempCommitData.tL) {
                 tempCommitData.tL = tempCommitData.tL.map(team => {
                     const cleanTeam = { ...team };
-                    // Các trường cần loại bỏ:
+                    // Loại bỏ các trường tính toán (computed fields)
                     delete cleanTeam.W;
                     delete cleanTeam.L;
-                    delete cleanTeam.gR; // Group Rank
-                    delete cleanTeam.mP; // Matches Played
-                    delete cleanTeam.GS; // Goals Scored
-                    delete cleanTeam.GC; // Goals Conceded
-                    delete cleanTeam.Pts; // Points
+                    delete cleanTeam.gR; 
+                    delete cleanTeam.mP; 
+                    delete cleanTeam.GS; 
+                    delete cleanTeam.GC; 
+                    delete cleanTeam.Pts; 
                     // Giữ lại: T, Tn, aPL, g, s, P
                     return cleanTeam;
                 });
@@ -592,9 +572,8 @@
         // --- LOGIC TẢI VÀ XỬ LÝ DỮ LIỆU ---
 
         /**
-         * Tách mảng 'matches' chung của state41.json thành các mảng vòng đấu riêng (matchesA, quarterfinals, final, v.v.)
-         * @param {object} data - Dữ liệu giải đấu có trường 'matches'
-         * @returns {object} Dữ liệu với các trường vòng đấu riêng biệt (UI Data)
+         * Tách mảng 'matches' chung thành các mảng vòng đấu riêng (matchesA, quarterfinals, final, v.v.)
+         * [V6.3 FIX]: Đơn giản hóa logic, chỉ tách khi có trường 'matches' (dữ liệu gốc)
          */
         function splitMatches(data) {
             const rounds = {
@@ -602,43 +581,36 @@
                 quarterfinals: [], semifinals: [], final: null
             };
             
-            // Nếu data là runtimeState, thì trường matches có thể không tồn tại vì đã được split trước đó
-            const sourceMatches = data.matches || data.matchesA.concat(data.matchesB, data.matchesC, data.matchesD, data.quarterfinals, data.semifinals, data.final ? [data.final] : []);
-
-            if (data.matches) {
-                data.matches.forEach(match => {
-                    if (match.Mc.startsWith('GA')) rounds.matchesA.push(match);
-                    else if (match.Mc.startsWith('GB')) rounds.matchesB.push(match);
-                    else if (match.Mc.startsWith('GC')) rounds.matchesC.push(match);
-                    else if (match.Mc.startsWith('GD')) rounds.matchesD.push(match);
-                    else if (match.Mc.startsWith('QF')) rounds.quarterfinals.push(match);
-                    else if (match.Mc.startsWith('SF')) rounds.semifinals.push(match);
-                    else if (match.Mc === 'F') rounds.final = match;
-                });
-            } else if (data.matchesA) {
-                 // Nếu dữ liệu đã được split, thì giữ nguyên (Dùng cho bước 3/4 trong Data Flow)
-                 rounds.matchesA = data.matchesA;
-                 rounds.matchesB = data.matchesB;
-                 rounds.matchesC = data.matchesC;
-                 rounds.matchesD = data.matchesD;
-                 rounds.quarterfinals = data.quarterfinals;
-                 rounds.semifinals = data.semifinals;
-                 rounds.final = data.final;
+            if (!data.matches) {
+                 // Dữ liệu đã được tách sẵn (từ active state), chỉ cần dùng lại
+                 return {
+                     matchesA: data.matchesA || [], matchesB: data.matchesB || [], matchesC: data.matchesC || [], matchesD: data.matchesD || [],
+                     quarterfinals: data.quarterfinals || [], semifinals: data.semifinals || [], final: data.final || null
+                 };
             }
-
-            // Xóa trường 'matches' cũ (nếu có) và trả về các trường mới
-            const newData = { ...data };
-            delete newData.matches;
+            
+            // Xử lý tách từ mảng matches chung (chỉ xảy ra khi tải lần đầu)
+            data.matches.forEach(match => {
+                if (match.Mc.startsWith('GA')) rounds.matchesA.push(match);
+                else if (match.Mc.startsWith('GB')) rounds.matchesB.push(match);
+                else if (match.Mc.startsWith('GC')) rounds.matchesC.push(match);
+                else if (match.Mc.startsWith('GD')) rounds.matchesD.push(match);
+                else if (match.Mc.startsWith('QF')) rounds.quarterfinals.push(match);
+                else if (match.Mc.startsWith('SF')) rounds.semifinals.push(match);
+                else if (match.Mc === 'F') rounds.final = match;
+            });
             
             // Cập nhật lại runtimeState với các mảng đã tách
-            newData.matchesA = rounds.matchesA;
-            newData.matchesB = rounds.matchesB;
-            newData.matchesC = rounds.matchesC;
-            newData.matchesD = rounds.matchesD;
-            newData.quarterfinals = rounds.quarterfinals;
-            newData.semifinals = rounds.semifinals;
-            newData.final = rounds.final;
+            data.matchesA = rounds.matchesA;
+            data.matchesB = rounds.matchesB;
+            data.matchesC = rounds.matchesC;
+            data.matchesD = rounds.matchesD;
+            data.quarterfinals = rounds.quarterfinals;
+            data.semifinals = rounds.semifinals;
+            data.final = rounds.final;
             
+            delete data.matches; // Xóa mảng chung sau khi tách
+
             // uiData chỉ cần các mảng match đã tách
             return rounds; 
         }
@@ -667,20 +639,20 @@
                     showStatus('Đã tải trạng thái hoạt động (state41s.json) thành công.', 'info', 'statusMessage');
                 } else if (activeResponse.status === 404) {
                     showStatus('Không tìm thấy state41s.json. Sử dụng state41.json làm mẫu và tự động đồng bộ lần đầu.', 'warning', 'statusMessage');
-                    isInitialCommitNeeded = true; // Set flag for initial commit
+                    isInitialCommitNeeded = true; 
                 } else {
                      console.error(`Lỗi khi tải state41s.json: ${activeResponse.status}`);
                      showStatus(`Lỗi ${activeResponse.status} khi tải state41s.json. Sử dụng state41.json làm mẫu.`, 'warning', 'statusMessage');
-                     isInitialCommitNeeded = true; // Use base data and commit if fetch failed (except 401/403 which are fatal)
+                     isInitialCommitNeeded = true; 
                 }
 
-                // Thiết lập Runtime State (Bản sao toàn bộ dữ liệu, bao gồm các trường tính toán sau này)
+                // Thiết lập Runtime State
                 runtimeState = activeData || baseData; 
                 
-                // Tách mảng matches thành các mảng vòng đấu riêng biệt (A, B, C, D, QF, SF, F) - Cập nhật trực tiếp vào runtimeState
-                splitMatches(runtimeState);
+                // Tách mảng matches thành các mảng vòng đấu riêng biệt (Cập nhật trực tiếp vào runtimeState)
+                uiData = splitMatches(runtimeState);
                 
-                // 3. Lấy SHA của file ACTIVE để sử dụng cho lần commit tiếp theo (Chỉ cần lấy SHA của active file)
+                // 3. Lấy SHA của file ACTIVE
                 const shaResponse = await fetch(ACTIVE_API_URL + `?ref=${BRANCH}`);
                 let sha = null;
                 if (shaResponse.ok) {
@@ -688,7 +660,6 @@
                     sha = data.sha;
                 }
                 
-                // Lưu SHA vào metadata để sử dụng trong commit tiếp theo
                 runtimeState.metadata = { sha: sha }; 
 
                 // 4. Xử lý và Render dữ liệu
@@ -696,11 +667,10 @@
                 
                 // 5. Commit lần đầu nếu chưa có active file (404)
                 if (isInitialCommitNeeded) {
-                     // Dùng hàm non-debounced cho lần commit đầu
-                     await _coreCommitLogic('Initial sync from state41.json to state41s.json (V6.2)', true); 
+                     await _coreCommitLogic('Initial sync from state41.json to state41s.json (V6.3)', true); 
                 }
                 
-                showStatus('Đã tải và xử lý dữ liệu thành công! (V6.2)', 'success', 'statusMessage');
+                showStatus('Đã tải và xử lý dữ liệu thành công! (V6.3)', 'success', 'statusMessage');
                 switchTab('General'); 
 
             } catch (error) {
@@ -710,31 +680,25 @@
         }
         
         /**
-         * Logic cốt lõi để COMMIT. Được gọi bởi cả hàm Debounced và Initial Commit.
-         * @param {string} commitMessage - Thông điệp commit
-         * @param {boolean} isInitialCommit - Commit lần đầu (không cần token check)
+         * Logic cốt lõi để COMMIT.
          */
         async function _coreCommitLogic(commitMessage, isInitialCommit = false) {
             if (!isInitialCommit) {
                 githubToken = localStorage.getItem('githubToken') || ''; 
                 if (!githubToken || githubToken.trim().length === 0) {
-                    // Cảnh báo nhưng không return, để hàm debounced wrapper có thể hiển thị cảnh báo
                     return false; 
                 }
             }
 
-            // Bỏ qua nếu dữ liệu không tồn tại
             if (!runtimeState) return false; 
 
             // Chuẩn bị dữ liệu (unify và loại bỏ các trường tính toán VÀ metadata)
-            const commitData = unifyAndCleanData(runtimeState); // Trích xuất Core Data sạch
+            const commitData = unifyAndCleanData(runtimeState); 
             
-            // Lấy SHA CŨ từ dữ liệu in-memory để dùng cho API commit
             const currentSha = runtimeState.metadata?.sha;
 
             const base64Content = jsonToBase64(commitData);
             
-            // Sử dụng một ID ảo cho nút COMMIT để hàm getShaAndCommit không vô hiệu hóa nút thật
             await getShaAndCommit(
                 ACTIVE_API_URL, 
                 base64Content, 
@@ -762,9 +726,6 @@
         
         /**
          * Tính toán Stats (W, L, Pts, GS, GC) cho một đội dựa trên kết quả vòng bảng.
-         * @param {object} team - Đối tượng đội
-         * @param {object} state - Toàn bộ dữ liệu giải đấu (runtimeState)
-         * @returns {object} Đối tượng đội đã cập nhật stats
          */
         function calculateTeamStats(team, state) {
             // Khởi tạo các trường tính toán
@@ -773,7 +734,7 @@
             const groupMatches = state[`matches${team.g}`] || [];
             
             groupMatches.forEach(match => {
-                if (match.sA === null || match.sB === null) return; // Bỏ qua trận chưa có tỉ số
+                if (match.sA === null || match.sB === null) return; 
                 
                 const isTeamA = match.teamA === team.T;
                 const isTeamB = match.teamB === team.T;
@@ -789,10 +750,10 @@
                         team.GC += sB;
                         if (sA > sB) {
                             team.W++;
-                            team.Pts += 3; // 3 điểm cho trận thắng
+                            team.Pts += 3; 
                         } else if (sB > sA) {
                             team.L++;
-                            team.Pts += 0; // 0 điểm cho trận thua
+                            team.Pts += 0; 
                         }
                     } else if (isTeamB) {
                         team.GS += sB;
@@ -813,8 +774,6 @@
 
         /**
          * Tính toán Bảng xếp hạng Vòng bảng (sắp xếp).
-         * @param {Array<object>} teams - Danh sách đội trong cùng một bảng
-         * @returns {Array<object>} Danh sách đội đã sắp xếp
          */
         function calculateStandings(teams) {
             // Thứ tự ưu tiên: 1. Điểm (Pts) > 2. Hiệu số điểm (GS - GC) > 3. Điểm thắng (GS) > 4. Tên đội (Tn)
@@ -833,9 +792,9 @@
         
         /**
          * Cập nhật các cặp đấu Vòng loại trực tiếp (QF, SF, F) dựa trên kết quả vòng bảng.
-         * @param {object} state - Dữ liệu giải đấu (runtimeState) đã được tính toán group rank (gR)
          */
         function updateKnockoutBrackets(state) {
+            // Helper để lấy danh sách đội đã xếp hạng trong một bảng
             const teamsByGroup = (group) => {
                 const teams = state.tL.filter(t => t.g === group);
                 return teams.sort((a, b) => a.gR - b.gR);
@@ -851,7 +810,7 @@
             // Cập nhật Winner/Loser cho các trận đã có tỉ số (trong vòng QF, SF, F)
             const updateMatchWinner = (match) => {
                 if (!match || match.sA === null || match.sB === null) {
-                    delete match.winner; // Xóa winner nếu chưa có tỉ số
+                    delete match.winner; 
                     return;
                 }
 
@@ -875,27 +834,27 @@
 
             // 2. QF (Tứ kết)
             const qfMatches = state.quarterfinals || [];
-            if (qfMatches.length >= 4) { // Chỉ xử lý 4 trận QF cơ bản
+            if (qfMatches.length >= 4) { 
                 // QF1: 1A vs 2B
-                qfMatches[0].teamA = A[0]?.T || null; qfMatches[0].teamB = B[1]?.T || null;
+                qfMatches[0].teamA = A[0]?.T || '1A'; qfMatches[0].teamB = B[1]?.T || '2B';
                 // QF2: 1B vs 2A
-                qfMatches[1].teamA = B[0]?.T || null; qfMatches[1].teamB = A[1]?.T || null;
+                qfMatches[1].teamA = B[0]?.T || '1B'; qfMatches[1].teamB = A[1]?.T || '2A';
                 // QF3: 1C vs 2D
-                qfMatches[2].teamA = C[0]?.T || null; qfMatches[2].teamB = D[1]?.T || null;
+                qfMatches[2].teamA = C[0]?.T || '1C'; qfMatches[2].teamB = D[1]?.T || '2D';
                 // QF4: 1D vs 2C
-                qfMatches[3].teamA = D[0]?.T || null; qfMatches[3].teamB = C[1]?.T || null;
+                qfMatches[3].teamA = D[0]?.T || '1D'; qfMatches[3].teamB = C[1]?.T || '2C';
             }
 
             // 3. SF (Bán kết)
             const sfMatches = state.semifinals || [];
             if (sfMatches.length >= 2) {
                 // SF1: Winner QF1 vs Winner QF3
-                sfMatches[0].teamA = getWinner(qfMatches[0]);
-                sfMatches[0].teamB = getWinner(qfMatches[2]);
+                sfMatches[0].teamA = getWinner(qfMatches[0]) || 'Winner QF1';
+                sfMatches[0].teamB = getWinner(qfMatches[2]) || 'Winner QF3';
                 
                 // SF2: Winner QF2 vs Winner QF4
-                sfMatches[1].teamA = getWinner(qfMatches[1]);
-                sfMatches[1].teamB = getWinner(qfMatches[3]);
+                sfMatches[1].teamA = getWinner(qfMatches[1]) || 'Winner QF2';
+                sfMatches[1].teamB = getWinner(qfMatches[3]) || 'Winner QF4';
             }
              sfMatches.forEach(updateMatchWinner);
 
@@ -904,15 +863,14 @@
             const finalMatch = state.final;
             if (finalMatch) {
                 // F: Winner SF1 vs Winner SF2
-                finalMatch.teamA = getWinner(sfMatches[0]);
-                finalMatch.teamB = getWinner(sfMatches[1]);
+                finalMatch.teamA = getWinner(sfMatches[0]) || 'Winner SF1';
+                finalMatch.teamB = getWinner(sfMatches[1]) || 'Winner SF2';
             }
             if(finalMatch) updateMatchWinner(finalMatch);
         }
         
         /**
          * Hàm chính xử lý tất cả logic tính toán và gọi render.
-         * @param {object} state - Dữ liệu runtimeState
          */
         window.processDataAndRender = function(state) {
             
@@ -949,42 +907,54 @@
             updateKnockoutBrackets(state);
             
             // 3. Chuẩn bị UI Data
-            // uiData chỉ cần các mảng match đã tách ra
-            uiData = splitMatches(state);
-
+            // uiData đã được cập nhật trực tiếp trong hàm splitMatches lúc tải.
+            // Sau khi updateKnockoutBrackets, uiData.quarterfinals, etc. đã tự động update
+            
             // 4. Render toàn bộ giao diện
             renderGeneralTab(state);
             renderTeamManagementTab(state);
             allGroups.forEach(group => {
-                 renderGroupTab(group, groupsToRender[group].teams, uiData[`matches${group}`]);
+                 renderGroupTab(group, groupsToRender[group].teams, state[`matches${group}`]); // Dùng state[`matches${group}`] trực tiếp
             });
             renderKnockoutTab(uiData);
         }
 
-        // --- LOGIC XẾP HẠNG CHUNG CUỘC (V6.2) ---
+        // --- LOGIC XẾP HẠNG CHUNG CUỘC ---
 
         /**
          * Lấy tên đội (Tn) từ Team ID (T)
-         * @param {string} teamId - Mã đội
-         * @returns {string} Tên đội rút gọn (Tn)
+         * [V6.3 FIX]: Cải tiến logic để xử lý các mã placeholder (1A, Winner QF1)
+         * @param {string} teamId - Mã đội (T) hoặc Mã placeholder (1A, Winner QF1, null)
+         * @returns {string} Tên đội rút gọn (Tn) hoặc Mã placeholder/TBA
          */
         function getTeamName(teamId) {
+            if (!teamId) return 'TBA'; // To Be Announced
+            
+            // Kiểm tra nếu là mã placeholder (1A, 2B, Winner QF1, ...)
+            const isPlaceholder = teamId.length <= 8 && 
+                (teamId.match(/^(Winner SF|Loser SF|Winner QF|\d[A-D])$/i) || 
+                 teamId.includes('Winner') || teamId.match(/^\d[A-D]$/));
+
+            if (isPlaceholder) {
+                // Trả về chính mã đó nếu là placeholder
+                return teamId.replace('Winner ', 'W '); 
+            }
+
             if (!runtimeState || !runtimeState.tL) return teamId;
+            
             const team = runtimeState.tL.find(t => t.T === teamId);
-            // Trả về Tn (Nickname) nếu tìm thấy, ngược lại trả về teamId (hoặc 'Chưa xác định' nếu teamId là null)
-            return team ? team.Tn : (teamId || 'Chưa xác định'); 
+            // Trả về Tn (Nickname) nếu tìm thấy, ngược lại trả về teamId 
+            return team ? team.Tn : teamId; 
         }
         
         /**
          * Xác định Vô địch, Á quân và Giải ba đồng hạng dựa trên kết quả Knockout.
-         * @param {object} state - Dữ liệu giải đấu (runtimeState)
-         * @returns {object} {champion, runnerUp, thirdPlace: []}
          */
         function determineFinalRanks(state) {
             const ranks = {
                 champion: null,
                 runnerUp: null,
-                thirdPlace: [] // Thua Bán kết
+                thirdPlace: [] 
             };
             
             // 1. Check for Final (F) match
@@ -992,9 +962,8 @@
             if (finalMatch && finalMatch.winner) {
                 ranks.champion = finalMatch.winner;
                 
-                // Á quân (Runner-up): Đội còn lại trong trận chung kết
                 const loserF = (finalMatch.teamA !== finalMatch.winner) ? finalMatch.teamA : finalMatch.teamB;
-                if (loserF) {
+                if (loserF && !loserF.match(/^(Winner SF)/i)) { // Đảm bảo không phải là mã placeholder
                     ranks.runnerUp = loserF;
                 }
             }
@@ -1003,11 +972,9 @@
             const semifinals = state.semifinals;
             if (semifinals && semifinals.length === 2) {
                 semifinals.forEach(match => {
-                    // Nếu trận đấu có tỉ số VÀ có người thắng (nghĩa là có người thua)
                     if (match.sA !== null && match.sB !== null && match.winner && match.teamA && match.teamB) {
-                         // Giải ba đồng hạng: Đội thua trong trận bán kết
                         const loserSF = (match.teamA !== match.winner) ? match.teamA : match.teamB;
-                        if (loserSF && !ranks.thirdPlace.includes(loserSF)) {
+                        if (loserSF && !ranks.thirdPlace.includes(loserSF) && !loserSF.match(/^(Winner QF)/i)) {
                             ranks.thirdPlace.push(loserSF);
                         }
                     }
@@ -1107,7 +1074,6 @@
                         </div>
                     `).join('');
                 
-                // Nếu chỉ có 1 đội được xác định
                 if (ranks.thirdPlace.length === 1) {
                      thirdHtml += `
                         <div class="text-center p-4 border border-[var(--border-color)] rounded-lg text-gray-500">
@@ -1124,7 +1090,7 @@
 
         window.renderGeneralTab = function(state) {
             
-            // 1. Render Final Results (New Logic)
+            // 1. Render Final Results
             const ranks = determineFinalRanks(state);
             renderFinalResults(ranks); 
             
@@ -1137,7 +1103,7 @@
             const sortedTeams = [...state.tL].sort((a, b) => {
                 if (a.g < b.g) return -1;
                 if (a.g > b.g) return 1;
-                return a.gR - b.gR; // Sort by Rank within the same group
+                return a.gR - b.gR; 
             });
 
             if (window.renderTeamCard) {
@@ -1152,6 +1118,7 @@
         }
 
         // RENDER: Team Management Tab
+        // [V6.3 Tối ưu]: Render lại toàn bộ tab (TeamManagement) khi có thay đổi thông tin đội
         window.renderTeamManagementTab = function(state) {
             const teamManagementListEl = document.getElementById('teamManagementList');
             if (!teamManagementListEl) return;
@@ -1235,7 +1202,6 @@
 
             // --- Render Matches ---
             const matchesEl = document.getElementById(`matches${group}`);
-            // Safety check: matches should be an array, but this prevents failure if it is null/undefined
             const safeMatches = matches || []; 
             if (matchesEl) {
                  let matchHtml = `
@@ -1245,7 +1211,6 @@
                 
                 safeMatches.forEach((match, index) => {
                     
-                    // [FIXED] Sử dụng hàm getTeamName để đảm bảo luôn lấy Tn (Tên rút gọn)
                     const teamAName = getTeamName(match.teamA);
                     const teamBName = getTeamName(match.teamB);
 
@@ -1289,9 +1254,10 @@
                 const matchTitle = roundKey === 'final' ? 'Chung Kết' : roundKey === 'semifinals' ? `Bán Kết ${index+1}` : `Tứ Kết ${index+1}`;
                 const statusClass = match.sA !== null && match.sB !== null ? 'border-l-4 border-yellow-500' : 'border-l-4 border-gray-500';
                 const winnerName = match.winner ? getTeamName(match.winner) : 'Chưa xác định';
-                // TBA (To Be Announced) được giữ lại cho vòng loại vì là tên đội sẽ được xác định sau
-                const teamAName = match.teamA ? (teamA ? teamA.Tn : match.teamA) : 'TBA';
-                const teamBName = match.teamB ? (teamB ? teamB.Tn : match.teamB) : 'TBA';
+                
+                // [V6.3 FIX]: Đảm bảo hiển thị đúng tên/mã cho vòng loại
+                const teamAName = getTeamName(match.teamA);
+                const teamBName = getTeamName(match.teamB);
 
 
                 return `
@@ -1394,12 +1360,13 @@
             processDataAndRender(runtimeState);
             
             // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
-            autoCommitActiveState('Auto update scores and recalculate ranks/knockout (V6.2)');
+            autoCommitActiveState('Auto update scores and recalculate ranks/knockout (V6.3)');
             showStatus('Tỉ số đã được cập nhật cục bộ và đang chờ đồng bộ (Debounced)...', 'info', 'statusMessage');
         }
 
         /**
          * Cập nhật thông tin đội (Tn) trong tab Team Management
+         * [V6.3 Tối ưu]: Gọi renderGeneralTab để cập nhật tên đội trên tab General (Team List)
          */
         window.updateTeamInfo = function(teamId, field, value) {
             if (!runtimeState) return;
@@ -1407,16 +1374,19 @@
             const team = runtimeState.tL.find(t => t.T === teamId);
             if (team) {
                 team[field] = value;
-                // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
-                autoCommitActiveState('Auto update team nickname (Tn) (V6.2)');
+
+                // Cập nhật lại giao diện Team Management và General
+                renderTeamManagementTab(runtimeState);
+                renderGeneralTab(runtimeState); 
+
+                autoCommitActiveState('Auto update team nickname (Tn) (V6.3)');
                 showStatus('Thông tin đội đã được cập nhật cục bộ và đang chờ đồng bộ (Debounced)...', 'info', 'statusMessage');
-                // Render lại để cập nhật Tn trên toàn bộ giao diện
-                processDataAndRender(runtimeState);
             }
         }
 
         /**
          * Cập nhật thông tin người chơi (name, pL, bY) trong tab Team Management
+         * [V6.3 Tối ưu]: Gọi renderTeamManagementTab và renderGeneralTab
          */
         window.updatePlayerInfo = function(teamId, pIndex, field, value) {
             if (!runtimeState) return;
@@ -1432,20 +1402,22 @@
                     }
                 }
                 
-                // Update player data
                 team.P[pIndex][field] = finalValue;
                 
-                // Recalculate aPL if pL was changed
                 if (field === 'pL') {
                     const totalPL = team.P.reduce((sum, player) => sum + (player.pL || 0), 0);
                     team.aPL = totalPL / team.P.length;
+                    
+                    // Nếu aPL thay đổi, nó ảnh hưởng đến Team Management và General
+                    renderTeamManagementTab(runtimeState);
+                    renderGeneralTab(runtimeState);
+                } else {
+                     // Nếu chỉ đổi tên/năm sinh, chỉ cần render lại Team Management (Không ảnh hưởng đến General/Stats)
+                     renderTeamManagementTab(runtimeState);
                 }
                 
-                // Render lại tab Team Management để cập nhật aPL và trạng thái
-                renderTeamManagementTab(runtimeState); 
                 
-                // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
-                autoCommitActiveState('Auto update player details (name, pL, bY) (V6.2)');
+                autoCommitActiveState('Auto update player details (name, pL, bY) (V6.3)');
                 showStatus('Thông tin người chơi đã được cập nhật cục bộ và đang chờ đồng bộ (Debounced)...', 'info', 'statusMessage');
             }
         }
@@ -1461,15 +1433,13 @@
                 return;
             }
 
-            const commitMessage = 'Manual sync of active state (state41s.json - V6.2)';
+            const commitMessage = 'Manual sync of active state (state41s.json - V6.3)';
             
-            // Chuẩn bị dữ liệu (unify và loại bỏ các trường tính toán VÀ metadata)
             const commitData = unifyAndCleanData(runtimeState);
             const currentSha = runtimeState.metadata?.sha;
             
             const base64Content = jsonToBase64(commitData);
             
-            // Dùng getShaAndCommit non-auto-commit
             await getShaAndCommit(ACTIVE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult', currentSha, false);
         };
 
@@ -1481,34 +1451,33 @@
                 return;
             }
 
-            // Lấy lại dữ liệu gốc (initialBaseData) và cập nhật trường tL, sau đó commit lên BASE API
             const fullBaseData = JSON.parse(JSON.stringify(initialBaseData));
 
             // Chỉ cập nhật các trường liên quan đến Team List (tL) từ dữ liệu hiện tại (runtimeState)
-            fullBaseData.tL = runtimeState.tL.map(team => ({
-                 T: team.T, 
-                 Tn: team.Tn, 
-                 aPL: team.aPL, 
-                 g: team.g,
-                 s: team.s,
-                 // Cập nhật P (người chơi)
-                 P: team.P.map(player => ({
-                    name: player.name,
-                    bY: player.bY,
-                    pL: player.pL,
-                    ph: player.ph,
-                    em: player.em,
-                    gC: player.gC,
-                    fC: player.fC,
-                 }))
-            }));
+            fullBaseData.tL = runtimeState.tL.map(team => {
+                 // Clone team object and clean up computed fields just for safety before transferring to base data structure
+                 const cleanTeam = { 
+                     T: team.T, 
+                     Tn: team.Tn, 
+                     aPL: team.aPL, 
+                     g: team.g,
+                     s: team.s,
+                     P: team.P.map(player => ({
+                        name: player.name,
+                        bY: player.bY,
+                        pL: player.pL,
+                        ph: player.ph,
+                        em: player.em,
+                        gC: player.gC,
+                        fC: player.fC,
+                     }))
+                };
+                return cleanTeam;
+            });
             
-            // Giữ lại các trường match từ BASE data (Base data không bao giờ chứa metadata.sha)
-            
-            // Gộp mảng match lại thành 'matches' thống nhất trước khi commit BASE file
             const commitData = unifyMatches(fullBaseData);
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update base team details and overwrite state41.json via web app (V6.2)';
+            const commitMessage = 'Update base team details and overwrite state41.json via web app (V6.3)';
 
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json (Template gốc) trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -1536,20 +1505,18 @@
                 return;
             }
             
-            // 1. Chuẩn bị dữ liệu (unify và loại bỏ các trường tính toán)
             const exportData = unifyAndCleanData(runtimeState);
             
-            // 2. Chuẩn bị file JSON
             const jsonString = JSON.stringify(exportData, null, 2);
             const blob = new Blob([jsonString], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            // 3. Tạo link download
+            
             const a = document.createElement('a');
             a.href = url;
             const now = new Date();
             const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
             a.download = `state41_FULL_EXPORT_${dateStr}.json`;
-            // 4. Kích hoạt download
+            
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -1561,8 +1528,6 @@
         
         /**
          * Tạo tỉ số ngẫu nhiên theo luật giới hạn điểm.
-         * @param {boolean} isGroupMatch - True nếu là vòng bảng (Max 11), False nếu là vòng loại (Max 15).
-         * @returns {{sA: number, sB: number}} Tỉ số ngẫu nhiên.
          */
         function getSimulatedScore(isGroupMatch) {
             const WIN_SCORE = isGroupMatch ? 11 : 15;
@@ -1578,7 +1543,6 @@
                 lossScore = Math.floor(Math.random() * 5); 
             }
             
-            // Đảm bảo không có tỉ số hòa trong giả lập
             lossScore = Math.min(lossScore, MAX_LOSS_SCORE);
 
             if (winner === 'A') {
@@ -1599,11 +1563,10 @@
                 matchesToSimulate = runtimeState[roundKey];
                 isGroup = true;
             } else if (roundType === 'Knockout') { 
-                // Giả lập theo thứ tự: QF -> SF -> F
                 
                 // 1. QF
                 (runtimeState.quarterfinals || []).forEach(match => {
-                    if (match.teamA && match.teamB && (match.sA === null || match.sB === null)) {
+                    if (match.teamA && match.teamB && !match.teamA.match(/^(1|2)[A-D]$/) && (match.sA === null || match.sB === null)) {
                         const score = getSimulatedScore(false);
                         match.sA = score.sA;
                         match.sB = score.sB;
@@ -1613,7 +1576,7 @@
                 
                 // 2. SF
                  (runtimeState.semifinals || []).forEach(match => {
-                    if (match.teamA && match.teamB && (match.sA === null || match.sB === null)) {
+                    if (match.teamA && match.teamB && !match.teamA.match(/^(Winner QF)/i) && (match.sA === null || match.sB === null)) {
                         const score = getSimulatedScore(false);
                         match.sA = score.sA;
                         match.sB = score.sB;
@@ -1623,7 +1586,7 @@
                 
                 // 3. Final
                 const finalMatch = runtimeState.final;
-                if (finalMatch && finalMatch.teamA && finalMatch.teamB && (finalMatch.sA === null || finalMatch.sB === null)) {
+                if (finalMatch && finalMatch.teamA && finalMatch.teamB && !finalMatch.teamA.match(/^(Winner SF)/i) && (finalMatch.sA === null || finalMatch.sB === null)) {
                     const score = getSimulatedScore(false);
                     finalMatch.sA = score.sA;
                     finalMatch.sB = score.sB;
@@ -1632,17 +1595,14 @@
                 
                 showStatus('Đã giả lập tỉ số Vòng Loại Trực Tiếp (QF, SF, F).', 'warning', 'statusMessage');
                 
-                // Xử lý lại dữ liệu và render lại toàn bộ
                 processDataAndRender(runtimeState);
-                // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
-                autoCommitActiveState('Auto commit simulated scores (Knockout - V6.2)');
+                autoCommitActiveState('Auto commit simulated scores (Knockout - V6.3)');
                 return;
             }
 
             if (!matchesToSimulate || matchesToSimulate.length === 0) return showStatus(`Không có trận đấu nào trong Bảng ${roundType} để giả lập.`, 'warning', 'statusMessage');
 
             matchesToSimulate.forEach(match => {
-                // Chỉ giả lập cho trận chưa có tỉ số
                 if (match.sA === null || match.sB === null) {
                     const score = getSimulatedScore(isGroup);
                     match.sA = score.sA;
@@ -1652,10 +1612,8 @@
 
             showStatus(`Đã giả lập tỉ số Vòng Bảng ${roundType}.`, 'warning', 'statusMessage');
             
-            // Xử lý lại dữ liệu và render lại toàn bộ
             processDataAndRender(runtimeState);
-            // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
-            autoCommitActiveState(`Auto commit simulated scores (Group ${roundType} - V6.2)`);
+            autoCommitActiveState(`Auto commit simulated scores (Group ${roundType} - V6.3)`);
         }
         
         window.confirmResetScores = function() {
@@ -1673,7 +1631,6 @@
 
         /**
          * Xóa tỉ số của một vòng đấu về null.
-         * @param {string} roundType - Mã vòng đấu (A, B, C, D, QF, SF, F)
          */
         function resetScores(roundType) {
             const roundKeyMap = {
@@ -1686,7 +1643,6 @@
                 return showStatus(`Lỗi: Vòng đấu ${roundType} không hợp lệ hoặc không tồn tại.`, 'error', 'resetResult');
             }
             
-            // Sử dụng runtimeState để cập nhật
             if (key === 'final' && runtimeState.final) {
                 runtimeState.final.sA = null;
                 runtimeState.final.sB = null;
@@ -1697,12 +1653,10 @@
                 });
             }
 
-            // Sau khi reset, xử lý lại dữ liệu và render
             processDataAndRender(runtimeState);
             document.getElementById('resetRoundSelector').value = '';
             
-            // Tự động COMMIT (Auto-Save) - Dùng Debounced commit
-            autoCommitActiveState(`Auto commit score reset for ${roundType} (V6.2)`);
+            autoCommitActiveState(`Auto commit score reset for ${roundType} (V6.3)`);
             showStatus(`Đã XÓA TẤT CẢ tỉ số của Vòng ${roundType} thành công và đang chờ đồng bộ (Debounced).`, 'success', 'resetResult');
             switchTab('Configuration');
         }
@@ -1785,10 +1739,9 @@
                  document.getElementById('githubToken').value = '********';
             }
 
-            // Event listeners for theme toggle
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
-            // Event listeners for swipe navigation (on the whole app container)
+            // Event listeners for swipe navigation
             document.getElementById('app').addEventListener('touchstart', (e) => {
                  if (e.target.closest('.score-input, .text-input')) return;
                 startX = e.changedTouches[0].screenX;
