@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.3.7 - FIX LOGIC XẾP HẠNG</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V4.3.8 - FIX XẾP HẠNG STALE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.3.7)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V4.3.8)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync)</p>
                 </div>
             </div>
@@ -311,7 +311,7 @@
     <script>
         
         // ==============================================================================================================
-        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.3.7 - FIX LOGIC XẾP HẠNG)
+        // KHỐI CẤU HÌNH GITHUB API & DỮ LIỆU (Phiên bản V4.3.8 - FIX XẾP HẠNG STALE)
         // ==============================================================================================================
         const GITHUB_REPO_OWNER = 'cqtin2024';
         const GITHUB_REPO_NAME = 'ITVTG';
@@ -528,7 +528,7 @@
             }
             
             const base64Content = jsonToBase64(diffData);
-            const commitMessage = 'Update match scores via web app (state41s.json - V4.3.7)'; // Version updated
+            const commitMessage = 'Update match scores via web app (state41s.json - V4.3.8)'; // Version updated
             
             await getShaAndCommit(SCORE_API_URL, base64Content, commitMessage, 'commitScoreButton', 'scoreCommitResult');
         };
@@ -593,7 +593,7 @@
             // FIX CẤU TRÚC V4.2: Gộp mảng match lại thành 'matches' thống nhất trước khi commit BASE file
             const commitData = unifyMatches(fullTeamData);
             const base64Content = jsonToBase64(commitData);
-            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.3.7)'; // Version updated
+            const commitMessage = 'Update team details and overwrite state41.json via web app (V4.3.8)'; // Version updated
 
             if (!confirm("CẢNH BÁO: Thao tác này sẽ GHI ĐÈ TOÀN BỘ file state41.json trên GitHub. Bạn có chắc chắn không?")) {
                 showStatus("Thao tác cập nhật đội đã bị hủy.", 'info', 'teamCommitResult');
@@ -607,7 +607,7 @@
             switchTab('TeamManagement');
         }
 
-        // --- HÀM TIỆN ÍCH CHO TÍNH TOÁN V4.3.7 ---
+        // --- HÀM TIỆN ÍCH CHO TÍNH TOÁN V4.3.8 ---
         
         /**
          * Hàm tiện ích để xác định roundKey từ matchCode
@@ -736,7 +736,7 @@
         }
         
         // =========================================================================
-        // PHẦN SỬA LỖI V4.3.5: Ưu tiên hiển thị Nickname (Tn) và Match Name (A/B)
+        // PHẦN SỬA LỖI V4.3.8: Logic cập nhật Tỉ số và Render
         // =========================================================================
         
         /**
@@ -766,7 +766,7 @@
         }
 
         /**
-         * Hàm xử lý khi tỉ số được thay đổi trên giao diện (FIXED LOGIC V4.3.7)
+         * Hàm xử lý khi tỉ số được thay đổi trên giao diện (FIXED LOGIC V4.3.8)
          * Đã gộp logic Tái tính toán và Tái hiển thị để đảm bảo đồng bộ UI/UX.
          */
         window.handleScoreChange = function(event) {
@@ -804,10 +804,9 @@
             }
 
 
-            // --- BƯỚC 2: TÁI TÍNH TOÁN VÀ TÁI HIỂN THỊ TOÀN BỘ (FIX V4.3.7) ---
-            // Luôn gọi tính toán vì cần cập nhật GS/GC và kiểm tra điều kiện thắng/thua
+            // --- BƯỚC 2: TÁI TÍNH TOÁN VÀ TÁI HIỂN THỊ TOÀN BỘ (FIX V4.3.8) ---
             
-            // 1. Luôn tính toán lại tất cả Bảng xếp hạng Vòng Bảng
+            // 1. Luôn tính toán lại toàn bộ dữ liệu
             if (window.calculateAllData) {
                 window.calculateAllData();
             }
@@ -817,13 +816,17 @@
                 window.updateKnockoutBrackets();
             }
             
-            // 3. Tái hiển thị các thành phần thay đổi
-            
-            // Nếu là trận Vòng Bảng, cập nhật Bảng xếp hạng và trận đấu của Bảng đó
-            if (groupCode) { 
+            // 3. Tái hiển thị: Bắt buộc render lại tất cả Bảng xếp hạng Vòng Bảng (FIX V4.3.8)
+            // Lệnh này đảm bảo UI của các bảng A-D luôn được refresh bằng dữ liệu mới nhất
+            ['A', 'B', 'C', 'D'].forEach(group => {
                 if (window.renderGroupStandingTable) {
-                    window.renderGroupStandingTable(groupCode);
+                    window.renderGroupStandingTable(group);
                 }
+            });
+
+            // 4. Tái hiển thị trận đấu và các phần còn lại
+            // Chỉ re-render các trận đấu (có ô input) của Group đang active
+            if (groupCode) { 
                 if (window.renderGroupMatches) {
                     window.renderGroupMatches(groupCode);
                 }
@@ -841,7 +844,7 @@
                 window.renderFinalResults();
             }
             
-            // --- END BƯỚC 2 ---
+            // --- END BƯỚC 2 (FIX V4.3.8) ---
         };
 
 
@@ -875,6 +878,7 @@
              const container = document.getElementById(`table${groupCode}`);
              if (!tournamentData || !container) return;
 
+             // Lấy dữ liệu đã được tính toán (bao gồm gR, W, L, Pts, GD)
              const groupTeams = tournamentData.tL.filter(t => t.g === groupCode).sort((a, b) => a.gR - b.gR);
              
              let html = `
@@ -1341,11 +1345,18 @@
                 if (window.calculateAllData) {
                     window.calculateAllData();
                 }
+                
+                // *** FIX V4.3.8: Re-render tất cả bảng xếp hạng khi giả lập score (đã bao gồm trong calculateAllData call, nhưng gọi renderGroupStandingTable(groupCode) để refresh)
+                ['A', 'B', 'C', 'D'].forEach(group => {
+                    if (window.renderGroupStandingTable) {
+                        window.renderGroupStandingTable(group);
+                    }
+                });
+
 
                 // Tái hiển thị tab hiện tại
                 if (groupCode) {
                     if (window.renderGroupMatches) window.renderGroupMatches(groupCode);
-                    if (window.renderGroupStandingTable) window.renderGroupStandingTable(groupCode);
                 } else if (roundType === 'Knockout') {
                     if (window.renderKnockoutMatches) window.renderKnockoutMatches();
                 }
@@ -1404,10 +1415,16 @@
                     window.calculateAllData();
                 }
                 
+                // *** FIX V4.3.8: Re-render tất cả bảng xếp hạng khi reset score
+                ['A', 'B', 'C', 'D'].forEach(group => {
+                    if (window.renderGroupStandingTable) {
+                        window.renderGroupStandingTable(group);
+                    }
+                });
+
                 // Tái hiển thị tab hiện tại
                 if (groupCode) {
                     if (window.renderGroupMatches) window.renderGroupMatches(groupCode);
-                    if (window.renderGroupStandingTable) window.renderGroupStandingTable(groupCode);
                 } else {
                     if (window.renderKnockoutMatches) window.renderKnockoutMatches();
                 }
