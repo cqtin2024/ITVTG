@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V6.0 - Auto Commit</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) V6.0 - Auto Commit (FIXED)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -100,7 +100,7 @@
             <div class="flex items-center">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V6.0)</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL (V6.0 - FIXED)</h1>
                     <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Auto Sync)</p>
                 </div>
             </div>
@@ -585,15 +585,18 @@
                 // 2. Tải ACTIVE file (state41s.json)
                 const activeResponse = await fetch(ACTIVE_DATA_URL);
                 let activeData = null;
+                let isInitialCommitNeeded = false;
                 
                 if (activeResponse.ok) {
                     activeData = await activeResponse.json();
                     showStatus('Đã tải trạng thái hoạt động (state41s.json) thành công.', 'info', 'statusMessage');
                 } else if (activeResponse.status === 404) {
                     showStatus('Không tìm thấy state41s.json. Sử dụng state41.json làm mẫu và tự động đồng bộ lần đầu.', 'warning', 'statusMessage');
+                    isInitialCommitNeeded = true; // Set flag for initial commit
                 } else {
                      console.error(`Lỗi khi tải state41s.json: ${activeResponse.status}`);
                      showStatus(`Lỗi ${activeResponse.status} khi tải state41s.json. Sử dụng state41.json làm mẫu.`, 'warning', 'statusMessage');
+                     isInitialCommitNeeded = true; // Use base data and commit if fetch failed (except 401/403 which are fatal)
                 }
 
                 let mergedData = activeData || baseData;
@@ -616,7 +619,7 @@
                 processDataAndRender(mergedData);
                 
                 // 5. Commit lần đầu nếu chưa có active file (404)
-                if (activeResponse.status === 404) {
+                if (isInitialCommitNeeded) {
                      await autoCommitActiveState('Initial sync from state41.json to state41s.json (V6.0)', true); // Commit lần đầu
                 }
                 
@@ -671,6 +674,12 @@
          */
         function processDataAndRender(data) {
             tournamentData = data;
+            
+            // [FIX] Safety check to prevent map errors if core data is missing/invalid
+            if (!data || !data.tL || !Array.isArray(data.tL)) {
+                 showStatus('Lỗi: Dữ liệu tL (Team List) bị thiếu hoặc không hợp lệ. Không thể xử lý và render.', 'error', 'statusMessage');
+                 return;
+            }
             
             // 1. Tính toán Bảng xếp hạng Vòng bảng
             data.tL = data.tL.map(team => calculateTeamStats(team, data));
@@ -808,13 +817,13 @@
             }
             
             // 1. Cập nhật kết quả các trận đấu đã có tỉ số trước
-            data.quarterfinals.forEach(updateMatchWinner);
-            data.semifinals.forEach(updateMatchWinner);
+            (data.quarterfinals || []).forEach(updateMatchWinner);
+            (data.semifinals || []).forEach(updateMatchWinner);
             if (data.final) updateMatchWinner(data.final);
 
 
             // 2. QF (Tứ kết)
-            const qfMatches = data.quarterfinals;
+            const qfMatches = data.quarterfinals || [];
             if (qfMatches.length >= 4) { // Chỉ xử lý 4 trận QF cơ bản
                 // QF1: 1A vs 2B
                 qfMatches[0].teamA = A[0]?.T || null; qfMatches[0].teamB = B[1]?.T || null;
@@ -827,7 +836,7 @@
             }
 
             // 3. SF (Bán kết)
-            const sfMatches = data.semifinals;
+            const sfMatches = data.semifinals || [];
             if (sfMatches.length >= 2) {
                 // SF1: Winner QF1 vs Winner QF3
                 sfMatches[0].teamA = getWinner(qfMatches[0]);
@@ -1130,13 +1139,15 @@
 
             // --- Render Matches ---
             const matchesEl = document.getElementById(`matches${group}`);
+            // Safety check: matches should be an array, but this prevents failure if it is null/undefined
+            const safeMatches = matches || []; 
             if (matchesEl) {
                  let matchHtml = `
                     <h3 class="text-xl font-bold text-[var(--group-header-text)] mb-3 border-b border-[var(--border-color)] pb-2">Lịch Thi Đấu Bảng ${group}</h3>
                     <div class="space-y-3">
                 `;
                 
-                matches.forEach((match, index) => {
+                safeMatches.forEach((match, index) => {
                     const teamA = data.tL.find(t => t.T === match.teamA);
                     const teamB = data.tL.find(t => t.T === match.teamB);
                     const statusClass = match.sA !== null && match.sB !== null ? 'border-l-4 border-green-500' : 'border-l-4 border-gray-500';
@@ -1220,7 +1231,7 @@
             if (qfEl) {
                 let html = '<h3 class="text-2xl font-bold text-red-400 mb-4">Tứ Kết (Quarterfinals)</h3>';
                 html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
-                data.quarterfinals.forEach((match, index) => {
+                (data.quarterfinals || []).forEach((match, index) => {
                     html += renderMatchBlock('quarterfinals', index, match);
                 });
                 html += '</div>';
@@ -1232,7 +1243,7 @@
             if (sfEl) {
                 let html = '<h3 class="text-2xl font-bold text-red-400 mt-6 mb-4">Bán Kết (Semifinals)</h3>';
                 html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
-                data.semifinals.forEach((match, index) => {
+                (data.semifinals || []).forEach((match, index) => {
                     html += renderMatchBlock('semifinals', index, match);
                 });
                 html += '</div>';
@@ -1241,13 +1252,15 @@
 
             // --- Render Final ---
             const finalEl = document.getElementById('finalSection');
-            if (finalEl) {
+            if (finalEl && data.final) {
                 finalEl.innerHTML = `
                     <h3 class="text-2xl font-bold text-red-500 mt-6 mb-4 border-t border-[var(--border-color)] pt-4">Chung Kết (Final)</h3>
                     <div class="grid grid-cols-1 gap-4 max-w-lg mx-auto">
                         ${renderMatchBlock('final', 0, data.final)}
                     </div>
                 `;
+            } else if (finalEl) {
+                finalEl.innerHTML = `<h3 class="text-2xl font-bold text-gray-500 mt-6 mb-4 border-t border-[var(--border-color)] pt-4">Chung Kết (Final) - Chưa có dữ liệu trận đấu</h3>`;
             }
         }
         
@@ -1309,16 +1322,22 @@
             const team = tournamentData.tL.find(t => t.T === teamId);
             if (team && team.P[pIndex]) {
                 let finalValue = value;
+                
                 if (field === 'pL') {
                     finalValue = parseFloat(value);
-                    if (isNaN(finalValue)) finalValue = team.P[pIndex].pL; 
-                    
-                    // Cập nhật lại aPL của đội
-                    const otherPlayerPL = team.P[1 - pIndex].pL;
-                    team.aPL = (finalValue + otherPlayerPL) / 2;
+                    if (isNaN(finalValue)) {
+                        return showStatus('Lỗi: Cấp độ (PL) phải là số.', 'error', 'statusMessage');
+                    }
                 }
                 
+                // Update player data
                 team.P[pIndex][field] = finalValue;
+                
+                // Recalculate aPL if pL was changed
+                if (field === 'pL') {
+                    const totalPL = team.P.reduce((sum, player) => sum + (player.pL || 0), 0);
+                    team.aPL = totalPL / team.P.length;
+                }
                 
                 // Render lại tab Team Management để cập nhật aPL và trạng thái
                 renderTeamManagementTab(tournamentData); 
@@ -1435,7 +1454,6 @@
 
         // --- SIMULATE SCORES & RESET ---
         
-        // ... (Các hàm simulateScores, getSimulatedScore, confirmResetScores, resetScores giữ nguyên)
         /**
          * Tạo tỉ số ngẫu nhiên theo luật giới hạn điểm.
          * @param {boolean} isGroupMatch - True nếu là vòng bảng (Max 11), False nếu là vòng loại (Max 15).
@@ -1477,8 +1495,9 @@
                 isGroup = true;
             } else if (roundType === 'Knockout') { 
                 // Giả lập theo thứ tự: QF -> SF -> F
+                
                 // 1. QF
-                tournamentData.quarterfinals.forEach(match => {
+                (tournamentData.quarterfinals || []).forEach(match => {
                     if (match.teamA && match.teamB && (match.sA === null || match.sB === null)) {
                         const score = getSimulatedScore(false);
                         match.sA = score.sA;
@@ -1486,8 +1505,9 @@
                     }
                 });
                 updateKnockoutBrackets(tournamentData);
+                
                 // 2. SF
-                 tournamentData.semifinals.forEach(match => {
+                 (tournamentData.semifinals || []).forEach(match => {
                     if (match.teamA && match.teamB && (match.sA === null || match.sB === null)) {
                         const score = getSimulatedScore(false);
                         match.sA = score.sA;
@@ -1495,6 +1515,7 @@
                     }
                 });
                 updateKnockoutBrackets(tournamentData);
+                
                 // 3. Final
                 const finalMatch = tournamentData.final;
                 if (finalMatch && finalMatch.teamA && finalMatch.teamB && (finalMatch.sA === null || finalMatch.sB === null)) {
@@ -1560,7 +1581,7 @@
                 return showStatus(`Lỗi: Vòng đấu ${roundType} không hợp lệ hoặc không tồn tại.`, 'error', 'resetResult');
             }
 
-            if (key === 'final') {
+            if (key === 'final' && tournamentData.final) {
                 tournamentData.final.sA = null;
                 tournamentData.final.sB = null;
             } else if (Array.isArray(tournamentData[key])) {
