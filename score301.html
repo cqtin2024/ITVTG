@@ -244,9 +244,15 @@
         const GITHUB_REPO_NAME = 'ITVTG';
         const BRANCH = 'main';
 
+        // ----------------------------------------------------------------------------------
+        // Cập nhật: Lấy dữ liệu ban đầu từ state3.json
+        const BASE_FILE_PATH = 'data/state3.json';
+        const BASE_DATA_URL = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/${BASE_FILE_PATH}`;
+
+        // Cập nhật: Tất cả commit đều ghi vào state301.json (theo yêu cầu trước)
         const CONSOLIDATED_FILE_PATH = 'data/state301.json';
         const CONSOLIDATED_API_URL = `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${CONSOLIDATED_FILE_PATH}`;
-        const CONSOLIDATED_DATA_URL = `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/${CONSOLIDATED_FILE_PATH}`;
+        // ----------------------------------------------------------------------------------
 
         let tournamentData = null; 
         let initialTournamentData = null; 
@@ -312,14 +318,14 @@
             let sha = null;
             
             try {
-                showStatus('Đang lấy SHA hiện tại của file...', 'info', resultElementId);
+                showStatus('Đang lấy SHA hiện tại của file commit...', 'info', resultElementId);
 
                 const shaResponse = await fetch(fileUrl + `?ref=${BRANCH}`, {
                     headers: { 'Authorization': `Bearer ${pat}` }
                 });
 
                 if (shaResponse.status === 404) {
-                    showStatus('File chưa tồn tại trên nhánh, sẽ tạo mới.', 'info', resultElementId);
+                    showStatus('File commit chưa tồn tại trên nhánh, sẽ tạo mới.', 'info', resultElementId);
                 } else if (shaResponse.status === 401) {
                     const errorJson = await shaResponse.json();
                     throw new Error(`401 Unauthorized: ${errorJson.message || 'Token không hợp lệ hoặc thiếu quyền "repo".'}`);
@@ -329,7 +335,7 @@
                 } else {
                     const data = await shaResponse.json();
                     sha = data.sha;
-                    showStatus(`Đã lấy SHA file thành công. SHA: ${sha.substring(0, 10)}...`, 'info', resultElementId);
+                    showStatus(`Đã lấy SHA file commit thành công. SHA: ${sha.substring(0, 10)}...`, 'info', resultElementId);
                 }
                 
                 commitButton.textContent = 'Đang Commit (PUT)...';
@@ -448,9 +454,6 @@
             }
 
             await commitFullStateToGitHub(commitMessage, 'commitTeamButton', 'teamCommitResult');
-            
-            // Sau khi commit thành công, có thể tải lại để đảm bảo TeamManagement UI đồng bộ, nhưng đã được xử lý trong getShaAndCommit
-            // switchTab('TeamManagement'); 
         }
 
         async function fetchWithRetry(url, options = {}, maxRetries = 3) {
@@ -500,25 +503,26 @@
 
         async function loadDataFromGitHub() {
             const loadingMessage = document.getElementById('statusMessage');
-            loadingMessage.textContent = "Đang tải dữ liệu toàn bộ (state301.json)...";
+            loadingMessage.textContent = "Đang tải dữ liệu ban đầu (state3.json)...";
             loadingMessage.classList.remove('hidden', 'bg-red-900/50', 'bg-orange-900/50', 'bg-green-900/50');
             loadingMessage.classList.add('bg-blue-900/50');
 
             let loadedData = null;
             
             try {
-                const response = await fetchWithRetry(CONSOLIDATED_DATA_URL);
-                if (!response) throw new Error("Không thể tải dữ liệu gốc từ state301.json (404 Not Found). Vui lòng tạo file.");
+                // SỬ DỤNG BASE_DATA_URL (state3.json) để tải dữ liệu ban đầu
+                const response = await fetchWithRetry(BASE_DATA_URL); 
+                if (!response) throw new Error("Không thể tải dữ liệu gốc từ state3.json (404 Not Found). Vui lòng tạo file.");
                 
-                loadedData = await parseGitHubRawContent(response, CONSOLIDATED_FILE_PATH);
-                if (!loadedData) throw new Error("DỮ LIỆU state301.json KHÔNG CÓ NỘI DUNG hoặc không phải JSON hợp lệ.");
+                loadedData = await parseGitHubRawContent(response, BASE_FILE_PATH);
+                if (!loadedData) throw new Error("DỮ LIỆU state3.json KHÔNG CÓ NỘI DUNG hoặc không phải JSON hợp lệ.");
                 
                 // Lưu trữ dữ liệu gốc để so sánh khi commit tỉ số
                 initialTournamentData = JSON.parse(JSON.stringify(loadedData)); 
                 // Dữ liệu làm việc trực tiếp
                 tournamentData = JSON.parse(JSON.stringify(loadedData)); 
                 
-                loadingMessage.textContent = "Đã tải dữ liệu thành công từ state301.json.";
+                loadingMessage.textContent = "Đã tải dữ liệu thành công từ state3.json.";
                 
                 loadingMessage.classList.add('bg-green-900/50');
                 loadingMessage.classList.remove('bg-blue-900/50');
