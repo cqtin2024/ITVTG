@@ -15,26 +15,35 @@
         .tab-content.active { display: block; }
         
         /* Global table settings for Standings */
-        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        /* Standings table: Vẫn giữ overflow-x: auto để cuộn ngang, giúp 7 cột hiển thị đầy đủ và dễ đọc trên mobile */
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; } 
         table { width: 100%; min-width: 600px; border-collapse: collapse; }
         th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid #e5e7eb; }
         
         /* Tùy chỉnh ĐẶC BIỆT cho bảng Match Results để vừa màn hình nhỏ */
         .match-table th, .match-table td {
-            padding: 4px 1px; /* Giảm padding tối đa */
-            font-size: 0.75rem; /* Giảm font size cho mobile */
+            padding: 2px 1px; /* Giảm padding tối đa */
+            font-size: 0.7rem; /* Giảm font size cho mobile */
             white-space: normal; /* Cho phép xuống dòng */
             word-break: break-word; /* Đảm bảo từ dài bị cắt nếu cần */
             vertical-align: middle;
+            height: 3.5rem; /* Chiều cao cố định để chứa 2 dòng tên đội */
+            line-height: 1;
         }
 
         /* Thu gọn ô nhập điểm */
         .score-input { 
-            width: 2.8rem; /* Thu gọn chiều rộng input vừa đủ 2 chữ số */
+            width: 2.2rem; /* Thu gọn chiều rộng input vừa đủ 2 chữ số */
             text-align: center; 
             font-weight: bold; 
             padding: 1px; /* Giảm padding */
             font-size: 0.7rem; /* Giảm font size */
+        }
+        
+        /* Thu gọn nút Save */
+        .update-btn {
+            padding: 2px 4px !important;
+            font-size: 0.65rem !important;
         }
 
         /* Cột Mc, T, C: Giữ 1 dòng và thu gọn */
@@ -48,21 +57,28 @@
 
         /* Điều chỉnh cho tên đội: Cho phép xuống dòng sau dấu - */
         .match-table .team-name-cell {
-            min-width: 55px; /* Minimum width cho tên đội */
+            min-width: 50px; /* Minimum width cho tên đội */
+            max-width: 70px; /* Giới hạn để buộc xuống dòng */
             line-height: 1.2;
-            padding-left: 2px;
-            padding-right: 2px;
+            padding-left: 1px;
+            padding-right: 1px;
+            text-align: center;
         }
 
         /* Desktop view: Revert to standard padding/width */
         @media (min-width: 768px) {
             table { min-width: 100%; }
-            th, td { padding: 12px 10px; font-size: 1rem; }
-            .match-table th, .match-table td { padding: 8px 6px; font-size: 1rem; }
+            th, td { padding: 12px 10px; font-size: 1rem; height: auto; }
+            .match-table th, .match-table td { padding: 8px 6px; font-size: 1rem; height: auto;}
             .score-input { width: 4rem; padding: 4px; font-size: 1rem; }
             .match-table .mc-cell, .match-table .time-cell, .match-table .court-cell {
                 white-space: normal;
                 width: auto;
+            }
+            .match-table .team-name-cell {
+                min-width: 100px;
+                max-width: none;
+                line-height: normal;
             }
         }
     </style>
@@ -507,18 +523,29 @@
         knockoutMatches.forEach(match => {
             // QF Setup
             if (match.r === 'QF') {
-                match.A = groupParticipants[match.A] || match.A;
-                match.B = groupParticipants[match.B] || match.B;
+                // Check if current team name is still a placeholder (e.g., 'W.A')
+                if (match.A.length === 3 && match.A.startsWith('W.') || match.A.startsWith('R.')) {
+                    match.A = groupParticipants[match.A] || match.A;
+                }
+                if (match.B.length === 3 && match.B.startsWith('W.') || match.B.startsWith('R.')) {
+                    match.B = groupParticipants[match.B] || match.B;
+                }
             }
 
             // SF and Final Setup (Replace placeholders with winners)
-            if (['SF', 'F'].includes(match.r) && (match.A.startsWith('W.QF') || match.A.startsWith('W.SF'))) {
-                const winnerA = tournamentState.matches.find(m => m.Mc === match.A.substring(2))?.Wn || match.A;
-                const winnerB = tournamentState.matches.find(m => m.Mc === match.B.substring(2))?.Wn || match.B;
+            if (['SF', 'F'].includes(match.r)) {
+                // Find winner of the referenced match (e.g., W.QF1)
+                const winnerA = tournamentState.matches.find(m => m.Mc === match.A.substring(2))?.Wn;
+                const winnerB = tournamentState.matches.find(m => m.Mc === match.B.substring(2))?.Wn;
                 
-                // Only update if the winner is a real team name, not a placeholder
-                if (!winnerA.startsWith('W.')) match.A = winnerA;
-                if (!winnerB.startsWith('W.')) match.B = winnerB;
+                // Only update A if A is a placeholder (W.QF1) and winner is determined
+                if (match.A.startsWith('W.QF') && winnerA && !winnerA.startsWith('W.')) {
+                    match.A = winnerA;
+                }
+                // Only update B if B is a placeholder (W.QF3) and winner is determined
+                if (match.B.startsWith('W.QF') && winnerB && !winnerB.startsWith('W.')) {
+                    match.B = winnerB;
+                }
             }
 
             // Update Runner-Up for Final match
@@ -533,6 +560,12 @@
         const match = tournamentState.matches.find(m => m.Mc === mc);
         if (!match) {
             showModal("Update Error", `Match Code ${mc} not found. Please check again.`, false);
+            return false;
+        }
+        
+        // Skip update if team is a placeholder
+        if (match.A.startsWith('W.') || match.A.startsWith('R.') || match.B.startsWith('W.') || match.B.startsWith('R.')) {
+            showModal("Update Error", `Cannot update score for match ${mc}. Participants must be determined first.`, false);
             return false;
         }
 
@@ -590,15 +623,15 @@
         
         // Find 2 Semi-Final losers (Shared Third Place)
         sfMatches.forEach(match => {
-            if (match.Wn && match.A !== match.Wn) {
+            if (match.Wn && match.A !== match.Wn && !match.A.startsWith('W.')) {
                 results.thirdPlace.push(match.A);
             }
-            if (match.Wn && match.B !== match.Wn) {
+            if (match.Wn && match.B !== match.Wn && !match.B.startsWith('W.')) {
                 results.thirdPlace.push(match.B);
             }
         });
 
-        // Filter out placeholders if any SF match hasn't determined the winner yet
+        // Filter out placeholders
         results.thirdPlace = [...new Set(results.thirdPlace)].filter(t => !t.startsWith('W.'));
         
         return results;
@@ -665,6 +698,8 @@
 
         // 1. Standings Table
         html += `<h3 class="text-lg font-medium mb-2 text-gray-700">Group Standings</h3>`;
+        // Thêm chú thích cho người dùng về việc cuộn ngang
+        html += `<p class="text-xs text-gray-500 mb-2 italic">(*) Swipe left/right to view all columns.</p>`;
         html += `<div class="table-wrapper mb-6"><table class="text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden">
                     <thead class="bg-teal-500 text-white">
                         <tr>
@@ -693,13 +728,16 @@
 
         // 2. Match Results & Update (Sử dụng class match-table cho CSS tối ưu mobile)
         html += `<h3 class="text-lg font-medium mb-2 text-gray-700">Match Results & Update</h3>`;
-        html += `<div class="table-wrapper"><table class="match-table text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden">
+        // Không cần table-wrapper vì bảng này đã được tối ưu để vừa màn hình ngang
+        html += `<div><table class="match-table text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden w-full">
                     <thead class="bg-gray-700 text-white">
                         <tr>
                             <th class="mc-cell">Mc</th>
                             <th class="time-cell">T</th>
                             <th class="court-cell">C</th>
-                            <th colspan="3" class="text-center">Score</th>
+                            <th class="team-name-cell">Team A</th>
+                            <th colspan="1" class="text-center">Score</th>
+                            <th class="team-name-cell">Team B</th>
                             <th>Action</th>
                         </tr>
                     </thead><tbody>`;
@@ -708,9 +746,9 @@
             const isWinnerA = match.Wn === match.A;
             const isWinnerB = match.Wn === match.B;
             
-            // Dùng <wbr> (Word Break Opportunity) để gợi ý xuống dòng sau dấu -
-            const teamAHtml = match.A.replace('-', '<wbr>-');
-            const teamBHtml = match.B.replace('-', '<wbr>-');
+            // THAY ĐỔI: Forced line break for team names (if they contain '-')
+            const teamAHtml = match.A.includes('-') ? match.A.replace('-', '-<br>') : match.A;
+            const teamBHtml = match.B.includes('-') ? match.B.replace('-', '-<br>') : match.B;
             
             html += `<tr class="group-match-row hover:bg-gray-50 transition duration-100" data-mc="${match.Mc}">
                         <td class="mc-cell">${match.Mc}</td>
@@ -731,7 +769,7 @@
                         
                         <!-- Action Button: Changed to "Save" -->
                         <td>
-                            <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-2 rounded-md transition duration-150">Save</button>
+                            <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-md transition duration-150">Save</button>
                         </td>
                     </tr>`;
         });
@@ -753,13 +791,16 @@
             
             if (matchesInRound.length > 0) {
                 html += `<h3 class="text-lg font-medium my-4 p-2 bg-gray-100 border-l-4 border-teal-500 text-gray-700">${rounds[roundCode]}</h3>`;
-                html += `<div class="table-wrapper mb-6"><table class="match-table text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden">
+                // Không cần table-wrapper vì bảng này đã được tối ưu để vừa màn hình ngang
+                html += `<div><table class="match-table text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden w-full">
                             <thead class="bg-teal-500 text-white">
                                 <tr>
                                     <th class="mc-cell">Mc</th>
                                     <th class="time-cell">T</th>
                                     <th class="court-cell">C</th>
-                                    <th colspan="3" class="text-center">Score</th>
+                                    <th class="team-name-cell">Team A</th>
+                                    <th colspan="1" class="text-center">Score</th>
+                                    <th class="team-name-cell">Team B</th>
                                     <th>Action</th>
                                 </tr>
                             </thead><tbody>`;
@@ -768,9 +809,9 @@
                     const isWinnerA = match.Wn === match.A;
                     const isWinnerB = match.Wn === match.B;
                     
-                    // Dùng <wbr> (Word Break Opportunity) để gợi ý xuống dòng sau dấu -
-                    const teamAHtml = match.A.replace('-', '<wbr>-');
-                    const teamBHtml = match.B.replace('-', '<wbr>-');
+                    // THAY ĐỔI: Forced line break for team names (if they contain '-') or are placeholders
+                    const teamAHtml = match.A.includes('-') ? match.A.replace('-', '-<br>') : match.A;
+                    const teamBHtml = match.B.includes('-') ? match.B.replace('-', '-<br>') : match.B;
 
                     html += `<tr class="group-match-row hover:bg-gray-50 transition duration-100" data-mc="${match.Mc}">
                                 <td class="mc-cell">${match.Mc}</td>
@@ -791,7 +832,7 @@
                                 
                                 <!-- Action Button: Changed to "Save" -->
                                 <td>
-                                    <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-2 rounded-md transition duration-150">Save</button>
+                                    <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white font-bold rounded-md transition duration-150">Save</button>
                                 </td>
                             </tr>`;
                 });
@@ -927,6 +968,13 @@
                         if (match.Mc === 'QF2') { match.A = 'W.B'; match.B = 'R.A'; }
                         if (match.Mc === 'QF3') { match.A = 'W.C'; match.B = 'R.D'; }
                         if (match.Mc === 'QF4') { match.A = 'W.D'; match.B = 'R.C'; }
+                    });
+                     tournamentState.matches.filter(m => m.r === 'SF').forEach(match => {
+                        if (match.Mc === 'SF1') { match.A = 'W.QF1'; match.B = 'W.QF3'; }
+                        if (match.Mc === 'SF2') { match.A = 'W.QF2'; match.B = 'W.QF4'; }
+                    });
+                     tournamentState.matches.filter(m => m.r === 'F').forEach(match => {
+                        match.A = 'W.SF1'; match.B = 'W.SF2';
                     });
                 }
                 
