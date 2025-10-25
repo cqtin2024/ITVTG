@@ -21,8 +21,8 @@
         
         /* Tùy chỉnh ĐẶC BIỆT cho bảng Match Results để vừa màn hình nhỏ */
         .match-table th, .match-table td {
-            padding: 6px 3px; /* Giảm padding tối đa */
-            font-size: 0.8rem; /* Giảm font size cho mobile */
+            padding: 4px 1px; /* Giảm padding tối đa */
+            font-size: 0.75rem; /* Giảm font size cho mobile */
             white-space: normal; /* Cho phép xuống dòng */
             word-break: break-word; /* Đảm bảo từ dài bị cắt nếu cần */
             vertical-align: middle;
@@ -30,17 +30,28 @@
 
         /* Thu gọn ô nhập điểm */
         .score-input { 
-            width: 3.2rem; /* Thu gọn chiều rộng input */
+            width: 2.8rem; /* Thu gọn chiều rộng input vừa đủ 2 chữ số */
             text-align: center; 
             font-weight: bold; 
-            padding: 2px;
-            font-size: 0.8rem;
+            padding: 1px; /* Giảm padding */
+            font-size: 0.7rem; /* Giảm font size */
         }
 
-        /* Điều chỉnh cho tên đội để xuống 2 dòng */
-        .match-table .team-a-name, .match-table .team-b-name, .match-table .match-winner-name {
-            min-width: 60px; /* Đảm bảo đủ không gian cho 2 dòng tên ngắn */
+        /* Cột Mc, T, C: Giữ 1 dòng và thu gọn */
+        .match-table .mc-cell, 
+        .match-table .time-cell, 
+        .match-table .court-cell {
+            white-space: nowrap; /* Giữ nội dung 1 dòng */
+            width: 1%; /* Thu gọn tối đa */
+            text-align: center;
+        }
+
+        /* Điều chỉnh cho tên đội: Cho phép xuống dòng sau dấu - */
+        .match-table .team-name-cell {
+            min-width: 55px; /* Minimum width cho tên đội */
             line-height: 1.2;
+            padding-left: 2px;
+            padding-right: 2px;
         }
 
         /* Desktop view: Revert to standard padding/width */
@@ -49,6 +60,10 @@
             th, td { padding: 12px 10px; font-size: 1rem; }
             .match-table th, .match-table td { padding: 8px 6px; font-size: 1rem; }
             .score-input { width: 4rem; padding: 4px; font-size: 1rem; }
+            .match-table .mc-cell, .match-table .time-cell, .match-table .court-cell {
+                white-space: normal;
+                width: auto;
+            }
         }
     </style>
 </head>
@@ -447,7 +462,7 @@
                     team.mP = stats.mP;
                     team.PF = stats.PF;
                     team.PA = stats.PA;
-                    team.PD = stats.PF - stats.PA;
+                    team.PD = team.PF - team.PA;
                     team.HS = stats.HS;
                 }
             });
@@ -670,12 +685,11 @@
         html += `<div class="table-wrapper"><table class="match-table text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden">
                     <thead class="bg-gray-700 text-white">
                         <tr>
-                            <th>Mc</th>
-                            <th>Time</th>
-                            <th>Court</th>
-                            <th colspan="3" class="text-center">Score & Update</th>
-                            <th>Winner</th>
-                            <th></th>
+                            <th class="mc-cell">Mc</th>
+                            <th class="time-cell">T</th>
+                            <th class="court-cell">C</th>
+                            <th colspan="3" class="text-center">Score</th>
+                            <th>Action</th>
                         </tr>
                     </thead><tbody>`;
 
@@ -683,20 +697,30 @@
             const isWinnerA = match.Wn === match.A;
             const isWinnerB = match.Wn === match.B;
             
+            // Dùng <wbr> (Word Break Opportunity) để gợi ý xuống dòng sau dấu -
+            const teamAHtml = match.A.replace('-', '<wbr>-');
+            const teamBHtml = match.B.replace('-', '<wbr>-');
+            
             html += `<tr class="group-match-row hover:bg-gray-50 transition duration-100" data-mc="${match.Mc}">
-                        <td>${match.Mc}</td>
-                        <td>${match.t}</td>
-                        <td>${match.c}</td>
-                        <td class="team-a-name ${isWinnerA ? 'winning-team' : ''}">${match.A}</td>
+                        <td class="mc-cell">${match.Mc}</td>
+                        <td class="time-cell">${match.t}</td>
+                        <td class="court-cell">${match.c}</td>
+                        
+                        <!-- Team A Name: Highlight if winner -->
+                        <td class="team-name-cell ${isWinnerA ? 'font-bold text-teal-600' : ''}">${teamAHtml}</td>
+                        
                         <td class="score-input-cell flex items-center justify-center space-x-1">
                             <input type="number" min="0" max="11" value="${match.sA}" class="score-input border rounded-md" data-team="A">
                             <span class="font-bold">-</span>
                             <input type="number" min="0" max="11" value="${match.sB}" class="score-input border rounded-md" data-team="B">
                         </td>
-                        <td class="team-b-name ${isWinnerB ? 'winning-team' : ''}">${match.B}</td>
-                        <td class="match-winner-name text-center font-bold text-teal-600">${match.Wn || '...'}</td>
+                        
+                        <!-- Team B Name: Highlight if winner -->
+                        <td class="team-name-cell ${isWinnerB ? 'font-bold text-teal-600' : ''}">${teamBHtml}</td>
+                        
+                        <!-- Action Button: Changed to "Save" -->
                         <td>
-                            <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-2 rounded-md transition duration-150">Update</button>
+                            <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-2 rounded-md transition duration-150">Save</button>
                         </td>
                     </tr>`;
         });
@@ -721,12 +745,11 @@
                 html += `<div class="table-wrapper mb-6"><table class="match-table text-sm md:text-base bg-white shadow-sm rounded-lg overflow-hidden">
                             <thead class="bg-teal-500 text-white">
                                 <tr>
-                                    <th>Mc</th>
-                                    <th>Time</th>
-                                    <th>Court</th>
-                                    <th colspan="3" class="text-center">Match Teams & Score Update</th>
-                                    <th>Winner</th>
-                                    <th></th>
+                                    <th class="mc-cell">Mc</th>
+                                    <th class="time-cell">T</th>
+                                    <th class="court-cell">C</th>
+                                    <th colspan="3" class="text-center">Score</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead><tbody>`;
                 
@@ -734,20 +757,30 @@
                     const isWinnerA = match.Wn === match.A;
                     const isWinnerB = match.Wn === match.B;
                     
+                    // Dùng <wbr> (Word Break Opportunity) để gợi ý xuống dòng sau dấu -
+                    const teamAHtml = match.A.replace('-', '<wbr>-');
+                    const teamBHtml = match.B.replace('-', '<wbr>-');
+
                     html += `<tr class="group-match-row hover:bg-gray-50 transition duration-100" data-mc="${match.Mc}">
-                                <td>${match.Mc}</td>
-                                <td>${match.t}</td>
-                                <td>${match.c}</td>
-                                <td class="team-a-name ${isWinnerA ? 'winning-team' : ''}">${match.A}</td>
+                                <td class="mc-cell">${match.Mc}</td>
+                                <td class="time-cell">${match.t}</td>
+                                <td class="court-cell">${match.c}</td>
+                                
+                                <!-- Team A Name: Highlight if winner -->
+                                <td class="team-name-cell ${isWinnerA ? 'font-bold text-teal-600' : ''}">${teamAHtml}</td>
+                                
                                 <td class="score-input-cell flex items-center justify-center space-x-1">
                                     <input type="number" min="0" max="11" value="${match.sA}" class="score-input border rounded-md" data-team="A">
                                     <span class="font-bold">-</span>
                                     <input type="number" min="0" max="11" value="${match.sB}" class="score-input border rounded-md" data-team="B">
                                 </td>
-                                <td class="team-b-name ${isWinnerB ? 'winning-team' : ''}">${match.B}</td>
-                                <td class="match-winner-name text-center font-bold text-teal-600">${match.Wn || '...'}</td>
+                                
+                                <!-- Team B Name: Highlight if winner -->
+                                <td class="team-name-cell ${isWinnerB ? 'font-bold text-teal-600' : ''}">${teamBHtml}</td>
+                                
+                                <!-- Action Button: Changed to "Save" -->
                                 <td>
-                                    <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-2 rounded-md transition duration-150">Update</button>
+                                    <button onclick="handleManualUpdate('${match.Mc}')" class="update-btn bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold py-1 px-2 rounded-md transition duration-150">Save</button>
                                 </td>
                             </tr>`;
                 });
