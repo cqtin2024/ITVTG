@@ -984,8 +984,8 @@
       "B": "W.QF3",
       "sB": "0",
       "Wn": "W.QF3",
-      "teamA": null,
-      "teamB": null
+      "teamA": "Winner QF1",
+      "teamB": "Winner QF3"
     },
     {
       "Mc": "SF2",
@@ -996,8 +996,8 @@
       "B": "W.QF4",
       "sB": "0",
       "Wn": "W.QF4",
-      "teamA": null,
-      "teamB": null
+      "teamA": "Winner QF2",
+      "teamB": "Winner QF4"
     },
     {
       "Mc": "F",
@@ -1009,8 +1009,8 @@
       "sB": "0",
       "Wn": "W.SF2",
       "rU": "W.SF1",
-      "teamA": null,
-      "teamB": null
+      "teamA": "Winner SF1",
+      "teamB": "Winner SF2"
     }
   ]
 }
