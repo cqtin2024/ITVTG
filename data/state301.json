@@ -63,6 +63,15 @@
       "scoreDiff": 18
     },
     {
+      "D": "Duy Hưng-Minh Tú",
+      "W": 1,
+      "L": 1,
+      "HS": "11",
+      "Pts": 3,
+      "mP": 2,
+      "scoreDiff": 2
+    },
+    {
       "D": "Quốc Thịnh-Minh Phương",
       "W": 1,
       "L": 1,
@@ -72,22 +81,13 @@
       "scoreDiff": -4
     },
     {
-      "D": "Duy Hưng-Minh Tú",
-      "W": 0,
-      "L": 1,
-      "HS": "8",
-      "Pts": 0,
-      "mP": 1,
-      "scoreDiff": -3
-    },
-    {
       "D": "Minh Chang-Minh Châu",
       "W": 0,
-      "L": 1,
-      "HS": "0",
+      "L": 2,
+      "HS": "6",
       "Pts": 0,
-      "mP": 1,
-      "scoreDiff": -11
+      "mP": 2,
+      "scoreDiff": -16
     }
   ],
   "tableB": [
@@ -227,10 +227,10 @@
       "t": "14:45",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "0",
+      "sA": "11",
       "B": "Minh Chang-Minh Châu",
-      "sB": "0",
-      "Wn": "Chưa có"
+      "sB": "6",
+      "Wn": "Duy Hưng-Minh Tú"
     },
     {
       "t": "14:45",
@@ -452,7 +452,7 @@
       "c": "S5",
       "A": "Quí Tuấn-Mạnh Hùng",
       "sA": "0",
-      "B": "Quốc Thịnh-Minh Phương",
+      "B": "Duy Hưng-Minh Tú",
       "sB": "0",
       "Wn": "Chưa có"
     },
