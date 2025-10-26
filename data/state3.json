@@ -11,7 +11,7 @@
     "bY": "Birth Year (Năm sinh)",
     "ph": "Phone (Số điện thoại)",
     "em": "Email (Thư điện tử)",
-    "gC": "Game Code (Mã môn chơi: BD_DB - Cầu lông Đôi)",
+    "gC": "Game Code (Mã môn chơi: PB_DB - Cầu lông Đôi)",
     "fC": "Format Code (Mã thể thức: RR_KO - Vòng tròn + Loại trực tiếp)",
     "D": "Team Name (Tên đội - trong bảng xếp hạng)",
     "W": "Wins (Số trận thắng)",
@@ -193,7 +193,7 @@
       "t": "14:15",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "11",
+      "sA": "0",
       "B": "Quốc Thịnh-Minh Phương",
       "sB": "0",
       "Wn": "Duy Hưng-Minh Tú"
@@ -202,7 +202,7 @@
       "t": "14:15",
       "c": "S4",
       "A": "Minh Chang-Minh Châu",
-      "sA": "11",
+      "sA": "0",
       "B": "Quốc Khánh-Linh Vũ",
       "sB": "0",
       "Wn": "Minh Chang-Minh Châu"
@@ -211,7 +211,7 @@
       "t": "14:45",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "11",
+      "sA": "0",
       "B": "Minh Chang-Minh Châu",
       "sB": "0",
       "Wn": "Duy Hưng-Minh Tú"
@@ -220,7 +220,7 @@
       "t": "14:45",
       "c": "S4",
       "A": "Quốc Thịnh-Minh Phương",
-      "sA": "11",
+      "sA": "0",
       "B": "Quốc Khánh-Linh Vũ",
       "sB": "0",
       "Wn": "Quốc Thịnh-Minh Phương"
@@ -229,7 +229,7 @@
       "t": "15:15",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "11",
+      "sA": "0",
       "B": "Quốc Khánh-Linh Vũ",
       "sB": "0",
       "Wn": "Duy Hưng-Minh Tú"
@@ -238,7 +238,7 @@
       "t": "15:15",
       "c": "S4",
       "A": "Quốc Thịnh-Minh Phương",
-      "sA": "11",
+      "sA": "0",
       "B": "Minh Chang-Minh Châu",
       "sB": "0",
       "Wn": "Quốc Thịnh-Minh Phương"
@@ -249,7 +249,7 @@
       "t": "14:30",
       "c": "S3",
       "A": "Quí Tuấn-Mạnh Hùng",
-      "sA": "11",
+      "sA": "0",
       "B": "Quốc Hùng-Đức Duy",
       "sB": "0",
       "Wn": "Quí Tuấn-Mạnh Hùng"
@@ -258,7 +258,7 @@
       "t": "14:30",
       "c": "S4",
       "A": "Thanh Sơn-Khoa Tiến",
-      "sA": "11",
+      "sA": "0",
       "B": "Quang Tiến-Tất Thành",
       "sB": "0",
       "Wn": "Thanh Sơn-Khoa Tiến"
@@ -267,7 +267,7 @@
       "t": "15:00",
       "c": "S3",
       "A": "Quí Tuấn-Mạnh Hùng",
-      "sA": "11",
+      "sA": "0",
       "B": "Thanh Sơn-Khoa Tiến",
       "sB": "0",
       "Wn": "Quí Tuấn-Mạnh Hùng"
@@ -276,7 +276,7 @@
       "t": "15:00",
       "c": "S4",
       "A": "Quốc Hùng-Đức Duy",
-      "sA": "11",
+      "sA": "0",
       "B": "Quang Tiến-Tất Thành",
       "sB": "0",
       "Wn": "Quốc Hùng-Đức Duy"
@@ -285,7 +285,7 @@
       "t": "15:30",
       "c": "S3",
       "A": "Quí Tuấn-Mạnh Hùng",
-      "sA": "11",
+      "sA": "0",
       "B": "Quang Tiến-Tất Thành",
       "sB": "0",
       "Wn": "Quí Tuấn-Mạnh Hùng"
@@ -294,7 +294,7 @@
       "t": "15:30",
       "c": "S4",
       "A": "Quốc Hùng-Đức Duy",
-      "sA": "11",
+      "sA": "0",
       "B": "Thanh Sơn-Khoa Tiến",
       "sB": "0",
       "Wn": "Quốc Hùng-Đức Duy"
@@ -305,7 +305,7 @@
       "t": "14:15",
       "c": "S5",
       "A": "Hoàng Thanh-Công Phương",
-      "sA": "11",
+      "sA": "0",
       "B": "Lê Duy-Thanh Vương",
       "sB": "0",
       "Wn": "Hoàng Thanh-Công Phương"
@@ -314,7 +314,7 @@
       "t": "14:15",
       "c": "S6",
       "A": "Văn Cường-Văn Dũng",
-      "sA": "11",
+      "sA": "0",
       "B": "Đông Chu-Ngọc Hùng",
       "sB": "0",
       "Wn": "Văn Cường-Văn Dũng"
@@ -323,7 +323,7 @@
       "t": "14:45",
       "c": "S5",
       "A": "Hoàng Thanh-Công Phương",
-      "sA": "11",
+      "sA": "0",
       "B": "Văn Cường-Văn Dũng",
       "sB": "0",
       "Wn": "Hoàng Thanh-Công Phương"
@@ -332,7 +332,7 @@
       "t": "14:45",
       "c": "S6",
       "A": "Lê Duy-Thanh Vương",
-      "sA": "11",
+      "sA": "0",
       "B": "Đông Chu-Ngọc Hùng",
       "sB": "0",
       "Wn": "Lê Duy-Thanh Vương"
@@ -341,7 +341,7 @@
       "t": "15:15",
       "c": "S5",
       "A": "Hoàng Thanh-Công Phương",
-      "sA": "11",
+      "sA": "0",
       "B": "Đông Chu-Ngọc Hùng",
       "sB": "0",
       "Wn": "Hoàng Thanh-Công Phương"
@@ -350,7 +350,7 @@
       "t": "15:15",
       "c": "S6",
       "A": "Lê Duy-Thanh Vương",
-      "sA": "11",
+      "sA": "0",
       "B": "Văn Cường-Văn Dũng",
       "sB": "0",
       "Wn": "Lê Duy-Thanh Vương"
@@ -361,7 +361,7 @@
       "t": "14:30",
       "c": "S5",
       "A": "Bá Châu-Hiền Phong",
-      "sA": "11",
+      "sA": "0",
       "B": "Tiến Mạnh-Quang Tín",
       "sB": "0",
       "Wn": "Bá Châu-Hiền Phong"
@@ -370,7 +370,7 @@
       "t": "14:30",
       "c": "S6",
       "A": "Minh Thiện-Duy Minh",
-      "sA": "11",
+      "sA": "0",
       "B": "Viết Tuấn-Quang Dũng",
       "sB": "0",
       "Wn": "Minh Thiện-Duy Minh"
@@ -379,7 +379,7 @@
       "t": "15:00",
       "c": "S5",
       "A": "Bá Châu-Hiền Phong",
-      "sA": "11",
+      "sA": "0",
       "B": "Minh Thiện-Duy Minh",
       "sB": "0",
       "Wn": "Bá Châu-Hiền Phong"
@@ -388,7 +388,7 @@
       "t": "15:00",
       "c": "S6",
       "A": "Tiến Mạnh-Quang Tín",
-      "sA": "11",
+      "sA": "0",
       "B": "Viết Tuấn-Quang Dũng",
       "sB": "0",
       "Wn": "Tiến Mạnh-Quang Tín"
@@ -397,7 +397,7 @@
       "t": "15:30",
       "c": "S5",
       "A": "Bá Châu-Hiền Phong",
-      "sA": "11",
+      "sA": "0",
       "B": "Viết Tuấn-Quang Dũng",
       "sB": "0",
       "Wn": "Bá Châu-Hiền Phong"
@@ -406,7 +406,7 @@
       "t": "15:30",
       "c": "S6",
       "A": "Tiến Mạnh-Quang Tín",
-      "sA": "11",
+      "sA": "0",
       "B": "Minh Thiện-Duy Minh",
       "sB": "0",
       "Wn": "Tiến Mạnh-Quang Tín"
@@ -485,7 +485,7 @@
       "g": "A",
       "T": "Team 9",
       "Tn": "Duy Hưng-Minh Tú",
-      "aPL": 4.5,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -493,8 +493,8 @@
           "bY": "1995",
           "ph": "09xx-xxx-001",
           "em": "duyhung@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -502,8 +502,8 @@
           "bY": "1998",
           "ph": "09xx-xxx-002",
           "em": "minhtu@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -512,7 +512,7 @@
       "g": "A",
       "T": "Team 3",
       "Tn": "Quốc Thịnh-Minh Phương",
-      "aPL": 4.5,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -520,8 +520,8 @@
           "bY": "1996",
           "ph": "09xx-xxx-003",
           "em": "quocthinh@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -529,8 +529,8 @@
           "bY": "1997",
           "ph": "09xx-xxx-004",
           "em": "minhphuong@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -539,7 +539,7 @@
       "g": "A",
       "T": "Team 11",
       "Tn": "Minh Chang-Minh Châu",
-      "aPL": 4.5,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -548,7 +548,7 @@
           "ph": "09xx-xxx-005",
           "em": "minhchang@example.com",
           "pL": 2,
-          "gC": "BD_DB",
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -556,8 +556,8 @@
           "bY": "2001",
           "ph": "09xx-xxx-006",
           "em": "minhchau@example.com",
-          "pL": 2,
-          "gC": "BD_DB",
+          "pL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -566,7 +566,7 @@
       "g": "A",
       "T": "Team 5",
       "Tn": "Quốc Khánh-Linh Vũ",
-      "aPL": 4.5,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -574,8 +574,8 @@
           "bY": "1993",
           "ph": "09xx-xxx-007",
           "em": "quockhanh@example.com",
-          "pL": 5,
-          "gC": "BD_DB",
+          "pL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -583,8 +583,8 @@
           "bY": "1994",
           "ph": "09xx-xxx-008",
           "em": "linhvua@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -593,7 +593,7 @@
       "g": "B",
       "T": "Team 4",
       "Tn": "Quí Tuấn-Mạnh Hùng",
-      "aPL": 3.0,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -601,8 +601,8 @@
           "bY": "1992",
           "ph": "09xx-xxx-009",
           "em": "quytuan@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -610,8 +610,8 @@
           "bY": "1993",
           "ph": "09xx-xxx-010",
           "em": "manhhung@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -620,7 +620,7 @@
       "g": "B",
       "T": "Team 7",
       "Tn": "Quốc Hùng-Đức Duy",
-      "aPL": 5.0,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -628,8 +628,8 @@
           "bY": "1995",
           "ph": "09xx-xxx-011",
           "em": "quochung@example.com",
-          "pL": 5,
-          "gC": "BD_DB",
+          "pL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -638,7 +638,7 @@
           "ph": "09xx-xxx-012",
           "em": "ducduy@example.com",
           "pL": 5,
-          "gC": "BD_DB",
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -647,7 +647,7 @@
       "g": "B",
       "T": "Team 12",
       "Tn": "Thanh Sơn-Khoa Tiến",
-      "aPL": 3.0,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -655,8 +655,8 @@
           "bY": "1997",
           "ph": "09xx-xxx-013",
           "em": "thanhson@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "aPL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -664,8 +664,8 @@
           "bY": "1998",
           "ph": "09xx-xxx-014",
           "em": "khoatien@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "aPL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -674,7 +674,7 @@
       "g": "B",
       "T": "Team 1",
       "Tn": "Quang Tiến-Tất Thành",
-      "aPL": 4.0,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -682,8 +682,8 @@
           "bY": "1995",
           "ph": "09xx-xxx-015",
           "em": "quangtien@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -691,8 +691,8 @@
           "bY": "1996",
           "ph": "09xx-xxx-016",
           "em": "tatthanh@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -701,7 +701,7 @@
       "g": "C",
       "T": "Team 16",
       "Tn": "Hoàng Thanh-Công Phương",
-      "aPL": 3.0,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -709,8 +709,8 @@
           "bY": "1992",
           "ph": "09xx-xxx-017",
           "em": "hoangthanh@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -718,8 +718,8 @@
           "bY": "1993",
           "ph": "09xx-xxx-018",
           "em": "congphuong@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -728,7 +728,7 @@
       "g": "C",
       "T": "Team 10",
       "Tn": "Lê Duy-Thanh Vương",
-      "aPL": 3.5,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -736,8 +736,8 @@
           "bY": "1994",
           "ph": "09xx-xxx-019",
           "em": "leduy@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -745,8 +745,8 @@
           "bY": "1995",
           "ph": "09xx-xxx-020",
           "em": "thanhvuong@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -755,7 +755,7 @@
       "g": "C",
       "T": "Team 14",
       "Tn": "Văn Cường-Văn Dũng",
-      "aPL": 4.0,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -763,8 +763,8 @@
           "bY": "1996",
           "ph": "09xx-xxx-021",
           "em": "vancuong@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -772,8 +772,8 @@
           "bY": "1997",
           "ph": "09xx-xxx-022",
           "em": "vandzung@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -782,7 +782,7 @@
       "g": "C",
       "T": "Team 6",
       "Tn": "Đông Chu-Ngọc Hùng",
-      "aPL": 4.0,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -790,8 +790,8 @@
           "bY": "1998",
           "ph": "09xx-xxx-023",
           "em": "dongchu@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -799,8 +799,8 @@
           "bY": "1999",
           "ph": "09xx-xxx-024",
           "em": "ngochung@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -809,7 +809,7 @@
       "g": "D",
       "T": "Team 13",
       "Tn": "Bá Châu-Hiền Phong",
-      "aPL": 3.0,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -817,8 +817,8 @@
           "bY": "1992",
           "ph": "09xx-xxx-025",
           "em": "bachau@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -826,8 +826,8 @@
           "bY": "1993",
           "ph": "09xx-xxx-026",
           "em": "hienphong@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -836,7 +836,7 @@
       "g": "D",
       "T": "Team 8",
       "Tn": "Tiến Mạnh-Quang Tín",
-      "aPL": 4.0,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -844,8 +844,8 @@
           "bY": "1994",
           "ph": "09xx-xxx-027",
           "em": "tienmanh@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -853,8 +853,8 @@
           "bY": "1995",
           "ph": "09xx-xxx-028",
           "em": "quangtin@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -863,7 +863,7 @@
       "g": "D",
       "T": "Team 15",
       "Tn": "Minh Thiện-Duy Minh",
-      "aPL": 3.5,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -871,8 +871,8 @@
           "bY": "1996",
           "ph": "09xx-xxx-029",
           "em": "minhthien@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -880,8 +880,8 @@
           "bY": "1997",
           "ph": "09xx-xxx-030",
           "em": "duyminh@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
@@ -890,7 +890,7 @@
       "g": "D",
       "T": "Team 2",
       "Tn": "Viết Tuấn-Quang Dũng",
-      "aPL": 3.5,
+      "aPL": 2.5,
       "s": 0,
       "P": [
         {
@@ -898,8 +898,8 @@
           "bY": "1998",
           "ph": "09xx-xxx-031",
           "em": "viettuan@example.com",
-          "pL": 3,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         },
         {
@@ -907,8 +907,8 @@
           "bY": "1999",
           "ph": "09xx-xxx-032",
           "em": "quangdung@example.com",
-          "pL": 4,
-          "gC": "BD_DB",
+          "PL": 2.5,
+          "gC": "PB_DB",
           "fC": "RR_KO"
         }
       ]
