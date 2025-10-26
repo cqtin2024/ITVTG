@@ -36,8 +36,9 @@
     
     /* MOBILE: Kích hoạt Carousel/Swipe */
     #content-carousel { 
+        /* Đã cập nhật thành 500vw (5 tabs) */
         display: flex; 
-        width: 400vw; 
+        width: 500vw; 
         transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1); 
     }
     .swipe-section { 
@@ -224,6 +225,7 @@
     .tab-btn { 
         background-color: var(--tab-inactive-bg); color: var(--tab-inactive-color); 
         transition: all 0.2s ease; font-size: 0.85rem; border: 1px solid #B0BEC5; font-weight: 600; 
+        width: 20%; /* Đã khôi phục lại cho 5 tabs */
     }
     .active-primary { 
         background-color: var(--primary) !important; 
@@ -241,7 +243,7 @@
     .bg-white { background-color: var(--content-bg) !important; color: var(--text-dark) !important; }
     .text-gray-600, .text-gray-700 { color: var(--text-muted) !important; }
     .bg-green-50 { background-color: #E9F4FF !important; } 
-    .team-card { transition: transform .15s ease, box-shadow .15s ease; border-left-color: var(--primary) !important; }
+    .team-card { transition: transform .15s ease, box-shadow .15s ease; border-l-color: var(--primary) !important; }
     .team-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
     .text-green-700, .text-green-800, .border-green-500, .bg-green-700 { 
       color: var(--primary) !important; 
@@ -275,15 +277,24 @@
   
   <div id="tab-controls-container">
     <div id="tab-controls" class="flex justify-around max-w-4xl mx-auto px-4">
-      <button onclick="goToSection(0)" class="tab-btn active-primary flex-1 mx-1 px-3 py-2 rounded-full shadow-md">GROUP</button>
-      <button onclick="goToSection(1)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">QUARTER</button>
-      <button onclick="goToSection(2)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">FINAL</button>
-      <button onclick="goToSection(3)" class="tab-btn flex-1 mx-1 px-3 py-2 rounded-full shadow-md">TEAM</button>
+      <button onclick="goToSection(0)" class="tab-btn active-accent mx-1 px-3 py-2 rounded-full shadow-md">INFO</button>
+      <button onclick="goToSection(1)" class="tab-btn mx-1 px-3 py-2 rounded-full shadow-md">GROUP</button>
+      <button onclick="goToSection(2)" class="tab-btn mx-1 px-3 py-2 rounded-full shadow-md">QUARTER</button>
+      <button onclick="goToSection(3)" class="tab-btn mx-1 px-3 py-2 rounded-full shadow-md">FINAL</button>
+      <button onclick="goToSection(4)" class="tab-btn mx-1 px-3 py-2 rounded-full shadow-md">TEAM</button>
     </div>
   </div>
 
   <main id="main-content-wrapper" class="overflow-hidden">
     <div id="content-carousel">
+
+      <section class="swipe-section" id="info">
+        <div class='bg-white p-4 rounded-xl shadow-md'>
+          <h3 class='text-lg font-bold text-green-700 mb-3 text-center'>TOURNAMENT INFORMATION</h3>
+          <p class='text-sm text-gray-600'>Loading information...</p>
+        </div>
+      </section>
+
       <section class="swipe-section" id="rounds">
         <div class="bg-white p-4 rounded-xl shadow-md">
           <p class="text-sm text-gray-600">Group stage data will be loaded automatically from the JSON file.</p>
@@ -307,6 +318,7 @@
           <p class='text-sm text-gray-600'>Loading team list...</p>
         </div>
       </section>
+      
     </div>
   </main>
 
@@ -315,9 +327,22 @@
   <script>
     const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state301.json'; 
     const REFRESH_INTERVAL = 30000;
+    
+    // ĐÃ KHÔI PHỤC: MOCK_TOURNAMENT_INFO
+    const MOCK_TOURNAMENT_INFO = {
+        "Org": "IT Vũng Tàu Goup",
+        "SD": "26-10-2025",
+        "FTT": "14:00",
+        "Location": "HM Sport - Pickleball & Coffee - 195 Võ Thị Sáu, Vũng Tàu",
+        "Map Location": "https://maps.app.goo.gl/KqqrpVqmVi4uNg7s7",
+        "Gala": "Quán nhậu Thống Nhất - 56 Thống Nhất, Vũng Tàu ",
+        "GT": "18:30",
+        "MapGL": "https://maps.app.goo.gl/Zbuo59wSeRsHP6E59"
+    };
 
     const carousel = document.getElementById('content-carousel');
-    let currentIndex = 0;
+    // Mặc định hiển thị tab INFO (index 0)
+    let currentIndex = 0; 
     let cachedTeamList = []; 
 
     function getLastTwoWords(name) {
@@ -326,13 +351,12 @@
       return parts.length >= 2 ? parts.slice(-2).join(' ') : name;
     }
     
-    // ĐÃ SỬA: Truy cập team.P[i].name thay vì team.P[i]
     function getCombinedName(teamId) {
         if (!teamId || teamId.includes('.') || teamId === 'TBD') return teamId; 
 
         const team = cachedTeamList.find(t => t.T === teamId);
         
-        // SỬA LỖI LOGIC: Truy cập vào thuộc tính .name bên trong đối tượng người chơi
+        // Đã sửa lỗi logic: Truy cập vào thuộc tính .name bên trong đối tượng người chơi
         if (team && team.P && team.P.length >= 2 && team.P[0].name && team.P[1].name) {
             const p1LastTwo = getLastTwoWords(team.P[0].name); 
             const p2LastTwo = getLastTwoWords(team.P[1].name);
@@ -343,7 +367,8 @@
 
 
     function goToSection(index) {
-      currentIndex = Math.max(0, Math.min(3, index));
+      // Đã cập nhật cho 5 tabs: index 0 đến 4
+      currentIndex = Math.max(0, Math.min(4, index)); 
       updateTabs();
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -368,7 +393,8 @@
       document.querySelectorAll('#tab-controls button').forEach((btn, i) => {
         btn.classList.remove('active-primary', 'active-accent');
         if (i === currentIndex) {
-          btn.classList.add(i === 3 ? 'active-accent' : 'active-primary');
+          // Tab INFO (index 0) và TEAM (index 4) dùng active-accent
+          btn.classList.add(i === 0 || i === 4 ? 'active-accent' : 'active-primary'); 
         }
       });
     }
@@ -388,10 +414,13 @@
         const data = await res.json();
         
         // 2. Tải thành công
-        msg.textContent = ''; // Xóa dòng chữ Loading
-        icon.classList.add('status-success'); // Hiển thị icon xanh nhấp nháy
+        msg.textContent = ''; 
+        icon.classList.add('status-success'); 
         
         cachedTeamList = data.tL || [];
+        
+        // ĐÃ KHÔI PHỤC: Gán dữ liệu info giả lập vào data
+        data.tournamentInfo = MOCK_TOURNAMENT_INFO; 
         
         renderData(data);
       } catch (err) {
@@ -402,8 +431,10 @@
         }
         msg.textContent = '⚠️ Data load error: ' + errorMsg;
         icon.classList.remove('status-success');
-        icon.classList.add('status-error'); // Hiển thị icon lỗi
-        renderData({});
+        icon.classList.add('status-error');
+        
+        // ĐÃ KHÔI PHỤC: Vẫn render info khi có lỗi
+        renderData({ tournamentInfo: MOCK_TOURNAMENT_INFO, tL: cachedTeamList }); 
       }
     }
 
@@ -415,11 +446,50 @@
     }
 
     function renderData(data) {
-      renderRounds(data);
+      // ĐÃ KHÔI PHỤC: Gọi hàm renderInfo
+      renderInfo(data.tournamentInfo); 
+      
+      // Đã điều chỉnh lại Index của các hàm này
+      renderRounds(data); 
       renderQuarterfinals(data.quarterfinals);
       renderKnockout(data.semifinals, data.final);
       renderPlayers(data.tL); 
       goToSection(currentIndex); 
+    }
+    
+    // ĐÃ KHÔI PHỤC: Hàm renderInfo
+    function renderInfo(info) {
+        const c = document.getElementById('info');
+        if (!info) {
+            c.innerHTML = `<div class='bg-white p-4 rounded-xl shadow-md text-gray-600 text-sm'>Tournament information is not available.</div>`;
+            return;
+        }
+        
+        let html = `<div class='bg-white p-4 rounded-xl shadow-md'>
+                        <h3 class='text-xl font-bold text-primary mb-4 text-center'>ITVTG PICKLEBALL TOURNAMENT 2025</h3>
+                        
+                        <div class='space-y-4'>
+                            <div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
+                                <p class='text-sm font-semibold text-gray-700'>Organizer:</p>
+                                <p class='text-lg font-bold text-header-bg'>${info.Org || 'N/A'}</p>
+                                <p class='text-sm font-semibold text-gray-700'>Date: ${info.SD || 'N/A'} (Start: ${info.FTT || 'N/A'})</p>
+                            </div>
+
+                            <div class='p-3 border-l-4 border-accent bg-yellow-50/50 rounded-lg'>
+                                <p class='text-sm font-semibold text-gray-700'>Tournament Location:</p>
+                                <p class='text-lg font-bold text-header-bg'>${info.Location || 'N/A'}</p>
+                                ${info['Map Location'] ? `<a href='${info['Map Location']}' target='_blank' class='text-primary text-sm font-semibold hover:underline'>➡️ View Map</a>` : ''}
+                            </div>
+                            
+                            <div class='p-3 border-l-4 border-green-500 bg-green-50/50 rounded-lg'>
+                                <p class='text-sm font-semibold text-gray-700'>Gala Dinner Location:</p>
+                                <p class='text-lg font-bold text-header-bg'>${info.Gala || 'N/A'}</p>
+                                <p class='text-sm font-semibold text-gray-700'>Time: ${info.GT || 'N/A'}</p>
+                                ${info.MapGL ? `<a href='${info.MapGL}' target='_blank' class='text-primary text-sm font-semibold hover:underline'>➡️ View Map</a>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+        c.innerHTML = html;
     }
     
     function renderRounds(data) {
@@ -580,7 +650,6 @@
       c.innerHTML = html;
     }
 
-    // ĐÃ SỬA: Truy cập team.P[i].name thay vì team.P[i]
     function renderPlayers(teamList) {
         const c = document.getElementById('players');
         let html = ``; 
@@ -602,18 +671,19 @@
                         <div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>`;
             
             teamsByGroup[group].forEach(team => {
-                // SỬA LỖI LOGIC: Truy cập vào thuộc tính .name bên trong đối tượng người chơi
+                // Đã sửa lỗi logic: Truy cập vào thuộc tính .name bên trong đối tượng người chơi
                 const p1Name = (team.P && team.P[0] && team.P[0].name) || 'N/A';
                 const p2Name = (team.P && team.P[1] && team.P[1].name) || 'N/A';
                 
                 const combinedName = `${getLastTwoWords(p1Name)} & ${getLastTwoWords(p2Name)}`; 
                 const teamNickname = team.Tn || combinedName;
 
-                html += `<div class='team-card border-l-4 border-green-500 p-3 rounded-lg bg-green-50'>
-                            <div class='text-sm font-semibold text-red-700'>${teamNickname}</div>
-                            <div class='text-xs text-gray-600'>ID: ${team.T} | Group: ${team.g}</div>
-                            <div class='text-xs mt-2 text-gray-700'>1. ${p1Name}</div>
-                            <div class='text-xs text-gray-700'>2. ${p2Name}</div>
+                html += `<div class='team-card border-l-4 border-primary p-3 rounded-lg bg-blue-50/50 shadow-sm'>
+                            <div class='text-md font-bold text-primary'>${teamNickname}</div>
+                            <div class='text-xs text-gray-600 mb-2'>ID: ${team.T} | Group: ${team.g}</div>
+                            
+                            <div class='text-sm text-header-bg font-semibold'>1. ${p1Name}</div>
+                            <div class='text-sm text-header-bg font-semibold'>2. ${p2Name}</div>
                          </div>`;
             });
 
@@ -622,18 +692,23 @@
         c.innerHTML = html;
     }
 
+
     // Swipe handling
     let startX=0, isDown=false;
-    document.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; isDown=true; });
-    document.addEventListener('touchend', e=>{ 
-        if(!isDown) return; 
+    const mainContent = document.getElementById('main-content-wrapper');
+
+    mainContent.addEventListener('touchstart', e=>{ 
+        if (window.innerWidth >= 992) return; 
+        startX = e.touches[0].clientX; 
+        isDown=true; 
+    });
+    mainContent.addEventListener('touchend', e=>{ 
+        if(!isDown || window.innerWidth >= 992) return; 
         isDown=false; 
         const endX = e.changedTouches[0].clientX; 
         const diff = endX - startX; 
-        if(window.innerWidth < 992) {
-            if(diff > 60) goToSection(currentIndex-1); 
-            if(diff < -60) goToSection(currentIndex+1); 
-        }
+        if(diff > 60) goToSection(currentIndex-1); 
+        if(diff < -60) goToSection(currentIndex+1); 
     });
 
     setInterval(fetchData, REFRESH_INTERVAL);
