@@ -55,12 +55,12 @@
   "tableA": [
     {
       "D": "Duy Hưng-Minh Tú",
-      "W": 1,
+      "W": 0,
       "L": 0,
-      "HS": "1",
-      "Pts": 3,
-      "mP": 1,
-      "scoreDiff": 1
+      "HS": "0",
+      "Pts": 0,
+      "mP": 0,
+      "scoreDiff": 0
     },
     {
       "D": "Minh Chang-Minh Châu",
@@ -83,11 +83,11 @@
     {
       "D": "Quốc Thịnh-Minh Phương",
       "W": 0,
-      "L": 1,
+      "L": 0,
       "HS": "0",
       "Pts": 0,
-      "mP": 1,
-      "scoreDiff": -1
+      "mP": 0,
+      "scoreDiff": 0
     }
   ],
   "tableB": [
@@ -209,10 +209,10 @@
       "t": "14:15",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "1",
+      "sA": "0",
       "B": "Quốc Thịnh-Minh Phương",
       "sB": "0",
-      "Wn": "Duy Hưng-Minh Tú"
+      "Wn": "Chưa có"
     },
     {
       "t": "14:15",
