@@ -93,21 +93,21 @@
   "tableB": [
     {
       "D": "Quang Tiến-Tất Thành",
-      "W": 2,
+      "W": 3,
       "L": 0,
       "HS": "11",
-      "Pts": 6,
-      "mP": 2,
-      "scoreDiff": 20
+      "Pts": 9,
+      "mP": 3,
+      "scoreDiff": 28
     },
     {
       "D": "Quí Tuấn-Mạnh Hùng",
       "W": 2,
-      "L": 0,
+      "L": 1,
       "HS": "11",
       "Pts": 6,
-      "mP": 2,
-      "scoreDiff": 20
+      "mP": 3,
+      "scoreDiff": 12
     },
     {
       "D": "Quốc Hùng-Đức Duy",
@@ -178,12 +178,12 @@
     },
     {
       "D": "Minh Thiện-Duy Minh",
-      "W": 1,
+      "W": 2,
       "L": 1,
       "HS": "11",
-      "Pts": 3,
-      "mP": 2,
-      "scoreDiff": 2
+      "Pts": 6,
+      "mP": 3,
+      "scoreDiff": 10
     },
     {
       "D": "Bá Châu-Hiền Phong",
@@ -197,11 +197,11 @@
     {
       "D": "Tiến Mạnh-Quang Tín",
       "W": 0,
-      "L": 2,
+      "L": 3,
       "HS": "10",
       "Pts": 0,
-      "mP": 2,
-      "scoreDiff": -5
+      "mP": 3,
+      "scoreDiff": -13
     }
   ],
   "matchesA": [
@@ -301,10 +301,10 @@
       "t": "15:30",
       "c": "S3",
       "A": "Quí Tuấn-Mạnh Hùng",
-      "sA": "0",
+      "sA": "3",
       "B": "Quang Tiến-Tất Thành",
-      "sB": "0",
-      "Wn": "Chưa có"
+      "sB": "11",
+      "Wn": "Quang Tiến-Tất Thành"
     },
     {
       "t": "15:30",
@@ -422,10 +422,10 @@
       "t": "15:30",
       "c": "S6",
       "A": "Tiến Mạnh-Quang Tín",
-      "sA": "0",
+      "sA": "3",
       "B": "Minh Thiện-Duy Minh",
-      "sB": "0",
-      "Wn": "Chưa có"
+      "sB": "11",
+      "Wn": "Minh Thiện-Duy Minh"
     }
   ],
   "quarterfinals": [
