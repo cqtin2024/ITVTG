@@ -178,12 +178,12 @@
     },
     {
       "D": "Bá Châu-Hiền Phong",
-      "W": 1,
+      "W": 2,
       "L": 1,
       "HS": "11",
-      "Pts": 3,
-      "mP": 2,
-      "scoreDiff": -6
+      "Pts": 6,
+      "mP": 3,
+      "scoreDiff": 0
     },
     {
       "D": "Tiến Mạnh-Quang Tín",
@@ -197,11 +197,11 @@
     {
       "D": "Minh Thiện-Duy Minh",
       "W": 0,
-      "L": 1,
+      "L": 2,
       "HS": "3",
       "Pts": 0,
-      "mP": 1,
-      "scoreDiff": -8
+      "mP": 2,
+      "scoreDiff": -14
     }
   ],
   "matchesA": [
@@ -395,10 +395,10 @@
       "t": "15:00",
       "c": "S5",
       "A": "Bá Châu-Hiền Phong",
-      "sA": "0",
+      "sA": "6",
       "B": "Minh Thiện-Duy Minh",
       "sB": "0",
-      "Wn": "Chưa có"
+      "Wn": "Bá Châu-Hiền Phong"
     },
     {
       "t": "15:00",
