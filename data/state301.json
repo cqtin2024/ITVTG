@@ -54,7 +54,7 @@
   },
   "tableA": [
     {
-      "D": "Quốc Thịnh-Minh Phương",
+      "D": "Duy Hưng-Minh Tú",
       "W": 1,
       "L": 0,
       "HS": "1",
@@ -81,7 +81,7 @@
       "scoreDiff": 0
     },
     {
-      "D": "Duy Hưng-Minh Tú",
+      "D": "Quốc Thịnh-Minh Phương",
       "W": 0,
       "L": 1,
       "HS": "0",
@@ -209,10 +209,10 @@
       "t": "14:15",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "0",
+      "sA": "1",
       "B": "Quốc Thịnh-Minh Phương",
-      "sB": "1",
-      "Wn": "Quốc Thịnh-Minh Phương"
+      "sB": "0",
+      "Wn": "Duy Hưng-Minh Tú"
     },
     {
       "t": "14:15",
@@ -432,7 +432,7 @@
     {
       "t": "15:45",
       "c": "S3",
-      "A": "Quốc Thịnh-Minh Phương",
+      "A": "Duy Hưng-Minh Tú",
       "sA": "0",
       "B": "Quí Tuấn-Mạnh Hùng",
       "sB": "0",
