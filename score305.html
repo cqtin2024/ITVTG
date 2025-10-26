@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) - v1.2</title>
+    <title>Quản Lý Giải Đấu & Cập Nhật Thông Tin (GitHub Sync) - v1.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -92,7 +92,7 @@
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[var(--accent-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15.75l-4-4m0 0l4-4m-4 4h14M17 12a5 5 0 11-10 0 5 5 0 0110 0z"></path></svg>
                 <div class="text-left ml-4">
                     <h1 class="text-xl md:text-3xl font-extrabold text-[var(--text-color)] leading-none">QUẢN LÝ GIẢI ĐẤU PICKLEBALL</h1>
-                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.2**</p>
+                    <p class="text-xs md:text-sm text-[var(--accent-color)]">Cập Nhật Tỉ Số & Thông Tin Đội (GitHub Sync) - **v1.4**</p>
                 </div>
             </div>
             
@@ -617,8 +617,8 @@
             const standings = {};
 
             groupMatches.forEach(match => {
-                if (!standings[match.A]) standings[match.A] = { D: match.A, W: 0, L: 0, HS: 0, Pts: 0, mP: 0, scoreDiff: 0 };
-                if (!standings[match.B]) standings[match.B] = { D: match.B, W: 0, L: 0, HS: 0, Pts: 0, mP: 0, scoreDiff: 0 };
+                if (!standings[match.A]) standings[match.A] = { D: match.A, W: 0, L: 0, GS: 0, GC: 0, Pts: 0, mP: 0, scoreDiff: 0 };
+                if (!standings[match.B]) standings[match.B] = { D: match.B, W: 0, L: 0, GS: 0, GC: 0, Pts: 0, mP: 0, scoreDiff: 0 };
             });
 
             groupMatches.forEach(match => {
@@ -628,9 +628,12 @@
                 const isPlayed = (sA !== 0) || (sB !== 0);
 
                 if (isPlayed) {
-                    standings[match.A].HS = Math.max(standings[match.A].HS, sA);
-                    standings[match.B].HS = Math.max(standings[match.B].HS, sB);
-
+                    // Update GS and GC
+                    standings[match.A].GS += sA;
+                    standings[match.B].GC += sA;
+                    standings[match.A].GC += sB;
+                    standings[match.B].GS += sB;
+                    
                     standings[match.A].scoreDiff += (sA - sB);
                     standings[match.B].scoreDiff += (sB - sA);
 
@@ -642,12 +645,12 @@
 
                 if (winnerCode === 'A') {
                     standings[match.A].W++;
-                    standings[match.A].Pts += 1; // ĐIỀU CHỈNH: Thắng được 1 điểm
+                    standings[match.A].Pts += 1; // Thắng được 1 điểm
                     standings[match.B].L++;
                     match.Wn = match.A;
                 } else if (winnerCode === 'B') {
                     standings[match.B].W++;
-                    standings[match.B].Pts += 1; // ĐIỀU CHỈNH: Thắng được 1 điểm
+                    standings[match.B].Pts += 1; // Thắng được 1 điểm
                     standings[match.A].L++;
                     match.Wn = match.B;
                 } else {
@@ -656,12 +659,33 @@
             });
 
             const sortedStandings = Object.values(standings).sort((a, b) => {
+                // Priority 1: Wins (Số trận thắng)
                 if (b.W !== a.W) return b.W - a.W;
-                if (b.Pts !== a.Pts) return b.Pts - a.Pts;
+                
+                // Priority 2: Goal Difference (Hiệu số bàn thắng/thua)
                 if (b.scoreDiff !== a.scoreDiff) return b.scoreDiff - a.scoreDiff;
-                if (b.HS !== a.HS) return b.HS - a.HS;
-                return a.D.localeCompare(b.D);
-            }).map(({ D, W, L, HS, Pts, mP, scoreDiff }) => ({ D, W, L, HS: String(HS), Pts, mP, scoreDiff }));
+                
+                // Priority 3: Total Goals Scored (Tổng điểm ghi được - GS)
+                if (b.GS !== a.GS) return b.GS - a.GS;
+                
+                // Priority 4: Head-to-Head (Đối đầu trực tiếp) - Only executed if previous criteria are equal
+                const matchH2H = groupMatches.find(m => 
+                    (m.A === a.D && m.B === b.D) || (m.A === b.D && m.B === a.D)
+                );
+                
+                if (matchH2H) {
+                    const teamAIsA = matchH2H.A === a.D;
+                    const scoreA = teamAIsA ? parseInt(matchH2H.sA) : parseInt(matchH2H.sB);
+                    const scoreB = teamAIsA ? parseInt(matchH2H.sB) : parseInt(matchH2H.sA);
+                    
+                    if (scoreA > scoreB) return -1; // a won H2H, a is better (comes before b)
+                    if (scoreB > scoreA) return 1;  // b won H2H, b is better (comes before a)
+                }
+                
+                // Priority 5: Remove Team Name tie-breaker -> return 0 (maintain order)
+                return 0; 
+
+            }).map(({ D, W, L, Pts, mP, scoreDiff, GS, GC }) => ({ D, W, L, Pts, mP, scoreDiff, GS, GC }));
 
             return sortedStandings;
         }
@@ -686,9 +710,13 @@
                  return 'Chưa có';
             };
 
-            data.quarterfinals[0].A = getRank('A', 1); data.quarterfinals[0].B = getRank('B', 2);
-            data.quarterfinals[1].A = getRank('C', 1); data.quarterfinals[1].B = getRank('D', 2);
-            data.quarterfinals[2].A = getRank('B', 1); data.quarterfinals[2].B = getRank('A', 2);
+            // QF 1: A1 vs B2 (Giữ nguyên)
+            data.quarterfinals[0].A = getRank('A', 1); data.quarterfinals[0].B = getRank('B', 2); 
+            // QF 2: B1 vs A2 (Đã chỉnh sửa)
+            data.quarterfinals[1].A = getRank('B', 1); data.quarterfinals[1].B = getRank('A', 2);
+            // QF 3: C1 vs D2 (Đã chỉnh sửa)
+            data.quarterfinals[2].A = getRank('C', 1); data.quarterfinals[2].B = getRank('D', 2);
+            // QF 4: D1 vs C2 (Giữ nguyên)
             data.quarterfinals[3].A = getRank('D', 1); data.quarterfinals[3].B = getRank('C', 2);
             data.quarterfinals.forEach(qf => qf.Wn = calculateMatchWinnerName(qf));
 
@@ -803,7 +831,8 @@
                                     <th class="px-2 py-2 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Hạng</th>
                                     <th class="px-2 py-2 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Đội</th>
                                     <th class="px-2 py-2 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">T</th>
-                                    <th class="px-2 py-2 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">H/S</th> <th class="px-2 py-2 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">B</th>
+                                    <th class="px-2 py-2 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">H/S</th>
+                                    <th class="px-2 py-2 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">TBG</th>
                                     <th class="px-2 py-2 text-center text-xs font-medium text-gray-200 uppercase tracking-wider">Điểm</th>
                                 </tr>
                             </thead>
@@ -813,7 +842,8 @@
                                         <td class="px-2 py-2 whitespace-nowrap font-medium ${index === 0 ? 'text-yellow-400' : (index === 1 ? 'text-green-400' : 'text-[var(--text-color)]')}">${index + 1}</td>
                                         <td class="px-2 py-2 whitespace-nowrap text-sm text-[var(--text-color)]">${team.D}</td>
                                         <td class="px-2 py-2 whitespace-nowrap text-sm text-center text-green-500">${team.W}</td>
-                                        <td class="px-2 py-2 whitespace-nowrap text-sm text-center ${team.scoreDiff > 0 ? 'text-green-400' : (team.scoreDiff < 0 ? 'text-red-400' : 'text-gray-400')} font-bold">${team.scoreDiff}</td> <td class="px-2 py-2 whitespace-nowrap text-sm text-center text-red-500">${team.L}</td>
+                                        <td class="px-2 py-2 whitespace-nowrap text-sm text-center ${team.scoreDiff > 0 ? 'text-green-400' : (team.scoreDiff < 0 ? 'text-red-400' : 'text-gray-400')} font-bold">${team.scoreDiff}</td>
+                                        <td class="px-2 py-2 whitespace-nowrap text-sm text-center text-blue-400 font-bold">${team.GS}</td>
                                         <td class="px-2 py-2 whitespace-nowrap text-sm text-center font-bold text-[var(--accent-color)]">${team.Pts}</td>
                                     </tr>
                                 `).join('')}
