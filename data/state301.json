@@ -130,13 +130,13 @@
   ],
   "tableC": [
     {
-      "D": "Văn Cường-Văn Dũng",
+      "D": "Lê Duy-Thanh Vương",
       "W": 1,
-      "L": 0,
+      "L": 1,
       "HS": "11",
       "Pts": 3,
-      "mP": 1,
-      "scoreDiff": 5
+      "mP": 2,
+      "scoreDiff": 6
     },
     {
       "D": "Đông Chu-Ngọc Hùng",
@@ -148,13 +148,13 @@
       "scoreDiff": 1
     },
     {
-      "D": "Lê Duy-Thanh Vương",
-      "W": 0,
+      "D": "Văn Cường-Văn Dũng",
+      "W": 1,
       "L": 1,
-      "HS": "10",
-      "Pts": 0,
-      "mP": 1,
-      "scoreDiff": -1
+      "HS": "11",
+      "Pts": 3,
+      "mP": 2,
+      "scoreDiff": -2
     },
     {
       "D": "Hoàng Thanh-Công Phương",
@@ -178,12 +178,12 @@
     },
     {
       "D": "Bá Châu-Hiền Phong",
-      "W": 2,
+      "W": 1,
       "L": 1,
       "HS": "11",
-      "Pts": 6,
-      "mP": 3,
-      "scoreDiff": 0
+      "Pts": 3,
+      "mP": 2,
+      "scoreDiff": -6
     },
     {
       "D": "Tiến Mạnh-Quang Tín",
@@ -197,11 +197,11 @@
     {
       "D": "Minh Thiện-Duy Minh",
       "W": 0,
-      "L": 2,
+      "L": 1,
       "HS": "3",
       "Pts": 0,
-      "mP": 2,
-      "scoreDiff": -14
+      "mP": 1,
+      "scoreDiff": -8
     }
   ],
   "matchesA": [
@@ -366,10 +366,10 @@
       "t": "15:15",
       "c": "S6",
       "A": "Lê Duy-Thanh Vương",
-      "sA": "0",
+      "sA": "11",
       "B": "Văn Cường-Văn Dũng",
-      "sB": "0",
-      "Wn": "Chưa có"
+      "sB": "4",
+      "Wn": "Lê Duy-Thanh Vương"
     }
   ],
   "matchesD": [
@@ -395,10 +395,10 @@
       "t": "15:00",
       "c": "S5",
       "A": "Bá Châu-Hiền Phong",
-      "sA": "6",
+      "sA": "0",
       "B": "Minh Thiện-Duy Minh",
       "sB": "0",
-      "Wn": "Bá Châu-Hiền Phong"
+      "Wn": "Chưa có"
     },
     {
       "t": "15:00",
@@ -441,7 +441,7 @@
     {
       "t": "15:45",
       "c": "S4",
-      "A": "Văn Cường-Văn Dũng",
+      "A": "Lê Duy-Thanh Vương",
       "sA": "0",
       "B": "Bá Châu-Hiền Phong",
       "sB": "0",
