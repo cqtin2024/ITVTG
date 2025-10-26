@@ -55,21 +55,21 @@
   "tableA": [
     {
       "D": "Quốc Khánh-Linh Vũ",
-      "W": 2,
+      "W": 3,
       "L": 0,
       "HS": "11",
-      "Pts": 6,
-      "mP": 2,
-      "scoreDiff": 18
+      "Pts": 9,
+      "mP": 3,
+      "scoreDiff": 24
     },
     {
       "D": "Duy Hưng-Minh Tú",
       "W": 1,
-      "L": 1,
+      "L": 2,
       "HS": "11",
       "Pts": 3,
-      "mP": 2,
-      "scoreDiff": 2
+      "mP": 3,
+      "scoreDiff": -4
     },
     {
       "D": "Quốc Thịnh-Minh Phương",
@@ -177,13 +177,22 @@
       "scoreDiff": 19
     },
     {
-      "D": "Bá Châu-Hiền Phong",
+      "D": "Minh Thiện-Duy Minh",
       "W": 1,
       "L": 1,
       "HS": "11",
       "Pts": 3,
       "mP": 2,
-      "scoreDiff": -6
+      "scoreDiff": 2
+    },
+    {
+      "D": "Bá Châu-Hiền Phong",
+      "W": 1,
+      "L": 2,
+      "HS": "11",
+      "Pts": 3,
+      "mP": 3,
+      "scoreDiff": -16
     },
     {
       "D": "Tiến Mạnh-Quang Tín",
@@ -193,15 +202,6 @@
       "Pts": 0,
       "mP": 2,
       "scoreDiff": -5
-    },
-    {
-      "D": "Minh Thiện-Duy Minh",
-      "W": 0,
-      "L": 1,
-      "HS": "3",
-      "Pts": 0,
-      "mP": 1,
-      "scoreDiff": -8
     }
   ],
   "matchesA": [
@@ -245,10 +245,10 @@
       "t": "15:15",
       "c": "S3",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "0",
+      "sA": "5",
       "B": "Quốc Khánh-Linh Vũ",
-      "sB": "0",
-      "Wn": "Chưa có"
+      "sB": "11",
+      "Wn": "Quốc Khánh-Linh Vũ"
     },
     {
       "t": "15:15",
@@ -395,10 +395,10 @@
       "t": "15:00",
       "c": "S5",
       "A": "Bá Châu-Hiền Phong",
-      "sA": "0",
+      "sA": "1",
       "B": "Minh Thiện-Duy Minh",
-      "sB": "0",
-      "Wn": "Chưa có"
+      "sB": "11",
+      "Wn": "Minh Thiện-Duy Minh"
     },
     {
       "t": "15:00",
@@ -443,7 +443,7 @@
       "c": "S4",
       "A": "Lê Duy-Thanh Vương",
       "sA": "0",
-      "B": "Bá Châu-Hiền Phong",
+      "B": "Minh Thiện-Duy Minh",
       "sB": "0",
       "Wn": "Chưa có"
     },
