@@ -355,8 +355,8 @@
 
         const team = cachedTeamList.find(t => t.T === teamId);
         
-        // CẬP NHẬT: Ưu tiên lấy tên từ team.name, nếu không có thì dùng team.P
-        const playerSource = team ? (team.name || team.P) : null; 
+        // CẬP NHẬT: Ưu tiên lấy tên từ team.P, sau đó là team.name
+        const playerSource = team ? (team.P || team.name) : null; 
 
         if (team && playerSource && playerSource.length >= 2) {
             const p1LastTwo = getLastTwoWords(playerSource[0]);
@@ -635,8 +635,8 @@
                         <div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>`;
             
             teamsByGroup[group].forEach(team => {
-                // CẬP NHẬT: Ưu tiên lấy playerNames từ team.name, nếu không có thì dùng team.P
-                const playerNames = team.name || team.P || [];
+                // CẬP NHẬT: Ưu tiên lấy playerNames từ team.P (Players), sau đó là team.name
+                const playerNames = team.P || team.name || [];
                 
                 const p1Name = playerNames[0] || 'N/A';
                 const p2Name = playerNames[1] || 'N/A';
