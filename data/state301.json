@@ -471,10 +471,10 @@
       "t": "16:10",
       "c": "S4",
       "A": "Duy Hưng-Minh Tú",
-      "sA": "0",
+      "sA": "1",
       "B": "Đông Chu-Ngọc Hùng",
-      "sB": "0",
-      "Wn": "Chưa có"
+      "sB": "2",
+      "Wn": "Đông Chu-Ngọc Hùng"
     },
     {
       "t": "16:25",
@@ -489,12 +489,12 @@
   "final": {
     "t": "17:05",
     "c": "S5",
-    "A": "Chưa có",
+    "A": "Đông Chu-Ngọc Hùng",
     "sA": "0",
     "B": "Chưa có",
     "sB": "0",
     "Wn": "Chưa có",
-    "rU": "Chưa có"
+    "rU": "Đông Chu-Ngọc Hùng"
   },
   "tL": [
     {
@@ -931,7 +931,7 @@
     }
   ],
   "champion": "Đang chờ...",
-  "runnerUp": "Đang chờ...",
-  "thirdPlace1": "Đang chờ...",
+  "runnerUp": "Đông Chu-Ngọc Hùng",
+  "thirdPlace1": "Duy Hưng-Minh Tú",
   "thirdPlace2": "Chưa có"
 }
