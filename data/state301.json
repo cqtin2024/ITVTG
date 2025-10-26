@@ -471,27 +471,27 @@
       "t": "16:10",
       "c": "S4",
       "A": "Quốc Khánh-Linh Vũ",
-      "sA": "0",
+      "sA": "15",
       "B": "Đông Chu-Ngọc Hùng",
-      "sB": "0",
-      "Wn": "Chưa có"
+      "sB": "13",
+      "Wn": "Quốc Khánh-Linh Vũ"
     },
     {
       "t": "16:25",
       "c": "S5",
       "A": "Quang Tiến-Tất Thành",
-      "sA": "0",
+      "sA": "15",
       "B": "Viết Tuấn-Quang Dũng",
-      "sB": "0",
-      "Wn": "Chưa có"
+      "sB": "11",
+      "Wn": "Quang Tiến-Tất Thành"
     }
   ],
   "final": {
     "t": "17:05",
     "c": "S5",
-    "A": "Chưa có",
+    "A": "Quốc Khánh-Linh Vũ",
     "sA": "0",
-    "B": "Chưa có",
+    "B": "Quang Tiến-Tất Thành",
     "sB": "0",
     "Wn": "Chưa có",
     "rU": "Chưa có"
@@ -932,6 +932,6 @@
   ],
   "champion": "Đang chờ...",
   "runnerUp": "Đang chờ...",
-  "thirdPlace1": "Đang chờ...",
-  "thirdPlace2": "Chưa có"
+  "thirdPlace1": "Đông Chu-Ngọc Hùng",
+  "thirdPlace2": "Viết Tuấn-Quang Dũng"
 }
