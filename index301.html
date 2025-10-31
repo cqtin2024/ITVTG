@@ -490,7 +490,7 @@
             return;
         }
         
-        // Xử lý thumbnail YouTube
+        // Xử lý thumbnail YouTube (Lấy từ trường "Link Youtube Clips")
         let youtubeHtml = '';
         if (info['Link Youtube Clips'] && info['Link Youtube Clips'].trim() !== "") {
             const youtubeInfo = getYoutubeId(info['Link Youtube Clips']);
