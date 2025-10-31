@@ -329,8 +329,6 @@
     const REFRESH_INTERVAL = 30000;
     
     // MOCK_TOURNAMENT_INFO chỉ dùng để FALLBACK cho các trường cơ bản khi JSON lỗi
-    // Các trường "Link Google Pictures" và "Link Youtube Clips" được đặt là rỗng để đảm bảo
-    // chỉ dùng dữ liệu thực từ JSON, không dùng link mẫu cứng.
     const MOCK_TOURNAMENT_INFO = {
         "Org": "IT Vũng Tàu Goup",
         "SD": "26-10-2025",
@@ -490,12 +488,23 @@
             return;
         }
         
+        // Kiểm tra Link Google Pictures (Đã cập nhật hiển thị là Drive Folder)
+        const googlePicturesHtml = info['Link Google Pictures'] && info['Link Google Pictures'].trim() !== "" ? 
+           `<div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
+               <p class='text-sm font-semibold text-gray-700'>Photo Album:</p>
+               <a href='${info['Link Google Pictures']}' target='_blank' class='text-lg font-bold text-primary hover:underline'>
+                   <span class="text-xl mr-2">📂</span> View Photo Drive Folder
+               </a>
+           </div>` : '';
+        
         // Xử lý thumbnail YouTube (Lấy từ trường "Link Youtube Clips")
         let youtubeHtml = '';
         if (info['Link Youtube Clips'] && info['Link Youtube Clips'].trim() !== "") {
             const youtubeInfo = getYoutubeId(info['Link Youtube Clips']);
+            
+            // Nếu là Playlist, ID sẽ là ID Playlist. Nếu là Video, ID là Video ID.
             if (youtubeInfo && youtubeInfo.id) {
-                // Sử dụng thumbnail chất lượng cao (hqdefault)
+                // Link thumbnail video/playlist
                 const thumbUrl = `https://img.youtube.com/vi/${youtubeInfo.id}/hqdefault.jpg`; 
                 const linkTitle = youtubeInfo.type === 'video' ? '▶️ Xem Video YouTube' : '▶️ Xem Playlist YouTube';
 
@@ -510,7 +519,7 @@
                         </a>
                     </div>`;
             } else {
-                 // Fallback nếu không trích xuất được ID
+                 // Fallback nếu không trích xuất được ID (vẫn hiển thị link)
                  youtubeHtml = `<div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
                     <p class='text-sm font-semibold text-gray-700'>Video Clips:</p>
                     <a href='${info['Link Youtube Clips']}' target='_blank' class='text-lg font-bold text-primary hover:underline'>▶️ Watch YouTube Clips</a>
@@ -518,12 +527,6 @@
             }
         }
         
-        // Kiểm tra Link Google Pictures
-        const googlePicturesHtml = info['Link Google Pictures'] && info['Link Google Pictures'].trim() !== "" ? 
-           `<div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
-               <p class='text-sm font-semibold text-gray-700'>Photo Album:</p>
-               <a href='${info['Link Google Pictures']}' target='_blank' class='text-lg font-bold text-primary hover:underline'>📸 View Google Pictures</a>
-           </div>` : '';
 
 
         
