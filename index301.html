@@ -328,7 +328,7 @@
     const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state301.json'; 
     const REFRESH_INTERVAL = 30000;
     
-    // MOCK_TOURNAMENT_INFO chỉ dùng để FALLBACK cho các trường cơ bản khi JSON lỗi
+    // ĐÃ KHÔI PHỤC: MOCK_TOURNAMENT_INFO
     const MOCK_TOURNAMENT_INFO = {
         "Org": "IT Vũng Tàu Goup",
         "SD": "26-10-2025",
@@ -338,37 +338,15 @@
         "Gala": "Quán nhậu Thống Nhất - 56 Thống Nhất, Vũng Tàu ",
         "GT": "18:30",
         "MapGL": "https://maps.app.goo.gl/Zbuo59wSeRsHP6E59",
-        "Link Google Pictures": "", 
-        "Link Youtube Clips": ""
+        // Bổ sung hai trường cho mục đích hiển thị thử nghiệm
+        "Link Google Pictures": "https://photos.app.goo.gl/ITVTG_Album_Mock_Link", 
+        "Link Youtube Clips": "https://www.youtube.com/playlist?list=ITVTG_Clips_Mock_List"
     };
 
     const carousel = document.getElementById('content-carousel');
     // Mặc định hiển thị tab INFO (index 0)
     let currentIndex = 0; 
     let cachedTeamList = []; 
-
-    /**
-     * Helper: Trích xuất Video ID hoặc Playlist ID từ URL YouTube
-     * @param {string} url - URL YouTube
-     * @returns {object|null} Object chứa id và type ('video' hoặc 'playlist') hoặc null
-     */
-    function getYoutubeId(url) {
-        if (!url) return null;
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-        const playlistRegExp = /[?&]list=([^#&?]+)/;
-        
-        const videoMatch = url.match(regExp);
-        if (videoMatch && videoMatch[2].length === 11) {
-            return { id: videoMatch[2], type: 'video' };
-        }
-
-        const playlistMatch = url.match(playlistRegExp);
-        if (playlistMatch && playlistMatch[1]) {
-            return { id: playlistMatch[1], type: 'playlist' };
-        }
-        
-        return null;
-    }
 
     function getLastTwoWords(name) {
       if (!name || typeof name !== 'string') return '';
@@ -381,6 +359,7 @@
 
         const team = cachedTeamList.find(t => t.T === teamId);
         
+        // Đã sửa lỗi logic: Truy cập vào thuộc tính .name bên trong đối tượng người chơi
         if (team && team.P && team.P.length >= 2 && team.P[0].name && team.P[1].name) {
             const p1LastTwo = getLastTwoWords(team.P[0].name); 
             const p2LastTwo = getLastTwoWords(team.P[1].name);
@@ -391,6 +370,7 @@
 
 
     function goToSection(index) {
+      // Đã cập nhật cho 5 tabs: index 0 đến 4
       currentIndex = Math.max(0, Math.min(4, index)); 
       updateTabs();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -416,6 +396,7 @@
       document.querySelectorAll('#tab-controls button').forEach((btn, i) => {
         btn.classList.remove('active-primary', 'active-accent');
         if (i === currentIndex) {
+          // Tab INFO (index 0) và TEAM (index 4) dùng active-accent
           btn.classList.add(i === 0 || i === 4 ? 'active-accent' : 'active-primary'); 
         }
       });
@@ -441,12 +422,16 @@
         
         cachedTeamList = data.tL || [];
         
-        // LOGIC QUAN TRỌNG: Ưu tiên data.info từ JSON. Nếu JSON không có info, dùng MOCK.
-        if (data.info) {
-             // Hợp nhất JSON data.info với MOCK để đảm bảo các trường cơ bản luôn có
-             data.tournamentInfo = { ...MOCK_TOURNAMENT_INFO, ...data.info };
-        } else {
+        // ĐÃ KHÔI PHỤC: Gán dữ liệu info giả lập vào data
+        // Dữ liệu từ JSON sẽ được ưu tiên, MOCK chỉ là fallback.
+        data.tournamentInfo = data.info || MOCK_TOURNAMENT_INFO; 
+        
+        // Nếu data.info không tồn tại, ta dùng MOCK, nhưng cần hợp nhất để thêm Link Pictures/Clips
+        if (!data.info) {
              data.tournamentInfo = MOCK_TOURNAMENT_INFO;
+        } else {
+             // Hợp nhất dữ liệu info từ JSON với các trường mock (như Link) nếu chúng không tồn tại trong JSON
+             data.tournamentInfo = { ...MOCK_TOURNAMENT_INFO, ...data.info };
         }
 
         renderData(data);
@@ -460,7 +445,7 @@
         icon.classList.remove('status-success');
         icon.classList.add('status-error');
         
-        // Vẫn render info khi có lỗi (sử dụng MOCK)
+        // ĐÃ KHÔI PHỤC: Vẫn render info khi có lỗi (sử dụng MOCK)
         renderData({ tournamentInfo: MOCK_TOURNAMENT_INFO, tL: cachedTeamList }); 
       }
     }
@@ -473,7 +458,10 @@
     }
 
     function renderData(data) {
+      // ĐÃ KHÔI PHỤC: Gọi hàm renderInfo
       renderInfo(data.tournamentInfo); 
+      
+      // Đã điều chỉnh lại Index của các hàm này
       renderRounds(data); 
       renderQuarterfinals(data.quarterfinals);
       renderKnockout(data.semifinals, data.final);
@@ -481,54 +469,13 @@
       goToSection(currentIndex); 
     }
     
+    // START: Hàm renderInfo đã được cập nhật để hiển thị Link Google Pictures và Link Youtube Clips
     function renderInfo(info) {
         const c = document.getElementById('info');
         if (!info) {
             c.innerHTML = `<div class='bg-white p-4 rounded-xl shadow-md text-gray-600 text-sm'>Tournament information is not available.</div>`;
             return;
         }
-        
-        // Kiểm tra Link Google Pictures (Đã cập nhật hiển thị là Drive Folder)
-        const googlePicturesHtml = info['Link Google Pictures'] && info['Link Google Pictures'].trim() !== "" ? 
-           `<div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
-               <p class='text-sm font-semibold text-gray-700'>Photo Album:</p>
-               <a href='${info['Link Google Pictures']}' target='_blank' class='text-lg font-bold text-primary hover:underline'>
-                   <span class="text-xl mr-2">📂</span> View Photo Drive Folder
-               </a>
-           </div>` : '';
-        
-        // Xử lý thumbnail YouTube (Lấy từ trường "Link Youtube Clips")
-        let youtubeHtml = '';
-        if (info['Link Youtube Clips'] && info['Link Youtube Clips'].trim() !== "") {
-            const youtubeInfo = getYoutubeId(info['Link Youtube Clips']);
-            
-            // Nếu là Playlist, ID sẽ là ID Playlist. Nếu là Video, ID là Video ID.
-            if (youtubeInfo && youtubeInfo.id) {
-                // Link thumbnail video/playlist
-                const thumbUrl = `https://img.youtube.com/vi/${youtubeInfo.id}/hqdefault.jpg`; 
-                const linkTitle = youtubeInfo.type === 'video' ? '▶️ Xem Video YouTube' : '▶️ Xem Playlist YouTube';
-
-                youtubeHtml = `
-                    <div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
-                        <p class='text-sm font-semibold text-gray-700 mb-2'>Video Clips:</p>
-                        <a href='${info['Link Youtube Clips']}' target='_blank' class='block relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300'>
-                            <img src='${thumbUrl}' alt='YouTube Video Thumbnail' class='w-full h-auto object-cover' onerror="this.onerror=null;this.src='https://via.placeholder.com/480x360?text=YouTube+Video+Clips'" />
-                            <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                                <span class="text-white text-3xl p-3 rounded-full bg-red-600 bg-opacity-80">${linkTitle}</span>
-                            </div>
-                        </a>
-                    </div>`;
-            } else {
-                 // Fallback nếu không trích xuất được ID (vẫn hiển thị link)
-                 youtubeHtml = `<div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
-                    <p class='text-sm font-semibold text-gray-700'>Video Clips:</p>
-                    <a href='${info['Link Youtube Clips']}' target='_blank' class='text-lg font-bold text-primary hover:underline'>▶️ Watch YouTube Clips</a>
-                 </div>`;
-            }
-        }
-        
-
-
         
         let html = `<div class='bg-white p-4 rounded-xl shadow-md'>
                         <h3 class='text-xl font-bold text-primary mb-4 text-center'>ITVTG PICKLEBALL TOURNAMENT 2025</h3>
@@ -553,14 +500,21 @@
                                 ${info.MapGL ? `<a href='${info.MapGL}' target='_blank' class='text-primary text-sm font-semibold hover:underline'>➡️ View Map</a>` : ''}
                             </div>
                             
-                            ${googlePicturesHtml}
+                            ${info['Link Google Pictures'] ? `<div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
+                                <p class='text-sm font-semibold text-gray-700'>Photo Album:</p>
+                                <a href='${info['Link Google Pictures']}' target='_blank' class='text-lg font-bold text-primary hover:underline'>📸 View Google Pictures</a>
+                            </div>` : ''}
                             
-                            ${youtubeHtml}
+                            ${info['Link Youtube Clips'] ? `<div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
+                                <p class='text-sm font-semibold text-gray-700'>Video Clips:</p>
+                                <a href='${info['Link Youtube Clips']}' target='_blank' class='text-lg font-bold text-primary hover:underline'>▶️ Watch YouTube Clips</a>
+                            </div>` : ''}
                             
                         </div>
                     </div>`;
         c.innerHTML = html;
     }
+    // END: Hàm renderInfo đã được cập nhật
     
     function renderRounds(data) {
         const c = document.getElementById('rounds');
@@ -741,6 +695,7 @@
                         <div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>`;
             
             teamsByGroup[group].forEach(team => {
+                // Đã sửa lỗi logic: Truy cập vào thuộc tính .name bên trong đối tượng người chơi
                 const p1Name = (team.P && team.P[0] && team.P[0].name) || 'N/A';
                 const p2Name = (team.P && team.P[1] && team.P[1].name) || 'N/A';
                 
