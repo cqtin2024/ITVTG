@@ -219,6 +219,29 @@
     }
 
     /* -------------------------------------------------------------------------- */
+    /* FLOATING BUTTONS (Auto Refresh Toggle & Manual Refresh) */
+    /* -------------------------------------------------------------------------- */
+    #refresh-btn { 
+        position: fixed; bottom: 20px; right: 20px; z-index: 50; 
+        background: var(--primary); color: var(--content-bg); font-weight: bold; padding: 14px; border-radius: 50%; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+    }
+    #toggle-refresh-btn { 
+        position: fixed; bottom: 80px; right: 20px; z-index: 50; /* Position above refresh-btn */
+        background: #28a745; /* Green for ON (Default) */
+        color: var(--content-bg); font-weight: bold; padding: 10px 14px; border-radius: 50%; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+        font-size: 0.8rem;
+        transition: background-color 0.3s;
+        min-width: 65px; /* Ensure button size is stable */
+        text-align: center;
+        line-height: 1.2;
+    }
+    #toggle-refresh-btn.off {
+        background: #dc3545; /* Red for OFF */
+    }
+
+    /* -------------------------------------------------------------------------- */
     /* CÁC STYLES CHUNG */
     /* -------------------------------------------------------------------------- */
     
@@ -251,12 +274,6 @@
     }
     .bg-green-700 { background-color: var(--primary) !important; color: var(--content-bg) !important; }
     .text-red-700 { color: var(--accent) !important; }
-
-    #refresh-btn { 
-        position: fixed; bottom: 20px; right: 20px; z-index: 50; 
-        background: var(--primary); color: var(--content-bg); font-weight: bold; padding: 14px; border-radius: 50%; 
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
-    }
   </style>
 </head>
 <body class="font-sans">
@@ -322,12 +339,17 @@
     </div>
   </main>
 
+  <button id="toggle-refresh-btn" title="Toggle Auto Refresh" onclick="toggleAutoRefresh()">Auto ON</button>
   <button id="refresh-btn" title="Reload data" onclick="manualRefresh()">⟳</button>
 
   <script>
     const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state301.json'; 
     const REFRESH_INTERVAL = 30000;
     
+    // Khai báo biến quản lý trạng thái Auto Refresh
+    let refreshIntervalId;
+    let isAutoRefreshEnabled = true;
+
     // MOCK_TOURNAMENT_INFO đã được cập nhật để bao gồm các khóa link, cho phép hợp nhất dữ liệu JSON.
     const MOCK_TOURNAMENT_INFO = {
         "Org": "IT Vũng Tàu Goup",
@@ -346,15 +368,50 @@
     // Mặc định hiển thị tab INFO (index 0)
     let currentIndex = 0; 
     let cachedTeamList = []; 
+    
+    // --------------------------------------------------------------------------
+    // AUTO REFRESH LOGIC
+    // --------------------------------------------------------------------------
+    function updateRefreshButtonUI() {
+        const btn = document.getElementById('toggle-refresh-btn');
+        if (isAutoRefreshEnabled) {
+            btn.classList.remove('off');
+            btn.innerHTML = 'Auto ON';
+            btn.title = `Auto Refresh is ON (Interval: ${REFRESH_INTERVAL/1000}s)`;
+        } else {
+            btn.classList.add('off');
+            btn.innerHTML = 'Auto OFF';
+            btn.title = 'Auto Refresh is OFF';
+        }
+    }
 
-    /**
-     * Helper: Trích xuất Video ID hoặc Playlist ID từ URL YouTube
-     * @param {string} url - URL YouTube
-     * @returns {object|null} Object chứa id và type ('video' hoặc 'playlist') hoặc null
-     */
+    function startAutoRefresh() {
+        if (refreshIntervalId) clearInterval(refreshIntervalId);
+        refreshIntervalId = setInterval(fetchData, REFRESH_INTERVAL);
+        isAutoRefreshEnabled = true;
+        updateRefreshButtonUI();
+    }
+
+    function stopAutoRefresh() {
+        if (refreshIntervalId) clearInterval(refreshIntervalId);
+        refreshIntervalId = null;
+        isAutoRefreshEnabled = false;
+        updateRefreshButtonUI();
+    }
+
+    function toggleAutoRefresh() {
+        if (isAutoRefreshEnabled) {
+            stopAutoRefresh();
+        } else {
+            startAutoRefresh();
+        }
+    }
+
+    // --------------------------------------------------------------------------
+    // HELPER FUNCTIONS (UNCHANGED)
+    // --------------------------------------------------------------------------
     function getYoutubeId(url) {
         if (!url) return null;
-        // Regex cho cả video ID (v=) và playlist ID (list=)
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
         const playlistRegExp = /[?&]list=([^#&?]+)/;
         
@@ -392,7 +449,6 @@
 
 
     function goToSection(index) {
-      // Đã cập nhật cho 5 tabs: index 0 đến 4
       currentIndex = Math.max(0, Math.min(4, index)); 
       updateTabs();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -418,17 +474,18 @@
       document.querySelectorAll('#tab-controls button').forEach((btn, i) => {
         btn.classList.remove('active-primary', 'active-accent');
         if (i === currentIndex) {
-          // Tab INFO (index 0) và TEAM (index 4) dùng active-accent
           btn.classList.add(i === 0 || i === 4 ? 'active-accent' : 'active-primary'); 
         }
       });
     }
 
+    // --------------------------------------------------------------------------
+    // DATA FETCHING AND RENDERING
+    // --------------------------------------------------------------------------
     async function fetchData() {
       const msg = document.getElementById('statusMessage');
       const icon = document.getElementById('dataStatusIcon');
 
-      // 1. Reset trạng thái & Bắt đầu Loading
       msg.textContent = 'Loading data...';
       icon.classList.remove('status-success', 'status-error');
       
@@ -438,26 +495,21 @@
         
         const data = await res.json();
         
-        // 2. Tải thành công
-        msg.textContent = ''; 
+        msg.textContent = `Last updated: ${new Date().toLocaleTimeString()}`; 
         icon.classList.add('status-success'); 
         
         cachedTeamList = data.tL || [];
         
-        // LOGIC ĐÃ CẬP NHẬT: Ưu tiên data.TournamentInfo (khóa mới) -> data.info (khóa cũ)
-        let rawInfo = data.TournamentInfo || data.info; // Lấy dữ liệu từ khóa mới hoặc khóa cũ
+        let rawInfo = data.TournamentInfo || data.info;
 
         if (rawInfo) {
-             // Hợp nhất rawInfo với MOCK_TOURNAMENT_INFO. Dữ liệu JSON sẽ ghi đè lên MOCK.
              data.tournamentInfo = { ...MOCK_TOURNAMENT_INFO, ...rawInfo };
         } else {
-             // Nếu cả hai đều không tồn tại, dùng MOCK
              data.tournamentInfo = MOCK_TOURNAMENT_INFO;
         }
         
         renderData(data);
       } catch (err) {
-        // 3. Xảy ra lỗi
         let errorMsg = err.message;
         if (window.location.protocol === 'file:') {
              errorMsg += " (Possibly CORS error. Please run on a web server).";
@@ -466,7 +518,6 @@
         icon.classList.remove('status-success');
         icon.classList.add('status-error');
         
-        // Vẫn render info khi có lỗi (sử dụng MOCK)
         renderData({ tournamentInfo: MOCK_TOURNAMENT_INFO, tL: cachedTeamList }); 
       }
     }
@@ -475,7 +526,17 @@
       const btn = document.getElementById('refresh-btn');
       btn.disabled = true;
       btn.classList.add('opacity-70');
-      fetchData().finally(() => setTimeout(() => { btn.disabled = false; btn.classList.remove('opacity-70'); }, 800));
+      // Tạm thời dừng auto refresh khi làm mới thủ công để tránh xung đột
+      if (isAutoRefreshEnabled) stopAutoRefresh(); 
+
+      fetchData().finally(() => {
+          setTimeout(() => { 
+              btn.disabled = false; 
+              btn.classList.remove('opacity-70'); 
+              // Khôi phục lại auto refresh nếu nó đã được bật trước đó
+              if (!refreshIntervalId && isAutoRefreshEnabled) startAutoRefresh();
+          }, 800);
+      });
     }
 
     function renderData(data) {
@@ -487,7 +548,7 @@
       goToSection(currentIndex); 
     }
     
-    // Hàm renderInfo đã được cập nhật để xử lý chèn YouTube Embed
+    // Hàm renderInfo (Đã tích hợp YouTube Embed)
     function renderInfo(info) {
         const c = document.getElementById('info');
         if (!info) {
@@ -495,7 +556,6 @@
             return;
         }
         
-        // Link Google Pictures
         const googlePicturesHtml = info['Link Google Pictures'] && info['Link Google Pictures'].trim() !== "" ? 
            `<div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
                <p class='text-sm font-semibold text-gray-700'>Photo Album:</p>
@@ -504,7 +564,6 @@
                </a>
            </div>` : '';
         
-        // Xử lý chèn YouTube (iframe)
         let youtubeHtml = '';
         if (info['Link Youtube Clips'] && info['Link Youtube Clips'].trim() !== "") {
             const youtubeInfo = getYoutubeId(info['Link Youtube Clips']);
@@ -513,12 +572,10 @@
                 let embedUrl = '';
                 let title = '';
 
-                // 1. Nếu là Playlist
                 if (youtubeInfo.type === 'playlist') {
                     embedUrl = `https://www.youtube.com/embed/videoseries?list=${youtubeInfo.id}&rel=0`;
                     title = 'YouTube Playlist';
                 } 
-                // 2. Nếu là Video đơn
                 else if (youtubeInfo.type === 'video') {
                     embedUrl = `https://www.youtube.com/embed/${youtubeInfo.id}?rel=0`;
                     title = 'YouTube Video Clip';
@@ -545,7 +602,6 @@
                         </div>`;
                 }
             } 
-            // Fallback nếu không trích xuất được ID
             else {
                  youtubeHtml = `<div class='p-3 border-l-4 border-primary bg-blue-50/50 rounded-lg'>
                     <p class='text-sm font-semibold text-gray-700'>Video Clips:</p>
@@ -585,6 +641,8 @@
                     </div>`;
         c.innerHTML = html;
     }
+    
+    // Các hàm renderRounds, renderTable, renderMatchList, renderQuarterfinals, renderKnockout, renderPlayers và logic Swipe không đổi.
     
     function renderRounds(data) {
         const c = document.getElementById('rounds');
@@ -765,7 +823,6 @@
                         <div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3'>`;
             
             teamsByGroup[group].forEach(team => {
-                // Đã sửa lỗi logic: Truy cập vào thuộc tính .name bên trong đối tượng người chơi
                 const p1Name = (team.P && team.P[0] && team.P[0].name) || 'N/A';
                 const p2Name = (team.P && team.P[1] && team.P[1].name) || 'N/A';
                 
@@ -805,8 +862,9 @@
         if(diff < -60) goToSection(currentIndex+1); 
     });
 
-    setInterval(fetchData, REFRESH_INTERVAL);
-    fetchData();
+    // Bắt đầu chế độ Auto Refresh và làm mới dữ liệu lần đầu
+    startAutoRefresh();
+    fetchData(); 
   </script>
 </body>
 </html>
