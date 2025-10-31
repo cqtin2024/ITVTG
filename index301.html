@@ -1,8 +1,334 @@
-<script>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ITVTG PICKLEBALL TOURNAMENT 2025</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* -------------------------------------------------------------------------- */
+    /* CUSTOM VARIABLES (VER 3.3 - STATUS ICON)     */
+    /* -------------------------------------------------------------------------- */
+    :root {
+      --primary: #007BFF;        /* Xanh Dương Sáng - Màu nhấn chính */
+      --accent: #FFC107;         /* Vàng Hổ Phách - Màu nhấn phụ/cảnh báo */
+      --header-bg: #15203D;      /* NAVY ĐẬM - Nền tiêu đề */
+      --body-bg: #EFF4F9;        /* Xanh Xám Nhạt - Nền Body */
+      --content-bg: #FFFFFF;     /* Trắng Sạch - Nền Card Nội dung */
+      --text-dark: #333333;      /* Đen Xám - Màu chữ chính */
+      --text-muted: #666666;     /* Xám đậm - Màu chữ phụ */
+      --tab-inactive-bg: #FFFFFF; 
+      --tab-inactive-color: #15203D; 
+      
+      --H-HEADER: 115px;          
+      --H-TABS: 40px;            
+    }
+    
+    /* -------------------------------------------------------------------------- */
+    /* BASE STYLES                                 */
+    /* -------------------------------------------------------------------------- */
+    body { 
+      background-color: var(--body-bg); 
+      color: var(--text-dark); 
+      overflow-x: hidden; 
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; 
+    }
+    
+    /* MOBILE: Kích hoạt Carousel/Swipe */
+    #content-carousel { 
+        /* Đã cập nhật thành 500vw (5 tabs) */
+        display: flex; 
+        width: 500vw; 
+        transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1); 
+    }
+    .swipe-section { 
+        width: 100vw; 
+        flex-shrink: 0; 
+        padding: 1rem; 
+        /* min-height = 100vh - (Header 115px + Tabs 40px) = 155px */
+        min-height: calc(100vh - 155px); 
+        overflow-y: auto; 
+    }
+    
+    /* -------------------------------------------------------------------------- */
+    /* MOBILE: HEADER & FIXED TAB BAR (Thu gọn) */
+    /* -------------------------------------------------------------------------- */
+    header { 
+        position: fixed; top: 0; left: 0; right: 0; z-index: 30; 
+        border-bottom: 4px solid var(--primary); 
+        background-color: var(--header-bg); 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
+        padding: 0.3rem 1rem 0.1rem 1rem; 
+        height: var(--H-HEADER); 
+        overflow: hidden; 
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    /* Container chính chứa Logo và Tiêu đề */
+    .header-main-content {
+        display: flex;
+        align-items: center; 
+        justify-content: center;
+        gap: 0.75rem; 
+        flex-grow: 1; 
+        padding-bottom: 0; 
+    }
+
+    .header-logo { 
+        height: 100px; 
+        max-height: 100px; 
+        width: auto; 
+    }
+    .header-title { 
+        font-size: 1.4rem !important; 
+        font-weight: 800; 
+        color: var(--content-bg); 
+        margin-bottom: 0; 
+    }
+    .header-subtitle { 
+        color: #B0BEC5; 
+        line-height: 1.2; 
+        margin-top: 0;
+        font-size: 0.7rem; 
+    }
+    
+    /* Container cho Tab Bar */
+    #tab-controls-container {
+        position: fixed;
+        top: var(--H-HEADER); 
+        left: 0; 
+        right: 0; 
+        z-index: 25; 
+        background-color: var(--body-bg); 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        padding: 0.3rem 0; 
+    }
+
+    /* MOBILE: Điều chỉnh Padding Top cho nội dung chính */
+    #main-content-wrapper { 
+        padding-top: calc(var(--H-HEADER) + var(--H-TABS)) !important; 
+        overflow-x: hidden;
+    }
+    
+    /* Status message */
+    #statusMessage {
+        font-size: 0.7rem !important; 
+        padding-bottom: 0.2rem !important;
+        padding-top: 0.1rem !important;
+        line-height: 1; 
+        color: #B0BEC5; /* Màu chữ mờ */
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* NEW: STATUS ICON STYLES */
+    /* -------------------------------------------------------------------------- */
+    .status-icon {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        background-color: transparent; 
+        margin-left: 5px; 
+        vertical-align: middle;
+    }
+
+    .status-success {
+        background-color: #28a745; /* Green */
+        animation: pulse-green 1.5s infinite alternate;
+    }
+
+    @keyframes pulse-green {
+        from { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.8); }
+        to { box-shadow: 0 0 0 4px rgba(40, 167, 69, 0); }
+    }
+    
+    .status-error {
+        background-color: var(--accent); /* Yellow/Red for error */
+        box-shadow: 0 0 0 2px var(--accent);
+    }
+    
+    /* -------------------------------------------------------------------------- */
+    /* FINAL MATCH HIGHLIGHT STYLES */
+    /* -------------------------------------------------------------------------- */
+    .final-highlight {
+        border: 3px solid var(--accent); 
+        box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); 
+    }
+    .champion-text {
+        font-size: 1.2rem;
+        font-weight: 900;
+        color: var(--accent) !important; 
+        animation: pulse 1s infinite alternate; 
+    }
+    @keyframes pulse {
+        from { opacity: 1; }
+        to { opacity: 0.7; }
+    }
+
+
+    /* -------------------------------------------------------------------------- */
+    /* DESKTOP (>= 992px) */
+    /* -------------------------------------------------------------------------- */
+    @media (min-width: 992px) {
+        
+        header {
+            position: static !important;
+            height: auto !important;
+            padding-top: 0.4rem !important; 
+            padding-bottom: 0.4rem !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        header .header-main-content {
+            justify-content: flex-start !important; 
+            align-items: center; 
+            flex-grow: 0;
+            gap: 1.25rem;
+            padding-bottom: 0 !important; 
+        }
+        
+        .header-logo { height: 75%; max-height: 2.2rem !important; } 
+        .header-title { font-size: 1.2rem !important; } 
+
+        #tab-controls-container {
+            position: static !important;
+            padding-top: 0.4rem !important;
+            padding-bottom: 0.4rem !important;
+        }
+
+        #content-carousel {
+            width: auto !important;
+            display: block !important;
+            transform: none !important; 
+            transition: none !important; 
+        }
+        .swipe-section {
+            width: 100% !important; 
+            display: none; 
+            padding: 1rem 0;
+        }
+        .bg-white { padding: 1.25rem; }
+        
+        .desktop-group-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 20px; 
+            margin-bottom: 30px;
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* CÁC STYLES CHUNG */
+    /* -------------------------------------------------------------------------- */
+    
+    .tab-btn { 
+        background-color: var(--tab-inactive-bg); color: var(--tab-inactive-color); 
+        transition: all 0.2s ease; font-size: 0.85rem; border: 1px solid #B0BEC5; font-weight: 600; 
+        width: 20%; /* Đã khôi phục lại cho 5 tabs */
+    }
+    .active-primary { 
+        background-color: var(--primary) !important; 
+        color: var(--content-bg) !important; 
+        border-color: var(--primary) !important;
+    }
+    .active-accent { 
+        background-color: var(--accent) !important; 
+        color: var(--header-bg) !important; 
+        border-color: var(--accent) !important;
+    }
+    .match-time-court { display: flex; flex-direction: column; align-items: center; padding-top: 0.3rem; padding-bottom: 0.3rem; }
+    .match-time { font-weight: 600; font-size: 0.85rem; color: var(--text-dark); }
+    .match-court { font-size: 0.75rem; color: var(--text-muted); }
+    .bg-white { background-color: var(--content-bg) !important; color: var(--text-dark) !important; }
+    .text-gray-600, .text-gray-700 { color: var(--text-muted) !important; }
+    .bg-green-50 { background-color: #E9F4FF !important; } 
+    .team-card { transition: transform .15s ease, box-shadow .15s ease; border-l-color: var(--primary) !important; }
+    .team-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+    .text-green-700, .text-green-800, .border-green-500, .bg-green-700 { 
+      color: var(--primary) !important; 
+      border-color: var(--primary) !important;
+    }
+    .bg-green-700 { background-color: var(--primary) !important; color: var(--content-bg) !important; }
+    .text-red-700 { color: var(--accent) !important; }
+
+    #refresh-btn { 
+        position: fixed; bottom: 20px; right: 20px; z-index: 50; 
+        background: var(--primary); color: var(--content-bg); font-weight: bold; padding: 14px; border-radius: 50%; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+    }
+  </style>
+</head>
+<body class="font-sans">
+  
+  <header class="shadow-lg">
+    <div class="header-main-content"> 
+      <img src="https://raw.githubusercontent.com/cqtin2024/ITVTG/main/LogoITGVT.png" alt="Logo ITVTG" class="header-logo w-auto" />
+      <div class="text-center">
+        <h1 class="header-title">ITVTG PICKLEBALL TOURNAMENT 2025</h1>
+        <p class="text-sm font-semibold header-subtitle">
+            Date: <strong>26/10/2025</strong>
+            <span id="dataStatusIcon" class="status-icon"></span> 
+        </p>
+      </div>
+    </div>
+    <div id="statusMessage" class="text-center text-xs font-medium header-subtitle">Loading data...</div>
+  </header>
+  
+  <div id="tab-controls-container">
+    <div id="tab-controls" class="flex justify-around max-w-4xl mx-auto px-4">
+      <button onclick="goToSection(0)" class="tab-btn active-accent mx-1 px-3 py-2 rounded-full shadow-md">INFO</button>
+      <button onclick="goToSection(1)" class="tab-btn mx-1 px-3 py-2 rounded-full shadow-md">GROUP</button>
+      <button onclick="goToSection(2)" class="tab-btn mx-1 px-3 py-2 rounded-full shadow-md">QUART</button>
+      <button onclick="goToSection(3)" class="tab-btn mx-1 px-3 py-2 rounded-full shadow-md">FINAL</button>
+      <button onclick="goToSection(4)" class="tab-btn mx-1 px-3 py-2 rounded-full shadow-md">TEAM</button>
+    </div>
+  </div>
+
+  <main id="main-content-wrapper" class="overflow-hidden">
+    <div id="content-carousel">
+
+      <section class="swipe-section" id="info">
+        <div class='bg-white p-4 rounded-xl shadow-md'>
+          <h3 class='text-lg font-bold text-green-700 mb-3 text-center'>TOURNAMENT INFORMATION</h3>
+          <p class='text-sm text-gray-600'>Loading information...</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="rounds">
+        <div class="bg-white p-4 rounded-xl shadow-md">
+          <p class="text-sm text-gray-600">Group stage data will be loaded automatically from the JSON file.</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="quarterfinals">
+        <div class="bg-white p-4 rounded-xl shadow-md">
+          <p class="text-sm text-gray-600">Quarterfinal matches will be shown here when data is available.</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="knockout">
+        <div class="bg-white p-4 rounded-xl shadow-md">
+          <p class="text-sm text-gray-600">Semifinals and Finals will be shown here when data is available.</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="players">
+        <div class='bg-white p-4 rounded-xl shadow-md'>
+          <p class='text-sm text-gray-600'>Loading team list...</p>
+        </div>
+      </section>
+      
+    </div>
+  </main>
+
+  <button id="refresh-btn" title="Reload data" onclick="manualRefresh()">⟳</button>
+
+  <script>
     const BASE_URL = 'https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/state301.json'; 
     const REFRESH_INTERVAL = 30000;
     
-    // MOCK_TOURNAMENT_INFO chỉ dùng để FALLBACK cho các trường cơ bản khi JSON lỗi
+    // MOCK_TOURNAMENT_INFO đã được cập nhật để bao gồm các khóa link, cho phép hợp nhất dữ liệu JSON.
     const MOCK_TOURNAMENT_INFO = {
         "Org": "IT Vũng Tàu Goup",
         "SD": "26-10-2025",
@@ -28,6 +354,7 @@
      */
     function getYoutubeId(url) {
         if (!url) return null;
+        // Regex cho cả video ID (v=) và playlist ID (list=)
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
         const playlistRegExp = /[?&]list=([^#&?]+)/;
         
@@ -55,7 +382,6 @@
 
         const team = cachedTeamList.find(t => t.T === teamId);
         
-        // Đã sửa lỗi logic: Truy cập vào thuộc tính .name bên trong đối tượng người chơi
         if (team && team.P && team.P.length >= 2 && team.P[0] && team.P[0].name && team.P[1] && team.P[1].name) {
             const p1LastTwo = getLastTwoWords(team.P[0].name); 
             const p2LastTwo = getLastTwoWords(team.P[1].name);
@@ -118,11 +444,11 @@
         
         cachedTeamList = data.tL || [];
         
-        // Bổ sung Logic: Ưu tiên data.TournamentInfo (khóa mới) -> data.info (khóa cũ)
+        // LOGIC ĐÃ CẬP NHẬT: Ưu tiên data.TournamentInfo (khóa mới) -> data.info (khóa cũ)
         let rawInfo = data.TournamentInfo || data.info; // Lấy dữ liệu từ khóa mới hoặc khóa cũ
 
         if (rawInfo) {
-             // Hợp nhất rawInfo với MOCK_TOURNAMENT_INFO. Dữ liệu JSON (TournamentInfo) sẽ ghi đè lên MOCK.
+             // Hợp nhất rawInfo với MOCK_TOURNAMENT_INFO. Dữ liệu JSON sẽ ghi đè lên MOCK.
              data.tournamentInfo = { ...MOCK_TOURNAMENT_INFO, ...rawInfo };
         } else {
              // Nếu cả hai đều không tồn tại, dùng MOCK
@@ -161,7 +487,7 @@
       goToSection(currentIndex); 
     }
     
-    // Hàm renderInfo đã được khôi phục và sử dụng đúng các khóa đã hợp nhất
+    // Hàm renderInfo đã được cập nhật để xử lý Album Ảnh và Video Clips
     function renderInfo(info) {
         const c = document.getElementById('info');
         if (!info) {
@@ -206,9 +532,6 @@
                  </div>`;
             }
         }
-        
-
-
         
         let html = `<div class='bg-white p-4 rounded-xl shadow-md'>
                         <h3 class='text-xl font-bold text-primary mb-4 text-center'>ITVTG PICKLEBALL TOURNAMENT 2025</h3>
@@ -463,4 +786,6 @@
 
     setInterval(fetchData, REFRESH_INTERVAL);
     fetchData();
-</script>
+  </script>
+</body>
+</html>
