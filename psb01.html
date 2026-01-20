@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PTSC Supply Base - Leading Solutions for Energy Industry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        body { font-family: 'Montserrat', sans-serif; }
+
+        .brand-blue { background-color: #0054a6; }
+        .text-brand-blue { color: #0054a6; }
+        .brand-cyan { background-color: #00aeef; }
+        .hover-cyan:hover { background-color: #0093ca; }
+
+        /* Menu logic */
+        .dropdown:hover .dropdown-menu { display: block; }
+        .dropdown-menu { display: none; }
+
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&q=80&w=1600');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .nav-item {
+            position: relative;
+            padding-bottom: 2px;
+        }
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #00aeef;
+            transition: width 0.3s ease;
+        }
+        .nav-item:hover::after { width: 100%; }
+        
+        .sticky-nav { position: sticky; top: 0; z-index: 50; }
+    </style>
+</head>
+<body class="bg-white">
+
+    <!-- TOP BAR -->
+    <div class="brand-blue text-white py-2 text-xs hidden md:block border-b border-blue-400/30">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center gap-6">
+                <span class="flex items-center gap-2"><i data-lucide="phone" class="w-3 h-3"></i> (+84) 254 383 8104</span>
+                <span class="flex items-center gap-2"><i data-lucide="mail" class="w-3 h-3"></i> ptscsupplybase@ptsc.com.vn</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="#" class="hover:text-cyan-300">Tuyển dụng</a>
+                <span class="text-blue-300">|</span>
+                <a href="#" class="hover:text-cyan-300">Liên hệ</a>
+                <div class="flex items-center gap-2 ml-4">
+                    <img src="https://flagcdn.com/w20/vn.png" class="w-4 h-3" alt="VN">
+                    <img src="https://flagcdn.com/w20/us.png" class="w-4 h-3 opacity-50 hover:opacity-100 cursor-pointer" alt="EN">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVIGATION (Like POS Website) -->
+    <header class="bg-white sticky-nav shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-24 items-center">
+                <!-- LOGO -->
+                <div class="flex items-center gap-4">
+                    <img src="https://upload.wikimedia.org/wikipedia/vi/a/a2/Logo_PTSC.png" class="h-16 w-auto" onerror="this.src='https://via.placeholder.com/60x60?text=PTSC'" alt="PTSC Logo">
+                    <div>
+                        <h1 class="text-xl font-black text-brand-blue leading-none">PTSC</h1>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Supply Base</p>
+                    </div>
+                </div>
+
+                <!-- MENU STRUCTURE -->
+                <nav class="hidden lg:flex items-center space-x-1">
+                    <a href="#" class="px-3 py-2 text-sm font-bold text-slate-700 nav-item">TRANG CHỦ</a>
+                    
+                    <!-- GIỚI THIỆU Dropdown -->
+                    <div class="relative dropdown group">
+                        <button class="flex items-center gap-1 px-3 py-2 text-sm font-bold text-slate-700 nav-item uppercase">
+                            Giới thiệu <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div class="dropdown-menu absolute left-0 mt-0 w-56 bg-white shadow-xl border-t-4 border-brand-cyan">
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue border-b border-slate-100">Thông điệp Ban Giám đốc</a>
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue border-b border-slate-100">Lịch sử hình thành</a>
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue border-b border-slate-100">Sơ đồ tổ chức</a>
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue">Tầm nhìn & Giá trị cốt lõi</a>
+                        </div>
+                    </div>
+
+                    <!-- DỊCH VỤ Dropdown -->
+                    <div class="relative dropdown group">
+                        <button class="flex items-center gap-1 px-3 py-2 text-sm font-bold text-slate-700 nav-item uppercase">
+                            Dịch vụ <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div class="dropdown-menu absolute left-0 mt-0 w-64 bg-white shadow-xl border-t-4 border-brand-cyan">
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue border-b border-slate-100 font-medium">Dịch vụ Căn cứ hậu cần</a>
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue border-b border-slate-100 font-medium">Logistics & Giao nhận</a>
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue border-b border-slate-100 font-medium">Cơ khí chế tạo & Xây lắp</a>
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue font-medium">Năng lượng tái tạo ngoài khơi</a>
+                        </div>
+                    </div>
+
+                    <!-- HẠ TẦNG Dropdown -->
+                    <div class="relative dropdown group">
+                        <button class="flex items-center gap-1 px-3 py-2 text-sm font-bold text-slate-700 nav-item uppercase">
+                            Hạ tầng <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div class="dropdown-menu absolute left-0 mt-0 w-56 bg-white shadow-xl border-t-4 border-brand-cyan">
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue border-b border-slate-100">Hệ thống cầu cảng</a>
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue border-b border-slate-100">Bãi hậu cần & Kho bãi</a>
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue">Thiết bị nâng hạ & Vận chuyển</a>
+                        </div>
+                    </div>
+
+                    <a href="#" class="px-3 py-2 text-sm font-bold text-slate-700 nav-item uppercase">Dự án</a>
+                    <a href="#" class="px-3 py-2 text-sm font-bold text-slate-700 nav-item uppercase">Tin tức</a>
+                    
+                    <div class="relative dropdown group">
+                        <button class="flex items-center gap-1 px-3 py-2 text-sm font-bold text-slate-700 nav-item uppercase">
+                            Cổ đông <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <div class="dropdown-menu absolute right-0 mt-0 w-56 bg-white shadow-xl border-t-4 border-brand-cyan">
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue border-b border-slate-100">Công bố thông tin</a>
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue border-b border-slate-100">Đại hội đồng cổ đông</a>
+                            <a href="#" class="block px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-blue">Báo cáo tài chính</a>
+                        </div>
+                    </div>
+
+                    <div class="ml-4 flex items-center">
+                        <button class="p-2 text-slate-400 hover:text-brand-blue"><i data-lucide="search" class="w-5 h-5"></i></button>
+                    </div>
+                </nav>
+
+                <!-- MOBILE MENU ICON -->
+                <button class="lg:hidden p-2">
+                    <i data-lucide="menu" class="w-8 h-8 text-brand-blue"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO (SLIDER SIMULATION) -->
+    <section class="hero-section h-[70vh] flex items-center relative">
+        <div class="max-w-7xl mx-auto px-4 w-full">
+            <div class="max-w-2xl bg-brand-blue/90 p-10 text-white rounded-r-lg border-l-8 border-brand-cyan shadow-2xl">
+                <h3 class="text-brand-cyan font-bold tracking-[0.3em] mb-4 text-sm animate-pulse">PTSC SUPPLY BASE 2025</h3>
+                <h2 class="text-4xl md:text-5xl font-black mb-6 leading-tight">NĂNG LỰC VƯỢT TRỘI - GIẢI PHÁP TRỌN GÓI</h2>
+                <p class="text-slate-200 mb-8 leading-relaxed">Đơn vị chủ lực cung cấp dịch vụ căn cứ hậu cần và cơ khí chế tạo chuyên dụng cho ngành dầu khí và năng lượng tái tạo.</p>
+                <div class="flex gap-4">
+                    <button class="brand-cyan hover-cyan text-white px-8 py-3 font-bold rounded flex items-center gap-2 transition-all group">
+                        XEM DỊCH VỤ <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+                    </button>
+                    <button class="border-2 border-white/50 hover:bg-white/10 text-white px-8 py-3 font-bold rounded transition-all">DỰ ÁN MỚI</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE CONTROLS (FAKE) -->
+        <div class="absolute bottom-10 right-10 flex gap-2">
+            <div class="w-12 h-1 bg-brand-cyan"></div>
+            <div class="w-12 h-1 bg-white/30 hover:bg-white/60 cursor-pointer"></div>
+            <div class="w-12 h-1 bg-white/30 hover:bg-white/60 cursor-pointer"></div>
+        </div>
+    </section>
+
+    <!-- QUICK STATS SECTION -->
+    <section class="bg-slate-50 py-16">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="flex items-center gap-4 bg-white p-6 rounded shadow-sm border-b-4 border-slate-200 hover:border-brand-cyan transition">
+                <div class="brand-blue p-3 rounded text-white"><i data-lucide="maximize" class="w-6 h-6"></i></div>
+                <div>
+                    <h4 class="text-2xl font-black text-brand-blue">82.2 ha</h4>
+                    <p class="text-xs text-slate-500 uppercase font-semibold">Căn cứ cảng</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 bg-white p-6 rounded shadow-sm border-b-4 border-slate-200 hover:border-brand-cyan transition">
+                <div class="brand-blue p-3 rounded text-white"><i data-lucide="anchor" class="w-6 h-6"></i></div>
+                <div>
+                    <h4 class="text-2xl font-black text-brand-blue">750 m</h4>
+                    <p class="text-xs text-slate-500 uppercase font-semibold">Cầu cảng liên tục</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 bg-white p-6 rounded shadow-sm border-b-4 border-slate-200 hover:border-brand-cyan transition">
+                <div class="brand-blue p-3 rounded text-white"><i data-lucide="hard-hat" class="w-6 h-6"></i></div>
+                <div>
+                    <h4 class="text-2xl font-black text-brand-blue">25,000 T</h4>
+                    <p class="text-xs text-slate-500 uppercase font-semibold">Năng lực hạ thủy</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 bg-white p-6 rounded shadow-sm border-b-4 border-slate-200 hover:border-brand-cyan transition">
+                <div class="brand-blue p-3 rounded text-white"><i data-lucide="award" class="w-6 h-6"></i></div>
+                <div>
+                    <h4 class="text-2xl font-black text-brand-blue">30+</h4>
+                    <p class="text-xs text-slate-500 uppercase font-semibold">Năm kinh nghiệm</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE BUSINESS (Brochure Section) -->
+    <section class="py-24 max-w-7xl mx-auto px-4">
+        <div class="text-center mb-16">
+            <h4 class="text-brand-cyan font-bold tracking-widest mb-2">LĨNH VỰC HOẠT ĐỘNG</h4>
+            <h2 class="text-3xl font-black text-brand-blue uppercase">Dịch vụ cung cấp chuyên sâu</h2>
+            <div class="w-20 h-1 brand-blue mx-auto mt-4"></div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-10">
+            <!-- Port Base -->
+            <div class="group bg-slate-50 rounded-xl overflow-hidden shadow-sm flex flex-col md:flex-row border border-slate-100">
+                <div class="md:w-1/2 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&q=80&w=800" class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Hậu cần">
+                </div>
+                <div class="md:w-1/2 p-8">
+                    <span class="text-brand-cyan font-bold text-xs uppercase">01. HẬU CẦN DẦU KHÍ</span>
+                    <h3 class="text-xl font-bold mt-2 mb-4 text-brand-blue">Căn cứ cảng & Kho bãi</h3>
+                    <p class="text-sm text-slate-500 mb-6 italic">Cầu bến, lưu kho thiết bị, xi măng, barite, nước sạch và nhiên liệu 24/7.</p>
+                    <a href="#" class="text-sm font-bold text-brand-blue flex items-center gap-2 hover:text-brand-cyan">CHI TIẾT <i data-lucide="chevron-right" class="w-4 h-4"></i></a>
+                </div>
+            </div>
+
+            <!-- EPCI/Mechanical -->
+            <div class="group bg-slate-50 rounded-xl overflow-hidden shadow-sm flex flex-col md:flex-row border border-slate-100">
+                <div class="md:w-1/2 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=800" class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Cơ khí">
+                </div>
+                <div class="md:w-1/2 p-8">
+                    <span class="text-brand-cyan font-bold text-xs uppercase">02. CƠ KHÍ CHẾ TẠO</span>
+                    <h3 class="text-xl font-bold mt-2 mb-4 text-brand-blue">Xây lắp & Chế tạo</h3>
+                    <p class="text-sm text-slate-500 mb-6 italic">Chế tạo chân đế, Topsides, Module siêu trường siêu trọng cho thị trường trong nước & quốc tế.</p>
+                    <a href="#" class="text-sm font-bold text-brand-blue flex items-center gap-2 hover:text-brand-cyan">CHI TIẾT <i data-lucide="chevron-right" class="w-4 h-4"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWEST PROJECTS (Like POS) -->
+    <section class="py-24 brand-blue text-white overflow-hidden relative">
+        <div class="absolute right-0 top-0 opacity-10 pointer-events-none">
+            <i data-lucide="anchor" class="w-[500px] h-[500px]"></i>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
+            <div class="flex justify-between items-end mb-16">
+                <div>
+                    <h4 class="text-brand-cyan font-bold tracking-widest mb-2">DỰ ÁN TIÊU BIỂU</h4>
+                    <h2 class="text-3xl font-black uppercase">Những cột mốc lịch sử</h2>
+                </div>
+                <div class="flex gap-4">
+                    <button class="p-3 border border-white/20 rounded hover:bg-white/10"><i data-lucide="chevron-left"></i></button>
+                    <button class="p-3 border border-white/20 rounded hover:bg-white/10"><i data-lucide="chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="bg-white/5 p-6 rounded-lg backdrop-blur-sm border border-white/10 hover:bg-white/10 transition group">
+                    <div class="mb-4 overflow-hidden rounded">
+                        <img src="https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&q=80&w=600" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500" alt="Project 1">
+                    </div>
+                    <span class="text-xs text-brand-cyan font-bold uppercase">2010 - 2012</span>
+                    <h3 class="text-lg font-bold mt-2">DỰ ÁN BIỂN ĐÔNG 01</h3>
+                    <p class="text-sm text-slate-300 mt-4 line-clamp-2">Khách hàng: Bien Dong POC. Khối lượng chế tạo 13.600MT cho giàn xử lý trung tâm.</p>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="bg-white/5 p-6 rounded-lg backdrop-blur-sm border border-white/10 hover:bg-white/10 transition group">
+                    <div class="mb-4 overflow-hidden rounded">
+                        <img src="https://images.unsplash.com/photo-1494412519320-aa613dfb7738?auto=format&fit=crop&q=80&w=600" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500" alt="Project 2">
+                    </div>
+                    <span class="text-xs text-brand-cyan font-bold uppercase">2023 - 2025</span>
+                    <h3 class="text-lg font-bold mt-2">GREATER CHANGHUA 2A</h3>
+                    <p class="text-sm text-slate-300 mt-4 line-clamp-2">Khách hàng: Orsted. Chế tạo chân đế điện gió ngoài khơi xuất khẩu sang Đài Loan.</p>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="bg-white/5 p-6 rounded-lg backdrop-blur-sm border border-white/10 hover:bg-white/10 transition group">
+                    <div class="mb-4 overflow-hidden rounded">
+                        <img src="https://images.unsplash.com/photo-1503694978374-8a2fa686963a?auto=format&fit=crop&q=80&w=600" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500" alt="Project 3">
+                    </div>
+                    <span class="text-xs text-brand-cyan font-bold uppercase">2015 - 2016</span>
+                    <h3 class="text-lg font-bold mt-2">SƯ TỬ TRẮNG FFD</h3>
+                    <p class="text-sm text-slate-300 mt-4 line-clamp-2">Khách hàng: Cuu Long JOC. Cung cấp hệ thống ống dẫn và cáp ngầm phức tạp.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER (Like POS Website) -->
+    <footer class="bg-slate-900 text-white pt-24 pb-8 border-t-8 border-brand-cyan">
+        <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-16">
+            <div class="col-span-1 md:col-span-1">
+                <img src="https://upload.wikimedia.org/wikipedia/vi/a/a2/Logo_PTSC.png" class="h-20 w-auto mb-8 brightness-200" alt="Footer Logo">
+                <p class="text-sm text-slate-400 leading-relaxed mb-6 italic">
+                    "Trọn giải pháp, Vẹn niềm tin" - PTSC Supply Base không ngừng đổi mới để trở thành trung tâm dịch vụ năng lượng hàng đầu khu vực.
+                </p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:brand-cyan transition"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:brand-cyan transition"><i data-lucide="youtube" class="w-5 h-5"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:brand-cyan transition"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-lg font-bold mb-8 border-l-4 border-brand-cyan pl-4">LIÊN HỆ</h4>
+                <div class="space-y-4 text-sm text-slate-400">
+                    <p class="flex items-start gap-3"><i data-lucide="map-pin" class="w-5 h-5 text-brand-cyan shrink-0"></i> 65A đường 30/4, Phường Thắng Nhất, TP. Vũng Tàu, Việt Nam</p>
+                    <p class="flex items-center gap-3"><i data-lucide="phone" class="w-5 h-5 text-brand-cyan shrink-0"></i> (+84) 254 383 8104</p>
+                    <p class="flex items-center gap-3"><i data-lucide="mail" class="w-5 h-5 text-brand-cyan shrink-0"></i> ptscsupplybase@ptsc.com.vn</p>
+                    <p class="flex items-center gap-3"><i data-lucide="globe" class="w-5 h-5 text-brand-cyan shrink-0"></i> www.ptscsupplybase.com.vn</p>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-lg font-bold mb-8 border-l-4 border-brand-cyan pl-4">DỊCH VỤ CHÍNH</h4>
+                <ul class="space-y-3 text-sm text-slate-400">
+                    <li><a href="#" class="hover:text-brand-cyan">Căn cứ hậu cần Dầu khí</a></li>
+                    <li><a href="#" class="hover:text-brand-cyan">Logistics đa phương thức</a></li>
+                    <li><a href="#" class="hover:text-brand-cyan">Cơ khí & Xây lắp EPCI</a></li>
+                    <li><a href="#" class="hover:text-brand-cyan">Điện gió ngoài khơi</a></li>
+                    <li><a href="#" class="hover:text-brand-cyan">Dịch vụ Đại lý Hàng hải</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-lg font-bold mb-8 border-l-4 border-brand-cyan pl-4">CHỨNG CHỈ</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/5 p-4 rounded text-center text-[10px] font-bold">ISO 9001:2015</div>
+                    <div class="bg-white/5 p-4 rounded text-center text-[10px] font-bold">ISO 45001:2018</div>
+                    <div class="bg-white/5 p-4 rounded text-center text-[10px] font-bold">ASME STAMP</div>
+                    <div class="bg-white/5 p-4 rounded text-center text-[10px] font-bold">EN 1090-2</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 pt-8 border-t border-white/5 flex flex-col md:row justify-between items-center text-xs text-slate-500 italic">
+            <p>© 2025 PTSC Supply Base - Member of Vietnam Oil and Gas Group (PVN)</p>
+            <div class="flex gap-4 mt-4 md:mt-0">
+                <a href="#" class="hover:text-white">Điều khoản sử dụng</a>
+                <a href="#" class="hover:text-white">Chính sách bảo mật</a>
+                <a href="#" class="hover:text-white">Sơ đồ trang</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // Mobile menu toggle logic could be added here
+    </script>
+</body>
+</html>
