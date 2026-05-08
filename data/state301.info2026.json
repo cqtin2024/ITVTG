@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "2.1.0",
+  "source": "PICKLEBALL ITGVT 2026 - V2.pdf",
+  "tournament": {
+    "name": "ITGVT Pickleball Tournament 2026 - Season 2",
+    "organizer": "ITGVT",
+    "startDate": "2026-06-06",
+    "endDate": "2026-06-06",
+    "startTime": "14:00",
+    "endTime": "17:30",
+    "slogan": "Dân IT chuyển mình bứt phá mọi giới hạn",
+    "purpose": "Giao lưu thể thao cây nhà lá vườn của ITGVT, tăng tính kết nối của anh em cùng nhóm ngành IT và chia sẻ công nghệ trong địa bàn tỉnh Bà Rịa - Vũng Tàu (cũ).",
+    "participants": "Thành viên ITGVT, bạn bè thành viên trong ngành IT tại Bà Rịa - Vũng Tàu (cũ), khách mời, nhà tài trợ được xác minh bởi BTC.",
+    "venue": {
+      "name": "Sân WinPick - 29/10 Xô Viết Nghệ Tĩnh, Vũng Tàu",
+      "mapUrl": ""
+    },
+    "gala": {
+      "name": "Gala ITGVT",
+      "time": "18:00 - 22:00",
+      "mapUrl": ""
+    },
+    "registration": {
+      "formUrl": "https://forms.gle/5Z1noqaLtBUdyHGu8",
+      "deadline": "2026-05-13",
+      "quota": "24 cặp đầu tiên hoàn thành đăng ký & đóng chi phí đầu tiên",
+      "supportContacts": [
+        {
+          "name": "Mr. Duy",
+          "phone": "0984 465 755"
+        },
+        {
+          "name": "Mr. Tín",
+          "phone": "0912 822 002"
+        }
+      ],
+      "feePerPlayer": "500,000 VND/VĐV",
+      "zaloNote": "Zalo group cho giải đấu sẽ được tạo sau khi gom đủ thành viên.",
+      "paymentNote": "Sau khi chuyển khoản các VĐV vui lòng thông báo Ban Tổ chức để xác nhận.",
+      "transferContent": "ITGVT Pickleball_Tên VĐV_Số điện thoại",
+      "refundPolicy": "Sau khi bốc thăm chia bảng thi đấu, lệ phí đăng ký không hoàn lại dưới mọi hình thức.",
+      "consentNote": "Việc đăng ký và đóng phí đồng nghĩa với việc VĐV đồng ý tuân thủ toàn bộ điều lệ của giải đấu."
+    },
+    "awards": [
+      "🥇 NHẤT x4: Cúp + Hiện vật, Quà tài trợ (nếu có)",
+      "🥈 NHÌ x4: Cúp + Hiện vật, Quà tài trợ (nếu có)",
+      "🥉 FairPlay x4: Cúp + Hiện vật, Quà tài trợ (nếu có)"
+    ],
+    "competitionFormat": {
+      "headline": "24 cặp, 6 bảng, mỗi bảng 4 cặp thi đấu vòng tròn 1 lượt.",
+      "pointsRule": "Trận thắng tính 1 điểm, thua 0 điểm trong suốt giải đấu.",
+      "tieBreak": "Nếu bằng điểm sẽ tính hiệu số, sau đó xét đối đầu trực tiếp, cuối cùng bốc thăm.",
+      "serieA": "12 đội Nhất và Nhì bảng vào Serie A: vòng 1/8, Tứ kết, Bán kết, Chung kết.",
+      "serieB": "12 đội Ba và Tư bảng vào Serie B: vòng 1/8, Tứ kết, Bán kết, Chung kết.",
+      "round16Rule": "Tại vòng 1/8 sẽ chọn 8 cặp vào Tứ kết gồm 6 cặp thắng và 2 cặp thua có thành tích tốt nhất tính từ vòng bảng.",
+      "scoring": "Từ vòng bảng đến Tứ kết thi đấu 1 hiệp chạm 11 điểm, 6 điểm đổi sân; Bán kết và Chung kết thi đấu 1 hiệp chạm 15 điểm, 8 điểm đổi sân."
+    },
+    "rules": [
+      "Vắng mặt quá 10 phút sau giờ thi đấu: xử thua với tỉ số tối đa 0-11 hoặc 0-15 tùy vòng đấu.",
+      "Đội tham gia có thể yêu cầu dừng trận vì lý do bất khả kháng nhưng sẽ xử thua trận hiện hành với tỉ số 0-11.",
+      "Mỗi đội có quyền call break time 1 lần/trận, tối đa 3 phút.",
+      "Trang phục thi đấu: Áo của giải."
+    ],
+    "referee": {
+      "management": "Công tác trọng tài bảng sẽ do đơn vị thứ 3 phụ trách do BTC thuê.",
+      "decision": "Anh em có thể trao đổi với trọng tài nhưng quyết định cuối cùng vẫn thuộc về trọng tài.",
+      "fairplay": "Trên tinh thần fairplay, tôn trọng, anh em tự giác nhận foul hoặc có thể trao đổi để serve lại. Không chấp nhận yêu cầu đổi trọng tài khi trận đấu đang diễn ra.",
+      "warning": "Tránh cằn nhằn, complain trọng tài quá nhiều. Đây cũng là một tiêu chí để tính fairplay."
+    },
+    "mediaPolicy": "Hình ảnh giải đấu được ghi lại bởi các ITGVT cây nhà lá vườn. BTC có quyền sử dụng hình ảnh cho truyền thông.",
+    "links": {
+      "photos": "",
+      "videos": ""
+    }
+  },
+  "groups": {},
+  "knockout": {
+    "quarterfinals": [],
+    "semifinals": [],
+    "final": null
+  },
+  "teams": [],
+  "results": {
+    "champion": "",
+    "runnerUp": "",
+    "thirdPlace": []
+  }
+}
