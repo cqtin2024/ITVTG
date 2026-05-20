@@ -1,0 +1,276 @@
+{
+  "schemaVersion": "2.2.0",
+  "source": "PICKLEBALL ITGVT 2026 - V2.pdf",
+  "tournament": {
+    "name": "ITGVT Pickleball Tournament 2026 - Season 2",
+    "organizer": "ITGVT",
+    "startDate": "2026-06-06",
+    "endDate": "2026-06-06",
+    "startTime": "14:00",
+    "endTime": "17:30",
+    "slogan": "Dân IT chuyển mình bứt phá mọi giới hạn",
+    "purpose": "Giao lưu thể thao cây nhà lá vườn của ITGVT, tăng tính kết nối của anh em cùng nhóm ngành IT và chia sẻ công nghệ trong địa bàn tỉnh Bà Rịa - Vũng Tàu (cũ).",
+    "participants": "Thành viên ITGVT, bạn bè thành viên trong ngành IT tại Bà Rịa - Vũng Tàu (cũ), khách mời, nhà tài trợ được xác minh bởi BTC.",
+    "venue": {
+      "name": "Sân WinPick - 29/10 Xô Viết Nghệ Tĩnh, Vũng Tàu",
+      "mapUrl": ""
+    },
+    "gala": {
+      "name": "Gala ITGVT",
+      "time": "18:00 - 22:00",
+      "mapUrl": ""
+    },
+    "registration": {
+      "formUrl": "https://forms.gle/5Z1noqaLtBUdyHGu8",
+      "deadline": "2026-05-13",
+      "quota": "24 cặp đầu tiên hoàn thành đăng ký & đóng chi phí đầu tiên",
+      "supportContacts": [
+        {
+          "name": "Mr. Duy",
+          "phone": "0984 465 755"
+        },
+        {
+          "name": "Mr. Tín",
+          "phone": "0912 822 002"
+        }
+      ],
+      "feePerPlayer": "500,000 VND/VĐV",
+      "zaloNote": "Zalo group cho giải đấu sẽ được tạo sau khi gom đủ thành viên.",
+      "paymentNote": "Sau khi chuyển khoản các VĐV vui lòng thông báo Ban Tổ chức để xác nhận.",
+      "transferContent": "ITGVT Pickleball_Tên VĐV_Số điện thoại",
+      "refundPolicy": "Sau khi bốc thăm chia bảng thi đấu, lệ phí đăng ký không hoàn lại dưới mọi hình thức.",
+      "consentNote": "Việc đăng ký và đóng phí đồng nghĩa với việc VĐV đồng ý tuân thủ toàn bộ điều lệ của giải đấu."
+    },
+    "awards": [
+      "🥇 NHẤT x4: Cúp + Hiện vật, Quà tài trợ (nếu có) [Serie A / B]",
+      "🥈 NHÌ x4: Cúp + Hiện vật, Quà tài trợ (nếu có) [Serie A / B]",
+      "🥉 FairPlay x4: Cúp + Hiện vật, Quà tài trợ (nếu có)"
+    ],
+    "competitionFormat": {
+      "headline": "24 cặp, 6 bảng, mỗi bảng 4 cặp thi đấu vòng tròn 1 lượt.",
+      "pointsRule": "Trận thắng tính 1 điểm, thua 0 điểm trong suốt giải đấu.",
+      "tieBreak": "Nếu bằng điểm sẽ tính hiệu số, sau đó xét đối đầu trực tiếp, cuối cùng bốc thăm.",
+      "serieA": "12 đội Nhất và Nhì bảng vào Serie A: vòng 1/8, Tứ kết, Bán kết, Chung kết.",
+      "serieB": "12 đội Ba và Tư bảng vào Serie B: vòng 1/8, Tứ kết, Bán kết, Chung kết.",
+      "round16Rule": "Tại vòng 1/8 sẽ chọn 8 cặp vào Tứ kết gồm 6 cặp thắng và 2 cặp thua có thành tích tốt nhất tính từ vòng bảng.",
+      "scoring": "Từ vòng bảng đến Tứ kết thi đấu 1 hiệp chạm 11 điểm, 6 điểm đổi sân; Bán kết và Chung kết thi đấu 1 hiệp chạm 15 điểm, 8 điểm đổi sân."
+    },
+    "rules": [
+      "Vắng mặt quá 10 phút sau giờ thi đấu: xử thua với tỉ số tối đa 0-11 hoặc 0-15 tùy vòng đấu.",
+      "Đội tham gia có thể yêu cầu dừng trận vì lý do bất khả kháng nhưng sẽ xử thua trận hiện hành với tỉ số 0-11.",
+      "Mỗi đội có quyền call break time 1 lần/trận, tối đa 3 phút.",
+      "Trang phục thi đấu: Áo của giải."
+    ],
+    "referee": {
+      "management": "Công tác trọng tài bảng sẽ do đơn vị thứ 3 phụ trách do BTC thuê.",
+      "decision": "Anh em có thể trao đổi với trọng tài nhưng quyết định cuối cùng vẫn thuộc về trọng tài.",
+      "fairplay": "Trên tinh thần fairplay, tôn trọng, anh em tự giác nhận foul hoặc có thể trao đổi để serve lại. Không chấp nhận yêu cầu đổi trọng tài khi trận đấu đang diễn ra.",
+      "warning": "Tránh cằn nhằn, complain trọng tài quá nhiều. Đây cũng là một tiêu chí để tính fairplay."
+    },
+    "mediaPolicy": "Hình ảnh giải đấu được ghi lại bởi các ITGVT cây nhà lá vườn. BTC có quyền sử dụng hình ảnh cho truyền thông.",
+    "links": {
+      "photos": "",
+      "videos": ""
+    }
+  },
+  "players": [
+    {"id": "player01", "name": "VĐV 01", "phone": "0900000001", "company": "IT Company A"},
+    {"id": "player02", "name": "VĐV 02", "phone": "0900000002", "company": "IT Company A"},
+    {"id": "player03", "name": "VĐV 03", "phone": "0900000003", "company": "IT Company B"},
+    {"id": "player04", "name": "VĐV 04", "phone": "0900000004", "company": "IT Company B"},
+    {"id": "player05", "name": "VĐV 05", "phone": "0900000005", "company": "IT Company C"},
+    {"id": "player06", "name": "VĐV 06", "phone": "0900000006", "company": "IT Company C"},
+    {"id": "player07", "name": "VĐV 07", "phone": "0900000007", "company": "IT Company D"},
+    {"id": "player08", "name": "VĐV 08", "phone": "0900000008", "company": "IT Company D"},
+    {"id": "player09", "name": "VĐV 09", "phone": "0900000009", "company": "Freelancer"},
+    {"id": "player10", "name": "VĐV 10", "phone": "0900000010", "company": "Freelancer"},
+    {"id": "player11", "name": "VĐV 11", "phone": "0900000011", "company": "IT Tech"},
+    {"id": "player12", "name": "VĐV 12", "phone": "0900000012", "company": "IT Tech"},
+    {"id": "player13", "name": "VĐV 13", "phone": "0900000013", "company": "Vũng Tàu Dev"},
+    {"id": "player14", "name": "VĐV 14", "phone": "0900000014", "company": "Vũng Tàu Dev"},
+    {"id": "player15", "name": "VĐV 15", "phone": "0900000015", "company": "IT Net"},
+    {"id": "player16", "name": "VĐV 16", "phone": "0900000016", "company": "IT Net"},
+    {"id": "player17", "name": "VĐV 17", "phone": "0900000017", "company": "Software Co"},
+    {"id": "player18", "name": "VĐV 18", "phone": "0900000018", "company": "Software Co"},
+    {"id": "player19", "name": "VĐV 19", "phone": "0900000019", "company": "Data Team"},
+    {"id": "player20", "name": "VĐV 20", "phone": "0900000020", "company": "Data Team"},
+    {"id": "player21", "name": "VĐV 21", "phone": "0900000021", "company": "AI Lab"},
+    {"id": "player22", "name": "VĐV 22", "phone": "0900000022", "company": "AI Lab"},
+    {"id": "player23", "name": "VĐV 23", "phone": "0900000023", "company": "Cyber Sec"},
+    {"id": "player24", "name": "VĐV 24", "phone": "0900000024", "company": "Cyber Sec"},
+    {"id": "player25", "name": "VĐV 25", "phone": "0900000025", "company": "VT Tech"},
+    {"id": "player26", "name": "VĐV 26", "phone": "0900000026", "company": "VT Tech"},
+    {"id": "player27", "name": "VĐV 27", "phone": "0900000027", "company": "ITGVT Club"},
+    {"id": "player28", "name": "VĐV 28", "phone": "0900000028", "company": "ITGVT Club"},
+    {"id": "player29", "name": "VĐV 29", "phone": "0900000029", "company": "Vũng Tàu Sol"},
+    {"id": "player30", "name": "VĐV 30", "phone": "0900000030", "company": "Vũng Tàu Sol"},
+    {"id": "player31", "name": "VĐV 31", "phone": "0900000031", "company": "IT Hub"},
+    {"id": "player32", "name": "VĐV 32", "phone": "0900000032", "company": "IT Hub"},
+    {"id": "player33", "name": "VĐV 33", "phone": "0900000033", "company": "Cloud Sys"},
+    {"id": "player34", "name": "VĐV 34", "phone": "0900000034", "company": "Cloud Sys"},
+    {"id": "player35", "name": "VĐV 35", "phone": "0900000035", "company": "DevOps VT"},
+    {"id": "player36", "name": "VĐV 36", "phone": "0900000036", "company": "DevOps VT"},
+    {"id": "player37", "name": "VĐV 37", "phone": "0900000037", "company": "Game Studio"},
+    {"id": "player38", "name": "VĐV 38", "phone": "0900000038", "company": "Game Studio"},
+    {"id": "player39", "name": "VĐV 39", "phone": "0900000039", "company": "Web App Co"},
+    {"id": "player40", "name": "VĐV 40", "phone": "0900000040", "company": "Web App Co"},
+    {"id": "player41", "name": "VĐV 41", "phone": "0900000041", "company": "Mobile Team"},
+    {"id": "player42", "name": "VĐV 42", "phone": "0900000042", "company": "Mobile Team"},
+    {"id": "player43", "name": "VĐV 43", "phone": "0900000043", "company": "IT Solution"},
+    {"id": "player44", "name": "VĐV 44", "phone": "0900000044", "company": "IT Solution"},
+    {"id": "player45", "name": "VĐV 45", "phone": "0900000045", "company": "VT Media"},
+    {"id": "player46", "name": "VĐV 46", "phone": "0900000046", "company": "VT Media"},
+    {"id": "player47", "name": "VĐV 47", "phone": "0900000047", "company": "ITGVT Sponsor"},
+    {"id": "player48", "name": "VĐV 48", "phone": "0900000048", "company": "ITGVT Sponsor"}
+  ],
+  "teams": [
+    {"id": "Team01", "name": "Team 01", "player1Id": "player01", "player2Id": "player02"},
+    {"id": "Team02", "name": "Team 02", "player1Id": "player03", "player2Id": "player04"},
+    {"id": "Team03", "name": "Team 03", "player1Id": "player05", "player2Id": "player06"},
+    {"id": "Team04", "name": "Team 04", "player1Id": "player07", "player2Id": "player08"},
+    {"id": "Team05", "name": "Team 05", "player1Id": "player09", "player2Id": "player10"},
+    {"id": "Team06", "name": "Team 06", "player1Id": "player11", "player2Id": "player12"},
+    {"id": "Team07", "name": "Team 07", "player1Id": "player13", "player2Id": "player14"},
+    {"id": "Team08", "name": "Team 08", "player1Id": "player15", "player2Id": "player16"},
+    {"id": "Team09", "name": "Team 09", "player1Id": "player17", "player2Id": "player18"},
+    {"id": "Team10", "name": "Team 10", "player1Id": "player19", "player2Id": "player20"},
+    {"id": "Team11", "name": "Team 11", "player1Id": "player21", "player2Id": "player22"},
+    {"id": "Team12", "name": "Team 12", "player1Id": "player23", "player2Id": "player24"},
+    {"id": "Team13", "name": "Team 13", "player1Id": "player25", "player2Id": "player26"},
+    {"id": "Team14", "name": "Team 14", "player1Id": "player27", "player2Id": "player28"},
+    {"id": "Team15", "name": "Team 15", "player1Id": "player29", "player2Id": "player30"},
+    {"id": "Team16", "name": "Team 16", "player1Id": "player31", "player2Id": "player32"},
+    {"id": "Team17", "name": "Team 17", "player1Id": "player33", "player2Id": "player34"},
+    {"id": "Team18", "name": "Team 18", "player1Id": "player35", "player2Id": "player36"},
+    {"id": "Team19", "name": "Team 19", "player1Id": "player37", "player2Id": "player38"},
+    {"id": "Team20", "name": "Team 20", "player1Id": "player39", "player2Id": "player40"},
+    {"id": "Team21", "name": "Team 21", "player1Id": "player41", "player2Id": "player42"},
+    {"id": "Team22", "name": "Team 22", "player1Id": "player43", "player2Id": "player44"},
+    {"id": "Team23", "name": "Team 23", "player1Id": "player45", "player2Id": "player46"},
+    {"id": "Team24", "name": "Team 24", "player1Id": "player47", "player2Id": "player48"}
+  ],
+  "groups": {
+    "A": {
+      "name": "Bảng A",
+      "teamIds": ["Team01", "Team02", "Team03", "Team04"],
+      "matches": [
+        {"id": "GA_1", "team1Id": "Team01", "team2Id": "Team02", "score1": null, "score2": null, "played": false},
+        {"id": "GA_2", "team1Id": "Team03", "team2Id": "Team04", "score1": null, "score2": null, "played": false},
+        {"id": "GA_3", "team1Id": "Team01", "team2Id": "Team03", "score1": null, "score2": null, "played": false},
+        {"id": "GA_4", "team1Id": "Team02", "team2Id": "Team04", "score1": null, "score2": null, "played": false},
+        {"id": "GA_5", "team1Id": "Team01", "team2Id": "Team04", "score1": null, "score2": null, "played": false},
+        {"id": "GA_6", "team1Id": "Team02", "team2Id": "Team03", "score1": null, "score2": null, "played": false}
+      ]
+    },
+    "B": {
+      "name": "Bảng B",
+      "teamIds": ["Team05", "Team06", "Team07", "Team08"],
+      "matches": [
+        {"id": "GB_1", "team1Id": "Team05", "team2Id": "Team06", "score1": null, "score2": null, "played": false},
+        {"id": "GB_2", "team1Id": "Team07", "team2Id": "Team08", "score1": null, "score2": null, "played": false},
+        {"id": "GB_3", "team1Id": "Team05", "team2Id": "Team07", "score1": null, "score2": null, "played": false},
+        {"id": "GB_4", "team1Id": "Team06", "team2Id": "Team08", "score1": null, "score2": null, "played": false},
+        {"id": "GB_5", "team1Id": "Team05", "team2Id": "Team08", "score1": null, "score2": null, "played": false},
+        {"id": "GB_6", "team1Id": "Team06", "team2Id": "Team07", "score1": null, "score2": null, "played": false}
+      ]
+    },
+    "C": {
+      "name": "Bảng C",
+      "teamIds": ["Team09", "Team10", "Team11", "Team12"],
+      "matches": [
+        {"id": "GC_1", "team1Id": "Team09", "team2Id": "Team10", "score1": null, "score2": null, "played": false},
+        {"id": "GC_2", "team1Id": "Team11", "team2Id": "Team12", "score1": null, "score2": null, "played": false},
+        {"id": "GC_3", "team1Id": "Team09", "team2Id": "Team11", "score1": null, "score2": null, "played": false},
+        {"id": "GC_4", "team1Id": "Team10", "team2Id": "Team12", "score1": null, "score2": null, "played": false},
+        {"id": "GC_5", "team1Id": "Team09", "team2Id": "Team12", "score1": null, "score2": null, "played": false},
+        {"id": "GC_6", "team1Id": "Team10", "team2Id": "Team11", "score1": null, "score2": null, "played": false}
+      ]
+    },
+    "D": {
+      "name": "Bảng D",
+      "teamIds": ["Team13", "Team14", "Team15", "Team16"],
+      "matches": [
+        {"id": "GD_1", "team1Id": "Team13", "team2Id": "Team14", "score1": null, "score2": null, "played": false},
+        {"id": "GD_2", "team1Id": "Team15", "team2Id": "Team16", "score1": null, "score2": null, "played": false},
+        {"id": "GD_3", "team1Id": "Team13", "team2Id": "Team15", "score1": null, "score2": null, "played": false},
+        {"id": "GD_4", "team1Id": "Team14", "team2Id": "Team16", "score1": null, "score2": null, "played": false},
+        {"id": "GD_5", "team1Id": "Team13", "team2Id": "Team16", "score1": null, "score2": null, "played": false},
+        {"id": "GD_6", "team1Id": "Team14", "team2Id": "Team15", "score1": null, "score2": null, "played": false}
+      ]
+    },
+    "E": {
+      "name": "Bảng E",
+      "teamIds": ["Team17", "Team18", "Team19", "Team20"],
+      "matches": [
+        {"id": "GE_1", "team1Id": "Team17", "team2Id": "Team18", "score1": null, "score2": null, "played": false},
+        {"id": "GE_2", "team1Id": "Team19", "team2Id": "Team20", "score1": null, "score2": null, "played": false},
+        {"id": "GE_3", "team1Id": "Team17", "team2Id": "Team19", "score1": null, "score2": null, "played": false},
+        {"id": "GE_4", "team1Id": "Team18", "team2Id": "Team20", "score1": null, "score2": null, "played": false},
+        {"id": "GE_5", "team1Id": "Team17", "team2Id": "Team20", "score1": null, "score2": null, "played": false},
+        {"id": "GE_6", "team1Id": "Team18", "team2Id": "Team19", "score1": null, "score2": null, "played": false}
+      ]
+    },
+    "F": {
+      "name": "Bảng F",
+      "teamIds": ["Team21", "Team22", "Team23", "Team24"],
+      "matches": [
+        {"id": "GF_1", "team1Id": "Team21", "team2Id": "Team22", "score1": null, "score2": null, "played": false},
+        {"id": "GF_2", "team1Id": "Team23", "team2Id": "Team24", "score1": null, "score2": null, "played": false},
+        {"id": "GF_3", "team1Id": "Team21", "team2Id": "Team23", "score1": null, "score2": null, "played": false},
+        {"id": "GF_4", "team1Id": "Team22", "team2Id": "Team24", "score1": null, "score2": null, "played": false},
+        {"id": "GF_5", "team1Id": "Team21", "team2Id": "Team24", "score1": null, "score2": null, "played": false},
+        {"id": "GF_6", "team1Id": "Team22", "team2Id": "Team23", "score1": null, "score2": null, "played": false}
+      ]
+    }
+  },
+  "knockout": {
+    "serieA": {
+      "roundOf16": [
+        {"id": "K_A16_1", "label": "Nhất A vs Nhì B", "team1Id": "Team01", "team2Id": "Team06", "score1": null, "score2": null, "played": false},
+        {"id": "K_A16_2", "label": "Nhất C vs Nhì D", "team1Id": "Team09", "team2Id": "Team14", "score1": null, "score2": null, "played": false},
+        {"id": "K_A16_3", "label": "Nhất E vs Nhì F", "team1Id": "Team17", "team2Id": "Team22", "score1": null, "score2": null, "played": false},
+        {"id": "K_A16_4", "label": "Nhất B vs Nhì A", "team1Id": "Team05", "team2Id": "Team02", "score1": null, "score2": null, "played": false},
+        {"id": "K_A16_5", "label": "Nhất D vs Nhì C", "team1Id": "Team13", "team2Id": "Team10", "score1": null, "score2": null, "played": false},
+        {"id": "K_A16_6", "label": "Nhất F vs Nhì E", "team1Id": "Team21", "team2Id": "Team18", "score1": null, "score2": null, "played": false}
+      ],
+      "quarterfinals": [
+        {"id": "K_AQ_1", "label": "Tứ Kết 1", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_AQ_2", "label": "Tứ Kết 2", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_AQ_3", "label": "Tứ Kết 3", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_AQ_4", "label": "Tứ Kết 4", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+      ],
+      "semifinals": [
+        {"id": "K_AS_1", "label": "Bán Kết 1", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_AS_2", "label": "Bán Kết 2", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+      ],
+      "final": {"id": "K_AF_1", "label": "Chung Kết Serie A", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+    },
+    "serieB": {
+      "roundOf16": [
+        {"id": "K_B16_1", "label": "Ba A vs Tư B", "team1Id": "Team03", "team2Id": "Team08", "score1": null, "score2": null, "played": false},
+        {"id": "K_B16_2", "label": "Ba C vs Tư D", "team1Id": "Team11", "team2Id": "Team16", "score1": null, "score2": null, "played": false},
+        {"id": "K_B16_3", "label": "Ba E vs Tư F", "team1Id": "Team19", "team2Id": "Team24", "score1": null, "score2": null, "played": false},
+        {"id": "K_B16_4", "label": "Ba B vs Tư A", "team1Id": "Team07", "team2Id": "Team04", "score1": null, "score2": null, "played": false},
+        {"id": "K_B16_5", "label": "Ba D vs Tư C", "team1Id": "Team15", "team2Id": "Team12", "score1": null, "score2": null, "played": false},
+        {"id": "K_B16_6", "label": "Ba F vs Tư E", "team1Id": "Team23", "team2Id": "Team20", "score1": null, "score2": null, "played": false}
+      ],
+      "quarterfinals": [
+        {"id": "K_BQ_1", "label": "Tứ Kết B1", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_BQ_2", "label": "Tứ Kết B2", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_BQ_3", "label": "Tứ Kết B3", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_BQ_4", "label": "Tứ Kết B4", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+      ],
+      "semifinals": [
+        {"id": "K_BS_1", "label": "Bán Kết B1", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_BS_2", "label": "Bán Kết B2", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+      ],
+      "final": {"id": "K_BF_1", "label": "Chung Kết Serie B", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+    }
+  },
+  "results": {
+    "championA": "",
+    "runnerUpA": "",
+    "championB": "",
+    "runnerUpB": ""
+  }
+}
