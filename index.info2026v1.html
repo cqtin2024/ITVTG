@@ -1,1347 +1,276 @@
-<!doctype html>
-<html lang="vi">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ITGVT Pickleball Tournament 2026</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root {
-      --primary: #007BFF;
-      --accent: #FFC107;
-      --header-bg: #15203D;
-      --body-bg: #EFF4F9;
-      --content-bg: #FFFFFF;
-      --text-dark: #333333;
-      --text-muted: #666666;
-      --H-HEADER: 115px;
-      --H-TABS: 40px;
-      --success: #28a745;
-      --danger: #dc3545;
-      --soft-primary: #E9F4FF;
-      --soft-accent: #FFF8E1;
-    }
-    body {
-      background-color: var(--body-bg);
-      color: var(--text-dark);
-      overflow-x: hidden;
-      font-family: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-    }
-    #content-carousel {
-      display: flex;
-      width: 500vw;
-      transition: transform .35s cubic-bezier(0.25,1,0.5,1);
-    }
-    .swipe-section {
-      width: 100vw;
-      flex-shrink: 0;
-      padding: 1rem;
-      min-height: calc(100vh - 155px);
-      overflow-y: auto;
-    }
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 30;
-      border-bottom: 4px solid var(--primary);
-      background: var(--header-bg);
-      box-shadow: 0 4px 15px rgba(0,0,0,.4);
-      padding: .3rem 1rem .1rem 1rem;
-      height: var(--H-HEADER);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .header-main-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: .75rem;
-      flex-grow: 1;
-    }
-    .header-title {
-      font-size: 1.05rem!important;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 0;
-      line-height: 1.25;
-      text-align: center;
-    }
-    .header-subtitle {
-      color: #B0BEC5;
-      line-height: 1.2;
-      margin-top: 0;
-      font-size: .72rem;
-    }
-    #tab-controls-container {
-      position: fixed;
-      top: var(--H-HEADER);
-      left: 0;
-      right: 0;
-      z-index: 25;
-      background: var(--body-bg);
-      box-shadow: 0 2px 5px rgba(0,0,0,.1);
-      padding: .3rem 0;
-    }
-    #main-content-wrapper {
-      padding-top: calc(var(--H-HEADER) + var(--H-TABS))!important;
-      overflow-x: hidden;
-    }
-    #statusMessage {
-      font-size: .72rem!important;
-      line-height: 1;
-      color: #B0BEC5;
-      text-align: center;
-    }
-    .status-icon {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      background: transparent;
-      margin-left: 5px;
-      vertical-align: middle;
-    }
-    .status-success { background-color: var(--success); }
-    .status-error { background-color: var(--danger); }
-    
-    .tab-btn {
-      background: #fff;
-      color: #15203D;
-      transition: all .2s ease;
-      font-size: .85rem;
-      border: 1px solid #B0BEC5;
-      font-weight: 600;
-      width: 18%;
-    }
-    .active-primary {
-      background-color: var(--primary)!important;
-      color: #fff!important;
-      border-color: var(--primary)!important;
-    }
-    .active-accent {
-      background-color: var(--accent)!important;
-      color: var(--header-bg)!important;
-      border-color: var(--accent)!important;
-    }
-    
-    .section-card {
-      background: #fff;
-      color: var(--text-dark);
-      border-radius: 1rem;
-      box-shadow: 0 6px 16px rgba(0,0,0,.08);
-      padding: 1rem;
-    }
-    .section-heading {
-      color: var(--primary);
-      font-weight: 800;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    
-    .info-block {
-      padding: .9rem;
-      border-left: 4px solid var(--primary);
-      background: var(--soft-primary);
-      border-radius: .75rem;
-    }
-    .info-block.warning {
-      border-left-color: var(--accent);
-      background: var(--soft-accent);
-    }
-    .text-header { color: var(--header-bg); }
-    
-    .accordion-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      user-select: none;
-    }
-    .accordion-icon {
-      transition: transform 0.2s ease;
-      margin-left: auto;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-    .accordion-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease-out, opacity 0.2s ease;
-      opacity: 0;
-    }
-    .info-block.active .accordion-content {
-      max-height: 1500px;
-      opacity: 1;
-      margin-top: 0.5rem;
-    }
-    .info-block.active .accordion-icon {
-      transform: rotate(180deg);
-    }
-
-    #refresh-btn, #toggle-refresh-btn {
-      position: fixed;
-      right: 20px;
-      z-index: 50;
-      color: white;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0,0,0,.3);
-    }
-    #refresh-btn {
-      bottom: 20px;
-      background: var(--primary);
-      padding: 14px;
-      border-radius: 9999px;
-    }
-    #toggle-refresh-btn {
-      bottom: 80px;
-      background: var(--success);
-      padding: 10px 14px;
-      border-radius: 9999px;
-      font-size: .8rem;
-      min-width: 70px;
-      text-align: center;
-    }
-    #toggle-refresh-btn.off { background: var(--danger); }
-    
-    .active-subtab {
-      background-color: var(--primary);
-      color: #fff;
-    }
-
-    @media (min-width: 992px) {
-      header {
-        position: static!important;
-        height: auto!important;
-        padding: .5rem 1rem!important;
-        box-shadow: 0 2px 8px rgba(0,0,0,.1);
-      }
-      .header-main-content { justify-content: flex-start!important; }
-      .header-title { text-align: left; font-size: 1.15rem!important; }
-      #tab-controls-container { position: static!important; }
-      #main-content-wrapper { padding-top: 0!important; }
-      #content-carousel {
-        width: auto!important;
-        display: block!important;
-        transform: none!important;
-        transition: none!important;
-      }
-      .swipe-section {
-        width: 100%!important;
-        display: none;
-        padding: 1rem 0;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="header-main-content">
-      <div class="text-center lg:text-left">
-        <h1 id="headerTitle" class="header-title">ITGVT Pickleball Tournament 2026 - Season 2</h1>
-        <p class="header-subtitle">
-          <span id="headerDate">Đang tải ngày thi đấu...</span>
-          <span id="dataStatusIcon" class="status-icon"></span>
-        </p>
-      </div>
-    </div>
-    <div id="statusMessage">Đang tải dữ liệu...</div>
-  </header>
-
-  <div id="tab-controls-container">
-    <div id="tab-controls" class="flex justify-around max-w-4xl mx-auto px-2">
-      <button onclick="goToSection(0)" class="tab-btn active-accent mx-1 px-1 py-2 rounded-full shadow-md text-xs sm:text-sm">INFO</button>
-      <button onclick="goToSection(1)" class="tab-btn mx-1 px-1 py-2 rounded-full shadow-md text-xs sm:text-sm">GROUP</button>
-      <button onclick="goToSection(2)" class="tab-btn mx-1 px-1 py-2 rounded-full shadow-md text-xs sm:text-sm">QUART</button>
-      <button onclick="goToSection(3)" class="tab-btn mx-1 px-1 py-2 rounded-full shadow-md text-xs sm:text-sm">FINAL</button>
-      <button onclick="goToSection(4)" class="tab-btn mx-1 px-1 py-2 rounded-full shadow-md text-xs sm:text-sm">TEAM</button>
-    </div>
-  </div>
-
-  <main id="main-content-wrapper" class="overflow-hidden">
-    <div id="content-carousel">
-      <!-- TAB INFO -->
-      <section class="swipe-section" id="info">
-        <div class="section-card">
-          <h3 class="section-heading text-lg">THÔNG TIN GIẢI ĐẤU</h3>
-          <p class="text-sm text-gray-600">Đang tải thông tin...</p>
-        </div>
-      </section>
-
-      <!-- TAB GROUP -->
-      <section class="swipe-section" id="rounds">
-        <div class="section-card">
-          <h3 class="section-heading text-lg">VÒNG BẢNG (GROUP STAGE)</h3>
-          <div class="flex justify-center mb-4 flex-wrap gap-2" id="group-nav">
-            <!-- Render nút chuyển bảng nhanh bằng JS -->
-          </div>
-          <div id="group-details-container" class="space-y-6">
-            <!-- Bảng xếp hạng và các trận đấu hiển thị động ở đây -->
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB QUART (Các vòng trong) -->
-      <section class="swipe-section" id="quarterfinals">
-        <div class="section-card">
-          <h3 class="section-heading text-lg">VÒNG LOẠI TRỰC TIẾP</h3>
-          
-          <!-- Sub-tabs chọn Serie A / Serie B -->
-          <div class="flex justify-center space-x-2 mb-4 bg-gray-100 p-1 rounded-lg max-w-xs mx-auto">
-            <button onclick="switchQuartSerie('serieA')" id="btn-quart-serieA" class="flex-1 py-1 px-3 text-sm font-semibold rounded-md active-subtab">Serie A</button>
-            <button onclick="switchQuartSerie('serieB')" id="btn-quart-serieB" class="flex-1 py-1 px-3 text-sm font-semibold rounded-md text-gray-700">Serie B</button>
-          </div>
-
-          <div id="quart-content" class="space-y-6">
-            <!-- Nội dung thi đấu các vòng loại trực tiếp của từng Serie được render tại đây -->
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB FINAL -->
-      <section class="swipe-section" id="knockout">
-        <div class="section-card">
-          <h3 class="section-heading text-lg">TRẬN CHUNG KẾT CÁC SERIE</h3>
-          <div class="space-y-6" id="final-tab-content">
-            <!-- Nơi hiển thị và cập nhật kết quả hai trận chung kết của Serie A & Serie B cùng một màn hình -->
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB TEAM (Quản lý VĐV & Team) -->
-      <section class="swipe-section" id="players">
-        <div class="section-card">
-          <h3 class="section-heading text-lg">DANH SÁCH & QUẢN LÝ ĐỘI ĐẤU</h3>
-          
-          <div class="flex justify-center space-x-2 mb-4 bg-gray-100 p-1 rounded-lg max-w-xs mx-auto">
-            <button onclick="switchTeamView('teams')" id="btn-view-teams" class="flex-1 py-1 px-3 text-sm font-semibold rounded-md active-subtab">Cặp Đấu (Teams)</button>
-            <button onclick="switchTeamView('players')" id="btn-view-players" class="flex-1 py-1 px-3 text-sm font-semibold rounded-md text-gray-700">VĐV (Players)</button>
-          </div>
-
-          <!-- Form cập nhật/thêm mới ẩn mặc định -->
-          <div id="editor-panel" class="hidden bg-gray-50 border border-gray-200 p-4 rounded-xl mb-4">
-            <h4 id="editor-title" class="font-bold text-blue-600 mb-2">Chỉnh sửa</h4>
-            <div id="editor-fields" class="space-y-3"></div>
-            <div class="flex justify-end gap-2 mt-3">
-              <button onclick="cancelEditor()" class="px-3 py-1 bg-gray-300 text-sm font-semibold rounded-lg">Hủy</button>
-              <button onclick="saveEditor()" class="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded-lg">Lưu lại</button>
-            </div>
-          </div>
-
-          <div id="team-view-content" class="overflow-x-auto">
-            <!-- Danh sách render tại đây -->
-          </div>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <button id="toggle-refresh-btn" class="off" onclick="toggleAutoRefresh()">Auto OFF</button>
-  <button id="refresh-btn" onclick="manualRefresh()">⟳</button>
-
-  <script>
-    // Cấu hình URL file JSON dự phòng nếu chạy trên server
-    const DATA_URL = './data/state301.info2026v1.json'; 
-    const REFRESH_INTERVAL = 30000; 
-    const carousel = document.getElementById('content-carousel'); 
-    const mainContent = document.getElementById('main-content-wrapper'); 
-    
-    let currentIndex = 0; 
-    let refreshIntervalId = null; 
-    let isAutoRefreshEnabled = false; 
-    let appState = null;
-    
-    // Quản lý các view nội bộ
-    let currentQuartSerie = 'serieA'; // 'serieA' hoặc 'serieB'
-    let currentTeamView = 'teams'; // 'teams' hoặc 'players'
-    let currentEditingItem = null; // {type: 'player'|'team', id: string}
-
-    function safeArray(value){return Array.isArray(value)?value:[];}
-    function formatDate(value){
-      if(!value) return 'N/A'; 
-      if(/^\d{4}-\d{2}-\d{2}$/.test(value)){
-        const [y,m,d] = value.split('-'); 
-        return `${d}/${m}/${y}`;
-      } 
-      return value;
-    }
-    function escapeHtml(value){
-      return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#39;');
-    }
-    
-    function getYoutubeEmbed(url){
-      if(!url) return null; 
-      try {
-        const parsed = new URL(url); 
-        const listId = parsed.searchParams.get('list'); 
-        const videoId = parsed.searchParams.get('v'); 
-        if(listId) return {type:'playlist',embedUrl:`https://www.youtube.com/embed/videoseries?list=${listId}&rel=0`}; 
-        if(videoId) return {type:'video',embedUrl:`https://www.youtube.com/embed/${videoId}?rel=0`};
-      } catch(e) {
-        return null;
-      } 
-      return null;
-    }
-
-    function updateRefreshButtonUI(){
-      const btn = document.getElementById('toggle-refresh-btn'); 
-      if(isAutoRefreshEnabled){
-        btn.classList.remove('off'); 
-        btn.innerHTML='Auto ON';
-      } else {
-        btn.classList.add('off'); 
-        btn.innerHTML='Auto OFF';
-      }
-    }
-
-    function startAutoRefresh(){
-      if(refreshIntervalId) clearInterval(refreshIntervalId); 
-      refreshIntervalId = setInterval(fetchData, REFRESH_INTERVAL); 
-      isAutoRefreshEnabled = true; 
-      updateRefreshButtonUI();
-    } 
-    function stopAutoRefresh(){
-      if(refreshIntervalId) clearInterval(refreshIntervalId); 
-      refreshIntervalId = null; 
-      isAutoRefreshEnabled = false; 
-      updateRefreshButtonUI();
-    } 
-    function toggleAutoRefresh(){
-      if(isAutoRefreshEnabled) stopAutoRefresh(); else startAutoRefresh();
-    } 
-    
-    function manualRefresh(){
-      const btn = document.getElementById('refresh-btn'); 
-      btn.disabled = true; 
-      const wasAuto = isAutoRefreshEnabled; 
-      if(wasAuto) stopAutoRefresh(); 
-      fetchData().finally(() => setTimeout(() => {
-        btn.disabled = false; 
-        if(wasAuto) startAutoRefresh();
-      }, 800));
-    }
-
-    function updateTabs(){
-      document.querySelectorAll('#tab-controls button').forEach((btn, index) => {
-        btn.classList.remove('active-primary', 'active-accent'); 
-        if(index === currentIndex){
-          btn.classList.add(index === 0 || index === 4 ? 'active-accent' : 'active-primary');
-        }
-      });
-    }
-
-    function goToSection(index){
-      currentIndex = Math.max(0, Math.min(4, index)); 
-      updateTabs(); 
-      window.scrollTo({top:0, behavior:'smooth'}); 
-      const isDesktop = window.innerWidth >= 992; 
-      const sections = document.querySelectorAll('.swipe-section'); 
-      if(isDesktop){
-        sections.forEach((section, i) => section.style.display = (i === currentIndex ? 'block' : 'none')); 
-        carousel.style.transform = 'translateX(0)'; 
-        carousel.style.transition = 'none';
-      } else {
-        sections.forEach(section => section.style.display = 'block'); 
-        carousel.style.transition = 'transform .35s cubic-bezier(0.25,1,0.5,1)'; 
-        carousel.style.transform = `translateX(${currentIndex * -100}vw)`;
-      }
-    }
-
-    function updateHeader(data){
-      const t = data?.tournament || {}; 
-      document.title = t.name || 'ITGVT Pickleball Tournament'; 
-      document.getElementById('headerTitle').textContent = t.name || 'ITGVT Pickleball Tournament'; 
-      document.getElementById('headerDate').textContent = `Ngày thi đấu: ${formatDate(t.startDate)} | ${t.startTime || ''} - ${t.endTime || ''}`;
-    }
-
-    function toggleAccordion(element) {
-      const block = element.closest('.info-block'); 
-      if(block) block.classList.toggle('active');
-    }
-
-    // Tìm kiếm Tên Team dựa trên ID
-    function getTeamName(teamId) {
-      if(!teamId) return "Chờ xác định";
-      const team = safeArray(appState?.teams).find(t => t.id === teamId);
-      if(!team) return escapeHtml(teamId);
-      
-      const p1 = safeArray(appState?.players).find(p => p.id === team.player1Id);
-      const p2 = safeArray(appState?.players).find(p => p.id === team.player2Id);
-      const pNames = (p1 && p2) ? ` (${p1.name} - ${p2.name})` : '';
-      return `${escapeHtml(team.name)}${pNames}`;
-    }
-
-    // --- TAB 1: RENDER INFO ---
-    function renderInfo(tournament){
-      const c = document.getElementById('info'); 
-      if(!tournament){
-        c.innerHTML = '<div class="section-card"><p class="text-sm text-gray-600">Thông tin giải đấu hiện chưa có.</p></div>'; 
-        return;
-      } 
-      const photoLink = tournament.links?.photos; 
-      const videoLink = tournament.links?.videos; 
-      const youtube = getYoutubeEmbed(videoLink); 
-      const awards = safeArray(tournament.awards).map(item => `<li>${escapeHtml(item)}</li>`).join('') || '<li>N/A</li>'; 
-      const contacts = safeArray(tournament.registration?.supportContacts).map(i => `<li><strong>${escapeHtml(i.name || '')}</strong>: ${escapeHtml(i.phone || '')}</li>`).join('') || '<li>N/A</li>'; 
-      const rules = safeArray(tournament.rules).map(item => `<li>${escapeHtml(item)}</li>`).join('') || '<li>N/A</li>'; 
-      const photoHtml = photoLink ? `<div class="info-block"><div class="accordion-header" onclick="toggleAccordion(this)"><p class="text-sm font-semibold text-gray-700">Album hình ảnh:</p><span class="accordion-icon">▼</span></div><div class="accordion-content"><a href="${escapeHtml(photoLink)}" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-blue-600 hover:underline inline-block mt-1">📂 Mở thư mục ảnh</a></div></div>` : ''; 
-      const videoHtml = videoLink ? (youtube ? `<div class="info-block"><div class="accordion-header" onclick="toggleAccordion(this)"><p class="text-sm font-semibold text-gray-700">Video clips:</p><span class="accordion-icon">▼</span></div><div class="accordion-content mb-2"><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;" class="mt-1"><iframe src="${escapeHtml(youtube.embedUrl)}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:8px;"></iframe></div><a href="${escapeHtml(videoLink)}" target="_blank" rel="noopener noreferrer" class="block text-center mt-2 text-sm font-semibold text-blue-600 hover:underline">Mở trên YouTube ↗️</a></div></div>` : `<div class="info-block"><div class="accordion-header" onclick="toggleAccordion(this)"><p class="text-sm font-semibold text-gray-700">Video clips:</p><span class="accordion-icon">▼</span></div><div class="accordion-content"><a href="${escapeHtml(videoLink)}" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-blue-600 hover:underline inline-block mt-1">▶️ Xem video YouTube</a></div></div>`) : '';
-      
-      c.innerHTML = `
-        <div class="section-card">
-          <h3 class="section-heading text-xl">${escapeHtml(tournament.name || 'Thông tin giải đấu')}</h3>
-          <div class="space-y-4">
-            <div class="info-block active">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                <p class="text-sm font-semibold text-gray-700">Đơn vị tổ chức & Thời gian:</p>
-                <span class="accordion-icon">▼</span>
-              </div>
-              <div class="accordion-content">
-                <p class="text-lg font-bold text-header">${escapeHtml(tournament.organizer || 'N/A')}</p>
-                <p class="text-sm text-gray-700">Thời gian thi đấu: <strong>${escapeHtml(formatDate(tournament.startDate))}</strong> | ${escapeHtml(tournament.startTime || '')} - ${escapeHtml(tournament.endTime || '')}</p>
-                <p class="text-sm text-gray-700 mt-2"><strong>Slogan:</strong> ${escapeHtml(tournament.slogan || 'N/A')}</p>
-              </div>
-            </div>
-            <div class="info-block warning active">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                <p class="text-sm font-semibold text-gray-700">Địa điểm thi đấu:</p>
-                <span class="accordion-icon">▼</span>
-              </div>
-              <div class="accordion-content">
-                <p class="text-lg font-bold text-header">${escapeHtml(tournament.venue?.name || 'N/A')}</p>
-              </div>
-            </div>
-            <div class="info-block">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                <p class="text-sm font-semibold text-gray-700">Mục đích & Đối tượng:</p>
-                <span class="accordion-icon">▼</span>
-              </div>
-              <div class="accordion-content">
-                <p class="text-sm text-gray-700">${escapeHtml(tournament.purpose || 'N/A')}</p>
-                <p class="text-sm text-gray-700 mt-2"><strong>Đối tượng:</strong> ${escapeHtml(tournament.participants || 'N/A')}</p>
-              </div>
-            </div>
-            <div class="info-block">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                <p class="text-sm font-semibold text-gray-700">Giải thưởng & Sự kiện:</p>
-                <span class="accordion-icon">▼</span>
-              </div>
-              <div class="accordion-content">
-                <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">${awards}</ul>
-                <p class="text-sm text-gray-700 mt-2"><strong>Gala:</strong> ${escapeHtml(tournament.gala?.time || 'N/A')}</p>
-              </div>
-            </div>
-            <div class="info-block warning">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                <p class="text-sm font-semibold text-gray-700">Đăng ký & Lệ phí:</p>
-                <span class="accordion-icon">▼</span>
-              </div>
-              <div class="accordion-content">
-                <p class="text-sm text-gray-700"><strong>Form đăng ký:</strong> <a href="${escapeHtml(tournament.registration?.formUrl || '#')}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-semibold hover:underline">${escapeHtml(tournament.registration?.formUrl || 'N/A')}</a></p>
-                <p class="text-sm text-gray-700"><strong>Hạn đăng ký:</strong> ${escapeHtml(formatDate(tournament.registration?.deadline) || 'N/A')}</p>
-                <p class="text-sm text-gray-700"><strong>Chỉ tiêu:</strong> ${escapeHtml(tournament.registration?.quota || 'N/A')}</p>
-                <p class="text-sm text-gray-700"><strong>Lệ phí:</strong> ${escapeHtml(tournament.registration?.feePerPlayer || 'N/A')}</p>
-                <p class="text-sm text-gray-700 mt-1">${escapeHtml(tournament.registration?.zaloNote || '')}</p>
-                <div class="mt-2">
-                  <p class="text-sm font-semibold text-gray-700">Liên hệ hỗ trợ:</p>
-                  <ul class="text-sm text-gray-700 list-disc pl-5">${contacts}</ul>
-                </div>
-                <p class="text-sm text-gray-700 mt-2"><strong>Nội dung chuyển khoản:</strong> ${escapeHtml(tournament.registration?.transferContent || 'N/A')}</p>
-                <p class="text-sm text-gray-700 mt-1">${escapeHtml(tournament.registration?.paymentNote || '')}</p>
-                <p class="text-sm text-gray-700 mt-1"><strong>Lưu ý:</strong> ${escapeHtml(tournament.registration?.refundPolicy || '')}</p>
-              </div>
-            </div>
-            <div class="info-block">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                <p class="text-sm font-semibold text-gray-700">Thể thức thi đấu:</p>
-                <span class="accordion-icon">▼</span>
-              </div>
-              <div class="accordion-content">
-                <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">
-                  <li>${escapeHtml(tournament.competitionFormat?.headline || 'N/A')}</li>
-                  <li>${escapeHtml(tournament.competitionFormat?.pointsRule || 'N/A')}</li>
-                  <li>${escapeHtml(tournament.competitionFormat?.tieBreak || 'N/A')}</li>
-                  <li>${escapeHtml(tournament.competitionFormat?.serieA || 'N/A')}</li>
-                  <li>${escapeHtml(tournament.competitionFormat?.serieB || 'N/A')}</li>
-                  <li>${escapeHtml(tournament.competitionFormat?.round16Rule || 'N/A')}</li>
-                  <li>${escapeHtml(tournament.competitionFormat?.scoring || 'N/A')}</li>
-                </ul>
-              </div>
-            </div>
-            <div class="info-block">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                <p class="text-sm font-semibold text-gray-700">Luật thi đấu & Trọng tài:</p>
-                <span class="accordion-icon">▼</span>
-              </div>
-              <div class="accordion-content">
-                <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">${rules}</ul>
-                <p class="text-sm text-gray-700 mt-2"><strong>Trọng tài:</strong> ${escapeHtml(tournament.referee?.management || 'N/A')}</p>
-                <p class="text-sm text-gray-700 mt-1">${escapeHtml(tournament.referee?.decision || '')}</p>
-                <p class="text-sm text-gray-700 mt-1">${escapeHtml(tournament.referee?.fairplay || '')}</p>
-              </div>
-            </div>
-            ${photoHtml}
-            ${videoHtml}
-          </div>
-        </div>`;
-    }
-
-    // --- TAB 2: VÒNG BẢNG & TÍNH ĐIỂM ĐỘNG ---
-    function renderGroups(groupsData) {
-      const navContainer = document.getElementById('group-nav');
-      const detailsContainer = document.getElementById('group-details-container');
-      
-      navContainer.innerHTML = '';
-      detailsContainer.innerHTML = '';
-
-      if (!groupsData || Object.keys(groupsData).length === 0) {
-        detailsContainer.innerHTML = '<p class="text-center text-gray-500">Chưa có thông tin vòng bảng.</p>';
-        return;
-      }
-
-      Object.entries(groupsData).forEach(([groupId, g], idx) => {
-        // Nút chuyển hướng nhanh
-        const navBtn = document.createElement('button');
-        navBtn.className = "px-3 py-1 bg-gray-200 hover:bg-blue-600 hover:text-white rounded-full font-bold text-sm transition";
-        navBtn.textContent = `Bảng ${groupId}`;
-        navBtn.onclick = () => {
-          document.getElementById(`group-card-${groupId}`).scrollIntoView({behavior: 'smooth', block: 'center'});
-        };
-        navContainer.appendChild(navBtn);
-
-        // Tính điểm động cho từng đội trong bảng dựa vào danh sách matches
-        const standings = {};
-        g.teamIds.forEach(tId => {
-          standings[tId] = { id: tId, played: 0, won: 0, lost: 0, points: 0, scoreDiff: 0 };
-        });
-
-        g.matches.forEach(m => {
-          if (m.played && m.score1 !== null && m.score2 !== null) {
-            const s1 = parseInt(m.score1);
-            const s2 = parseInt(m.score2);
-            
-            if (standings[m.team1Id]) {
-              standings[m.team1Id].played += 1;
-              standings[m.team1Id].scoreDiff += (s1 - s2);
-              if (s1 > s2) {
-                standings[m.team1Id].won += 1;
-                standings[m.team1Id].points += 1;
-              } else {
-                standings[m.team1Id].lost += 1;
-              }
-            }
-
-            if (standings[m.team2Id]) {
-              standings[m.team2Id].played += 1;
-              standings[m.team2Id].scoreDiff += (s2 - s1);
-              if (s2 > s1) {
-                standings[m.team2Id].won += 1;
-                standings[m.team2Id].points += 1;
-              } else {
-                standings[m.team2Id].lost += 1;
-              }
-            }
-          }
-        });
-
-        // Sắp xếp BXH dựa trên Điểm số -> Hiệu số
-        const sortedTeams = Object.values(standings).sort((a, b) => {
-          if (b.points !== a.points) return b.points - a.points;
-          return b.scoreDiff - a.scoreDiff;
-        });
-
-        // Render khối bảng xếp hạng và các trận đấu
-        let rowsHtml = '';
-        sortedTeams.forEach((team, rIdx) => {
-          const rankColor = rIdx < 2 ? "bg-green-100 font-bold" : "bg-orange-50";
-          rowsHtml += `
-            <tr class="${rankColor} border-b text-xs sm:text-sm">
-              <td class="px-2 py-2 text-center font-bold">${rIdx + 1}</td>
-              <td class="px-2 py-2 font-medium">${getTeamName(team.id)}</td>
-              <td class="px-1 py-2 text-center">${team.played}</td>
-              <td class="px-1 py-2 text-center text-green-700">${team.won}</td>
-              <td class="px-1 py-2 text-center text-red-600">${team.lost}</td>
-              <td class="px-1 py-2 text-center font-bold">${team.scoreDiff > 0 ? '+' : ''}${team.scoreDiff}</td>
-              <td class="px-2 py-2 text-center font-bold text-blue-600">${team.points}</td>
-            </tr>
-          `;
-        });
-
-        let matchesHtml = '';
-        g.matches.forEach(m => {
-          matchesHtml += `
-            <div class="flex items-center justify-between border-b py-2 text-xs sm:text-sm">
-              <div class="flex-1 text-right pr-2 font-semibold text-gray-700">${getTeamName(m.team1Id)}</div>
-              <div class="flex items-center gap-1 justify-center bg-gray-100 rounded-lg px-2 py-1 min-w-[70px]">
-                <input type="number" value="${m.score1 ?? ''}" placeholder="-" 
-                       onchange="updateGroupMatchScore('${groupId}', '${m.id}', 1, this.value)"
-                       class="w-8 text-center bg-white border rounded font-bold text-blue-600 text-xs py-0.5">
-                <span class="text-gray-400">:</span>
-                <input type="number" value="${m.score2 ?? ''}" placeholder="-" 
-                       onchange="updateGroupMatchScore('${groupId}', '${m.id}', 2, this.value)"
-                       class="w-8 text-center bg-white border rounded font-bold text-blue-600 text-xs py-0.5">
-              </div>
-              <div class="flex-1 text-left pl-2 font-semibold text-gray-700">${getTeamName(m.team2Id)}</div>
-            </div>
-          `;
-        });
-
-        const groupBlock = `
-          <div id="group-card-${groupId}" class="border border-blue-100 rounded-xl p-3 bg-slate-50 shadow-sm">
-            <h4 class="font-black text-blue-700 border-b pb-1 mb-2 text-md flex justify-between items-center">
-              <span>BẢNG ${groupId}</span>
-              <span class="text-xs text-gray-500 font-normal">Nhất & Nhì vào Serie A, Ba & Tư vào Serie B</span>
-            </h4>
-            
-            <div class="overflow-x-auto mb-3">
-              <table class="w-full text-left bg-white rounded-lg shadow-sm">
-                <thead>
-                  <tr class="bg-blue-600 text-white text-xs">
-                    <th class="px-2 py-1.5 text-center w-8">Hạng</th>
-                    <th class="px-2 py-1.5">Đội đấu</th>
-                    <th class="px-1 py-1.5 text-center w-8">Trận</th>
-                    <th class="px-1 py-1.5 text-center w-8">T</th>
-                    <th class="px-1 py-1.5 text-center w-8">B</th>
-                    <th class="px-1 py-1.5 text-center w-10">HS</th>
-                    <th class="px-2 py-1.5 text-center w-10">Điểm</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${rowsHtml}
-                </tbody>
-              </table>
-            </div>
-
-            <h5 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Danh sách trận đấu:</h5>
-            <div class="bg-white rounded-lg p-2 space-y-1 shadow-inner">
-              ${matchesHtml}
-            </div>
-          </div>
-        `;
-        detailsContainer.innerHTML += groupBlock;
-      });
-    }
-
-    // Cập nhật điểm đấu trực tiếp trong Vòng Bảng
-    function updateGroupMatchScore(groupId, matchId, teamIndex, value) {
-      if(!appState || !appState.groups[groupId]) return;
-      const match = appState.groups[groupId].matches.find(m => m.id === matchId);
-      if(!match) return;
-
-      const intVal = value === '' ? null : parseInt(value);
-      if (teamIndex === 1) match.score1 = intVal;
-      if (teamIndex === 2) match.score2 = intVal;
-
-      // Đánh dấu trận đấu hoàn thành nếu cả 2 ô điểm được cập nhật
-      match.played = (match.score1 !== null && match.score2 !== null);
-      
-      // Vẽ lại bảng đấu & tính toán lại tự động
-      renderGroups(appState.groups);
-      triggerDataStatusIcon(true);
-    }
-
-    // --- TAB 3: QUART (VÒNG LOẠI TRỰC TIẾP SERIE A / SERIE B) ---
-    function switchQuartSerie(serie) {
-      currentQuartSerie = serie;
-      document.getElementById('btn-quart-serieA').classList.toggle('active-subtab', serie === 'serieA');
-      document.getElementById('btn-quart-serieB').classList.toggle('active-subtab', serie === 'serieB');
-      
-      // Đổi màu chữ nút còn lại
-      document.getElementById('btn-quart-serieA').classList.toggle('text-gray-700', serie !== 'serieA');
-      document.getElementById('btn-quart-serieB').classList.toggle('text-gray-700', serie !== 'serieB');
-      
-      renderQuart();
-    }
-
-    function renderQuart() {
-      const container = document.getElementById('quart-content');
-      if(!appState || !appState.knockout) return;
-
-      const serieData = appState.knockout[currentQuartSerie];
-      if(!serieData) {
-        container.innerHTML = '<p class="text-gray-500 text-center">Không tìm thấy dữ liệu Serie này.</p>';
-        return;
-      }
-
-      // Xây dựng HTML cho mỗi trận Knockout
-      const buildMatchEditorHtml = (match, listName) => {
-        return `
-          <div class="bg-white border rounded-lg p-3 shadow-sm space-y-2 text-xs sm:text-sm">
-            <div class="flex justify-between items-center border-b pb-1">
-              <span class="font-bold text-blue-700">${escapeHtml(match.label)}</span>
-              <span class="text-gray-400 text-xs">ID: ${match.id}</span>
-            </div>
-            
-            <div class="flex flex-col gap-2">
-              <div class="flex items-center justify-between">
-                <div class="flex-1">
-                  <select onchange="updateKOId('${currentQuartSerie}', '${listName}', '${match.id}', 1, this.value)" class="w-full border rounded px-1 py-0.5 text-xs">
-                    <option value="">-- Chọn Đội 1 --</option>
-                    ${safeArray(appState.teams).map(t => `<option value="${t.id}" ${match.team1Id === t.id ? 'selected' : ''}>${t.name}</option>`).join('')}
-                  </select>
-                </div>
-                <div class="w-16 ml-2">
-                  <input type="number" placeholder="Điểm 1" value="${match.score1 ?? ''}" 
-                         onchange="updateKOMatchScore('${currentQuartSerie}', '${listName}', '${match.id}', 1, this.value)"
-                         class="w-full text-center border rounded font-bold text-xs py-0.5">
-                </div>
-              </div>
-
-              <div class="flex items-center justify-between">
-                <div class="flex-1">
-                  <select onchange="updateKOId('${currentQuartSerie}', '${listName}', '${match.id}', 2, this.value)" class="w-full border rounded px-1 py-0.5 text-xs">
-                    <option value="">-- Chọn Đội 2 --</option>
-                    ${safeArray(appState.teams).map(t => `<option value="${t.id}" ${match.team2Id === t.id ? 'selected' : ''}>${t.name}</option>`).join('')}
-                  </select>
-                </div>
-                <div class="w-16 ml-2">
-                  <input type="number" placeholder="Điểm 2" value="${match.score2 ?? ''}" 
-                         onchange="updateKOMatchScore('${currentQuartSerie}', '${listName}', '${match.id}', 2, this.value)"
-                         class="w-full text-center border rounded font-bold text-xs py-0.5">
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      };
-
-      let r16Html = safeArray(serieData.roundOf16).map(m => buildMatchEditorHtml(m, 'roundOf16')).join('');
-      let qfHtml = safeArray(serieData.quarterfinals).map(m => buildMatchEditorHtml(m, 'quarterfinals')).join('');
-      let sfHtml = safeArray(serieData.semifinals).map(m => buildMatchEditorHtml(m, 'semifinals')).join('');
-
-      container.innerHTML = `
-        <div class="space-y-4">
-          <div>
-            <h4 class="font-extrabold text-blue-800 border-l-4 border-blue-600 pl-2 mb-2 text-sm sm:text-md uppercase">Vòng 1/8</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${r16Html || '<p class="text-xs text-gray-500">Chưa thiết lập</p>'}</div>
-          </div>
-          <div>
-            <h4 class="font-extrabold text-blue-800 border-l-4 border-blue-600 pl-2 mb-2 text-sm sm:text-md uppercase">Tứ Kết</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${qfHtml || '<p class="text-xs text-gray-500">Chưa thiết lập</p>'}</div>
-          </div>
-          <div>
-            <h4 class="font-extrabold text-blue-800 border-l-4 border-blue-600 pl-2 mb-2 text-sm sm:text-md uppercase">Bán Kết</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${sfHtml || '<p class="text-xs text-gray-500">Chưa thiết lập</p>'}</div>
-          </div>
-        </div>
-      `;
-    }
-
-    // Cập nhật đội thi đấu ở các vòng KO
-    function updateKOId(serie, listName, matchId, teamIndex, selectedTeamId) {
-      if(!appState || !appState.knockout[serie]) return;
-      const match = appState.knockout[serie][listName].find(m => m.id === matchId);
-      if(!match) return;
-
-      if(teamIndex === 1) match.team1Id = selectedTeamId || null;
-      if(teamIndex === 2) match.team2Id = selectedTeamId || null;
-
-      triggerDataStatusIcon(true);
-    }
-
-    // Cập nhật điểm số ở các vòng KO
-    function updateKOMatchScore(serie, listName, matchId, teamIndex, value) {
-      if(!appState || !appState.knockout[serie]) return;
-      const match = appState.knockout[serie][listName].find(m => m.id === matchId);
-      if(!match) return;
-
-      const intVal = value === '' ? null : parseInt(value);
-      if(teamIndex === 1) match.score1 = intVal;
-      if(teamIndex === 2) match.score2 = intVal;
-
-      match.played = (match.score1 !== null && match.score2 !== null);
-      triggerDataStatusIcon(true);
-    }
-
-    // --- TAB 4: CHUNG KẾT HAI SERIE CHUNG MỘT TAB ---
-    function renderFinalTab() {
-      const container = document.getElementById('final-tab-content');
-      if(!appState || !appState.knockout) return;
-
-      const finalA = appState.knockout.serieA.final;
-      const finalB = appState.knockout.serieB.final;
-
-      const buildFinalBlockHtml = (finalObj, serieLabel, championField, runnerUpField) => {
-        if(!finalObj) return `<p class="text-center text-gray-400">Chưa thiết lập trận Chung kết ${serieLabel}</p>`;
-        
-        return `
-          <div class="border border-yellow-400 bg-amber-50/40 p-4 rounded-xl shadow-md space-y-3">
-            <h4 class="font-black text-amber-800 text-sm sm:text-md border-b border-amber-200 pb-1 uppercase flex justify-between">
-              <span>CHUNG KẾT ${serieLabel}</span>
-              <span class="text-yellow-600">🏆 Cúp Vô Địch</span>
-            </h4>
-            
-            <div class="flex flex-col gap-2 text-xs sm:text-sm">
-              <div class="flex items-center justify-between">
-                <div class="flex-1">
-                  <select onchange="updateFinalId('${serieLabel}', 1, this.value)" class="w-full border rounded px-2 py-1 text-xs">
-                    <option value="">-- Chọn Đội Tranh Đai 1 --</option>
-                    ${safeArray(appState.teams).map(t => `<option value="${t.id}" ${finalObj.team1Id === t.id ? 'selected' : ''}>${t.name}</option>`).join('')}
-                  </select>
-                </div>
-                <div class="w-20 ml-2">
-                  <input type="number" placeholder="Điểm" value="${finalObj.score1 ?? ''}" 
-                         onchange="updateFinalScore('${serieLabel}', 1, this.value)"
-                         class="w-full text-center border rounded font-extrabold text-blue-600 py-1">
-                </div>
-              </div>
-
-              <div class="flex items-center justify-between">
-                <div class="flex-1">
-                  <select onchange="updateFinalId('${serieLabel}', 2, this.value)" class="w-full border rounded px-2 py-1 text-xs">
-                    <option value="">-- Chọn Đội Tranh Đai 2 --</option>
-                    ${safeArray(appState.teams).map(t => `<option value="${t.id}" ${finalObj.team2Id === t.id ? 'selected' : ''}>${t.name}</option>`).join('')}
-                  </select>
-                </div>
-                <div class="w-20 ml-2">
-                  <input type="number" placeholder="Điểm" value="${finalObj.score2 ?? ''}" 
-                         onchange="updateFinalScore('${serieLabel}', 2, this.value)"
-                         class="w-full text-center border rounded font-extrabold text-blue-600 py-1">
-                </div>
-              </div>
-            </div>
-
-            <!-- Thiết lập thủ công Nhà vô địch & Á quân -->
-            <div class="mt-4 pt-3 border-t border-dashed border-amber-200 grid grid-cols-2 gap-2 text-xs sm:text-sm">
-              <div>
-                <label class="block font-bold text-gray-700">🏆 NHÀ VÔ ĐỊCH:</label>
-                <input type="text" value="${escapeHtml(appState.results[championField] || '')}" 
-                       onchange="updateChampionText('${championField}', this.value)"
-                       placeholder="Ví dụ: Team 01" class="w-full border rounded px-2 py-1 mt-1 text-xs">
-              </div>
-              <div>
-                <label class="block font-bold text-gray-700">🥈 Á QUÂN:</label>
-                <input type="text" value="${escapeHtml(appState.results[runnerUpField] || '')}" 
-                       onchange="updateChampionText('${runnerUpField}', this.value)"
-                       placeholder="Ví dụ: Team 02" class="w-full border rounded px-2 py-1 mt-1 text-xs">
-              </div>
-            </div>
-          </div>
-        `;
-      };
-
-      container.innerHTML = `
-        <div class="space-y-6">
-          ${buildFinalBlockHtml(finalA, 'SERIE A', 'championA', 'runnerUpA')}
-          ${buildFinalBlockHtml(finalB, 'SERIE B', 'championB', 'runnerUpB')}
-        </div>
-      `;
-    }
-
-    function updateFinalId(serieLabel, teamIndex, selectedTeamId) {
-      const field = serieLabel === 'SERIE A' ? 'serieA' : 'serieB';
-      if(!appState || !appState.knockout[field]) return;
-      const finalObj = appState.knockout[field].final;
-      
-      if(teamIndex === 1) finalObj.team1Id = selectedTeamId || null;
-      if(teamIndex === 2) finalObj.team2Id = selectedTeamId || null;
-
-      triggerDataStatusIcon(true);
-    }
-
-    function updateFinalScore(serieLabel, teamIndex, value) {
-      const field = serieLabel === 'SERIE A' ? 'serieA' : 'serieB';
-      if(!appState || !appState.knockout[field]) return;
-      const finalObj = appState.knockout[field].final;
-
-      const intVal = value === '' ? null : parseInt(value);
-      if(teamIndex === 1) finalObj.score1 = intVal;
-      if(teamIndex === 2) finalObj.score2 = intVal;
-
-      finalObj.played = (finalObj.score1 !== null && finalObj.score2 !== null);
-      triggerDataStatusIcon(true);
-    }
-
-    function updateChampionText(field, val) {
-      if(!appState || !appState.results) return;
-      appState.results[field] = val;
-      triggerDataStatusIcon(true);
-    }
-
-    // --- TAB 5: TEAM & PLAYERS MANAGER (QUẢN LÝ ĐỘI NGŨ) ---
-    function switchTeamView(view) {
-      currentTeamView = view;
-      document.getElementById('btn-view-teams').classList.toggle('active-subtab', view === 'teams');
-      document.getElementById('btn-view-players').classList.toggle('active-subtab', view === 'players');
-      
-      document.getElementById('btn-view-teams').classList.toggle('text-gray-700', view !== 'teams');
-      document.getElementById('btn-view-players').classList.toggle('text-gray-700', view !== 'players');
-      
-      cancelEditor();
-      renderTeamView();
-    }
-
-    function renderTeamView() {
-      const container = document.getElementById('team-view-content');
-      if(!appState) return;
-
-      if(currentTeamView === 'players') {
-        let rows = safeArray(appState.players).map(p => {
-          return `
-            <tr class="border-b hover:bg-slate-50 text-xs sm:text-sm">
-              <td class="px-2 py-2 font-mono text-blue-600">${escapeHtml(p.id)}</td>
-              <td class="px-2 py-2 font-bold">${escapeHtml(p.name)}</td>
-              <td class="px-2 py-2">${escapeHtml(p.phone || 'N/A')}</td>
-              <td class="px-2 py-2">${escapeHtml(p.company || 'N/A')}</td>
-              <td class="px-2 py-2 text-right">
-                <button onclick="openEditor('player', '${p.id}')" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs font-bold hover:bg-yellow-600">Sửa</button>
-              </td>
-            </tr>
-          `;
-        }).join('');
-
-        container.innerHTML = `
-          <div class="mb-2 flex justify-between items-center">
-            <span class="text-xs font-semibold text-gray-500 uppercase">Tổng cộng: ${safeArray(appState.players).length} VĐV</span>
-            <button onclick="createNewPlayer()" class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded">+ Thêm VĐV</button>
-          </div>
-          <table class="w-full text-left bg-white rounded-lg border">
-            <thead>
-              <tr class="bg-gray-100 text-gray-700 text-xs uppercase">
-                <th class="px-2 py-1.5">ID</th>
-                <th class="px-2 py-1.5">Họ Tên</th>
-                <th class="px-2 py-1.5">SĐT</th>
-                <th class="px-2 py-1.5">Đơn vị</th>
-                <th class="px-2 py-1.5 text-right">Tác vụ</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows || '<tr><td colspan="5" class="text-center py-4 text-gray-500">Không có dữ liệu VĐV.</td></tr>'}
-            </tbody>
-          </table>
-        `;
-      } else {
-        let rows = safeArray(appState.teams).map(t => {
-          const p1 = safeArray(appState.players).find(p => p.id === t.player1Id);
-          const p2 = safeArray(appState.players).find(p => p.id === t.player2Id);
-          const p1Name = p1 ? p1.name : `Chưa chọn (${t.player1Id || 'N/A'})`;
-          const p2Name = p2 ? p2.name : `Chưa chọn (${t.player2Id || 'N/A'})`;
-
-          return `
-            <tr class="border-b hover:bg-slate-50 text-xs sm:text-sm">
-              <td class="px-2 py-2 font-mono text-blue-600">${escapeHtml(t.id)}</td>
-              <td class="px-2 py-2 font-bold">${escapeHtml(t.name)}</td>
-              <td class="px-2 py-2 text-gray-700">${escapeHtml(p1Name)} &amp; ${escapeHtml(p2Name)}</td>
-              <td class="px-2 py-2 text-right">
-                <button onclick="openEditor('team', '${t.id}')" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs font-bold hover:bg-yellow-600">Sửa</button>
-              </td>
-            </tr>
-          `;
-        }).join('');
-
-        container.innerHTML = `
-          <div class="mb-2 flex justify-between items-center">
-            <span class="text-xs font-semibold text-gray-500 uppercase">Tổng cộng: ${safeArray(appState.teams).length} Cặp đấu</span>
-            <button onclick="createNewTeam()" class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded">+ Thêm Cặp Đấu</button>
-          </div>
-          <table class="w-full text-left bg-white rounded-lg border">
-            <thead>
-              <tr class="bg-gray-100 text-gray-700 text-xs uppercase">
-                <th class="px-2 py-1.5">ID Team</th>
-                <th class="px-2 py-1.5">Tên Cặp Đấu</th>
-                <th class="px-2 py-1.5">Thành viên Đội</th>
-                <th class="px-2 py-1.5 text-right">Tác vụ</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows || '<tr><td colspan="4" class="text-center py-4 text-gray-500">Không có dữ liệu Team.</td></tr>'}
-            </tbody>
-          </table>
-        `;
-      }
-    }
-
-    // Mở khung chỉnh sửa cho VĐV hoặc Team
-    function openEditor(type, id) {
-      const panel = document.getElementById('editor-panel');
-      const title = document.getElementById('editor-title');
-      const fields = document.getElementById('editor-fields');
-      
-      panel.classList.remove('hidden');
-      currentEditingItem = { type, id };
-
-      if(type === 'player') {
-        const p = appState.players.find(x => x.id === id);
-        title.innerHTML = `Chỉnh sửa VĐV: <span class="text-gray-700 font-mono">${id}</span>`;
-        fields.innerHTML = `
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">Họ tên VĐV:</label>
-            <input type="text" id="edit-player-name" value="${escapeHtml(p.name)}" class="w-full border rounded px-2 py-1 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">Số điện thoại:</label>
-            <input type="text" id="edit-player-phone" value="${escapeHtml(p.phone || '')}" class="w-full border rounded px-2 py-1 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">Đơn vị / Doanh nghiệp:</label>
-            <input type="text" id="edit-player-company" value="${escapeHtml(p.company || '')}" class="w-full border rounded px-2 py-1 text-sm">
-          </div>
-        `;
-      } else if (type === 'team') {
-        const t = appState.teams.find(x => x.id === id);
-        title.innerHTML = `Chỉnh sửa Cặp đấu: <span class="text-gray-700 font-mono">${id}</span>`;
-        fields.innerHTML = `
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">Tên Cặp đấu (Team):</label>
-            <input type="text" id="edit-team-name" value="${escapeHtml(t.name)}" class="w-full border rounded px-2 py-1 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">VĐV thứ nhất:</label>
-            <select id="edit-team-p1" class="w-full border rounded px-2 py-1 text-sm">
-              <option value="">-- Chọn VĐV 1 --</option>
-              ${appState.players.map(p => `<option value="${p.id}" ${t.player1Id === p.id ? 'selected' : ''}>${p.name} (${p.id})</option>`).join('')}
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">VĐV thứ hai:</label>
-            <select id="edit-team-p2" class="w-full border rounded px-2 py-1 text-sm">
-              <option value="">-- Chọn VĐV 2 --</option>
-              ${appState.players.map(p => `<option value="${p.id}" ${t.player2Id === p.id ? 'selected' : ''}>${p.name} (${p.id})</option>`).join('')}
-            </select>
-          </div>
-        `;
-      }
-    }
-
-    function cancelEditor() {
-      document.getElementById('editor-panel').classList.add('hidden');
-      currentEditingItem = null;
-    }
-
-    function saveEditor() {
-      if(!currentEditingItem || !appState) return;
-      const {type, id} = currentEditingItem;
-
-      if(type === 'player') {
-        const p = appState.players.find(x => x.id === id);
-        if(p) {
-          p.name = document.getElementById('edit-player-name').value;
-          p.phone = document.getElementById('edit-player-phone').value;
-          p.company = document.getElementById('edit-player-company').value;
-        }
-      } else if(type === 'team') {
-        const t = appState.teams.find(x => x.id === id);
-        if(t) {
-          t.name = document.getElementById('edit-team-name').value;
-          t.player1Id = document.getElementById('edit-team-p1').value || null;
-          t.player2Id = document.getElementById('edit-team-p2').value || null;
-        }
-      }
-
-      triggerDataStatusIcon(true);
-      cancelEditor();
-      renderTeamView();
-      // Khởi tạo và render lại giao diện các phần khác do thông tin thay đổi
-      renderGroups(appState.groups);
-      renderQuart();
-      renderFinalTab();
-    }
-
-    // Khởi tạo các phần tử dữ liệu mới ngay trên giao diện
-    function createNewPlayer() {
-      const nextIdNum = appState.players.length + 1;
-      const nextId = "player" + String(nextIdNum).padStart(2, '0');
-      const newPlayer = {
-        id: nextId,
-        name: `VĐV Mới ${nextIdNum}`,
-        phone: "",
-        company: ""
-      };
-      appState.players.push(newPlayer);
-      renderTeamView();
-      openEditor('player', nextId);
-    }
-
-    function createNewTeam() {
-      const nextIdNum = appState.teams.length + 1;
-      const nextId = "Team" + String(nextIdNum).padStart(2, '0');
-      const newTeam = {
-        id: nextId,
-        name: `Team Mới ${nextIdNum}`,
-        player1Id: "",
-        player2Id: ""
-      };
-      appState.teams.push(newTeam);
-      renderTeamView();
-      openEditor('team', nextId);
-    }
-
-    // Trạng thái lưu dữ liệu
-    function triggerDataStatusIcon(changed) {
-      const icon = document.getElementById('dataStatusIcon');
-      const msg = document.getElementById('statusMessage');
-      if (changed) {
-        icon.className = "status-icon status-error";
-        msg.innerHTML = "⚠️ Có thay đổi chưa lưu (Dữ liệu chạy Local)";
-      } else {
-        icon.className = "status-icon status-success";
-      }
-    }
-
-    // --- FETCH DATA & KHỞI CHẠY ---
-    async function fetchData(){
-      const msg = document.getElementById('statusMessage'); 
-      const icon = document.getElementById('dataStatusIcon'); 
-      msg.textContent = 'Đang tải dữ liệu...'; 
-      icon.classList.remove('status-success','status-error'); 
-      
-      try {
-        const res = await fetch(DATA_URL, {cache:'no-store'}); 
-        if(!res.ok) throw new Error(`HTTP ${res.status}`); 
-        const data = await res.json(); 
-        appState = data; 
-        
-        updateHeader(data); 
-        renderInfo(data.tournament); 
-        renderGroups(data.groups);
-        renderQuart();
-        renderFinalTab();
-        renderTeamView();
-
-        msg.textContent = `Cập nhật lúc: ${new Date().toLocaleTimeString()}`; 
-        icon.classList.add('status-success'); 
-      } catch(err) {
-        msg.textContent = '⚠️ Lỗi tải dữ liệu. Sử dụng dữ liệu mẫu...'; 
-        icon.classList.add('status-error'); 
-        
-        // Tạo dữ liệu giả lập Offline
-        if(!appState) {
-          appState = mockAppState();
-          updateHeader(appState); 
-          renderInfo(appState.tournament); 
-          renderGroups(appState.groups);
-          renderQuart();
-          renderFinalTab();
-          renderTeamView();
-        }
-      } 
-      goToSection(currentIndex);
-    }
-
-    // Khởi tạo Mock Data phục vụ hiển thị ngoại tuyến / thử nghiệm cục bộ
-    function mockAppState() {
-      const defaultState = {
-        "tournament": {
-          "name": "ITGVT Pickleball Tournament 2026 - Season 2",
-          "organizer": "ITGVT",
-          "startDate": "2026-06-06",
-          "startTime": "14:00",
-          "endTime": "17:30",
-          "slogan": "Dân IT bứt phá mọi giới hạn",
-          "venue": { "name": "Sân WinPick - 29/10 Xô Viết Nghệ Tĩnh, Vũng Tàu" },
-          "competitionFormat": {
-            "headline": "24 cặp, 6 bảng, thi đấu vòng tròn 1 lượt.",
-            "pointsRule": "Trận thắng tính 1 điểm, thua 0 điểm.",
-            "serieA": "12 đội Nhất và Nhì bảng vào Serie A.",
-            "serieB": "12 đội Ba và Tư bảng vào Serie B."
-          },
-          "awards": ["🥇 Nhất Serie A & B", "🥈 Nhì Serie A & B"],
-          "rules": ["Vắng mặt quá 10 phút xử thua 0-11"]
+{
+  "schemaVersion": "2.2.0",
+  "source": "PICKLEBALL ITGVT 2026 - V2.pdf",
+  "tournament": {
+    "name": "ITGVT Pickleball Tournament 2026 - Season 2",
+    "organizer": "ITGVT",
+    "startDate": "2026-06-06",
+    "endDate": "2026-06-06",
+    "startTime": "14:00",
+    "endTime": "17:30",
+    "slogan": "Dân IT chuyển mình bứt phá mọi giới hạn",
+    "purpose": "Giao lưu thể thao cây nhà lá vườn của ITGVT, tăng tính kết nối của anh em cùng nhóm ngành IT và chia sẻ công nghệ trong địa bàn tỉnh Bà Rịa - Vũng Tàu (cũ).",
+    "participants": "Thành viên ITGVT, bạn bè thành viên trong ngành IT tại Bà Rịa - Vũng Tàu (cũ), khách mời, nhà tài trợ được xác minh bởi BTC.",
+    "venue": {
+      "name": "Sân WinPick - 29/10 Xô Viết Nghệ Tĩnh, Vũng Tàu",
+      "mapUrl": ""
+    },
+    "gala": {
+      "name": "Gala ITGVT",
+      "time": "18:00 - 22:00",
+      "mapUrl": ""
+    },
+    "registration": {
+      "formUrl": "https://forms.gle/5Z1noqaLtBUdyHGu8",
+      "deadline": "2026-05-13",
+      "quota": "24 cặp đầu tiên hoàn thành đăng ký & đóng chi phí đầu tiên",
+      "supportContacts": [
+        {
+          "name": "Mr. Duy",
+          "phone": "0984 465 755"
         },
-        "players": [],
-        "teams": [],
-        "groups": {},
-        "knockout": {
-          "serieA": { "roundOf16": [], "quarterfinals": [], "semifinals": [], "final": null },
-          "serieB": { "roundOf16": [], "quarterfinals": [], "semifinals": [], "final": null }
-        },
-        "results": { "championA": "", "runnerUpA": "", "championB": "", "runnerUpB": "" }
-      };
-
-      // Tạo 48 người chơi
-      for(let i = 1; i <= 48; i++) {
-        defaultState.players.push({
-          id: `player${String(i).padStart(2, '0')}`,
-          name: `VĐV ${String(i).padStart(2, '0')}`,
-          phone: "0900000" + String(i).padStart(3, '0'),
-          company: "ITGVT Club"
-        });
-      }
-      
-      // Tạo 24 đội đấu
-      for(let i = 1; i <= 24; i++) {
-        defaultState.teams.push({
-          id: `Team${String(i).padStart(2, '0')}`,
-          name: `Team ${String(i).padStart(2, '0')}`,
-          player1Id: `player${String(i*2 - 1).padStart(2, '0')}`,
-          player2Id: `player${String(i*2).padStart(2, '0')}`
-        });
-      }
-
-      // Tạo 6 bảng (A-F), 4 đội mỗi bảng
-      const gLetters = ["A", "B", "C", "D", "E", "F"];
-      gLetters.forEach((letter, gIdx) => {
-        const teamOffset = gIdx * 4;
-        const gTeams = [
-          `Team${String(teamOffset + 1).padStart(2, '0')}`,
-          `Team${String(teamOffset + 2).padStart(2, '0')}`,
-          `Team${String(teamOffset + 3).padStart(2, '0')}`,
-          `Team${String(teamOffset + 4).padStart(2, '0')}`
-        ];
-
-        defaultState.groups[letter] = {
-          name: `Bảng ${letter}`,
-          teamIds: gTeams,
-          matches: [
-            { id: `G${letter}_1`, team1Id: gTeams[0], team2Id: gTeams[1], score1: null, score2: null, played: false },
-            { id: `G${letter}_2`, team1Id: gTeams[2], team2Id: gTeams[3], score1: null, score2: null, played: false },
-            { id: `G${letter}_3`, team1Id: gTeams[0], team2Id: gTeams[2], score1: null, score2: null, played: false },
-            { id: `G${letter}_4`, team1Id: gTeams[1], team2Id: gTeams[3], score1: null, score2: null, played: false },
-            { id: `G${letter}_5`, team1Id: gTeams[0], team2Id: gTeams[3], score1: null, score2: null, played: false },
-            { id: `G${letter}_6`, team1Id: gTeams[1], team2Id: gTeams[2], score1: null, score2: null, played: false }
-          ]
-        };
-      });
-
-      const makeEmptyKO = (label, idPrefix) => ({
-        id: idPrefix, label, team1Id: null, team2Id: null, score1: null, score2: null, played: false
-      });
-
-      const series = ["serieA", "serieB"];
-      series.forEach(s => {
-        const p = s === "serieA" ? "A" : "B";
-        for(let i=1; i<=6; i++) {
-          defaultState.knockout[s].roundOf16.push(makeEmptyKO(`1/8 Trận ${i}`, `K_${p}16_${i}`));
+        {
+          "name": "Mr. Tín",
+          "phone": "0912 822 002"
         }
-        for(let i=1; i<=4; i++) {
-          defaultState.knockout[s].quarterfinals.push(makeEmptyKO(`Tứ Kết ${i}`, `K_${p}Q_${i}`));
-        }
-        for(let i=1; i<=2; i++) {
-          defaultState.knockout[s].semifinals.push(makeEmptyKO(`Bán Kết ${i}`, `K_${p}S_${i}`));
-        }
-        defaultState.knockout[s].final = makeEmptyKO(`Chung Kết Serie ${p}`, `K_${p}F_1`);
-      });
-
-      return defaultState;
+      ],
+      "feePerPlayer": "500,000 VND/VĐV",
+      "zaloNote": "Zalo group cho giải đấu sẽ được tạo sau khi gom đủ thành viên.",
+      "paymentNote": "Sau khi chuyển khoản các VĐV vui lòng thông báo Ban Tổ chức để xác nhận.",
+      "transferContent": "ITGVT Pickleball_Tên VĐV_Số điện thoại",
+      "refundPolicy": "Sau khi bốc thăm chia bảng thi đấu, lệ phí đăng ký không hoàn lại dưới mọi hình thức.",
+      "consentNote": "Việc đăng ký và đóng phí đồng nghĩa với việc VĐV đồng ý tuân thủ toàn bộ điều lệ của giải đấu."
+    },
+    "awards": [
+      "🥇 NHẤT x4: Cúp + Hiện vật, Quà tài trợ (nếu có) [Serie A / B]",
+      "🥈 NHÌ x4: Cúp + Hiện vật, Quà tài trợ (nếu có) [Serie A / B]",
+      "🥉 FairPlay x4: Cúp + Hiện vật, Quà tài trợ (nếu có)"
+    ],
+    "competitionFormat": {
+      "headline": "24 cặp, 6 bảng, mỗi bảng 4 cặp thi đấu vòng tròn 1 lượt.",
+      "pointsRule": "Trận thắng tính 1 điểm, thua 0 điểm trong suốt giải đấu.",
+      "tieBreak": "Nếu bằng điểm sẽ tính hiệu số, sau đó xét đối đầu trực tiếp, cuối cùng bốc thăm.",
+      "serieA": "12 đội Nhất và Nhì bảng vào Serie A: vòng 1/8, Tứ kết, Bán kết, Chung kết.",
+      "serieB": "12 đội Ba và Tư bảng vào Serie B: vòng 1/8, Tứ kết, Bán kết, Chung kết.",
+      "round16Rule": "Tại vòng 1/8 sẽ chọn 8 cặp vào Tứ kết gồm 6 cặp thắng và 2 cặp thua có thành tích tốt nhất tính từ vòng bảng.",
+      "scoring": "Từ vòng bảng đến Tứ kết thi đấu 1 hiệp chạm 11 điểm, 6 điểm đổi sân; Bán kết và Chung kết thi đấu 1 hiệp chạm 15 điểm, 8 điểm đổi sân."
+    },
+    "rules": [
+      "Vắng mặt quá 10 phút sau giờ thi đấu: xử thua với tỉ số tối đa 0-11 hoặc 0-15 tùy vòng đấu.",
+      "Đội tham gia có thể yêu cầu dừng trận vì lý do bất khả kháng nhưng sẽ xử thua trận hiện hành với tỉ số 0-11.",
+      "Mỗi đội có quyền call break time 1 lần/trận, tối đa 3 phút.",
+      "Trang phục thi đấu: Áo của giải."
+    ],
+    "referee": {
+      "management": "Công tác trọng tài bảng sẽ do đơn vị thứ 3 phụ trách do BTC thuê.",
+      "decision": "Anh em có thể trao đổi với trọng tài nhưng quyết định cuối cùng vẫn thuộc về trọng tài.",
+      "fairplay": "Trên tinh thần fairplay, tôn trọng, anh em tự giác nhận foul hoặc có thể trao đổi để serve lại. Không chấp nhận yêu cầu đổi trọng tài khi trận đấu đang diễn ra.",
+      "warning": "Tránh cằn nhằn, complain trọng tài quá nhiều. Đây cũng là một tiêu chí để tính fairplay."
+    },
+    "mediaPolicy": "Hình ảnh giải đấu được ghi lại bởi các ITGVT cây nhà lá vườn. BTC có quyền sử dụng hình ảnh cho truyền thông.",
+    "links": {
+      "photos": "",
+      "videos": ""
     }
-
-    // --- SWIPE GESTURES ON MOBILE ---
-    let touchStartX = 0, isTouching = false; 
-    mainContent.addEventListener('touchstart', e => {
-      if(window.innerWidth >= 992) return; 
-      touchStartX = e.touches[0].clientX; 
-      isTouching = true;
-    }); 
-    
-    mainContent.addEventListener('touchend', e => {
-      if(!isTouching || window.innerWidth >= 992) return; 
-      isTouching = false; 
-      const diff = e.changedTouches[0].clientX - touchStartX; 
-      if(diff > 60) goToSection(currentIndex - 1); 
-      if(diff < -60) goToSection(currentIndex + 1);
-    }); 
-    
-    window.addEventListener('resize', () => goToSection(currentIndex)); 
-    document.addEventListener('keydown', e => {
-      if(e.key === 'ArrowLeft') goToSection(currentIndex - 1); 
-      if(e.key === 'ArrowRight') goToSection(currentIndex + 1);
-    }); 
-
-    updateRefreshButtonUI(); 
-    fetchData();
-  </script>
-</body>
-</html>
+  },
+  "players": [
+    {"id": "player01", "name": "VĐV 01", "phone": "0900000001", "company": "IT Company A"},
+    {"id": "player02", "name": "VĐV 02", "phone": "0900000002", "company": "IT Company A"},
+    {"id": "player03", "name": "VĐV 03", "phone": "0900000003", "company": "IT Company B"},
+    {"id": "player04", "name": "VĐV 04", "phone": "0900000004", "company": "IT Company B"},
+    {"id": "player05", "name": "VĐV 05", "phone": "0900000005", "company": "IT Company C"},
+    {"id": "player06", "name": "VĐV 06", "phone": "0900000006", "company": "IT Company C"},
+    {"id": "player07", "name": "VĐV 07", "phone": "0900000007", "company": "IT Company D"},
+    {"id": "player08", "name": "VĐV 08", "phone": "0900000008", "company": "IT Company D"},
+    {"id": "player09", "name": "VĐV 09", "phone": "0900000009", "company": "Freelancer"},
+    {"id": "player10", "name": "VĐV 10", "phone": "0900000010", "company": "Freelancer"},
+    {"id": "player11", "name": "VĐV 11", "phone": "0900000011", "company": "IT Tech"},
+    {"id": "player12", "name": "VĐV 12", "phone": "0900000012", "company": "IT Tech"},
+    {"id": "player13", "name": "VĐV 13", "phone": "0900000013", "company": "Vũng Tàu Dev"},
+    {"id": "player14", "name": "VĐV 14", "phone": "0900000014", "company": "Vũng Tàu Dev"},
+    {"id": "player15", "name": "VĐV 15", "phone": "0900000015", "company": "IT Net"},
+    {"id": "player16", "name": "VĐV 16", "phone": "0900000016", "company": "IT Net"},
+    {"id": "player17", "name": "VĐV 17", "phone": "0900000017", "company": "Software Co"},
+    {"id": "player18", "name": "VĐV 18", "phone": "0900000018", "company": "Software Co"},
+    {"id": "player19", "name": "VĐV 19", "phone": "0900000019", "company": "Data Team"},
+    {"id": "player20", "name": "VĐV 20", "phone": "0900000020", "company": "Data Team"},
+    {"id": "player21", "name": "VĐV 21", "phone": "0900000021", "company": "AI Lab"},
+    {"id": "player22", "name": "VĐV 22", "phone": "0900000022", "company": "AI Lab"},
+    {"id": "player23", "name": "VĐV 23", "phone": "0900000023", "company": "Cyber Sec"},
+    {"id": "player24", "name": "VĐV 24", "phone": "0900000024", "company": "Cyber Sec"},
+    {"id": "player25", "name": "VĐV 25", "phone": "0900000025", "company": "VT Tech"},
+    {"id": "player26", "name": "VĐV 26", "phone": "0900000026", "company": "VT Tech"},
+    {"id": "player27", "name": "VĐV 27", "phone": "0900000027", "company": "ITGVT Club"},
+    {"id": "player28", "name": "VĐV 28", "phone": "0900000028", "company": "ITGVT Club"},
+    {"id": "player29", "name": "VĐV 29", "phone": "0900000029", "company": "Vũng Tàu Sol"},
+    {"id": "player30", "name": "VĐV 30", "phone": "0900000030", "company": "Vũng Tàu Sol"},
+    {"id": "player31", "name": "VĐV 31", "phone": "0900000031", "company": "IT Hub"},
+    {"id": "player32", "name": "VĐV 32", "phone": "0900000032", "company": "IT Hub"},
+    {"id": "player33", "name": "VĐV 33", "phone": "0900000033", "company": "Cloud Sys"},
+    {"id": "player34", "name": "VĐV 34", "phone": "0900000034", "company": "Cloud Sys"},
+    {"id": "player35", "name": "VĐV 35", "phone": "0900000035", "company": "DevOps VT"},
+    {"id": "player36", "name": "VĐV 36", "phone": "0900000036", "company": "DevOps VT"},
+    {"id": "player37", "name": "VĐV 37", "phone": "0900000037", "company": "Game Studio"},
+    {"id": "player38", "name": "VĐV 38", "phone": "0900000038", "company": "Game Studio"},
+    {"id": "player39", "name": "VĐV 39", "phone": "0900000039", "company": "Web App Co"},
+    {"id": "player40", "name": "VĐV 40", "phone": "0900000040", "company": "Web App Co"},
+    {"id": "player41", "name": "VĐV 41", "phone": "0900000041", "company": "Mobile Team"},
+    {"id": "player42", "name": "VĐV 42", "phone": "0900000042", "company": "Mobile Team"},
+    {"id": "player43", "name": "VĐV 43", "phone": "0900000043", "company": "IT Solution"},
+    {"id": "player44", "name": "VĐV 44", "phone": "0900000044", "company": "IT Solution"},
+    {"id": "player45", "name": "VĐV 45", "phone": "0900000045", "company": "VT Media"},
+    {"id": "player46", "name": "VĐV 46", "phone": "0900000046", "company": "VT Media"},
+    {"id": "player47", "name": "VĐV 47", "phone": "0900000047", "company": "ITGVT Sponsor"},
+    {"id": "player48", "name": "VĐV 48", "phone": "0900000048", "company": "ITGVT Sponsor"}
+  ],
+  "teams": [
+    {"id": "Team01", "name": "Team 01", "player1Id": "player01", "player2Id": "player02"},
+    {"id": "Team02", "name": "Team 02", "player1Id": "player03", "player2Id": "player04"},
+    {"id": "Team03", "name": "Team 03", "player1Id": "player05", "player2Id": "player06"},
+    {"id": "Team04", "name": "Team 04", "player1Id": "player07", "player2Id": "player08"},
+    {"id": "Team05", "name": "Team 05", "player1Id": "player09", "player2Id": "player10"},
+    {"id": "Team06", "name": "Team 06", "player1Id": "player11", "player2Id": "player12"},
+    {"id": "Team07", "name": "Team 07", "player1Id": "player13", "player2Id": "player14"},
+    {"id": "Team08", "name": "Team 08", "player1Id": "player15", "player2Id": "player16"},
+    {"id": "Team09", "name": "Team 09", "player1Id": "player17", "player2Id": "player18"},
+    {"id": "Team10", "name": "Team 10", "player1Id": "player19", "player2Id": "player20"},
+    {"id": "Team11", "name": "Team 11", "player1Id": "player21", "player2Id": "player22"},
+    {"id": "Team12", "name": "Team 12", "player1Id": "player23", "player2Id": "player24"},
+    {"id": "Team13", "name": "Team 13", "player1Id": "player25", "player2Id": "player26"},
+    {"id": "Team14", "name": "Team 14", "player1Id": "player27", "player2Id": "player28"},
+    {"id": "Team15", "name": "Team 15", "player1Id": "player29", "player2Id": "player30"},
+    {"id": "Team16", "name": "Team 16", "player1Id": "player31", "player2Id": "player32"},
+    {"id": "Team17", "name": "Team 17", "player1Id": "player33", "player2Id": "player34"},
+    {"id": "Team18", "name": "Team 18", "player1Id": "player35", "player2Id": "player36"},
+    {"id": "Team19", "name": "Team 19", "player1Id": "player37", "player2Id": "player38"},
+    {"id": "Team20", "name": "Team 20", "player1Id": "player39", "player2Id": "player40"},
+    {"id": "Team21", "name": "Team 21", "player1Id": "player41", "player2Id": "player42"},
+    {"id": "Team22", "name": "Team 22", "player1Id": "player43", "player2Id": "player44"},
+    {"id": "Team23", "name": "Team 23", "player1Id": "player45", "player2Id": "player46"},
+    {"id": "Team24", "name": "Team 24", "player1Id": "player47", "player2Id": "player48"}
+  ],
+  "groups": {
+    "A": {
+      "name": "Bảng A",
+      "teamIds": ["Team01", "Team02", "Team03", "Team04"],
+      "matches": [
+        {"id": "GA_1", "team1Id": "Team01", "team2Id": "Team02", "score1": null, "score2": null, "played": false},
+        {"id": "GA_2", "team1Id": "Team03", "team2Id": "Team04", "score1": null, "score2": null, "played": false},
+        {"id": "GA_3", "team1Id": "Team01", "team2Id": "Team03", "score1": null, "score2": null, "played": false},
+        {"id": "GA_4", "team1Id": "Team02", "team2Id": "Team04", "score1": null, "score2": null, "played": false},
+        {"id": "GA_5", "team1Id": "Team01", "team2Id": "Team04", "score1": null, "score2": null, "played": false},
+        {"id": "GA_6", "team1Id": "Team02", "team2Id": "Team03", "score1": null, "score2": null, "played": false}
+      ]
+    },
+    "B": {
+      "name": "Bảng B",
+      "teamIds": ["Team05", "Team06", "Team07", "Team08"],
+      "matches": [
+        {"id": "GB_1", "team1Id": "Team05", "team2Id": "Team06", "score1": null, "score2": null, "played": false},
+        {"id": "GB_2", "team1Id": "Team07", "team2Id": "Team08", "score1": null, "score2": null, "played": false},
+        {"id": "GB_3", "team1Id": "Team05", "team2Id": "Team07", "score1": null, "score2": null, "played": false},
+        {"id": "GB_4", "team1Id": "Team06", "team2Id": "Team08", "score1": null, "score2": null, "played": false},
+        {"id": "GB_5", "team1Id": "Team05", "team2Id": "Team08", "score1": null, "score2": null, "played": false},
+        {"id": "GB_6", "team1Id": "Team06", "team2Id": "Team07", "score1": null, "score2": null, "played": false}
+      ]
+    },
+    "C": {
+      "name": "Bảng C",
+      "teamIds": ["Team09", "Team10", "Team11", "Team12"],
+      "matches": [
+        {"id": "GC_1", "team1Id": "Team09", "team2Id": "Team10", "score1": null, "score2": null, "played": false},
+        {"id": "GC_2", "team1Id": "Team11", "team2Id": "Team12", "score1": null, "score2": null, "played": false},
+        {"id": "GC_3", "team1Id": "Team09", "team2Id": "Team11", "score1": null, "score2": null, "played": false},
+        {"id": "GC_4", "team1Id": "Team10", "team2Id": "Team12", "score1": null, "score2": null, "played": false},
+        {"id": "GC_5", "team1Id": "Team09", "team2Id": "Team12", "score1": null, "score2": null, "played": false},
+        {"id": "GC_6", "team1Id": "Team10", "team2Id": "Team11", "score1": null, "score2": null, "played": false}
+      ]
+    },
+    "D": {
+      "name": "Bảng D",
+      "teamIds": ["Team13", "Team14", "Team15", "Team16"],
+      "matches": [
+        {"id": "GD_1", "team1Id": "Team13", "team2Id": "Team14", "score1": null, "score2": null, "played": false},
+        {"id": "GD_2", "team1Id": "Team15", "team2Id": "Team16", "score1": null, "score2": null, "played": false},
+        {"id": "GD_3", "team1Id": "Team13", "team2Id": "Team15", "score1": null, "score2": null, "played": false},
+        {"id": "GD_4", "team1Id": "Team14", "team2Id": "Team16", "score1": null, "score2": null, "played": false},
+        {"id": "GD_5", "team1Id": "Team13", "team2Id": "Team16", "score1": null, "score2": null, "played": false},
+        {"id": "GD_6", "team1Id": "Team14", "team2Id": "Team15", "score1": null, "score2": null, "played": false}
+      ]
+    },
+    "E": {
+      "name": "Bảng E",
+      "teamIds": ["Team17", "Team18", "Team19", "Team20"],
+      "matches": [
+        {"id": "GE_1", "team1Id": "Team17", "team2Id": "Team18", "score1": null, "score2": null, "played": false},
+        {"id": "GE_2", "team1Id": "Team19", "team2Id": "Team20", "score1": null, "score2": null, "played": false},
+        {"id": "GE_3", "team1Id": "Team17", "team2Id": "Team19", "score1": null, "score2": null, "played": false},
+        {"id": "GE_4", "team1Id": "Team18", "team2Id": "Team20", "score1": null, "score2": null, "played": false},
+        {"id": "GE_5", "team1Id": "Team17", "team2Id": "Team20", "score1": null, "score2": null, "played": false},
+        {"id": "GE_6", "team1Id": "Team18", "team2Id": "Team19", "score1": null, "score2": null, "played": false}
+      ]
+    },
+    "F": {
+      "name": "Bảng F",
+      "teamIds": ["Team21", "Team22", "Team23", "Team24"],
+      "matches": [
+        {"id": "GF_1", "team1Id": "Team21", "team2Id": "Team22", "score1": null, "score2": null, "played": false},
+        {"id": "GF_2", "team1Id": "Team23", "team2Id": "Team24", "score1": null, "score2": null, "played": false},
+        {"id": "GF_3", "team1Id": "Team21", "team2Id": "Team23", "score1": null, "score2": null, "played": false},
+        {"id": "GF_4", "team1Id": "Team22", "team2Id": "Team24", "score1": null, "score2": null, "played": false},
+        {"id": "GF_5", "team1Id": "Team21", "team2Id": "Team24", "score1": null, "score2": null, "played": false},
+        {"id": "GF_6", "team1Id": "Team22", "team2Id": "Team23", "score1": null, "score2": null, "played": false}
+      ]
+    }
+  },
+  "knockout": {
+    "serieA": {
+      "roundOf16": [
+        {"id": "K_A16_1", "label": "Nhất A vs Nhì B", "team1Id": "Team01", "team2Id": "Team06", "score1": null, "score2": null, "played": false},
+        {"id": "K_A16_2", "label": "Nhất C vs Nhì D", "team1Id": "Team09", "team2Id": "Team14", "score1": null, "score2": null, "played": false},
+        {"id": "K_A16_3", "label": "Nhất E vs Nhì F", "team1Id": "Team17", "team2Id": "Team22", "score1": null, "score2": null, "played": false},
+        {"id": "K_A16_4", "label": "Nhất B vs Nhì A", "team1Id": "Team05", "team2Id": "Team02", "score1": null, "score2": null, "played": false},
+        {"id": "K_A16_5", "label": "Nhất D vs Nhì C", "team1Id": "Team13", "team2Id": "Team10", "score1": null, "score2": null, "played": false},
+        {"id": "K_A16_6", "label": "Nhất F vs Nhì E", "team1Id": "Team21", "team2Id": "Team18", "score1": null, "score2": null, "played": false}
+      ],
+      "quarterfinals": [
+        {"id": "K_AQ_1", "label": "Tứ Kết 1", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_AQ_2", "label": "Tứ Kết 2", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_AQ_3", "label": "Tứ Kết 3", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_AQ_4", "label": "Tứ Kết 4", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+      ],
+      "semifinals": [
+        {"id": "K_AS_1", "label": "Bán Kết 1", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_AS_2", "label": "Bán Kết 2", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+      ],
+      "final": {"id": "K_AF_1", "label": "Chung Kết Serie A", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+    },
+    "serieB": {
+      "roundOf16": [
+        {"id": "K_B16_1", "label": "Ba A vs Tư B", "team1Id": "Team03", "team2Id": "Team08", "score1": null, "score2": null, "played": false},
+        {"id": "K_B16_2", "label": "Ba C vs Tư D", "team1Id": "Team11", "team2Id": "Team16", "score1": null, "score2": null, "played": false},
+        {"id": "K_B16_3", "label": "Ba E vs Tư F", "team1Id": "Team19", "team2Id": "Team24", "score1": null, "score2": null, "played": false},
+        {"id": "K_B16_4", "label": "Ba B vs Tư A", "team1Id": "Team07", "team2Id": "Team04", "score1": null, "score2": null, "played": false},
+        {"id": "K_B16_5", "label": "Ba D vs Tư C", "team1Id": "Team15", "team2Id": "Team12", "score1": null, "score2": null, "played": false},
+        {"id": "K_B16_6", "label": "Ba F vs Tư E", "team1Id": "Team23", "team2Id": "Team20", "score1": null, "score2": null, "played": false}
+      ],
+      "quarterfinals": [
+        {"id": "K_BQ_1", "label": "Tứ Kết B1", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_BQ_2", "label": "Tứ Kết B2", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_BQ_3", "label": "Tứ Kết B3", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_BQ_4", "label": "Tứ Kết B4", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+      ],
+      "semifinals": [
+        {"id": "K_BS_1", "label": "Bán Kết B1", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false},
+        {"id": "K_BS_2", "label": "Bán Kết B2", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+      ],
+      "final": {"id": "K_BF_1", "label": "Chung Kết Serie B", "team1Id": null, "team2Id": null, "score1": null, "score2": null, "played": false}
+    }
+  },
+  "results": {
+    "championA": "",
+    "runnerUpA": "",
+    "championB": "",
+    "runnerUpB": ""
+  }
+}
