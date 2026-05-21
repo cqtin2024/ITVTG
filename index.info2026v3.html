@@ -1,0 +1,1504 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ITGVT Pickleball Tournament 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary: #007BFF;
+      --accent: #FFC107;
+      --header-bg: #15203D;
+      --body-bg: #EFF4F9;
+      --content-bg: #FFFFFF;
+      --text-dark: #333333;
+      --text-muted: #666666;
+      --H-HEADER: 115px;
+      --H-TABS: 40px;
+      --success: #28a745;
+      --danger: #dc3545;
+      --soft-primary: #E9F4FF;
+      --soft-accent: #FFF8E1;
+    }
+    body {
+      background-color: var(--body-bg);
+      color: var(--text-dark);
+      overflow-x: hidden;
+      font-family: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+    }
+    #content-carousel {
+      display: flex;
+      width: calc(100vw * 5);
+      transition: transform .35s cubic-bezier(0.25,1,0.5,1);
+    }
+    .swipe-section {
+      width: 100vw;
+      flex-shrink: 0;
+      padding: 1rem;
+      min-height: calc(100vh - 155px);
+      overflow-y: auto;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      border-bottom: 4px solid var(--primary);
+      background: var(--header-bg);
+      box-shadow: 0 4px 15px rgba(0,0,0,.4);
+      padding: .3rem 1rem .1rem 1rem;
+      height: var(--H-HEADER);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .header-main-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .75rem;
+      flex-grow: 1;
+    }
+    .header-title {
+      font-size: 1.05rem!important;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0;
+      line-height: 1.25;
+      text-align: center;
+    }
+    .header-subtitle {
+      color: #B0BEC5;
+      line-height: 1.2;
+      margin-top: 0;
+      font-size: .72rem;
+    }
+    .header-logo {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      padding: 6px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.25);
+    }
+    @media (max-width: 640px) {
+      .header-logo {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    #tab-controls-container {
+      position: fixed;
+      top: var(--H-HEADER);
+      left: 0;
+      right: 0;
+      z-index: 25;
+      background: var(--body-bg);
+      box-shadow: 0 2px 5px rgba(0,0,0,.1);
+      padding: .3rem 0;
+    }
+    #main-content-wrapper {
+      padding-top: calc(var(--H-HEADER) + var(--H-TABS))!important;
+      overflow-x: hidden;
+    }
+    #statusMessage {
+      font-size: .72rem!important;
+      line-height: 1;
+      color: #B0BEC5;
+      text-align: center;
+    }
+    .status-icon {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      background: transparent;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    .status-success { background-color: var(--success); }
+    .status-error { background-color: var(--danger); }
+    
+    .tab-btn {
+      background: #fff;
+      color: #15203D;
+      transition: all .2s ease;
+      font-size: .85rem;
+      border: 1px solid #B0BEC5;
+      font-weight: 600;
+      width: 18%;
+    }
+    .active-primary {
+      background-color: var(--primary)!important;
+      color: #fff!important;
+      border-color: var(--primary)!important;
+    }
+    .active-accent {
+      background-color: var(--accent)!important;
+      color: var(--header-bg)!important;
+      border-color: var(--accent)!important;
+    }
+    
+    .section-card {
+      background: #fff;
+      color: var(--text-dark);
+      border-radius: 1rem;
+      box-shadow: 0 6px 16px rgba(0,0,0,.08);
+      padding: 1rem;
+    }
+    .section-heading {
+      color: var(--primary);
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    
+    .info-block {
+      padding: .9rem;
+      border-left: 4px solid var(--primary);
+      background: var(--soft-primary);
+      border-radius: .75rem;
+    }
+    .info-block.warning {
+      border-left-color: var(--accent);
+      background: var(--soft-accent);
+    }
+    .text-header { color: var(--header-bg); }
+    
+    .accordion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .accordion-icon {
+      transition: transform 0.2s ease;
+      margin-left: auto;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, opacity 0.2s ease;
+      opacity: 0;
+    }
+    .info-block.active .accordion-content {
+      max-height: 1500px;
+      opacity: 1;
+      margin-top: 0.5rem;
+    }
+    .info-block.active .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    #refresh-btn, #toggle-refresh-btn {
+      position: fixed;
+      right: 20px;
+      z-index: 50;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    }
+    #refresh-btn {
+      bottom: 20px;
+      background: var(--primary);
+      padding: 14px;
+      border-radius: 9999px;
+    }
+    #toggle-refresh-btn {
+      bottom: 80px;
+      background: var(--success);
+      padding: 10px 14px;
+      border-radius: 9999px;
+      font-size: .8rem;
+      min-width: 70px;
+      text-align: center;
+    }
+    #toggle-refresh-btn.off { background: var(--danger); }
+    
+    .active-subtab {
+      background-color: var(--primary);
+      color: #fff;
+    }
+
+    @media (min-width: 992px) {
+      header {
+        position: static!important;
+        height: auto!important;
+        padding: .5rem 1rem!important;
+        box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      }
+      .header-main-content { justify-content: flex-start!important; }
+      .header-title { text-align: left; font-size: 1.15rem!important; }
+      #tab-controls-container { position: static!important; }
+      #main-content-wrapper { padding-top: 0!important; }
+      #content-carousel {
+        width: auto!important;
+        display: block!important;
+        transform: none!important;
+        transition: none!important;
+      }
+      .swipe-section {
+        width: 100%!important;
+        display: none;
+        padding: 1rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-main-content">
+      <img 
+        src="./LogoITGVT01.png" 
+        alt="ITGVT Logo" 
+        class="header-logo"
+        onerror="this.style.display='none'"
+      />
+      <div class="text-center lg:text-left">
+        <h1 id="headerTitle" class="header-title">ITGVT Pickleball Tournament 2026 - Season 2</h1>
+        <p class="header-subtitle">
+          <span id="headerDate">Đang tải ngày thi đấu...</span>
+          <span id="dataStatusIcon" class="status-icon"></span>
+        </p>
+      </div>
+    </div>
+    <div id="statusMessage">Đang tải dữ liệu...</div>
+  </header>
+
+  <div id="tab-controls-container">
+    <div id="tab-controls" class="flex justify-around max-w-4xl mx-auto px-2">
+      <button onclick="goToSection(0)" class="tab-btn active-accent mx-1 px-1 py-2 rounded-full shadow-md text-xs sm:text-sm">INFO</button>
+      <button onclick="goToSection(1)" class="tab-btn mx-1 px-1 py-2 rounded-full shadow-md text-xs sm:text-sm">GROUP</button>
+      <button onclick="goToSection(2)" class="tab-btn mx-1 px-1 py-2 rounded-full shadow-md text-xs sm:text-sm">QUART</button>
+      <button onclick="goToSection(3)" class="tab-btn mx-1 px-1 py-2 rounded-full shadow-md text-xs sm:text-sm">FINAL</button>
+      <button onclick="goToSection(4)" class="tab-btn mx-1 px-1 py-2 rounded-full shadow-md text-xs sm:text-sm">TEAM</button>
+    </div>
+  </div>
+
+  <main id="main-content-wrapper" class="overflow-hidden">
+    <div id="content-carousel">
+      <section class="swipe-section" id="info">
+        <div class="section-card">
+          <h3 class="section-heading text-lg">THÔNG TIN GIẢI ĐẤU</h3>
+          <p class="text-sm text-gray-600">Đang tải thông tin...</p>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="rounds">
+        <div class="section-card">
+          <h3 class="section-heading text-lg">VÒNG BẢNG (GROUP STAGE)</h3>
+          
+          <div id="draw-panel" class="mb-4 bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-center hidden">
+            <p class="text-xs text-yellow-800 mb-2 font-medium">Danh sách đội đã KHÓA. Bạn có thể bốc thăm phân phối ngẫu nhiên các hạt giống và đội thường.</p>
+            <button onclick="drawGroupsRandom()" class="px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-lg text-xs transition shadow">
+              🎲 Bốc thăm / Ngẫu nhiên chia bảng
+            </button>
+          </div>
+
+          <div class="flex justify-center mb-4 flex-wrap gap-2" id="group-nav"></div>
+          <div id="group-details-container" class="space-y-6"></div>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="quarterfinals">
+        <div class="section-card">
+          <h3 class="section-heading text-lg">VÒNG LOẠI TRỰC TIẾP</h3>
+          
+          <div class="flex justify-center space-x-2 mb-4 bg-gray-100 p-1 rounded-lg max-w-xs mx-auto">
+            <button onclick="switchQuartSerie('serieA')" id="btn-quart-serieA" class="flex-1 py-1 px-3 text-sm font-semibold rounded-md active-subtab">Serie A</button>
+            <button onclick="switchQuartSerie('serieB')" id="btn-quart-serieB" class="flex-1 py-1 px-3 text-sm font-semibold rounded-md text-gray-700">Serie B</button>
+          </div>
+
+          <div id="quart-content" class="space-y-6"></div>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="knockout">
+        <div class="section-card">
+          <h3 class="section-heading text-lg">TRẬN CHUNG KẾT CÁC SERIE</h3>
+          <div class="space-y-6" id="final-tab-content"></div>
+        </div>
+      </section>
+
+      <section class="swipe-section" id="players">
+        <div class="section-card">
+          <h3 class="section-heading text-lg">DANH SÁCH & QUẢN LÝ ĐỘI ĐẤU</h3>
+          
+          <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 bg-slate-100 p-2 rounded-xl">
+            <div class="flex space-x-2 bg-gray-200 p-1 rounded-lg w-full sm:w-auto">
+              <button onclick="switchTeamView('teams')" id="btn-view-teams" class="flex-1 sm:flex-none py-1 px-4 text-xs font-semibold rounded-md active-subtab">Cặp Đấu (Teams)</button>
+              <button onclick="switchTeamView('players')" id="btn-view-players" class="flex-1 sm:flex-none py-1 px-4 text-xs font-semibold rounded-md text-gray-700">VĐV (Players)</button>
+            </div>
+            
+            <button id="btn-lock-toggle" onclick="toggleLockTeams()" class="w-full sm:w-auto px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-blue-600 shadow">
+              🔒 Khóa thông tin Team
+            </button>
+          </div>
+
+          <div id="editor-panel" class="hidden bg-gray-50 border border-gray-200 p-4 rounded-xl mb-4">
+            <h4 id="editor-title" class="font-bold text-blue-600 mb-2">Chỉnh sửa</h4>
+            <div id="editor-fields" class="space-y-3"></div>
+            <div class="flex justify-end gap-2 mt-3">
+              <button onclick="cancelEditor()" class="px-3 py-1 bg-gray-300 text-sm font-semibold rounded-lg">Hủy</button>
+              <button onclick="saveEditor()" class="px-3 py-1 bg-blue-600 text-white text-sm font-semibold rounded-lg">Lưu lại</button>
+            </div>
+          </div>
+
+          <div id="team-view-content" class="overflow-x-auto"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <button id="toggle-refresh-btn" class="off" onclick="toggleAutoRefresh()">Auto OFF</button>
+  <button id="refresh-btn" onclick="manualRefresh()">⟳</button>
+
+  <script>
+    const DATA_URL = './data/state301.info2026v22.json'; 
+    const REFRESH_INTERVAL = 30000; 
+    const carousel = document.getElementById('content-carousel'); 
+    const mainContent = document.getElementById('main-content-wrapper'); 
+    
+    let currentIndex = 0; 
+    let refreshIntervalId = null; 
+    let isAutoRefreshEnabled = false; 
+    let appState = null;
+    
+    let currentQuartSerie = 'serieA'; 
+    let currentTeamView = 'teams'; 
+    let currentEditingItem = null; 
+
+    function safeArray(value){return Array.isArray(value)?value:[];}
+    function formatDate(value){
+      if(!value) return 'N/A'; 
+      if(/^\d{4}-\d{2}-\d{2}$/.test(value)){
+        const [y,m,d] = value.split('-'); 
+        return `${d}/${m}/${y}`;
+      } 
+      return value;
+    }
+    function escapeHtml(value){
+      return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    
+    function getYoutubeEmbed(url){
+      if(!url) return null; 
+      try {
+        const parsed = new URL(url); 
+        const listId = parsed.searchParams.get('list'); 
+        const videoId = parsed.searchParams.get('v'); 
+        if(listId) return {type:'playlist',embedUrl:`https://www.youtube.com/embed/videoseries?list=${listId}&rel=0`}; 
+        if(videoId) return {type:'video',embedUrl:`https://www.youtube.com/embed/${videoId}?rel=0`};
+      } catch(e) { return null; } 
+      return null;
+    }
+
+    function updateRefreshButtonUI(){
+      const btn = document.getElementById('toggle-refresh-btn'); 
+      if(isAutoRefreshEnabled){
+        btn.classList.remove('off'); 
+        btn.innerHTML='Auto ON';
+      } else {
+        btn.classList.add('off'); 
+        btn.innerHTML='Auto OFF';
+      }
+    }
+
+    function startAutoRefresh(){
+      if(refreshIntervalId) clearInterval(refreshIntervalId); 
+      refreshIntervalId = setInterval(() => {
+        // Không auto-refresh khi đang mở bảng chỉnh sửa để tránh mất dữ liệu nhập liệu
+        if(!currentEditingItem) fetchData();
+      }, REFRESH_INTERVAL); 
+      isAutoRefreshEnabled = true; 
+      updateRefreshButtonUI();
+    } 
+    function stopAutoRefresh(){
+      if(refreshIntervalId) clearInterval(refreshIntervalId); 
+      refreshIntervalId = null; 
+      isAutoRefreshEnabled = false; 
+      updateRefreshButtonUI();
+    } 
+    function toggleAutoRefresh(){
+      if(isAutoRefreshEnabled) stopAutoRefresh(); else startAutoRefresh();
+    } 
+    
+    function manualRefresh(){
+      const btn = document.getElementById('refresh-btn'); 
+      btn.disabled = true; 
+      const wasAuto = isAutoRefreshEnabled; 
+      if(wasAuto) stopAutoRefresh(); 
+      fetchData().finally(() => setTimeout(() => {
+        btn.disabled = false; 
+        if(wasAuto) startAutoRefresh();
+      }, 800));
+    }
+
+    function updateTabs(){
+      document.querySelectorAll('#tab-controls button').forEach((btn, index) => {
+        btn.classList.remove('active-primary', 'active-accent'); 
+        if(index === currentIndex){
+          btn.classList.add(index === 0 || index === 4 ? 'active-accent' : 'active-primary');
+        }
+      });
+    }
+
+    function goToSection(index) {
+      const totalSections = document.querySelectorAll('.swipe-section').length;
+      index = Math.max(0, Math.min(index, totalSections - 1));
+      currentIndex = Math.max(0, Math.min(4, index)); 
+      updateTabs(); 
+      window.scrollTo({top:0, behavior:'smooth'}); 
+      const isDesktop = window.innerWidth >= 992; 
+      const sections = document.querySelectorAll('.swipe-section'); 
+      if(isDesktop){
+        sections.forEach((section, i) => section.style.display = (i === currentIndex ? 'block' : 'none')); 
+        carousel.style.transform = 'translateX(0)'; 
+        carousel.style.transition = 'none';
+      } else {
+        sections.forEach(section => section.style.display = 'block'); 
+        carousel.style.transition = 'transform .35s cubic-bezier(0.25,1,0.5,1)'; 
+        carousel.style.transform = `translateX(${currentIndex * -100}vw)`;
+      }
+    }
+
+    function updateHeader(data){
+      const t = data?.tournament || {}; 
+      document.title = t.name || 'ITGVT Pickleball Tournament'; 
+      document.getElementById('headerTitle').textContent = t.name || 'ITGVT Pickleball Tournament'; 
+      document.getElementById('headerDate').textContent = `Ngày thi đấu: ${formatDate(t.startDate)} | ${t.startTime || ''} - ${t.endTime || ''}`;
+    }
+
+    function toggleAccordion(element) {
+      const block = element.closest('.info-block'); 
+      if(block) block.classList.toggle('active');
+    }
+
+    function getTeamName(teamId) {
+      if(!teamId) return "Chờ xác định";
+      const team = safeArray(appState?.teams).find(t => t.id === teamId);
+      if(!team) return escapeHtml(teamId);
+      
+      const p1 = safeArray(appState?.players).find(p => p.id === team.player1Id);
+      const p2 = safeArray(appState?.players).find(p => p.id === team.player2Id);
+      const pNames = (p1 && p2) ? ` (${p1.name} - ${p2.name})` : '';
+      const seedLabel = team.isSeed ? ' 🌟' : '';
+      return `${escapeHtml(team.name)}${pNames}${seedLabel}`;
+    }
+
+    function toggleLockTeams() {
+      if(!appState) return;
+      appState.isTeamsLocked = !appState.isTeamsLocked;
+      
+      // Đồng bộ hóa hiển thị giao diện bốc thăm
+      const drawPanel = document.getElementById('draw-panel');
+      if(appState.isTeamsLocked) {
+        drawPanel.classList.remove('hidden');
+      } else {
+        drawPanel.classList.add('hidden');
+      }
+      
+      cancelEditor();
+      renderTeamView();
+      updateLockBtnUI();
+      triggerDataStatusIcon(true);
+    }
+
+    function updateLockBtnUI() {
+      const btn = document.getElementById('btn-lock-toggle');
+      if(!btn) return;
+      if(appState?.isTeamsLocked) {
+        btn.innerHTML = '🔓 Mở khóa danh sách';
+        btn.className = "w-full sm:w-auto px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-red-600 shadow";
+      } else {
+        btn.innerHTML = '🔒 Khóa thông tin Team';
+        btn.className = "w-full sm:w-auto px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-blue-600 shadow";
+      }
+    }
+
+    function toggleSeedStatus(teamId, checkbox) {
+      if(!appState) return;
+      const team = appState.teams.find(t => t.id === teamId);
+      if(!team) return;
+
+      const currentSeedsCount = appState.teams.filter(t => t.isSeed).length;
+      if(checkbox.checked && currentSeedsCount >= 6) {
+        alert('Chỉ được phép chọn tối đa 6 đội làm hạt giống!');
+        checkbox.checked = false;
+        return;
+      }
+      
+      team.isSeed = checkbox.checked;
+      triggerDataStatusIcon(true);
+    }
+
+    function drawGroupsRandom() {
+      if(!appState) return;
+      const seeds = appState.teams.filter(t => t.isSeed);
+      const normalTeams = appState.teams.filter(t => !t.isSeed);
+
+      if(seeds.length !== 6) {
+        alert(`Cần chọn chính xác 6 đội hạt giống trước khi chia bảng (Hiện chọn: ${seeds.length} đội).`);
+        return;
+      }
+      if(appState.teams.length !== 24) {
+        alert(`Số lượng đội phải bằng 24 để chia đều vào 6 bảng (Hiện có: ${appState.teams.length} đội).`);
+        return;
+      }
+
+      // Thuật toán xáo trộn Fisher-Yates
+      const shuffleArray = (arr) => {
+        let out = [...arr];
+        for (let i = out.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [out[i], out[j]] = [out[j], out[i]];
+        }
+        return out;
+      };
+
+      const shuffledSeeds = shuffleArray(seeds);
+      const shuffledNormals = shuffleArray(normalTeams);
+
+      const letters = ["A", "B", "C", "D", "E", "F"];
+      let normalIdx = 0;
+
+      letters.forEach((letter, index) => {
+        const gTeams = [];
+        // Đội thứ 1 luôn là hạt giống
+        gTeams.push(shuffledSeeds[index].id);
+        // 3 đội tiếp theo bốc ngẫu nhiên từ danh sách thường
+        for(let k = 0; k < 3; k++) {
+          gTeams.push(shuffledNormals[normalIdx].id);
+          normalIdx++;
+        }
+
+        appState.groups[letter] = {
+          name: `Bảng ${letter}`,
+          teamIds: gTeams,
+          matches: [
+            { id: `G${letter}_1`, team1Id: gTeams[0], team2Id: gTeams[1], score1: null, score2: null, played: false },
+            { id: `G${letter}_2`, team1Id: gTeams[2], team2Id: gTeams[3], score1: null, score2: null, played: false },
+            { id: `G${letter}_3`, team1Id: gTeams[0], team2Id: gTeams[2], score1: null, score2: null, played: false },
+            { id: `G${letter}_4`, team1Id: gTeams[1], team2Id: gTeams[3], score1: null, score2: null, played: false },
+            { id: `G${letter}_5`, team1Id: gTeams[0], team2Id: gTeams[3], score1: null, score2: null, played: false },
+            { id: `G${letter}_6`, team1Id: gTeams[1], team2Id: gTeams[2], score1: null, score2: null, played: false }
+          ]
+        };
+      });
+
+      renderGroups(appState.groups);
+      triggerDataStatusIcon(true);
+      alert("Bốc thăm chia bảng ngẫu nhiên hoàn tất!");
+    }
+
+    // --- TAB 1: RENDER INFO ---
+    function renderInfo(tournament){
+      const c = document.getElementById('info'); 
+      if(!tournament){
+        c.innerHTML = '<div class="section-card"><p class="text-sm text-gray-600">Thông tin giải đấu hiện chưa có.</p></div>'; 
+        return;
+      } 
+      const photoLink = tournament.links?.photos; 
+      const videoLink = tournament.links?.videos; 
+      const youtube = getYoutubeEmbed(videoLink); 
+      const awards = safeArray(tournament.awards).map(item => `<li>${escapeHtml(item)}</li>`).join('') || '<li>N/A</li>'; 
+      const contacts = safeArray(tournament.registration?.supportContacts).map(i => `<li><strong>${escapeHtml(i.name || '')}</strong>: ${escapeHtml(i.phone || '')}</li>`).join('') || '<li>N/A</li>'; 
+      const rules = safeArray(tournament.rules).map(item => `<li>${escapeHtml(item)}</li>`).join('') || '<li>N/A</li>'; 
+      const photoHtml = photoLink ? `<div class="info-block"><div class="accordion-header" onclick="toggleAccordion(this)"><p class="text-sm font-semibold text-gray-700">Album hình ảnh:</p><span class="accordion-icon">▼</span></div><div class="accordion-content"><a href="${escapeHtml(photoLink)}" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-blue-600 hover:underline inline-block mt-1">📂 Mở thư mục ảnh</a></div></div>` : ''; 
+      const videoHtml = videoLink ? (youtube ? `<div class="info-block"><div class="accordion-header" onclick="toggleAccordion(this)"><p class="text-sm font-semibold text-gray-700">Video clips:</p><span class="accordion-icon">▼</span></div><div class="accordion-content mb-2"><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;" class="mt-1"><iframe src="${escapeHtml(youtube.embedUrl)}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:8px;"></iframe></div><a href="${escapeHtml(videoLink)}" target="_blank" rel="noopener noreferrer" class="block text-center mt-2 text-sm font-semibold text-blue-600 hover:underline">Mở trên YouTube ↗️</a></div></div>` : `<div class="info-block"><div class="accordion-header" onclick="toggleAccordion(this)"><p class="text-sm font-semibold text-gray-700">Video clips:</p><span class="accordion-icon">▼</span></div><div class="accordion-content"><a href="${escapeHtml(videoLink)}" target="_blank" rel="noopener noreferrer" class="text-lg font-bold text-blue-600 hover:underline inline-block mt-1">▶️ Xem video YouTube</a></div></div>`) : '';
+      
+      c.innerHTML = `
+        <div class="section-card">
+          <h3 class="section-heading text-xl">${escapeHtml(tournament.name || 'Thông tin giải đấu')}</h3>
+          <div class="space-y-4">
+            <div class="info-block active">
+              <div class="accordion-header" onclick="toggleAccordion(this)">
+                <p class="text-sm font-semibold text-gray-700">Đơn vị tổ chức & Thời gian:</p>
+                <span class="accordion-icon">▼</span>
+              </div>
+              <div class="accordion-content">
+                <p class="text-lg font-bold text-header">${escapeHtml(tournament.organizer || 'N/A')}</p>
+                <p class="text-sm text-gray-700">Thời gian thi đấu: <strong>${escapeHtml(formatDate(tournament.startDate))}</strong> | ${escapeHtml(tournament.startTime || '')} - ${escapeHtml(tournament.endTime || '')}</p>
+                <p class="text-sm text-gray-700 mt-2"><strong>Slogan:</strong> ${escapeHtml(tournament.slogan || 'N/A')}</p>
+              </div>
+            </div>
+            <div class="info-block warning active">
+              <div class="accordion-header" onclick="toggleAccordion(this)">
+                <p class="text-sm font-semibold text-gray-700">Địa điểm thi đấu:</p>
+                <span class="accordion-icon">▼</span>
+              </div>
+              <div class="accordion-content">
+                <p class="text-lg font-bold text-header">${escapeHtml(tournament.venue?.name || 'N/A')}</p>
+              </div>
+            </div>
+            <div class="info-block">
+              <div class="accordion-header" onclick="toggleAccordion(this)">
+                <p class="text-sm font-semibold text-gray-700">Thể thức thi đấu & Luật bổ sung:</p>
+                <span class="accordion-icon">▼</span>
+              </div>
+              <div class="accordion-content">
+                <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1 font-medium text-blue-900">
+                  <li>24 đội đấu chia 6 bảng. Nhất & Nhì lọt vào Serie A (12 đội). Ba & Tư xuống Serie B (12 đội).</li>
+                  <li>Mỗi nhánh Serie đấu trực tiếp vòng đầu tiên 6 trận để chọn 6 đội thắng.</li>
+                  <li>6 đội thua tranh 2 suất VÉ VỚT (Lucky Losers) dựa trên tổng điểm thi đấu (Vòng bảng + Điểm số tại trận Knockout vừa thua) để đủ 8 đội tiến vào Tứ Kết.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="info-block">
+              <div class="accordion-header" onclick="toggleAccordion(this)">
+                <p class="text-sm font-semibold text-gray-700">Giải thưởng & Sự kiện:</p>
+                <span class="accordion-icon">▼</span>
+              </div>
+              <div class="accordion-content">
+                <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">${awards}</ul>
+                <p class="text-sm text-gray-700 mt-2"><strong>Gala:</strong> ${escapeHtml(tournament.gala?.time || 'N/A')}</p>
+              </div>
+            </div>
+            <div class="info-block warning">
+              <div class="accordion-header" onclick="toggleAccordion(this)">
+                <p class="text-sm font-semibold text-gray-700">Đăng ký & Lệ phí:</p>
+                <span class="accordion-icon">▼</span>
+              </div>
+              <div class="accordion-content">
+                <p class="text-sm text-gray-700"><strong>Form đăng ký:</strong> <a href="${escapeHtml(tournament.registration?.formUrl || '#')}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-semibold hover:underline">${escapeHtml(tournament.registration?.formUrl || 'N/A')}</a></p>
+                <p class="text-sm text-gray-700"><strong>Hạn đăng ký:</strong> ${escapeHtml(formatDate(tournament.registration?.deadline) || 'N/A')}</p>
+                <p class="text-sm text-gray-700"><strong>Chỉ tiêu:</strong> ${escapeHtml(tournament.registration?.quota || 'N/A')}</p>
+                <p class="text-sm text-gray-700"><strong>Lệ phí:</strong> ${escapeHtml(tournament.registration?.feePerPlayer || 'N/A')}</p>
+                <div class="mt-2">
+                  <p class="text-sm font-semibold text-gray-700">Liên hệ hỗ trợ:</p>
+                  <ul class="text-sm text-gray-700 list-disc pl-5">${contacts}</ul>
+                </div>
+              </div>
+            </div>
+            <div class="info-block">
+              <div class="accordion-header" onclick="toggleAccordion(this)">
+                <p class="text-sm font-semibold text-gray-700">Luật thi đấu gốc:</p>
+                <span class="accordion-icon">▼</span>
+              </div>
+              <div class="accordion-content">
+                <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">${rules}</ul>
+              </div>
+            </div>
+            ${photoHtml}
+            ${videoHtml}
+          </div>
+        </div>`;
+    }
+
+    // --- TAB 2: VÒNG BẢNG & TÍNH ĐIỂM ĐỘNG ---
+    function renderGroups(groupsData) {
+      const navContainer = document.getElementById('group-nav');
+      const detailsContainer = document.getElementById('group-details-container');
+      
+      navContainer.innerHTML = '';
+      detailsContainer.innerHTML = '';
+
+      if (!groupsData || Object.keys(groupsData).length === 0) {
+        detailsContainer.innerHTML = '<p class="text-center text-gray-500 py-4">Chưa bốc thăm chia bảng. Vui lòng bấm khóa danh sách và bốc thăm.</p>';
+        return;
+      }
+
+      Object.entries(groupsData).forEach(([groupId, g]) => {
+        const navBtn = document.createElement('button');
+        navBtn.className = "px-3 py-1 bg-gray-200 hover:bg-blue-600 hover:text-white rounded-full font-bold text-sm transition";
+        navBtn.textContent = `Bảng ${groupId}`;
+        navBtn.onclick = () => {
+          document.getElementById(`group-card-${groupId}`).scrollIntoView({behavior: 'smooth', block: 'center'});
+        };
+        navContainer.appendChild(navBtn);
+
+        const standings = {};
+        safeArray(g.teamIds).forEach(tId => {
+          standings[tId] = { id: tId, played: 0, won: 0, lost: 0, points: 0, scoreDiff: 0 };
+        });
+
+        safeArray(g.matches).forEach(m => {
+          if (m.played && m.score1 !== null && m.score2 !== null) {
+            const s1 = parseInt(m.score1);
+            const s2 = parseInt(m.score2);
+            
+            if (standings[m.team1Id]) {
+              standings[m.team1Id].played += 1;
+              standings[m.team1Id].scoreDiff += (s1 - s2);
+              if (s1 > s2) {
+                standings[m.team1Id].won += 1;
+                standings[m.team1Id].points += 1;
+              } else {
+                standings[m.team1Id].lost += 1;
+              }
+            }
+
+            if (standings[m.team2Id]) {
+              standings[m.team2Id].played += 1;
+              standings[m.team2Id].scoreDiff += (s2 - s1);
+              if (s2 > s1) {
+                standings[m.team2Id].won += 1;
+                standings[m.team2Id].points += 1;
+              } else {
+                standings[m.team2Id].lost += 1;
+              }
+            }
+          }
+        });
+
+        const sortedTeams = Object.values(standings).sort((a, b) => {
+          if (b.points !== a.points) return b.points - a.points;
+          return b.scoreDiff - a.scoreDiff;
+        });
+
+        let rowsHtml = '';
+        sortedTeams.forEach((team, rIdx) => {
+          const rankColor = rIdx < 2 ? "bg-green-100 font-bold" : "bg-orange-50";
+          rowsHtml += `
+            <tr class="${rankColor} border-b text-xs sm:text-sm">
+              <td class="px-2 py-2 text-center font-bold">${rIdx + 1}</td>
+              <td class="px-2 py-2 font-medium">${getTeamName(team.id)}</td>
+              <td class="px-1 py-2 text-center">${team.played}</td>
+              <td class="px-1 py-2 text-center text-green-700">${team.won}</td>
+              <td class="px-1 py-2 text-center text-red-600">${team.lost}</td>
+              <td class="px-1 py-2 text-center font-bold">${team.scoreDiff > 0 ? '+' : ''}${team.scoreDiff}</td>
+              <td class="px-2 py-2 text-center font-bold text-blue-600">${team.points}</td>
+            </tr>
+          `;
+        });
+
+        let matchesHtml = '';
+        safeArray(g.matches).forEach(m => {
+          matchesHtml += `
+            <div class="flex items-center justify-between border-b py-2 text-xs sm:text-sm">
+              <div class="flex-1 text-right pr-2 font-semibold text-gray-700 text-ellipsis overflow-hidden">${getTeamName(m.team1Id)}</div>
+              <div class="flex items-center gap-1 justify-center bg-gray-100 rounded-lg px-2 py-1 min-w-[70px]">
+                <input type="number" value="${m.score1 ?? ''}" placeholder="-" 
+                       onchange="updateGroupMatchScore('${groupId}', '${m.id}', 1, this.value)"
+                       class="w-8 text-center bg-white border rounded font-bold text-blue-600 text-xs py-0.5">
+                <span class="text-gray-400">:</span>
+                <input type="number" value="${m.score2 ?? ''}" placeholder="-" 
+                       onchange="updateGroupMatchScore('${groupId}', '${m.id}', 2, this.value)"
+                       class="w-8 text-center bg-white border rounded font-bold text-blue-600 text-xs py-0.5">
+              </div>
+              <div class="flex-1 text-left pl-2 font-semibold text-gray-700 text-ellipsis overflow-hidden">${getTeamName(m.team2Id)}</div>
+            </div>
+          `;
+        });
+
+        const groupBlock = `
+          <div id="group-card-${groupId}" class="border border-blue-100 rounded-xl p-3 bg-slate-50 shadow-sm">
+            <h4 class="font-black text-blue-700 border-b pb-1 mb-2 text-md flex justify-between items-center">
+              <span>BẢNG ${groupId}</span>
+              <span class="text-xs text-gray-500 font-normal">Nhất/Nhì vào Serie A, Ba/Tư vào Serie B</span>
+            </h4>
+            
+            <div class="overflow-x-auto mb-3">
+              <table class="w-full text-left bg-white rounded-lg shadow-sm">
+                <thead>
+                  <tr class="bg-blue-600 text-white text-xs">
+                    <th class="px-2 py-1.5 text-center w-8">Hạng</th>
+                    <th class="px-2 py-1.5">Đội đấu</th>
+                    <th class="px-1 py-1.5 text-center w-8">Trận</th>
+                    <th class="px-1 py-1.5 text-center w-8">T</th>
+                    <th class="px-1 py-1.5 text-center w-8">B</th>
+                    <th class="px-1 py-1.5 text-center w-10">HS</th>
+                    <th class="px-2 py-1.5 text-center w-10">Điểm</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+            </div>
+
+            <h5 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Danh sách trận đấu:</h5>
+            <div class="bg-white rounded-lg p-2 space-y-1 shadow-inner">
+              ${matchesHtml}
+            </div>
+          </div>
+        `;
+        detailsContainer.innerHTML += groupBlock;
+      });
+    }
+
+    function updateGroupMatchScore(groupId, matchId, teamIndex, value) {
+      if(!appState || !appState.groups[groupId]) return;
+      const match = appState.groups[groupId].matches.find(m => m.id === matchId);
+      if(!match) return;
+
+      const intVal = value === '' ? null : parseInt(value);
+      if (teamIndex === 1) match.score1 = intVal;
+      if (teamIndex === 2) match.score2 = intVal;
+
+      match.played = (match.score1 !== null && match.score2 !== null);
+      
+      renderGroups(appState.groups);
+      triggerDataStatusIcon(true);
+    }
+
+    // --- TAB 3: QUART (VÒNG LOẠI TRỰC TIẾP CHỨA VÒNG 1/12 & LUẬT VÉ VỚT) ---
+    function switchQuartSerie(serie) {
+      currentQuartSerie = serie;
+      document.getElementById('btn-quart-serieA').classList.toggle('active-subtab', serie === 'serieA');
+      document.getElementById('btn-quart-serieB').classList.toggle('active-subtab', serie === 'serieB');
+      document.getElementById('btn-quart-serieA').classList.toggle('text-gray-700', serie !== 'serieA');
+      document.getElementById('btn-quart-serieB').classList.toggle('text-gray-700', serie !== 'serieB');
+      renderQuart();
+    }
+
+    function renderQuart() {
+      const container = document.getElementById('quart-content');
+      if(!appState || !appState.knockout) return;
+
+      const serieData = appState.knockout[currentQuartSerie];
+      if(!serieData) {
+        container.innerHTML = '<p class="text-gray-500 text-center">Không tìm thấy dữ liệu Serie này.</p>';
+        return;
+      }
+
+      // Tự động kiểm tra tính toán vé vớt mỗi khi hiển thị giao diện nhằm đồng bộ hóa dữ liệu
+      checkAndCalculateLuckyLosers(currentQuartSerie);
+
+      const buildMatchEditorHtml = (match, listName) => {
+        return `
+          <div class="bg-white border rounded-lg p-3 shadow-sm space-y-2 text-xs sm:text-sm">
+            <div class="flex justify-between items-center border-b pb-1">
+              <span class="font-bold text-blue-700">${escapeHtml(match.label)}</span>
+              <span class="text-gray-400 text-xs font-mono">${match.id}</span>
+            </div>
+            
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <select onchange="updateKOId('${currentQuartSerie}', '${listName}', '${match.id}', 1, this.value)" class="w-full border rounded px-1 py-0.5 text-xs">
+                    <option value="">-- Chọn Đội 1 --</option>
+                    ${safeArray(appState.teams).map(t => `<option value="${t.id}" ${match.team1Id === t.id ? 'selected' : ''}>${t.name} ${t.isSeed?'⭐':''}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="w-16 ml-2">
+                  <input type="number" placeholder="Điểm 1" value="${match.score1 ?? ''}" 
+                         onchange="updateKOMatchScore('${currentQuartSerie}', '${listName}', '${match.id}', 1, this.value)"
+                         class="w-full text-center border rounded font-bold text-xs py-0.5">
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <select onchange="updateKOId('${currentQuartSerie}', '${listName}', '${match.id}', 2, this.value)" class="w-full border rounded px-1 py-0.5 text-xs">
+                    <option value="">-- Chọn Đội 2 --</option>
+                    ${safeArray(appState.teams).map(t => `<option value="${t.id}" ${match.team2Id === t.id ? 'selected' : ''}>${t.name} ${t.isSeed?'⭐':''}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="w-16 ml-2">
+                  <input type="number" placeholder="Điểm 2" value="${match.score2 ?? ''}" 
+                         onchange="updateKOMatchScore('${currentQuartSerie}', '${listName}', '${match.id}', 2, this.value)"
+                         class="w-full text-center border rounded font-bold text-xs py-0.5">
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      };
+
+      let r12Html = safeArray(serieData.roundOf12).map(m => buildMatchEditorHtml(m, 'roundOf12')).join('');
+      let qfHtml = safeArray(serieData.quarterfinals).map(m => buildMatchEditorHtml(m, 'quarterfinals')).join('');
+      let sfHtml = safeArray(serieData.semifinals).map(m => buildMatchEditorHtml(m, 'semifinals')).join('');
+
+      // Giao diện hiển thị danh sách vé vớt xuất sắc
+      let luckyLosersHtml = `<p class="text-xs text-gray-500 italic">Chưa xác định (Yêu cầu nhập đầy đủ kết quả 6 trận đấu vòng loại trực tiếp bên dưới).</p>`;
+      if(serieData.luckyLosers && serieData.luckyLosers.length > 0) {
+        luckyLosersHtml = `<ol class="list-decimal pl-5 text-xs text-green-700 font-bold space-y-1">
+          ${serieData.luckyLosers.map(item => `<li>Đội: ${getTeamName(item.teamId)} - Tổng tích lũy: ${item.totalPoints}đ (Hiệu số: ${item.totalDiff})</li>`).join('')}
+        </ol>`;
+      }
+
+      container.innerHTML = `
+        <div class="space-y-4">
+          <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 p-3 rounded-xl">
+            <h5 class="text-xs font-black text-green-800 uppercase tracking-wider mb-1">🎟️ Suất Vé Vớt Vào Tứ Kết (2 Lucky Losers tốt nhất):</h5>
+            ${luckyLosersHtml}
+          </div>
+
+          <div>
+            <h4 class="font-extrabold text-blue-800 border-l-4 border-blue-600 pl-2 mb-2 text-sm sm:text-md uppercase">Vòng loại trực tiếp nhánh (12 đội - 6 trận)</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${r12Html || '<p class="text-xs text-gray-500">Chưa thiết lập</p>'}</div>
+          </div>
+          <div>
+            <h4 class="font-extrabold text-blue-800 border-l-4 border-blue-600 pl-2 mb-2 text-sm sm:text-md uppercase">Vòng Tứ Kết (6 Đội Thắng + 2 Đội Vé Vớt)</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${qfHtml || '<p class="text-xs text-gray-500">Chưa thiết lập</p>'}</div>
+          </div>
+          <div>
+            <h4 class="font-extrabold text-blue-800 border-l-4 border-blue-600 pl-2 mb-2 text-sm sm:text-md uppercase">Vòng Bán Kết</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${sfHtml || '<p class="text-xs text-gray-500">Chưa thiết lập</p>'}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateKOId(serie, listName, matchId, teamIndex, selectedTeamId) {
+      if(!appState || !appState.knockout[serie]) return;
+      const match = appState.knockout[serie][listName].find(m => m.id === matchId);
+      if(!match) return;
+
+      if(teamIndex === 1) match.team1Id = selectedTeamId || null;
+      if(teamIndex === 2) match.team2Id = selectedTeamId || null;
+
+      triggerDataStatusIcon(true);
+    }
+
+    function updateKOMatchScore(serie, listName, matchId, teamIndex, value) {
+      if(!appState || !appState.knockout[serie]) return;
+      const match = appState.knockout[serie][listName].find(m => m.id === matchId);
+      if(!match) return;
+
+      const intVal = value === '' ? null : parseInt(value);
+      if(teamIndex === 1) match.score1 = intVal;
+      if(teamIndex === 2) match.score2 = intVal;
+
+      match.played = (match.score1 !== null && match.score2 !== null);
+      
+      if(listName === 'roundOf12') {
+        checkAndCalculateLuckyLosers(serie);
+      }
+      
+      renderQuart();
+      triggerDataStatusIcon(true);
+    }
+
+    // Thuật toán cốt lõi tính toán suất Vé vớt và đẩy tự động lên Tứ Kết
+    function checkAndCalculateLuckyLosers(serieKey) {
+      const serie = appState.knockout[serieKey];
+      if(!serie || !serie.roundOf12) return;
+
+      const allMatchesPlayed = serie.roundOf12.every(m => m.played && m.score1 !== null && m.score2 !== null);
+      if(!allMatchesPlayed) {
+        serie.luckyLosers = []; 
+        return;
+      }
+
+      let winners = [];
+      let losers = [];
+
+      serie.roundOf12.forEach(m => {
+        const s1 = parseInt(m.score1);
+        const s2 = parseInt(m.score2);
+        if(s1 > s2) {
+          winners.push(m.team1Id);
+          losers.push({ teamId: m.team2Id, matchScore: s2, matchDiff: s2 - s1 });
+        } else {
+          winners.push(m.team2Id);
+          losers.push({ teamId: m.team1Id, matchScore: s1, matchDiff: s1 - s2 });
+        }
+      });
+
+      // Quét thành tích vòng bảng cộng dồn với trận KO vừa đá
+      const losersAnalysis = losers.map(loser => {
+        let groupPoints = 0;
+        let groupDiff = 0;
+
+        Object.values(appState.groups).forEach(g => {
+          // Tính điểm tích lũy vòng bảng của đội này bằng thuật toán quét động dữ liệu trận đấu vòng bảng
+          safeArray(g.matches).forEach(m => {
+            if(m.played && m.score1 !== null && m.score2 !== null) {
+              const s1 = parseInt(m.score1);
+              const s2 = parseInt(m.score2);
+              if(m.team1Id === loser.teamId) {
+                groupDiff += (s1 - s2);
+                if(s1 > s2) groupPoints += 1;
+              }
+              if(m.team2Id === loser.teamId) {
+                groupDiff += (s2 - s1);
+                if(s2 > s1) groupPoints += 1;
+              }
+            }
+          });
+        });
+
+        return {
+          teamId: loser.teamId,
+          totalPoints: groupPoints, // Điểm từ vòng bảng
+          totalDiff: groupDiff + loser.matchScore // Tổng thành tích chỉ số phụ tính cả trận trực tiếp vừa thua
+        };
+      });
+
+      // Sắp xếp tìm 2 đội cao nhất
+      losersAnalysis.sort((a, b) => {
+        if(b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+        return b.totalDiff - a.totalDiff;
+      });
+
+      const luckyTop2 = losersAnalysis.slice(0, 2);
+      serie.luckyLosers = luckyTop2;
+
+      // Hợp nhất 8 đội vào Tứ Kết: 6 đội thắng trực tiếp + 2 suất vé vớt
+      const advanced8Ids = [...winners, ...luckyTop2.map(x => x.teamId)];
+      
+      // Tự động phân bổ vào 4 cặp đấu Tứ Kết (nếu chưa được Admin tùy biến trước đó)
+      if(serie.quarterfinals && serie.quarterfinals.length === 4) {
+        serie.quarterfinals[0].team1Id = advanced8Ids[0] || null;
+        serie.quarterfinals[0].team2Id = advanced8Ids[7] || null;
+
+        serie.quarterfinals[1].team1Id = advanced8Ids[1] || null;
+        serie.quarterfinals[1].team2Id = advanced8Ids[6] || null;
+
+        serie.quarterfinals[2].team1Id = advanced8Ids[2] || null;
+        serie.quarterfinals[2].team2Id = advanced8Ids[5] || null;
+
+        serie.quarterfinals[3].team1Id = advanced8Ids[3] || null;
+        serie.quarterfinals[3].team2Id = advanced8Ids[4] || null;
+      }
+    }
+
+    // --- TAB 4: CHUNG KẾT HAI SERIE CHUNG MỘT TAB ---
+    function renderFinalTab() {
+      const container = document.getElementById('final-tab-content');
+      if(!appState || !appState.knockout) return;
+
+      const finalA = appState.knockout.serieA.final;
+      const finalB = appState.knockout.serieB.final;
+
+      const buildFinalBlockHtml = (finalObj, serieLabel, championField, runnerUpField) => {
+        if(!finalObj) return `<p class="text-center text-gray-400">Chưa thiết lập trận Chung kết ${serieLabel}</p>`;
+        
+        return `
+          <div class="border border-yellow-400 bg-amber-50/40 p-4 rounded-xl shadow-md space-y-3">
+            <h4 class="font-black text-amber-800 text-sm sm:text-md border-b border-amber-200 pb-1 uppercase flex justify-between">
+              <span>CHUNG KẾT ${serieLabel}</span>
+              <span class="text-yellow-600">🏆 Cúp Vô Địch</span>
+            </h4>
+            
+            <div class="flex flex-col gap-2 text-xs sm:text-sm">
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <select onchange="updateFinalId('${serieLabel}', 1, this.value)" class="w-full border rounded px-2 py-1 text-xs">
+                    <option value="">-- Chọn Đội Tranh Đai 1 --</option>
+                    ${safeArray(appState.teams).map(t => `<option value="${t.id}" ${finalObj.team1Id === t.id ? 'selected' : ''}>${t.name}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="w-20 ml-2">
+                  <input type="number" placeholder="Điểm" value="${finalObj.score1 ?? ''}" 
+                         onchange="updateFinalScore('${serieLabel}', 1, this.value)"
+                         class="w-full text-center border rounded font-extrabold text-blue-600 py-1">
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <select onchange="updateFinalId('${serieLabel}', 2, this.value)" class="w-full border rounded px-2 py-1 text-xs">
+                    <option value="">-- Chọn Đội Tranh Đai 2 --</option>
+                    ${safeArray(appState.teams).map(t => `<option value="${t.id}" ${finalObj.team2Id === t.id ? 'selected' : ''}>${t.name}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="w-20 ml-2">
+                  <input type="number" placeholder="Điểm" value="${finalObj.score2 ?? ''}" 
+                         onchange="updateFinalScore('${serieLabel}', 2, this.value)"
+                         class="w-full text-center border rounded font-extrabold text-blue-600 py-1">
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-dashed border-amber-200 grid grid-cols-2 gap-2 text-xs sm:text-sm">
+              <div>
+                <label class="block font-bold text-gray-700">🏆 NHÀ VÔ ĐỊCH:</label>
+                <input type="text" value="${escapeHtml(appState.results[championField] || '')}" 
+                       onchange="updateChampionText('${championField}', this.value)"
+                       placeholder="Ví dụ: Team 01" class="w-full border rounded px-2 py-1 mt-1 text-xs">
+              </div>
+              <div>
+                <label class="block font-bold text-gray-700">🥈 Á QUÂN:</label>
+                <input type="text" value="${escapeHtml(appState.results[runnerUpField] || '')}" 
+                       onchange="updateChampionText('${runnerUpField}', this.value)"
+                       placeholder="Ví dụ: Team 02" class="w-full border rounded px-2 py-1 mt-1 text-xs">
+              </div>
+            </div>
+          </div>
+        `;
+      };
+
+      container.innerHTML = `
+        <div class="space-y-6">
+          ${buildFinalBlockHtml(finalA, 'SERIE A', 'championA', 'runnerUpA')}
+          ${buildFinalBlockHtml(finalB, 'SERIE B', 'championB', 'runnerUpB')}
+        </div>
+      `;
+    }
+
+    function updateFinalId(serieLabel, teamIndex, selectedTeamId) {
+      const field = serieLabel === 'SERIE A' ? 'serieA' : 'serieB';
+      if(!appState || !appState.knockout[field]) return;
+      const finalObj = appState.knockout[field].final;
+      
+      if(teamIndex === 1) finalObj.team1Id = selectedTeamId || null;
+      if(teamIndex === 2) finalObj.team2Id = selectedTeamId || null;
+
+      triggerDataStatusIcon(true);
+    }
+
+    function updateFinalScore(serieLabel, teamIndex, value) {
+      const field = serieLabel === 'SERIE A' ? 'serieA' : 'serieB';
+      if(!appState || !appState.knockout[field]) return;
+      const finalObj = appState.knockout[field].final;
+
+      const intVal = value === '' ? null : parseInt(value);
+      if(teamIndex === 1) finalObj.score1 = intVal;
+      if(teamIndex === 2) finalObj.score2 = intVal;
+
+      finalObj.played = (finalObj.score1 !== null && finalObj.score2 !== null);
+      triggerDataStatusIcon(true);
+    }
+
+    function updateChampionText(field, val) {
+      if(!appState || !appState.results) return;
+      appState.results[field] = val;
+      triggerDataStatusIcon(true);
+    }
+
+    // --- TAB 5: TEAM & PLAYERS MANAGER (QUẢN LÝ ĐỘI NGŨ) ---
+    function switchTeamView(view) {
+      currentTeamView = view;
+      document.getElementById('btn-view-teams').classList.toggle('active-subtab', view === 'teams');
+      document.getElementById('btn-view-players').classList.toggle('active-subtab', view === 'players');
+      document.getElementById('btn-view-teams').classList.toggle('text-gray-700', view !== 'teams');
+      document.getElementById('btn-view-players').classList.toggle('text-gray-700', view !== 'players');
+      
+      cancelEditor();
+      renderTeamView();
+    }
+
+    function renderTeamView() {
+      const container = document.getElementById('team-view-content');
+      if(!appState) return;
+
+      const isLocked = !!appState.isTeamsLocked;
+
+      if(currentTeamView === 'players') {
+        let rows = safeArray(appState.players).map(p => {
+          return `
+            <tr class="border-b hover:bg-slate-50 text-xs sm:text-sm">
+              <td class="px-2 py-2 font-mono text-blue-600">${escapeHtml(p.id)}</td>
+              <td class="px-2 py-2 font-bold">${escapeHtml(p.name)}</td>
+              <td class="px-2 py-2">${escapeHtml(p.phone || 'N/A')}</td>
+              <td class="px-2 py-2">${escapeHtml(p.company || 'N/A')}</td>
+              <td class="px-2 py-2 text-right">
+                <button onclick="openEditor('player', '${p.id}')" ${isLocked ? 'disabled' : ''} class="px-2 py-1 bg-yellow-500 text-white rounded text-xs font-bold hover:bg-yellow-600 disabled:opacity-40">Sửa</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        container.innerHTML = `
+          <div class="mb-2 flex justify-between items-center">
+            <span class="text-xs font-semibold text-gray-500 uppercase">Tổng cộng: ${safeArray(appState.players).length} VĐV</span>
+            <button onclick="createNewPlayer()" ${isLocked ? 'disabled' : ''} class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded disabled:opacity-40">+ Thêm VĐV</button>
+          </div>
+          <table class="w-full text-left bg-white rounded-lg border">
+            <thead>
+              <tr class="bg-gray-100 text-gray-700 text-xs uppercase">
+                <th class="px-2 py-1.5">ID</th>
+                <th class="px-2 py-1.5">Họ Tên</th>
+                <th class="px-2 py-1.5">SĐT</th>
+                <th class="px-2 py-1.5">Đơn vị</th>
+                <th class="px-2 py-1.5 text-right">Tác vụ</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows || '<tr><td colspan="5" class="text-center py-4 text-gray-500">Không có dữ liệu VĐV.</td></tr>'}
+            </tbody>
+          </table>
+        `;
+      } else {
+        let rows = safeArray(appState.teams).map(t => {
+          const p1 = safeArray(appState.players).find(p => p.id === t.player1Id);
+          const p2 = safeArray(appState.players).find(p => p.id === t.player2Id);
+          const p1Name = p1 ? p1.name : `Chưa chọn (${t.player1Id || 'N/A'})`;
+          const p2Name = p2 ? p2.name : `Chưa chọn (${t.player2Id || 'N/A'})`;
+
+          return `
+            <tr class="border-b hover:bg-slate-50 text-xs sm:text-sm">
+              <td class="px-2 py-2 font-mono text-blue-600">${escapeHtml(t.id)}</td>
+              <td class="px-2 py-2 font-bold">${escapeHtml(t.name)}</td>
+              <td class="px-2 py-2 text-gray-700 text-xs">${escapeHtml(p1Name)} &amp; ${escapeHtml(p2Name)}</td>
+              <td class="px-2 py-2 text-center">
+                <input type="checkbox" ${t.isSeed ? 'checked' : ''} ${isLocked ? 'disabled' : ''} onchange="toggleSeedStatus('${t.id}', this)" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 disabled:opacity-50">
+              </td>
+              <td class="px-2 py-2 text-right">
+                <button onclick="openEditor('team', '${t.id}')" ${isLocked ? 'disabled' : ''} class="px-2 py-1 bg-yellow-500 text-white rounded text-xs font-bold hover:bg-yellow-600 disabled:opacity-40">Sửa</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        container.innerHTML = `
+          <div class="mb-2 flex justify-between items-center">
+            <span class="text-xs font-semibold text-gray-500 uppercase">Tổng cộng: ${safeArray(appState.teams).length}/24 Cặp đấu (Hạt giống: ${safeArray(appState.teams).filter(x => x.isSeed).length}/6)</span>
+            <button onclick="createNewTeam()" ${isLocked ? 'disabled' : ''} class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded disabled:opacity-40">+ Thêm Cặp Đấu</button>
+          </div>
+          <table class="w-full text-left bg-white rounded-lg border">
+            <thead>
+              <tr class="bg-gray-100 text-gray-700 text-xs uppercase">
+                <th class="px-2 py-1.5">ID Team</th>
+                <th class="px-2 py-1.5">Tên Cặp Đấu</th>
+                <th class="px-2 py-1.5">Thành viên Đội</th>
+                <th class="px-2 py-1.5 text-center w-20">Hạt giống</th>
+                <th class="px-2 py-1.5 text-right">Tác vụ</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows || '<tr><td colspan="5" class="text-center py-4 text-gray-500">Không có dữ liệu Team.</td></tr>'}
+            </tbody>
+          </table>
+        `;
+      }
+    }
+
+    function openEditor(type, id) {
+      if(appState?.isTeamsLocked) return;
+
+      const panel = document.getElementById('editor-panel');
+      const title = document.getElementById('editor-title');
+      const fields = document.getElementById('editor-fields');
+      
+      panel.classList.remove('hidden');
+      currentEditingItem = { type, id };
+
+      if(type === 'player') {
+        const p = appState.players.find(x => x.id === id);
+        title.innerHTML = `Chỉnh sửa VĐV: <span class="text-gray-700 font-mono">${id}</span>`;
+        fields.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Họ tên VĐV:</label>
+            <input type="text" id="edit-player-name" value="${escapeHtml(p.name)}" class="w-full border rounded px-2 py-1 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Số điện thoại:</label>
+            <input type="text" id="edit-player-phone" value="${escapeHtml(p.phone || '')}" class="w-full border rounded px-2 py-1 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Đơn vị / Doanh nghiệp:</label>
+            <input type="text" id="edit-player-company" value="${escapeHtml(p.company || '')}" class="w-full border rounded px-2 py-1 text-sm">
+          </div>
+        `;
+      } else if (type === 'team') {
+        const t = appState.teams.find(x => x.id === id);
+        title.innerHTML = `Chỉnh sửa Cặp đấu: <span class="text-gray-700 font-mono">${id}</span>`;
+        fields.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Tên Cặp đấu (Team):</label>
+            <input type="text" id="edit-team-name" value="${escapeHtml(t.name)}" class="w-full border rounded px-2 py-1 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">VĐV thứ nhất:</label>
+            <select id="edit-team-p1" class="w-full border rounded px-2 py-1 text-sm">
+              <option value="">-- Chọn VĐV 1 --</option>
+              ${appState.players.map(p => `<option value="${p.id}" ${t.player1Id === p.id ? 'selected' : ''}>${p.name} (${p.id})</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">VĐV thứ hai:</label>
+            <select id="edit-team-p2" class="w-full border rounded px-2 py-1 text-sm">
+              <option value="">-- Chọn VĐV 2 --</option>
+              ${appState.players.map(p => `<option value="${p.id}" ${t.player2Id === p.id ? 'selected' : ''}>${p.name} (${p.id})</option>`).join('')}
+            </select>
+          </div>
+        `;
+      }
+    }
+
+    function cancelEditor() {
+      document.getElementById('editor-panel').classList.add('hidden');
+      currentEditingItem = null;
+    }
+
+    function saveEditor() {
+      if(!currentEditingItem || !appState) return;
+      const {type, id} = currentEditingItem;
+
+      if(type === 'player') {
+        const p = appState.players.find(x => x.id === id);
+        if(p) {
+          p.name = document.getElementById('edit-player-name').value;
+          p.phone = document.getElementById('edit-player-phone').value;
+          p.company = document.getElementById('edit-player-company').value;
+        }
+      } else if(type === 'team') {
+        const t = appState.teams.find(x => x.id === id);
+        if(t) {
+          t.name = document.getElementById('edit-team-name').value;
+          t.player1Id = document.getElementById('edit-team-p1').value || null;
+          t.player2Id = document.getElementById('edit-team-p2').value || null;
+        }
+      }
+
+      triggerDataStatusIcon(true);
+      cancelEditor();
+      renderTeamView();
+      renderGroups(appState.groups);
+      renderQuart();
+      renderFinalTab();
+    }
+
+    function createNewPlayer() {
+      if(appState?.isTeamsLocked) return;
+      const nextIdNum = appState.players.length + 1;
+      const nextId = "player" + String(nextIdNum).padStart(2, '0');
+      appState.players.push({ id: nextId, name: `VĐV Mới ${nextIdNum}`, phone: "", company: "" });
+      renderTeamView();
+      openEditor('player', nextId);
+    }
+
+    function createNewTeam() {
+      if(appState?.isTeamsLocked) return;
+      const nextIdNum = appState.teams.length + 1;
+      const nextId = "Team" + String(nextIdNum).padStart(2, '0');
+      appState.teams.push({ id: nextId, name: `Team Mới ${nextIdNum}`, player1Id: "", player2Id: "", isSeed: false });
+      renderTeamView();
+      openEditor('team', nextId);
+    }
+
+    function triggerDataStatusIcon(changed) {
+      const icon = document.getElementById('dataStatusIcon');
+      const msg = document.getElementById('statusMessage');
+      if (changed) {
+        icon.className = "status-icon status-error";
+        msg.innerHTML = "⚠️ Có thay đổi chưa lưu (Dữ liệu chạy Local)";
+      } else {
+        icon.className = "status-icon status-success";
+      }
+    }
+
+    async function fetchData(){
+      const msg = document.getElementById('statusMessage'); 
+      const icon = document.getElementById('dataStatusIcon'); 
+      msg.textContent = 'Đang tải dữ liệu...'; 
+      icon.classList.remove('status-success','status-error'); 
+      
+      try {
+        const res = await fetch(DATA_URL, {cache:'no-store'}); 
+        if(!res.ok) throw new Error(`HTTP ${res.status}`); 
+        const data = await res.json(); 
+        appState = data; 
+        
+        // Cập nhật giao diện đồng bộ
+        updateHeader(data); 
+        renderInfo(data.tournament); 
+        renderGroups(data.groups);
+        renderQuart();
+        renderFinalTab();
+        renderTeamView();
+        updateLockBtnUI();
+
+        msg.textContent = `Cập nhật lúc: ${new Date().toLocaleTimeString()}`; 
+        icon.classList.add('status-success'); 
+      } catch(err) {
+        msg.textContent = '⚠️ Lỗi tải dữ liệu. Sử dụng dữ liệu mẫu...'; 
+        icon.classList.add('status-error'); 
+        
+        if(!appState) {
+          appState = mockAppState();
+          updateHeader(appState); 
+          renderInfo(appState.tournament); 
+          renderGroups(appState.groups);
+          renderQuart();
+          renderFinalTab();
+          renderTeamView();
+          updateLockBtnUI();
+        }
+      } 
+      goToSection(currentIndex);
+    }
+
+    function mockAppState() {
+      const defaultState = {
+        "isTeamsLocked": false,
+        "tournament": {
+          "name": "ITGVT Pickleball Tournament 2026 - Season 2",
+          "organizer": "ITGVT",
+          "startDate": "2026-06-06",
+          "startTime": "14:00",
+          "endTime": "17:30",
+          "slogan": "Dân IT bứt phá mọi giới hạn",
+          "venue": { "name": "Sân WinPick - 29/10 Xô Viết Nghệ Tĩnh, Vũng Tàu" }
+        },
+        "players": [],
+        "teams": [],
+        "groups": {},
+        "knockout": {
+          "serieA": { "roundOf12": [], "quarterfinals": [], "semifinals": [], "final": null, "luckyLosers": [] },
+          "serieB": { "roundOf12": [], "quarterfinals": [], "semifinals": [], "final": null, "luckyLosers": [] }
+        },
+        "results": { "championA": "", "runnerUpA": "", "championB": "", "runnerUpB": "" }
+      };
+
+      for(let i = 1; i <= 48; i++) {
+        defaultState.players.push({
+          id: `player${String(i).padStart(2, '0')}`,
+          name: `VĐV ${String(i).padStart(2, '0')}`,
+          phone: "0900000" + String(i).padStart(3, '0'),
+          company: "ITGVT Club"
+        });
+      }
+      
+      for(let i = 1; i <= 24; i++) {
+        defaultState.teams.push({
+          id: `Team${String(i).padStart(2, '0')}`,
+          name: `Team ${String(i).padStart(2, '0')}`,
+          player1Id: `player${String(i*2 - 1).padStart(2, '0')}`,
+          player2Id: `player${String(i*2).padStart(2, '0')}`,
+          isSeed: i <= 6 // Đánh dấu mặc định 6 đội hạt giống đầu tiên
+        });
+      }
+
+      const makeEmptyKO = (label, idPrefix) => ({
+        id: idPrefix, label, team1Id: null, team2Id: null, score1: null, score2: null, played: false
+      });
+
+      const series = ["serieA", "serieB"];
+      series.forEach(s => {
+        const p = s === "serieA" ? "A" : "B";
+        // Khởi tạo chính xác cấu trúc 6 trận của Vòng 1/12
+        for(let i=1; i<=6; i++) {
+          defaultState.knockout[s].roundOf12.push(makeEmptyKO(`Vòng 1/12 - Trận ${i}`, `K_${p}12_${i}`));
+        }
+        for(let i=1; i<=4; i++) {
+          defaultState.knockout[s].quarterfinals.push(makeEmptyKO(`Tứ Kết ${i}`, `K_${p}Q_${i}`));
+        }
+        for(let i=1; i<=2; i++) {
+          defaultState.knockout[s].semifinals.push(makeEmptyKO(`Bán Kết ${i}`, `K_${p}S_${i}`));
+        }
+        defaultState.knockout[s].final = makeEmptyKO(`Chung Kết Serie ${p}`, `K_${p}F_1`);
+      });
+
+      return defaultState;
+    }
+
+    // --- SWIPE GESTURES ON MOBILE ---
+    let touchStartX = 0, isTouching = false; 
+    mainContent.addEventListener('touchstart', e => {
+      if(window.innerWidth >= 992) return; 
+      touchStartX = e.touches[0].clientX; 
+      isTouching = true;
+    }); 
+    
+    mainContent.addEventListener('touchend', e => {
+      if(!isTouching || window.innerWidth >= 992) return; 
+      isTouching = false; 
+      const diff = e.changedTouches[0].clientX - touchStartX; 
+      if(diff > 60) goToSection(currentIndex - 1); 
+      if(diff < -60) goToSection(currentIndex + 1);
+    }); 
+    
+    window.addEventListener('resize', () => goToSection(currentIndex)); 
+    document.addEventListener('keydown', e => {
+      if(e.key === 'ArrowLeft') goToSection(currentIndex - 1); 
+      if(e.key === 'ArrowRight') goToSection(currentIndex + 1);
+    }); 
+
+    updateRefreshButtonUI(); 
+    fetchData();
+  </script>
+</body>
+</html>
