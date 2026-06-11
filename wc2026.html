@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World Cup 2026 - Live Data Hub</title>
+    <title>World Cup 2026 - Kết Nối Đã Khắc Phục</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -22,11 +22,11 @@
                         <i class="fa-solid fa-trophy text-amber-400"></i> FIFA 2026
                     </span>
                     <span id="data-status" class="bg-yellow-950 text-yellow-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-yellow-800 tracking-widest flex items-center gap-1">
-                        <i class="fa-solid fa-spinner animate-spin"></i> Đang tải dữ liệu...
+                        <i class="fa-solid fa-spinner animate-spin"></i> Đang kết nối...
                     </span>
                 </div>
-                <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800" id="main-nav">
-                    <button onclick="switchTab('live')" id="nav-live" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-indigo-600 text-white transition-all flex items-center gap-1.5">
+                <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
+                    <button onclick="switchTab('live')" id="nav-live" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-indigo-600 text-white transition-all">
                         Cập Nhật
                     </button>
                     <button onclick="switchTab('rounds')" id="nav-rounds" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-white transition-all">
@@ -41,85 +41,85 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        
+        <div id="error-alert" class="hidden bg-rose-950/80 border border-rose-800 text-rose-300 p-4 rounded-xl mb-6 flex items-center gap-3">
+            <i class="fa-solid fa-circle-exclamation text-xl"></i>
+            <div>
+                <span class="font-bold">Lỗi tải dữ liệu!</span> Trình duyệt chặn CORS hoặc đường dẫn sai. Đã tự động kích hoạt chế độ dự phòng.
+            </div>
+        </div>
 
         <section id="tab-live" class="tab-content block">
-            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl p-6 border border-slate-800 shadow-2xl mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h2 class="text-2xl font-extrabold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-indigo-400"></i> Bàn Điều Khiển Tỉ Số Online
-                    </h2>
-                    <p class="text-slate-400 text-sm mt-1">Dữ liệu nạp trực tiếp từ kho lưu trữ GitHub.</p>
-                </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-satellite-dish text-rose-500"></i> Bàn Điều Tốc Trận Đấu
+                </h2>
+                <p class="text-slate-400 text-xs mt-1">Thay đổi điểm số bên dưới để kiểm tra bảng xếp hạng tự động nhảy điểm số.</p>
             </div>
-            
-            <div id="admin-matches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                </div>
+            <div id="admin-matches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
 
         <section id="tab-rounds" class="tab-content hidden">
-            <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
-                <div>
-                    <h2 class="text-xl font-bold text-white flex items-center gap-2"><i class="fa-regular fa-calendar-days text-indigo-400"></i> Lịch Thi Đấu</h2>
-                </div>
-                <select id="round-select-filter" onchange="renderRoundView()" class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm font-medium text-white focus:outline-none w-full sm:w-64">
-                    <option value="Matchday 1">Vòng Bảng - Lượt Trận 1</option>
-                    <option value="Matchday 2">Vòng Bảng - Lượt Trận 2</option>
-                    <option value="Matchday 3">Vòng Bảng - Lượt Trận 3</option>
-                    <option value="Round of 32">Vòng 32 Đội</option>
-                    <option value="Round of 16">Vòng 16 Đội</option>
-                    <option value="Quarter-finals">Tứ Kết</option>
-                    <option value="Semi-finals">Bán Kết</option>
-                    <option value="Final">Trận CHUNG KẾT</option>
+            <div class="mb-6 bg-slate-900 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <span class="font-bold text-sm"><i class="fa-regular fa-clock mr-1"></i> Chọn Lượt Đấu Kỷ Yếu</span>
+                <select id="round-select-filter" onchange="renderRoundView()" class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none w-full sm:w-64">
+                    <option value="Lượt 1">Vòng Bảng - Lượt Trận 1</option>
+                    <option value="Lượt 2">Vòng Bảng - Lượt Trận 2</option>
+                    <option value="Lượt 3">Vòng Bảng - Lượt Trận 3</option>
                 </select>
             </div>
-            
             <div id="round-matches-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
 
         <section id="tab-groups" class="tab-content hidden">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-white flex items-center gap-2"><i class="fa-solid fa-table-list text-indigo-400"></i> Bảng Xếp Hạng 12 Bảng Đấu</h2>
-            </div>
             <div id="groups-container-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-8"></div>
         </section>
-
     </main>
 
     <script>
-        // Đường dẫn API lấy data thô từ kho lưu trữ của bạn
-        const API_URL = "https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/wc2026.json";
-        let worldCupData = { teams: [], fixtures: [] }; // Biến chứa dữ liệu sau khi tải về
+        // SỬ DỤNG CDN JSDELIVR ĐỂ TRÁNH LỖI CORS CỦA GITHUB RAW
+        const API_URL = "https://cdn.jsdelivr.net/gh/cqtin2024/ITVTG@main/data/wc2026.json";
+        let worldCupData = { teams: [], fixtures: [] };
 
-        // HÀM KHỞI CHẠY TẢI DỮ LIỆU TỪ GITHUB (FETCH API)
+        // HÀM TẢI DATA ONLINE CHỐNG LỖI KẾT NỐI
         async function loadOnlineData() {
+            const statusBadge = document.getElementById("data-status");
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) throw new Error("Không thể kết nối đến GitHub");
+                if (!response.ok) throw new Error("CORS hoặc lỗi mạng");
                 
                 worldCupData = await response.json();
                 
-                // Cập nhật giao diện trạng thái thành công
-                const statusBadge = document.getElementById("data-status");
                 statusBadge.className = "bg-emerald-950 text-emerald-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-emerald-800 tracking-widest flex items-center gap-1";
-                statusBadge.innerHTML = `<i class="fa-solid fa-cloud"></i> Đồng Bộ Online`;
+                statusBadge.innerHTML = `<i class="fa-solid fa-cloud-text"></i> Kết Nối Thành Công`;
                 
-                // Hiển thị dữ liệu lên màn hình mặc định
                 renderAdminConsole();
             } catch (error) {
-                console.error("Lỗi tải dữ liệu:", error);
-                document.getElementById("data-status").innerHTML = "❌ Lỗi kết nối dữ liệu";
+                console.warn("Chuyển sang chế độ dự phòng:", error);
+                document.getElementById("error-alert").classList.remove("hidden");
+                statusBadge.className = "bg-rose-950 text-rose-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-rose-800 tracking-widest";
+                statusBadge.innerHTML = `⚠️ Dữ liệu Offline`;
+                
+                // Nạp data nội bộ dự phòng nếu mạng tổng Github chết hẳn
+                worldCupData = {
+                    teams: [
+                        { id: "MEX", name: "Mexico", group: "A", flag: "🇲🇽" },
+                        { id: "RSA", name: "Nam Phi", group: "A", flag: "🇿🇦" },
+                        { id: "KOR", name: "Hàn Quốc", group: "A", flag: "🇰🇷" },
+                        { id: "CZE", name: "CH Séc", group: "A", flag: "🇨🇿" }
+                    ],
+                    fixtures: [
+                        { match_no: 1, group: "A", round: "Lượt 1", date: "2026-06-11", time_vnm: "20:00", status: "FT", home_team: "MEX", away_team: "RSA", scoreHome: 2, scoreAway: 1 }
+                    ]
+                };
+                renderAdminConsole();
             }
         }
 
-        // CHUYỂN TAB GIAO DIỆN
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.className = "tab-content hidden");
             document.getElementById(`tab-${tabId}`).className = "tab-content block";
-
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = "tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-white transition-all";
-            });
-            
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.className = "tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-white transition-all");
             document.getElementById(`nav-${tabId}`).className = "tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-indigo-600 text-white transition-all";
 
             if (tabId === 'live') renderAdminConsole();
@@ -131,10 +131,10 @@
             return worldCupData.teams.find(t => t.id === teamId) || { "name": teamId, "flag": "🏳️" };
         }
 
-        // XỬ LÝ HIỂN THỊ CẬP NHẬT TỈ SỐ (Dữ liệu động từ API)
+        // ĐIỀU CHỈNH ĐỌC TRƯỜNG BIẾN THEO FILE JSON GITHUB (scoreHome, scoreAway)
         function renderAdminConsole() {
             const container = document.getElementById('admin-matches-grid');
-            if(!worldCupData.fixtures || worldCupData.fixtures.length === 0) return;
+            if(!container || !worldCupData.fixtures) return;
             container.innerHTML = '';
 
             worldCupData.fixtures.forEach(match => {
@@ -144,48 +144,48 @@
                 const card = document.createElement('div');
                 card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between shadow-lg";
                 card.innerHTML = `
-                    <div class="flex justify-between items-center mb-3 text-[11px] font-bold text-slate-500 uppercase">
-                        <span>Trận #${match.match_no} ${match.group ? '• Bảng ' + match.group : ''}</span>
-                        <span class="px-2 py-0.5 border border-slate-700 bg-slate-950 rounded text-slate-400">${match.status}</span>
+                    <div class="flex justify-between items-center mb-3 text-[11px] font-bold text-slate-500">
+                        <span>TRẬN TỐI ƯU #${match.match_no} • BẢNG ${match.group || 'A'}</span>
+                        <span class="px-2 py-0.5 border border-slate-700 bg-slate-950 rounded text-slate-400 text-[10px]">${match.status}</span>
                     </div>
 
-                    <div class="flex items-center justify-between gap-2 my-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between gap-2 my-1.5 bg-slate-950 p-3 rounded-xl border border-slate-800">
                         <div class="flex items-center gap-2 flex-1 min-w-0">
-                            <span class="text-2xl shrink-0">${home.flag}</span>
+                            <span class="text-2xl">${home.flag}</span>
                             <span class="font-bold text-sm text-slate-200 truncate">${home.name}</span>
                         </div>
-                        <input type="number" value="${match.score.home !== null ? match.score.home : ''}" 
-                            onchange="updateScore(${match.match_no}, 'home', this.value)"
+                        <input type="number" value="${match.scoreHome !== null ? match.scoreHome : ''}" 
+                            onchange="updateScoreEngine(${match.match_no}, 'scoreHome', this.value)"
                             class="w-10 h-9 bg-slate-900 border border-slate-700 rounded-lg text-center font-black text-amber-400 text-sm">
                     </div>
 
-                    <div class="flex items-center justify-between gap-2 mb-4 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between gap-2 mb-3 bg-slate-950 p-3 rounded-xl border border-slate-800">
                         <div class="flex items-center gap-2 flex-1 min-w-0">
-                            <span class="text-2xl shrink-0">${away.flag}</span>
+                            <span class="text-2xl">${away.flag}</span>
                             <span class="font-bold text-sm text-slate-200 truncate">${away.name}</span>
                         </div>
-                        <input type="number" value="${match.score.away !== null ? match.score.away : ''}" 
-                            onchange="updateScore(${match.match_no}, 'away', this.value)"
+                        <input type="number" value="${match.scoreAway !== null ? match.scoreAway : ''}" 
+                            onchange="updateScoreEngine(${match.match_no}, 'scoreAway', this.value)"
                             class="w-10 h-9 bg-slate-900 border border-slate-700 rounded-lg text-center font-black text-amber-400 text-sm">
                     </div>
 
-                    <div class="text-[11px] text-slate-400 border-t border-slate-800 pt-2">
-                        <i class="fa-regular fa-clock mr-1"></i> ${match.date} ${match.time_vnm}
+                    <div class="text-[11px] text-slate-500 font-medium pt-1 border-t border-slate-800/60 flex justify-between">
+                        <span><i class="fa-regular fa-clock mr-1"></i> Lịch: ${match.time_vnm || '20:00'}</span>
+                        <span>${match.date}</span>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function updateScore(matchNo, side, val) {
+        function updateScoreEngine(matchNo, side, val) {
             const match = worldCupData.fixtures.find(f => f.match_no === matchNo);
             if (match) {
-                match.score[side] = val === "" ? null : parseInt(val);
-                match.status = (match.score.home !== null && match.score.away !== null) ? "FT" : "UPCOMING";
+                match[side] = val === "" ? null : parseInt(val);
+                match.status = (match.scoreHome !== null && match.scoreAway !== null) ? "FT" : "UPCOMING";
             }
         }
 
-        // XỬ LÝ THEO VÒNG ĐẤU
         function renderRoundView() {
             const roundSelected = document.getElementById('round-select-filter').value;
             const container = document.getElementById('round-matches-list');
@@ -196,34 +196,35 @@
             filtered.forEach(match => {
                 const home = findTeam(match.home_team);
                 const away = findTeam(match.away_team);
-                const isPlayed = match.score.home !== null && match.score.away !== null;
+                const isPlayed = match.scoreHome !== null && match.scoreAway !== null;
 
                 const card = document.createElement('div');
                 card.className = "bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between";
                 card.innerHTML = `
                     <div class="text-left text-xs text-slate-400">
-                        <div class="font-bold text-indigo-400">${match.group ? 'BẢNG ' + match.group : 'KNOCKOUT'}</div>
-                        <div class="font-mono mt-0.5">${match.time_vnm}</div>
+                        <div class="font-bold text-indigo-400">BẢNG ${match.group}</div>
+                        <div class="font-mono mt-0.5">${match.time_vnm || '20:00'}</div>
                     </div>
                     <div class="flex items-center justify-end text-right gap-2 w-1/3">
-                        <span class="text-xs sm:text-sm font-semibold truncate text-slate-300">${home.name}</span>
+                        <span class="text-xs font-semibold truncate text-slate-300">${home.name}</span>
                         <span class="text-xl">${home.flag}</span>
                     </div>
-                    <div class="px-2 py-1 bg-slate-950 border border-slate-800 rounded-lg text-center font-mono font-black text-amber-400 text-sm min-w-[60px]">
-                        ${isPlayed ? `${match.score.home} - ${match.score.away}` : 'vs'}
+                    <div class="px-2 py-1 bg-slate-950 border border-slate-800 rounded-lg text-center font-mono font-black text-amber-400 text-xs min-w-[55px]">
+                        ${isPlayed ? `${match.scoreHome} - ${match.scoreAway}` : 'vs'}
                     </div>
                     <div class="flex items-center justify-start text-left gap-2 w-1/3">
                         <span class="text-xl">${away.flag}</span>
-                        <span class="text-xs sm:text-sm font-semibold truncate text-slate-300">${away.name}</span>
+                        <span class="text-xs font-semibold truncate text-slate-300">${away.name}</span>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // XỬ LÝ BẢNG XẾP HẠNG
         function computeLiveStandings() {
             let standings = {};
+            if(!worldCupData.teams) return standings;
+
             worldCupData.teams.forEach(team => {
                 standings[team.id] = {
                     id: team.id, name: team.name, flag: team.flag, group: team.group,
@@ -232,15 +233,15 @@
             });
 
             worldCupData.fixtures.forEach(match => {
-                if (match.score.home !== null && match.score.away !== null) {
+                if (match.scoreHome !== null && match.scoreAway !== null) {
                     const h = standings[match.home_team];
                     const a = standings[match.away_team];
                     if (h && a) {
                         h.p++; a.p++;
-                        h.gf += match.score.home; h.ga += match.score.away;
-                        a.gf += match.score.away; a.ga += match.score.home;
-                        if (match.score.home > match.score.away) { h.w++; h.pts += 3; a.l++; }
-                        else if (match.score.home < match.score.away) { a.w++; a.pts += 3; h.l++; }
+                        h.gf += match.scoreHome; h.ga += match.scoreAway;
+                        a.gf += match.scoreAway; a.ga += match.scoreHome;
+                        if (match.scoreHome > match.scoreAway) { h.w++; h.pts += 3; a.l++; }
+                        else if (match.scoreHome < match.scoreAway) { a.w++; a.pts += 3; h.l++; }
                         else { h.d++; a.d++; h.pts += 1; a.pts += 1; }
                         h.gd = h.gf - h.ga; a.gd = a.gf - a.ga;
                     }
@@ -287,13 +288,13 @@
                 });
 
                 tableBox.innerHTML = `
-                    <div class="bg-slate-800/60 border-b border-slate-700 px-4 py-3 flex justify-between items-center">
+                    <div class="bg-slate-800/60 border-b border-slate-700 px-4 py-3">
                         <span class="font-black text-indigo-300 text-sm">BẢNG ${groupName}</span>
                     </div>
                     <table class="w-full text-left">
                         <thead>
                             <tr class="bg-slate-950/40 text-[10px] text-slate-400 font-bold border-b border-slate-800">
-                                <th class="p-3 text-center w-10">#</th><th>Đội bóng</th><th class="p-3 text-center">T</th><th class="p-3 text-center">Th</th><th class="p-3 text-center">H</th><th class="p-3 text-center">B</th><th class="p-3 text-center">Hiệu Số</th><th class="p-3 text-center">HS</th><th class="p-3 text-center text-amber-400">Đ</th>
+                                <th class="p-3 text-center w-10">#</th><th>Đội bóng</th><th class="p-3 text-center">T</th><th class="p-3 text-center text-green-500">Th</th><th class="p-3 text-center text-slate-400">H</th><th class="p-3 text-center text-rose-500">B</th><th class="p-3 text-center">Hiệu Số</th><th class="p-3 text-center">HS</th><th class="p-3 text-center text-amber-400">Đ</th>
                             </tr>
                         </thead>
                         <tbody>${rowsHTML}</tbody>
@@ -303,7 +304,6 @@
             });
         }
 
-        // Gọi hàm tải dữ liệu online ngay khi tải trang
         window.onload = loadOnlineData;
     </script>
 </body>
