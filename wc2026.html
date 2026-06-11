@@ -3,14 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World Cup 2026 - Kết Nối Đã Khắc Phục</title>
+    <title>World Cup 2026 - Pure Live Data Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-    </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
 
@@ -22,7 +17,7 @@
                         <i class="fa-solid fa-trophy text-amber-400"></i> FIFA 2026
                     </span>
                     <span id="data-status" class="bg-yellow-950 text-yellow-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-yellow-800 tracking-widest flex items-center gap-1">
-                        <i class="fa-solid fa-spinner animate-spin"></i> Đang kết nối...
+                        <i class="fa-solid fa-spinner animate-spin"></i> Đang kết nối API...
                     </span>
                 </div>
                 <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
@@ -40,28 +35,32 @@
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full relative">
         
-        <div id="error-alert" class="hidden bg-rose-950/80 border border-rose-800 text-rose-300 p-4 rounded-xl mb-6 flex items-center gap-3">
-            <i class="fa-solid fa-circle-exclamation text-xl"></i>
-            <div>
-                <span class="font-bold">Lỗi tải dữ liệu!</span> Trình duyệt chặn CORS hoặc đường dẫn sai. Đã tự động kích hoạt chế độ dự phòng.
+        <div id="error-screen" class="hidden absolute inset-0 bg-slate-950/95 z-40 flex flex-col items-center justify-center text-center p-6 min-h-[500px]">
+            <div class="w-20 h-20 bg-rose-950/50 border border-rose-800 rounded-full flex items-center justify-center text-rose-500 text-3xl mb-4 animate-bounce">
+                <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
+            <h3 class="text-xl font-black text-white">Mất kết nối với máy chủ dữ liệu World Cup</h3>
+            <p class="text-slate-400 text-sm max-w-md mt-2 mb-6" id="error-message-text">Trình duyệt bị chặn CORS, đường dẫn file JSON sai hoặc file trên GitHub đang bị lỗi cú pháp định dạng.</p>
+            <button onclick="loadOnlineData()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-rotate-right"></i> Thử tải lại dữ liệu ngay
+            </button>
         </div>
 
         <section id="tab-live" class="tab-content block">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
                 <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-satellite-dish text-rose-500"></i> Bàn Điều Tốc Trận Đấu
+                    <i class="fa-solid fa-satellite-dish text-indigo-400"></i> Bàn Điều Tốc Trận Đấu Online
                 </h2>
-                <p class="text-slate-400 text-xs mt-1">Thay đổi điểm số bên dưới để kiểm tra bảng xếp hạng tự động nhảy điểm số.</p>
+                <p class="text-slate-400 text-xs mt-1">Dữ liệu nguồn được nạp trực tiếp đồng bộ thời gian thực qua GitHub API.</p>
             </div>
             <div id="admin-matches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
 
         <section id="tab-rounds" class="tab-content hidden">
             <div class="mb-6 bg-slate-900 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <span class="font-bold text-sm"><i class="fa-regular fa-clock mr-1"></i> Chọn Lượt Đấu Kỷ Yếu</span>
+                <span class="font-bold text-sm"><i class="fa-regular fa-clock mr-1"></i> Bộ Lọc Lượt Đấu</span>
                 <select id="round-select-filter" onchange="renderRoundView()" class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none w-full sm:w-64">
                     <option value="Lượt 1">Vòng Bảng - Lượt Trận 1</option>
                     <option value="Lượt 2">Vòng Bảng - Lượt Trận 2</option>
@@ -76,47 +75,59 @@
         </section>
     </main>
 
-    <script>
-        // SỬ DỤNG CDN JSDELIVR ĐỂ TRÁNH LỖI CORS CỦA GITHUB RAW
-        const API_URL = "https://cdn.jsdelivr.net/gh/cqtin2024/ITVTG@main/data/wc2026.json";
-        let worldCupData = { teams: [], fixtures: [] };
+    <footer class="bg-slate-900 border-t border-slate-800 text-center py-4 text-xs text-slate-500">
+        &copy; 2026 FIFA World Cup Pure Online Engine Dashboard.
+    </footer>
 
-        // HÀM TẢI DATA ONLINE CHỐNG LỖI KẾT NỐI
+    <script>
+        // SỬ DỤNG LINK RAW GITHUB GỐC KÈM THEO CACHE-BUSTER PHÁ CACHE TRÌNH DUYỆT
+        let worldCupData = null; 
+
         async function loadOnlineData() {
             const statusBadge = document.getElementById("data-status");
+            const errorScreen = document.getElementById("error-screen");
+            
+            // Hiện trạng thái đang xử lý
+            statusBadge.className = "bg-yellow-950 text-yellow-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-yellow-800 tracking-widest flex items-center gap-1";
+            statusBadge.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang nạp API...`;
+            errorScreen.classList.add("hidden");
+
+            // Tạo chuỗi thời gian ngẫu nhiên để ép trình duyệt luôn lấy dữ liệu mới nhất trên GitHub thay vì dùng cache cũ
+            const cacheBuster = "?t=" + new Date().getTime();
+            const GITHUB_URL = "/data/wc2026.json" + cacheBuster;
+
             try {
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error("CORS hoặc lỗi mạng");
+                const response = await fetch(GITHUB_URL);
+                if (!response.ok) throw new Error(`Máy chủ báo lỗi HTTP: ${response.status}`);
                 
                 worldCupData = await response.json();
                 
+                // Kiểm định nghiêm ngặt cấu trúc, nếu thiếu lõi cứng sẽ không chạy
+                if (!worldCupData || !worldCupData.teams || !worldCupData.fixtures) {
+                    throw new Error("Dữ liệu JSON trên GitHub bị sai cấu trúc tên trường!");
+                }
+                
+                // Nếu vượt qua kiểm tra, hiển thị giao diện thành công
                 statusBadge.className = "bg-emerald-950 text-emerald-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-emerald-800 tracking-widest flex items-center gap-1";
-                statusBadge.innerHTML = `<i class="fa-solid fa-cloud-text"></i> Kết Nối Thành Công`;
+                statusBadge.innerHTML = `<i class="fa-solid fa-cloud-arrow-down"></i> Trực Tuyến 100%`;
                 
                 renderAdminConsole();
             } catch (error) {
-                console.warn("Chuyển sang chế độ dự phòng:", error);
-                document.getElementById("error-alert").classList.remove("hidden");
-                statusBadge.className = "bg-rose-950 text-rose-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-rose-800 tracking-widest";
-                statusBadge.innerHTML = `⚠️ Dữ liệu Offline`;
+                console.error("Lỗi vận hành hệ thống:", error.message);
                 
-                // Nạp data nội bộ dự phòng nếu mạng tổng Github chết hẳn
-                worldCupData = {
-                    teams: [
-                        { id: "MEX", name: "Mexico", group: "A", flag: "🇲🇽" },
-                        { id: "RSA", name: "Nam Phi", group: "A", flag: "🇿🇦" },
-                        { id: "KOR", name: "Hàn Quốc", group: "A", flag: "🇰🇷" },
-                        { id: "CZE", name: "CH Séc", group: "A", flag: "🇨🇿" }
-                    ],
-                    fixtures: [
-                        { match_no: 1, group: "A", round: "Lượt 1", date: "2026-06-11", time_vnm: "20:00", status: "FT", home_team: "MEX", away_team: "RSA", scoreHome: 2, scoreAway: 1 }
-                    ]
-                };
-                renderAdminConsole();
+                // Kích hoạt chặn giao diện, bắt buộc phải sửa lỗi kết nối hoặc sửa file JSON mới được đi tiếp
+                document.getElementById("error-message-text").innerText = `Chi tiết lỗi: ${error.message}. Vui lòng kiểm tra lại đường dẫn file hoặc cấu trúc JSON trên repo GitHub của bạn.`;
+                errorScreen.classList.remove("hidden");
+                
+                statusBadge.className = "bg-rose-950 text-rose-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-rose-800 tracking-widest";
+                statusBadge.innerHTML = `❌ Lỗi API`;
             }
         }
 
         function switchTab(tabId) {
+            // Nếu chưa tải được dữ liệu online, không cho phép bấm chuyển đổi tab xem thông tin trống
+            if(!worldCupData) return;
+
             document.querySelectorAll('.tab-content').forEach(el => el.className = "tab-content hidden");
             document.getElementById(`tab-${tabId}`).className = "tab-content block";
             document.querySelectorAll('.tab-btn').forEach(btn => btn.className = "tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-white transition-all");
@@ -131,10 +142,9 @@
             return worldCupData.teams.find(t => t.id === teamId) || { "name": teamId, "flag": "🏳️" };
         }
 
-        // ĐIỀU CHỈNH ĐỌC TRƯỜNG BIẾN THEO FILE JSON GITHUB (scoreHome, scoreAway)
         function renderAdminConsole() {
             const container = document.getElementById('admin-matches-grid');
-            if(!container || !worldCupData.fixtures) return;
+            if(!container || !worldCupData) return;
             container.innerHTML = '';
 
             worldCupData.fixtures.forEach(match => {
@@ -145,10 +155,9 @@
                 card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between shadow-lg";
                 card.innerHTML = `
                     <div class="flex justify-between items-center mb-3 text-[11px] font-bold text-slate-500">
-                        <span>TRẬN TỐI ƯU #${match.match_no} • BẢNG ${match.group || 'A'}</span>
+                        <span>TRẬN LẬP TRÌNH #${match.match_no} • BẢNG ${match.group || 'A'}</span>
                         <span class="px-2 py-0.5 border border-slate-700 bg-slate-950 rounded text-slate-400 text-[10px]">${match.status}</span>
                     </div>
-
                     <div class="flex items-center justify-between gap-2 my-1.5 bg-slate-950 p-3 rounded-xl border border-slate-800">
                         <div class="flex items-center gap-2 flex-1 min-w-0">
                             <span class="text-2xl">${home.flag}</span>
@@ -158,7 +167,6 @@
                             onchange="updateScoreEngine(${match.match_no}, 'scoreHome', this.value)"
                             class="w-10 h-9 bg-slate-900 border border-slate-700 rounded-lg text-center font-black text-amber-400 text-sm">
                     </div>
-
                     <div class="flex items-center justify-between gap-2 mb-3 bg-slate-950 p-3 rounded-xl border border-slate-800">
                         <div class="flex items-center gap-2 flex-1 min-w-0">
                             <span class="text-2xl">${away.flag}</span>
@@ -168,7 +176,6 @@
                             onchange="updateScoreEngine(${match.match_no}, 'scoreAway', this.value)"
                             class="w-10 h-9 bg-slate-900 border border-slate-700 rounded-lg text-center font-black text-amber-400 text-sm">
                     </div>
-
                     <div class="text-[11px] text-slate-500 font-medium pt-1 border-t border-slate-800/60 flex justify-between">
                         <span><i class="fa-regular fa-clock mr-1"></i> Lịch: ${match.time_vnm || '20:00'}</span>
                         <span>${match.date}</span>
@@ -223,8 +230,6 @@
 
         function computeLiveStandings() {
             let standings = {};
-            if(!worldCupData.teams) return standings;
-
             worldCupData.teams.forEach(team => {
                 standings[team.id] = {
                     id: team.id, name: team.name, flag: team.flag, group: team.group,
