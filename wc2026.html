@@ -94,7 +94,7 @@
 
             // Tạo chuỗi thời gian ngẫu nhiên để ép trình duyệt luôn lấy dữ liệu mới nhất trên GitHub thay vì dùng cache cũ
             const cacheBuster = "?t=" + new Date().getTime();
-            const GITHUB_URL = "/data/wc2026.json" + cacheBuster;
+            const GITHUB_URL = "../data/wc2026.json" + cacheBuster;
 
             try {
                 const response = await fetch(GITHUB_URL);
