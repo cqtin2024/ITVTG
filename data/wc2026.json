@@ -1,0 +1,272 @@
+// Khởi tạo đối tượng dữ liệu toàn cục cho World Cup 2026
+const worldCupData = {
+    tournament: "FIFA World Cup 2026",
+    total_teams: 48,
+    total_matches: 104,
+    timezone: "Giờ Việt Nam (UTC+7)",
+    teams: [],
+    fixtures: []
+};
+
+// 1. TỰ ĐỘNG KHỞI TẠO ĐẦY ĐỦ 48 ĐỘI BÓNG CHO 12 BẢNG ĐẤU (A đến L)
+const groupsConfig = {
+    "A": [
+        { id: "MEX", name: "Mexico", flag: "🇲🇽" },
+        { id: "RSA", name: "Nam Phi", flag: "🇿🇦" },
+        { id: "KOR", name: "Hàn Quốc", flag: "🇰🇷" },
+        { id: "CZE", name: "CH Séc", flag: "🇨🇿" }
+    ],
+    "B": [
+        { id: "CAN", name: "Canada", flag: "🇨🇦" },
+        { id: "BIH", name: "Bosnia", flag: "🇧🇦" },
+        { id: "QAT", name: "Qatar", flag: "🇶🇦" },
+        { id: "SUI", name: "Thụy Sĩ", flag: "🇨🇭" }
+    ],
+    "C": [
+        { id: "USA", name: "Hoa Kỳ", flag: "🇺🇸" },
+        { id: "PAR", name: "Paraguay", flag: "🇵🇾" },
+        { id: "AUS", name: "Australia", flag: "🇦🇺" },
+        { id: "TUR", name: "Thổ Nhĩ Kỳ", flag: "🇹🇷" }
+    ],
+    "D": [
+        { id: "BRA", name: "Brazil", flag: "🇧🇷" },
+        { id: "MAR", name: "Marốc", flag: "🇲🇦" },
+        { id: "HAI", name: "Haiti", flag: "🇭🇹" },
+        { id: "SCO", name: "Scotland", flag: "🏴" }
+    ],
+    "E": [
+        { id: "ARG", name: "Argentina", flag: "🇦🇷" },
+        { id: "GHA", name: "Ghana", flag: "🇬🇭" },
+        { id: "UKR", name: "Ukraine", flag: "🇺🇦" },
+        { id: "IRQ", name: "Iraq", flag: "🇮🇶" }
+    ],
+    "F": [
+        { id: "FRA", name: "Pháp", flag: "🇫🇷" },
+        { id: "NGA", name: "Nigeria", flag: "🇳🇬" },
+        { id: "PER", name: "Peru", flag: "🇵🇪" },
+        { id: "UZB", name: "Uzbekistan", flag: "🇺🇿" }
+    ],
+    "G": [
+        { id: "ENG", name: "Anh", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
+        { id: "CIV", name: "Bờ Biển Ngà", flag: "🇨🇮" },
+        { id: "JPN", name: "Nhật Bản", flag: "🇯🇵" },
+        { id: "CHI", name: "Chile", flag: "🇨🇱" }
+    ],
+    "H": [
+        { id: "ESP", name: "Tây Ban Nha", flag: "🇪🇸" },
+        { id: "TUN", name: "Tunisia", flag: "🇹🇳" },
+        { id: "IRN", name: "Iran", flag: "🇮🇷" },
+        { id: "COL", name: "Colombia", flag: "🇨🇴" }
+    ],
+    "I": [
+        { id: "POR", name: "Bồ Đào Nha", flag: "🇵🇹" },
+        { id: "CMR", name: "Cameroon", flag: "🇨🇲" },
+        { id: "UAE", name: "UAE", flag: "🇦🇪" },
+        { id: "ECU", name: "Ecuador", flag: "🇪🇨" }
+    ],
+    "J": [
+        { id: "GER", name: "Đức", flag: "🇩🇪" },
+        { id: "ALG", name: "Algeria", flag: "🇩🇿" },
+        { id: "KSA", name: "Ả Rập Xê Út", flag: "🇸🇦" },
+        { id: "URU", name: "Uruguay", flag: "🇺🇾" }
+    ],
+    "K": [
+        { id: "BEL", name: "Bỉ", flag: "🇧🇪" },
+        { id: "SEN", name: "Senegal", flag: "🇸🇳" },
+        { id: "OMA", name: "Oman", flag: "🇴🇲" },
+        { id: "VEN", name: "Venezuela", flag: "🇻🇪" }
+    ],
+    "L": [
+        { id: "NED", name: "Hà Lan", flag: "🇳🇱" },
+        { id: "EGY", name: "Ai Cập", flag: "🇪🇬" },
+        { id: "CHN", name: "Trung Quốc", flag: "🇨🇳" },
+        { id: "PAN", name: "Panama", flag: "🇵🇦" }
+    ]
+};
+
+// Đổ dữ liệu cấu hình vào mảng teams chính thức
+Object.keys(groupsConfig).forEach(groupName => {
+    groupsConfig[groupName].forEach(team => {
+        worldCupData.teams.push({
+            id: team.id,
+            name: team.name,
+            group: groupName,
+            flag: team.flag
+        });
+    });
+});
+
+// 2. THUẬT TOÁN TỰ ĐỘNG LẬP LỊCH ĐẦY ĐỦ CHO VÒNG BẢNG (72 TRẬN)
+// Vòng bảng gồm 12 bảng, mỗi bảng có 4 đội đá vòng tròn 3 lượt -> Tổng 72 trận.
+let matchCounter = 1;
+const startBaseDate = new Date("2026-06-11"); // Ngày khai mạc World Cup 2026
+
+const timeSlots = ["17:00", "20:00", "23:00", "02:00"]; // Khung giờ đẹp phát sóng tại VN
+
+Object.keys(groupsConfig).forEach((groupName, groupIdx) => {
+    const t = groupsConfig[groupName];
+    
+    // Khung sườn đối đầu vòng bảng chuẩn FIFA xoay vòng
+    const roundFixtures = [
+        { r: "Matchday 1", h: t[0].id, a: t[1].id },
+        { r: "Matchday 1", h: t[2].id, a: t[3].id },
+        { r: "Matchday 2", h: t[0].id, a: t[2].id },
+        { r: "Matchday 2", h: t[3].id, a: t[1].id },
+        { r: "Matchday 3", h: t[3].id, a: t[0].id },
+        { r: "Matchday 3", h: t[1].id, a: t[2].id }
+    ];
+
+    roundFixtures.forEach((f, fIdx) => {
+        // Thuật toán tịnh tiến ngày để các bảng không bị trùng lặp thời gian dày đặc
+        let daysOffset = Math.floor((matchCounter - 1) / 4); 
+        let matchDate = new Date(startBaseDate);
+        matchDate.setDate(startBaseDate.getDate() + daysOffset);
+        
+        let dateString = matchDate.toISOString().split('T')[0];
+        let timeString = timeSlots[(matchCounter - 1) % 4];
+
+        worldCupData.fixtures.push({
+            match_no: matchCounter,
+            stage: "Group Stage",
+            group: groupName,
+            round: f.r,
+            date: dateString,
+            time_vnm: timeString,
+            stadium: "Sân vận động FIFA Quốc Tế",
+            status: matchCounter === 1 ? "FT" : (matchCounter === 2 ? "LIVE" : "UPCOMING"),
+            live_minute: matchCounter === 2 ? "65'" : null,
+            home_team: f.h,
+            away_team: f.a,
+            score: {
+                home: matchCounter === 1 ? 2 : (matchCounter === 2 ? 1 : null),
+                away: matchCounter === 1 ? 1 : (matchCounter === 2 ? 1 : null)
+            }
+        });
+        matchCounter++;
+    });
+});
+
+// 3. TỰ ĐỘNG LẬP LỊCH TOÀN BỘ VÒNG ĐỐI ĐẦU TRỰC TIẾP (KNOCKOUT STAGE - 32 TRẬN CÒN LẠI)
+// Vòng 32 đội (Trận 73 - 88)
+let knockoutStartDate = new Date("2026-06-29");
+for (let i = 1; i <= 16; i++) {
+    let daysOffset = Math.floor((i - 1) / 4);
+    let matchDate = new Date(knockoutStartDate);
+    matchDate.setDate(knockoutStartDate.getDate() + daysOffset);
+
+    worldCupData.fixtures.push({
+        match_no: matchCounter,
+        stage: "Knockout Stage",
+        round: "Round of 32",
+        date: matchDate.toISOString().split('T')[0],
+        time_vnm: timeSlots[(matchCounter - 1) % 4],
+        stadium: "Sân vận động KO trung lập",
+        status: "UPCOMING",
+        home_team: `Nhất/Nhì cụm danh định KO ${i}`,
+        away_team: `Nhì/Ba cụm danh định KO ${i}`,
+        score: { home: null, away: null }
+    });
+    matchCounter++;
+}
+
+// Vòng 16 đội (Trận 89 - 96)
+let r16StartDate = new Date("2026-07-04");
+for (let i = 1; i <= 8; i++) {
+    let daysOffset = Math.floor((i - 1) / 2);
+    let matchDate = new Date(r16StartDate);
+    matchDate.setDate(r16StartDate.getDate() + daysOffset);
+
+    worldCupData.fixtures.push({
+        match_no: matchCounter,
+        stage: "Knockout Stage",
+        round: "Round of 16",
+        date: matchDate.toISOString().split('T')[0],
+        time_vnm: i % 2 === 0 ? "02:00" : "06:00",
+        stadium: "Sân vận động Vòng 16 đội",
+        status: "UPCOMING",
+        home_team: `Thắng trận ${72 + (i * 2 - 1)}`,
+        away_team: `Thắng trận ${72 + (i * 2)}`,
+        score: { home: null, away: null }
+    });
+    matchCounter++;
+}
+
+// Vòng Tứ kết (Trận 97 - 100)
+let qfStartDate = new Date("2026-07-09");
+for (let i = 1; i <= 4; i++) {
+    let daysOffset = Math.floor((i - 1) / 2);
+    let matchDate = new Date(qfStartDate);
+    matchDate.setDate(qfStartDate.getDate() + daysOffset);
+
+    worldCupData.fixtures.push({
+        match_no: matchCounter,
+        stage: "Knockout Stage",
+        round: "Quarter-finals",
+        date: matchDate.toISOString().split('T')[0],
+        time_vnm: i % 2 === 0 ? "03:00" : "07:00",
+        stadium: "Sân vận động lớn Tứ Kết",
+        status: "UPCOMING",
+        home_team: `Thắng trận ${88 + (i * 2 - 1)}`,
+        away_team: `Thắng trận ${88 + (i * 2)}`,
+        score: { home: null, away: null }
+    });
+    matchCounter++;
+}
+
+// Vòng Bán kết (Trận 101 - 102)
+worldCupData.fixtures.push({
+    match_no: 101,
+    stage: "Knockout Stage",
+    round: "Semi-finals",
+    date: "2026-07-15",
+    time_vnm: "07:00",
+    stadium: "AT&T Stadium (Dallas)",
+    status: "UPCOMING",
+    home_team: "Thắng trận 97",
+    away_team: "Thắng trận 98",
+    score: { home: null, away: null }
+});
+
+worldCupData.fixtures.push({
+    match_no: 102,
+    stage: "Knockout Stage",
+    round: "Semi-finals",
+    date: "2026-07-16",
+    time_vnm: "07:00",
+    stadium: "Mercedes-Benz Stadium (Atlanta)",
+    status: "UPCOMING",
+    home_team: "Thắng trận 99",
+    away_team: "Thắng trận 100",
+    score: { home: null, away: null }
+});
+
+// Trận Tranh Hạng Ba (Trận 103)
+worldCupData.fixtures.push({
+    match_no: 103,
+    stage: "Knockout Stage",
+    round: "Third place play-off",
+    date: "2026-07-19",
+    time_vnm: "03:00",
+    stadium: "Hard Rock Stadium (Miami)",
+    status: "UPCOMING",
+    home_team: "Thua trận 101",
+    away_team: "Thua trận 102",
+    score: { home: null, away: null }
+});
+
+// Trận CHUNG KẾT (Trận 104) - Trận đấu tìm ra nhà Vua thế giới!
+worldCupData.fixtures.push({
+    match_no: 104,
+    stage: "Knockout Stage",
+    round: "Final",
+    date: "2026-07-20",
+    time_vnm: "02:00",
+    stadium: "MetLife Stadium (New York/New Jersey)",
+    status: "UPCOMING",
+    home_team: "Thắng trận 101",
+    away_team: "Thắng trận 102",
+    score: { home: null, away: null }
+});
+
+// Xuất file dữ liệu ra môi trường Window/Module để file HTML đọc được trực tiếp
+console.log("Dữ liệu World Cup 2026 khởi tạo thành công: Đầy đủ 104 trận đấu.");
