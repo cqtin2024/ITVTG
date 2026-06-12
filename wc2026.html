@@ -79,12 +79,15 @@
                 </select>
             </div>
             <div id="round-matches-list" class="grid grid-cols-1 gap-3"></div>
+            <div id="knockout-notice" class="hidden mt-8 p-6 bg-gradient-to-r from-purple-950/30 to-indigo-950/30 border border-purple-800 rounded-xl text-center">
+                <p class="text-sm text-slate-300"><i class="fa-solid fa-circle-check mr-2 text-emerald-400"></i> Vòng bảng đã hoàn thành! Vòng loại trực tiếp sẽ sớm diễn ra.</p>
+            </div>
         </section>
 
         <!-- TAB: BẢNG XẾP HẠNG -->
         <section id="tab-groups" class="tab-content hidden">
             <div class="mb-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
-                <p class="text-xs text-slate-400"><i class="fa-solid fa-info-circle mr-1"></i> Xếp hạng được cập nhật tự động từ kết quả trận đấu. Top 2 đội mỗi bảng sẽ vượt vòng</p>
+                <p class="text-xs text-slate-400"><i class="fa-solid fa-info-circle mr-1"></i> Xếp hạng đ��ợc cập nhật tự động từ kết quả trận đấu. Top 2 đội mỗi bảng sẽ vượt vòng</p>
             </div>
             <div id="groups-container-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-8"></div>
         </section>
@@ -107,7 +110,6 @@
             errorScreen.classList.add("hidden");
 
             const cacheBuster = "?t=" + new Date().getTime();
-            // ĐƯỜNG DẪN TUYỆT ĐỐI ĐẾN FILE JSON TRÊN GITHUB
             const GITHUB_URL = "https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/wc2026.json" + cacheBuster;
 
             try {
@@ -132,6 +134,14 @@
                 statusBadge.className = "bg-rose-950 text-rose-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-rose-800";
                 statusBadge.innerHTML = `❌ Lỗi`;
             }
+        }
+
+        // Kiểm tra vòng bảng có hoàn thành không
+        function isGroupStageComplete() {
+            if (!worldCupData) return false;
+            const groupMatches = worldCupData.fixtures.filter(f => f.stage === "Group Stage");
+            const completedMatches = groupMatches.filter(f => f.score.home !== null && f.score.away !== null);
+            return completedMatches.length === groupMatches.length && groupMatches.length > 0;
         }
 
         // Chuyển đổi tab
@@ -245,10 +255,25 @@
 
         // Hiển thị tab LỊCH THI ĐẤU
         function renderRoundView() {
-            const roundSelected = document.getElementById('round-select-filter').value;
+            const roundSelect = document.getElementById('round-select-filter');
             const container = document.getElementById('round-matches-list');
+            const knockoutNotice = document.getElementById('knockout-notice');
+            
             container.innerHTML = '';
+            
+            // Nếu vòng bảng hoàn thành, ẩn selector vòng bảng và hiển thị thông báo
+            const isGroupComplete = isGroupStageComplete();
+            if (isGroupComplete) {
+                roundSelect.parentElement.style.display = 'none';
+                knockoutNotice.classList.remove('hidden');
+                container.innerHTML = '<p class="col-span-full text-center text-slate-400 py-8">Vòng loại trực tiếp chưa diễn ra</p>';
+                return;
+            } else {
+                roundSelect.parentElement.style.display = 'flex';
+                knockoutNotice.classList.add('hidden');
+            }
 
+            const roundSelected = roundSelect.value;
             const filtered = worldCupData.fixtures.filter(f => f.round === roundSelected);
 
             if (filtered.length === 0) {
