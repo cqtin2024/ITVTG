@@ -639,13 +639,13 @@
       "round": "Matchday 1",
       "date": "2026-06-11",
       "time_vnm": "17:00",
-      "stadium": "AT&T Stadium",
-      "status": "FT",
+      "stadium": "AT&T Stadium (Arlington)",
+      "status": "UPCOMING",
       "home_team": "MEX",
       "away_team": "RSA",
       "score": {
-        "home": 2,
-        "away": 1
+        "home": null,
+        "away": null
       }
     },
     {
@@ -655,24 +655,375 @@
       "round": "Matchday 1",
       "date": "2026-06-11",
       "time_vnm": "20:00",
-      "stadium": "Dallas",
-      "status": "LIVE",
-      "live_minute": "65'",
+      "stadium": "Dallas (Cotton Bowl)",
+      "status": "UPCOMING",
       "home_team": "KOR",
       "away_team": "CZE",
       "score": {
-        "home": 1,
-        "away": 1
+        "home": null,
+        "away": null
       }
     },
     {
       "match_no": 3,
       "stage": "Group Stage",
-      "group": "A",
-      "round": "Matchday 2",
+      "group": "B",
+      "round": "Matchday 1",
+      "date": "2026-06-11",
+      "time_vnm": "23:00",
+      "stadium": "SoFi Stadium (Los Angeles)",
+      "status": "UPCOMING",
+      "home_team": "CAN",
+      "away_team": "BIH",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 4,
+      "stage": "Group Stage",
+      "group": "B",
+      "round": "Matchday 1",
+      "date": "2026-06-12",
+      "time_vnm": "02:00",
+      "stadium": "MetLife Stadium (New York)",
+      "status": "UPCOMING",
+      "home_team": "QAT",
+      "away_team": "SUI",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 5,
+      "stage": "Group Stage",
+      "group": "C",
+      "round": "Matchday 1",
+      "date": "2026-06-12",
+      "time_vnm": "17:00",
+      "stadium": "NRG Stadium (Houston)",
+      "status": "UPCOMING",
+      "home_team": "USA",
+      "away_team": "PAR",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 6,
+      "stage": "Group Stage",
+      "group": "C",
+      "round": "Matchday 1",
+      "date": "2026-06-12",
+      "time_vnm": "20:00",
+      "stadium": "Allegiant Stadium (Las Vegas)",
+      "status": "UPCOMING",
+      "home_team": "AUS",
+      "away_team": "TUR",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 7,
+      "stage": "Group Stage",
+      "group": "D",
+      "round": "Matchday 1",
       "date": "2026-06-12",
       "time_vnm": "23:00",
-      "stadium": "SoFi Stadium",
+      "stadium": "Arrowhead Stadium (Kansas City)",
+      "status": "UPCOMING",
+      "home_team": "BRA",
+      "away_team": "MAR",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 8,
+      "stage": "Group Stage",
+      "group": "D",
+      "round": "Matchday 1",
+      "date": "2026-06-13",
+      "time_vnm": "02:00",
+      "stadium": "Levi's Stadium (San Francisco)",
+      "status": "UPCOMING",
+      "home_team": "HAI",
+      "away_team": "SCO",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 9,
+      "stage": "Group Stage",
+      "group": "E",
+      "round": "Matchday 1",
+      "date": "2026-06-13",
+      "time_vnm": "17:00",
+      "stadium": "Mercedes-Benz Stadium (Atlanta)",
+      "status": "UPCOMING",
+      "home_team": "ARG",
+      "away_team": "GHA",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 10,
+      "stage": "Group Stage",
+      "group": "E",
+      "round": "Matchday 1",
+      "date": "2026-06-13",
+      "time_vnm": "20:00",
+      "stadium": "Gillette Stadium (Boston)",
+      "status": "UPCOMING",
+      "home_team": "UKR",
+      "away_team": "IRQ",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 11,
+      "stage": "Group Stage",
+      "group": "F",
+      "round": "Matchday 1",
+      "date": "2026-06-13",
+      "time_vnm": "23:00",
+      "stadium": "Caesars Superdome (New Orleans)",
+      "status": "UPCOMING",
+      "home_team": "FRA",
+      "away_team": "NGA",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 12,
+      "stage": "Group Stage",
+      "group": "F",
+      "round": "Matchday 1",
+      "date": "2026-06-14",
+      "time_vnm": "02:00",
+      "stadium": "Mile High Stadium (Denver)",
+      "status": "UPCOMING",
+      "home_team": "PER",
+      "away_team": "UZB",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 13,
+      "stage": "Group Stage",
+      "group": "G",
+      "round": "Matchday 1",
+      "date": "2026-06-14",
+      "time_vnm": "17:00",
+      "stadium": "Azteca Stadium (Mexico City)",
+      "status": "UPCOMING",
+      "home_team": "ENG",
+      "away_team": "CIV",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 14,
+      "stage": "Group Stage",
+      "group": "G",
+      "round": "Matchday 1",
+      "date": "2026-06-14",
+      "time_vnm": "20:00",
+      "stadium": "Snapdragon Stadium (San Diego)",
+      "status": "UPCOMING",
+      "home_team": "JPN",
+      "away_team": "CHI",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 15,
+      "stage": "Group Stage",
+      "group": "H",
+      "round": "Matchday 1",
+      "date": "2026-06-14",
+      "time_vnm": "23:00",
+      "stadium": "Soldier Field (Chicago)",
+      "status": "UPCOMING",
+      "home_team": "ESP",
+      "away_team": "TUN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 16,
+      "stage": "Group Stage",
+      "group": "H",
+      "round": "Matchday 1",
+      "date": "2026-06-15",
+      "time_vnm": "02:00",
+      "stadium": "Empower Field (Denver)",
+      "status": "UPCOMING",
+      "home_team": "IRN",
+      "away_team": "COL",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 17,
+      "stage": "Group Stage",
+      "group": "I",
+      "round": "Matchday 1",
+      "date": "2026-06-15",
+      "time_vnm": "17:00",
+      "stadium": "Sporting Park (Kansas City)",
+      "status": "UPCOMING",
+      "home_team": "POR",
+      "away_team": "CMR",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 18,
+      "stage": "Group Stage",
+      "group": "I",
+      "round": "Matchday 1",
+      "date": "2026-06-15",
+      "time_vnm": "20:00",
+      "stadium": "Bank of America Stadium (Charlotte)",
+      "status": "UPCOMING",
+      "home_team": "UAE",
+      "away_team": "ECU",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 19,
+      "stage": "Group Stage",
+      "group": "J",
+      "round": "Matchday 1",
+      "date": "2026-06-15",
+      "time_vnm": "23:00",
+      "stadium": "Acrisure Stadium (Pittsburgh)",
+      "status": "UPCOMING",
+      "home_team": "GER",
+      "away_team": "ALG",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 20,
+      "stage": "Group Stage",
+      "group": "J",
+      "round": "Matchday 1",
+      "date": "2026-06-16",
+      "time_vnm": "02:00",
+      "stadium": "Hard Rock Stadium (Miami)",
+      "status": "UPCOMING",
+      "home_team": "KSA",
+      "away_team": "URU",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 21,
+      "stage": "Group Stage",
+      "group": "K",
+      "round": "Matchday 1",
+      "date": "2026-06-16",
+      "time_vnm": "17:00",
+      "stadium": "Lambeau Field (Green Bay)",
+      "status": "UPCOMING",
+      "home_team": "BEL",
+      "away_team": "SEN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 22,
+      "stage": "Group Stage",
+      "group": "K",
+      "round": "Matchday 1",
+      "date": "2026-06-16",
+      "time_vnm": "20:00",
+      "stadium": "Lucas Oil Stadium (Indianapolis)",
+      "status": "UPCOMING",
+      "home_team": "OMA",
+      "away_team": "VEN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 23,
+      "stage": "Group Stage",
+      "group": "L",
+      "round": "Matchday 1",
+      "date": "2026-06-16",
+      "time_vnm": "23:00",
+      "stadium": "Rose Bowl (Los Angeles)",
+      "status": "UPCOMING",
+      "home_team": "NED",
+      "away_team": "EGY",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 24,
+      "stage": "Group Stage",
+      "group": "L",
+      "round": "Matchday 1",
+      "date": "2026-06-17",
+      "time_vnm": "02:00",
+      "stadium": "Estadio BBVA (Monterrey)",
+      "status": "UPCOMING",
+      "home_team": "CHN",
+      "away_team": "PAN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 25,
+      "stage": "Group Stage",
+      "group": "A",
+      "round": "Matchday 2",
+      "date": "2026-06-17",
+      "time_vnm": "17:00",
+      "stadium": "AT&T Stadium (Arlington)",
       "status": "UPCOMING",
       "home_team": "MEX",
       "away_team": "KOR",
@@ -682,13 +1033,13 @@
       }
     },
     {
-      "match_no": 4,
+      "match_no": 26,
       "stage": "Group Stage",
       "group": "A",
       "round": "Matchday 2",
-      "date": "2026-06-12",
-      "time_vnm": "02:00",
-      "stadium": "MetLife Stadium",
+      "date": "2026-06-17",
+      "time_vnm": "20:00",
+      "stadium": "NRG Stadium (Houston)",
       "status": "UPCOMING",
       "home_team": "CZE",
       "away_team": "RSA",
@@ -698,13 +1049,365 @@
       }
     },
     {
-      "match_no": 5,
+      "match_no": 27,
+      "stage": "Group Stage",
+      "group": "B",
+      "round": "Matchday 2",
+      "date": "2026-06-17",
+      "time_vnm": "23:00",
+      "stadium": "MetLife Stadium (New York)",
+      "status": "UPCOMING",
+      "home_team": "CAN",
+      "away_team": "QAT",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 28,
+      "stage": "Group Stage",
+      "group": "B",
+      "round": "Matchday 2",
+      "date": "2026-06-18",
+      "time_vnm": "02:00",
+      "stadium": "SoFi Stadium (Los Angeles)",
+      "status": "UPCOMING",
+      "home_team": "BIH",
+      "away_team": "SUI",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 29,
+      "stage": "Group Stage",
+      "group": "C",
+      "round": "Matchday 2",
+      "date": "2026-06-18",
+      "time_vnm": "17:00",
+      "stadium": "Allegiant Stadium (Las Vegas)",
+      "status": "UPCOMING",
+      "home_team": "USA",
+      "away_team": "AUS",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 30,
+      "stage": "Group Stage",
+      "group": "C",
+      "round": "Matchday 2",
+      "date": "2026-06-18",
+      "time_vnm": "20:00",
+      "stadium": "Arrowhead Stadium (Kansas City)",
+      "status": "UPCOMING",
+      "home_team": "PAR",
+      "away_team": "TUR",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 31,
+      "stage": "Group Stage",
+      "group": "D",
+      "round": "Matchday 2",
+      "date": "2026-06-18",
+      "time_vnm": "23:00",
+      "stadium": "Levi's Stadium (San Francisco)",
+      "status": "UPCOMING",
+      "home_team": "BRA",
+      "away_team": "HAI",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 32,
+      "stage": "Group Stage",
+      "group": "D",
+      "round": "Matchday 2",
+      "date": "2026-06-19",
+      "time_vnm": "02:00",
+      "stadium": "Mercedes-Benz Stadium (Atlanta)",
+      "status": "UPCOMING",
+      "home_team": "MAR",
+      "away_team": "SCO",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 33,
+      "stage": "Group Stage",
+      "group": "E",
+      "round": "Matchday 2",
+      "date": "2026-06-19",
+      "time_vnm": "17:00",
+      "stadium": "Gillette Stadium (Boston)",
+      "status": "UPCOMING",
+      "home_team": "ARG",
+      "away_team": "UKR",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 34,
+      "stage": "Group Stage",
+      "group": "E",
+      "round": "Matchday 2",
+      "date": "2026-06-19",
+      "time_vnm": "20:00",
+      "stadium": "Caesars Superdome (New Orleans)",
+      "status": "UPCOMING",
+      "home_team": "GHA",
+      "away_team": "IRQ",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 35,
+      "stage": "Group Stage",
+      "group": "F",
+      "round": "Matchday 2",
+      "date": "2026-06-19",
+      "time_vnm": "23:00",
+      "stadium": "Mile High Stadium (Denver)",
+      "status": "UPCOMING",
+      "home_team": "FRA",
+      "away_team": "PER",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 36,
+      "stage": "Group Stage",
+      "group": "F",
+      "round": "Matchday 2",
+      "date": "2026-06-20",
+      "time_vnm": "02:00",
+      "stadium": "Azteca Stadium (Mexico City)",
+      "status": "UPCOMING",
+      "home_team": "NGA",
+      "away_team": "UZB",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 37,
+      "stage": "Group Stage",
+      "group": "G",
+      "round": "Matchday 2",
+      "date": "2026-06-20",
+      "time_vnm": "17:00",
+      "stadium": "Snapdragon Stadium (San Diego)",
+      "status": "UPCOMING",
+      "home_team": "ENG",
+      "away_team": "JPN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 38,
+      "stage": "Group Stage",
+      "group": "G",
+      "round": "Matchday 2",
+      "date": "2026-06-20",
+      "time_vnm": "20:00",
+      "stadium": "Soldier Field (Chicago)",
+      "status": "UPCOMING",
+      "home_team": "CIV",
+      "away_team": "CHI",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 39,
+      "stage": "Group Stage",
+      "group": "H",
+      "round": "Matchday 2",
+      "date": "2026-06-20",
+      "time_vnm": "23:00",
+      "stadium": "Empower Field (Denver)",
+      "status": "UPCOMING",
+      "home_team": "ESP",
+      "away_team": "IRN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 40,
+      "stage": "Group Stage",
+      "group": "H",
+      "round": "Matchday 2",
+      "date": "2026-06-21",
+      "time_vnm": "02:00",
+      "stadium": "Sporting Park (Kansas City)",
+      "status": "UPCOMING",
+      "home_team": "TUN",
+      "away_team": "COL",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 41,
+      "stage": "Group Stage",
+      "group": "I",
+      "round": "Matchday 2",
+      "date": "2026-06-21",
+      "time_vnm": "17:00",
+      "stadium": "Bank of America Stadium (Charlotte)",
+      "status": "UPCOMING",
+      "home_team": "POR",
+      "away_team": "UAE",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 42,
+      "stage": "Group Stage",
+      "group": "I",
+      "round": "Matchday 2",
+      "date": "2026-06-21",
+      "time_vnm": "20:00",
+      "stadium": "Acrisure Stadium (Pittsburgh)",
+      "status": "UPCOMING",
+      "home_team": "CMR",
+      "away_team": "ECU",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 43,
+      "stage": "Group Stage",
+      "group": "J",
+      "round": "Matchday 2",
+      "date": "2026-06-21",
+      "time_vnm": "23:00",
+      "stadium": "Hard Rock Stadium (Miami)",
+      "status": "UPCOMING",
+      "home_team": "GER",
+      "away_team": "KSA",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 44,
+      "stage": "Group Stage",
+      "group": "J",
+      "round": "Matchday 2",
+      "date": "2026-06-22",
+      "time_vnm": "02:00",
+      "stadium": "Lambeau Field (Green Bay)",
+      "status": "UPCOMING",
+      "home_team": "ALG",
+      "away_team": "URU",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 45,
+      "stage": "Group Stage",
+      "group": "K",
+      "round": "Matchday 2",
+      "date": "2026-06-22",
+      "time_vnm": "17:00",
+      "stadium": "Lucas Oil Stadium (Indianapolis)",
+      "status": "UPCOMING",
+      "home_team": "BEL",
+      "away_team": "OMA",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 46,
+      "stage": "Group Stage",
+      "group": "K",
+      "round": "Matchday 2",
+      "date": "2026-06-22",
+      "time_vnm": "20:00",
+      "stadium": "Rose Bowl (Los Angeles)",
+      "status": "UPCOMING",
+      "home_team": "SEN",
+      "away_team": "VEN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 47,
+      "stage": "Group Stage",
+      "group": "L",
+      "round": "Matchday 2",
+      "date": "2026-06-22",
+      "time_vnm": "23:00",
+      "stadium": "Estadio BBVA (Monterrey)",
+      "status": "UPCOMING",
+      "home_team": "NED",
+      "away_team": "CHN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 48,
+      "stage": "Group Stage",
+      "group": "L",
+      "round": "Matchday 2",
+      "date": "2026-06-23",
+      "time_vnm": "02:00",
+      "stadium": "AT&T Stadium (Arlington)",
+      "status": "UPCOMING",
+      "home_team": "EGY",
+      "away_team": "PAN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 49,
       "stage": "Group Stage",
       "group": "A",
       "round": "Matchday 3",
-      "date": "2026-06-13",
+      "date": "2026-06-23",
       "time_vnm": "17:00",
-      "stadium": "NRG Stadium",
+      "stadium": "NRG Stadium (Houston)",
       "status": "UPCOMING",
       "home_team": "CZE",
       "away_team": "MEX",
@@ -714,13 +1417,13 @@
       }
     },
     {
-      "match_no": 6,
+      "match_no": 50,
       "stage": "Group Stage",
       "group": "A",
       "round": "Matchday 3",
-      "date": "2026-06-13",
-      "time_vnm": "20:00",
-      "stadium": "Allegiant Stadium",
+      "date": "2026-06-23",
+      "time_vnm": "17:00",
+      "stadium": "MetLife Stadium (New York)",
       "status": "UPCOMING",
       "home_team": "RSA",
       "away_team": "KOR",
@@ -728,20 +1431,778 @@
         "home": null,
         "away": null
       }
-    }
-  ],
-  "knockout_stage_teams": {
-    "round_of_32": [],
-    "round_of_16": [],
-    "quarter_finals": [],
-    "semi_finals": [],
-    "final": {
-      "home_team": null,
-      "away_team": null,
-      "winner": null,
-      "date": "2026-07-20",
+    },
+    {
+      "match_no": 51,
+      "stage": "Group Stage",
+      "group": "B",
+      "round": "Matchday 3",
+      "date": "2026-06-23",
+      "time_vnm": "20:00",
+      "stadium": "SoFi Stadium (Los Angeles)",
+      "status": "UPCOMING",
+      "home_team": "SUI",
+      "away_team": "CAN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 52,
+      "stage": "Group Stage",
+      "group": "B",
+      "round": "Matchday 3",
+      "date": "2026-06-23",
+      "time_vnm": "20:00",
+      "stadium": "Allegiant Stadium (Las Vegas)",
+      "status": "UPCOMING",
+      "home_team": "QAT",
+      "away_team": "BIH",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 53,
+      "stage": "Group Stage",
+      "group": "C",
+      "round": "Matchday 3",
+      "date": "2026-06-23",
+      "time_vnm": "23:00",
+      "stadium": "Arrowhead Stadium (Kansas City)",
+      "status": "UPCOMING",
+      "home_team": "TUR",
+      "away_team": "USA",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 54,
+      "stage": "Group Stage",
+      "group": "C",
+      "round": "Matchday 3",
+      "date": "2026-06-23",
+      "time_vnm": "23:00",
+      "stadium": "Levi's Stadium (San Francisco)",
+      "status": "UPCOMING",
+      "home_team": "PAR",
+      "away_team": "AUS",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 55,
+      "stage": "Group Stage",
+      "group": "D",
+      "round": "Matchday 3",
+      "date": "2026-06-24",
+      "time_vnm": "17:00",
+      "stadium": "Mercedes-Benz Stadium (Atlanta)",
+      "status": "UPCOMING",
+      "home_team": "SCO",
+      "away_team": "BRA",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 56,
+      "stage": "Group Stage",
+      "group": "D",
+      "round": "Matchday 3",
+      "date": "2026-06-24",
+      "time_vnm": "17:00",
+      "stadium": "Gillette Stadium (Boston)",
+      "status": "UPCOMING",
+      "home_team": "HAI",
+      "away_team": "MAR",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 57,
+      "stage": "Group Stage",
+      "group": "E",
+      "round": "Matchday 3",
+      "date": "2026-06-24",
+      "time_vnm": "20:00",
+      "stadium": "Caesars Superdome (New Orleans)",
+      "status": "UPCOMING",
+      "home_team": "IRQ",
+      "away_team": "ARG",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 58,
+      "stage": "Group Stage",
+      "group": "E",
+      "round": "Matchday 3",
+      "date": "2026-06-24",
+      "time_vnm": "20:00",
+      "stadium": "Mile High Stadium (Denver)",
+      "status": "UPCOMING",
+      "home_team": "UKR",
+      "away_team": "GHA",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 59,
+      "stage": "Group Stage",
+      "group": "F",
+      "round": "Matchday 3",
+      "date": "2026-06-24",
+      "time_vnm": "23:00",
+      "stadium": "Azteca Stadium (Mexico City)",
+      "status": "UPCOMING",
+      "home_team": "UZB",
+      "away_team": "FRA",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 60,
+      "stage": "Group Stage",
+      "group": "F",
+      "round": "Matchday 3",
+      "date": "2026-06-24",
+      "time_vnm": "23:00",
+      "stadium": "Snapdragon Stadium (San Diego)",
+      "status": "UPCOMING",
+      "home_team": "PER",
+      "away_team": "NGA",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 61,
+      "stage": "Group Stage",
+      "group": "G",
+      "round": "Matchday 3",
+      "date": "2026-06-25",
+      "time_vnm": "17:00",
+      "stadium": "Soldier Field (Chicago)",
+      "status": "UPCOMING",
+      "home_team": "CHI",
+      "away_team": "ENG",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 62,
+      "stage": "Group Stage",
+      "group": "G",
+      "round": "Matchday 3",
+      "date": "2026-06-25",
+      "time_vnm": "17:00",
+      "stadium": "Empower Field (Denver)",
+      "status": "UPCOMING",
+      "home_team": "CIV",
+      "away_team": "JPN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 63,
+      "stage": "Group Stage",
+      "group": "H",
+      "round": "Matchday 3",
+      "date": "2026-06-25",
+      "time_vnm": "20:00",
+      "stadium": "Sporting Park (Kansas City)",
+      "status": "UPCOMING",
+      "home_team": "COL",
+      "away_team": "ESP",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 64,
+      "stage": "Group Stage",
+      "group": "H",
+      "round": "Matchday 3",
+      "date": "2026-06-25",
+      "time_vnm": "20:00",
+      "stadium": "Bank of America Stadium (Charlotte)",
+      "status": "UPCOMING",
+      "home_team": "IRN",
+      "away_team": "TUN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 65,
+      "stage": "Group Stage",
+      "group": "I",
+      "round": "Matchday 3",
+      "date": "2026-06-25",
+      "time_vnm": "23:00",
+      "stadium": "Acrisure Stadium (Pittsburgh)",
+      "status": "UPCOMING",
+      "home_team": "ECU",
+      "away_team": "POR",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 66,
+      "stage": "Group Stage",
+      "group": "I",
+      "round": "Matchday 3",
+      "date": "2026-06-25",
+      "time_vnm": "23:00",
+      "stadium": "Hard Rock Stadium (Miami)",
+      "status": "UPCOMING",
+      "home_team": "CMR",
+      "away_team": "UAE",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 67,
+      "stage": "Group Stage",
+      "group": "J",
+      "round": "Matchday 3",
+      "date": "2026-06-26",
+      "time_vnm": "17:00",
+      "stadium": "Lambeau Field (Green Bay)",
+      "status": "UPCOMING",
+      "home_team": "URU",
+      "away_team": "GER",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 68,
+      "stage": "Group Stage",
+      "group": "J",
+      "round": "Matchday 3",
+      "date": "2026-06-26",
+      "time_vnm": "17:00",
+      "stadium": "Lucas Oil Stadium (Indianapolis)",
+      "status": "UPCOMING",
+      "home_team": "KSA",
+      "away_team": "ALG",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 69,
+      "stage": "Group Stage",
+      "group": "K",
+      "round": "Matchday 3",
+      "date": "2026-06-26",
+      "time_vnm": "20:00",
+      "stadium": "Rose Bowl (Los Angeles)",
+      "status": "UPCOMING",
+      "home_team": "VEN",
+      "away_team": "BEL",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 70,
+      "stage": "Group Stage",
+      "group": "K",
+      "round": "Matchday 3",
+      "date": "2026-06-26",
+      "time_vnm": "20:00",
+      "stadium": "Estadio BBVA (Monterrey)",
+      "status": "UPCOMING",
+      "home_team": "OMA",
+      "away_team": "SEN",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 71,
+      "stage": "Group Stage",
+      "group": "L",
+      "round": "Matchday 3",
+      "date": "2026-06-26",
+      "time_vnm": "23:00",
+      "stadium": "AT&T Stadium (Arlington)",
+      "status": "UPCOMING",
+      "home_team": "PAN",
+      "away_team": "NED",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 72,
+      "stage": "Group Stage",
+      "group": "L",
+      "round": "Matchday 3",
+      "date": "2026-06-26",
+      "time_vnm": "23:00",
+      "stadium": "NRG Stadium (Houston)",
+      "status": "UPCOMING",
+      "home_team": "CHN",
+      "away_team": "EGY",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 73,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-06-29",
+      "time_vnm": "17:00",
+      "stadium": "MetLife Stadium (New York)",
+      "status": "UPCOMING",
+      "home_team": "Winner A",
+      "away_team": "Runner-up B",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 74,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-06-29",
+      "time_vnm": "20:00",
+      "stadium": "SoFi Stadium (Los Angeles)",
+      "status": "UPCOMING",
+      "home_team": "Winner B",
+      "away_team": "Runner-up A",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 75,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-06-29",
+      "time_vnm": "23:00",
+      "stadium": "Allegiant Stadium (Las Vegas)",
+      "status": "UPCOMING",
+      "home_team": "Winner C",
+      "away_team": "Runner-up D",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 76,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-06-30",
       "time_vnm": "02:00",
-      "stadium": "MetLife Stadium"
+      "stadium": "Arrowhead Stadium (Kansas City)",
+      "status": "UPCOMING",
+      "home_team": "Winner D",
+      "away_team": "Runner-up C",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 77,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-06-30",
+      "time_vnm": "17:00",
+      "stadium": "Mercedes-Benz Stadium (Atlanta)",
+      "status": "UPCOMING",
+      "home_team": "Winner E",
+      "away_team": "Runner-up F",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 78,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-06-30",
+      "time_vnm": "20:00",
+      "stadium": "Gillette Stadium (Boston)",
+      "status": "UPCOMING",
+      "home_team": "Winner F",
+      "away_team": "Runner-up E",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 79,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-06-30",
+      "time_vnm": "23:00",
+      "stadium": "Caesars Superdome (New Orleans)",
+      "status": "UPCOMING",
+      "home_team": "Winner G",
+      "away_team": "Runner-up H",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 80,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-07-01",
+      "time_vnm": "02:00",
+      "stadium": "Mile High Stadium (Denver)",
+      "status": "UPCOMING",
+      "home_team": "Winner H",
+      "away_team": "Runner-up G",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 81,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-07-01",
+      "time_vnm": "17:00",
+      "stadium": "Azteca Stadium (Mexico City)",
+      "status": "UPCOMING",
+      "home_team": "Winner I",
+      "away_team": "Runner-up J",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 82,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-07-01",
+      "time_vnm": "20:00",
+      "stadium": "Snapdragon Stadium (San Diego)",
+      "status": "UPCOMING",
+      "home_team": "Winner J",
+      "away_team": "Runner-up I",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 83,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-07-01",
+      "time_vnm": "23:00",
+      "stadium": "Soldier Field (Chicago)",
+      "status": "UPCOMING",
+      "home_team": "Winner K",
+      "away_team": "Runner-up L",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 84,
+      "stage": "Knockout Stage",
+      "round": "Round of 32",
+      "date": "2026-07-02",
+      "time_vnm": "02:00",
+      "stadium": "Empower Field (Denver)",
+      "status": "UPCOMING",
+      "home_team": "Winner L",
+      "away_team": "Runner-up K",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 85,
+      "stage": "Knockout Stage",
+      "round": "Round of 16",
+      "date": "2026-07-04",
+      "time_vnm": "17:00",
+      "stadium": "Sporting Park (Kansas City)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 73",
+      "away_team": "Winner Match 74",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 86,
+      "stage": "Knockout Stage",
+      "round": "Round of 16",
+      "date": "2026-07-04",
+      "time_vnm": "20:00",
+      "stadium": "Bank of America Stadium (Charlotte)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 75",
+      "away_team": "Winner Match 76",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 87,
+      "stage": "Knockout Stage",
+      "round": "Round of 16",
+      "date": "2026-07-04",
+      "time_vnm": "23:00",
+      "stadium": "Acrisure Stadium (Pittsburgh)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 77",
+      "away_team": "Winner Match 78",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 88,
+      "stage": "Knockout Stage",
+      "round": "Round of 16",
+      "date": "2026-07-05",
+      "time_vnm": "02:00",
+      "stadium": "Hard Rock Stadium (Miami)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 79",
+      "away_team": "Winner Match 80",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 89,
+      "stage": "Knockout Stage",
+      "round": "Round of 16",
+      "date": "2026-07-05",
+      "time_vnm": "17:00",
+      "stadium": "Lambeau Field (Green Bay)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 81",
+      "away_team": "Winner Match 82",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 90,
+      "stage": "Knockout Stage",
+      "round": "Round of 16",
+      "date": "2026-07-05",
+      "time_vnm": "20:00",
+      "stadium": "Lucas Oil Stadium (Indianapolis)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 83",
+      "away_team": "Winner Match 84",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 91,
+      "stage": "Knockout Stage",
+      "round": "Round of 16",
+      "date": "2026-07-05",
+      "time_vnm": "23:00",
+      "stadium": "Rose Bowl (Los Angeles)",
+      "status": "UPCOMING",
+      "home_team": "2nd Place Group 1",
+      "away_team": "Winner Group 5",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 92,
+      "stage": "Knockout Stage",
+      "round": "Round of 16",
+      "date": "2026-07-06",
+      "time_vnm": "02:00",
+      "stadium": "Estadio BBVA (Monterrey)",
+      "status": "UPCOMING",
+      "home_team": "Winner Group 5",
+      "away_team": "2nd Place Group 1",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 93,
+      "stage": "Knockout Stage",
+      "round": "Quarter-finals",
+      "date": "2026-07-09",
+      "time_vnm": "17:00",
+      "stadium": "AT&T Stadium (Arlington)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 85",
+      "away_team": "Winner Match 86",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 94,
+      "stage": "Knockout Stage",
+      "round": "Quarter-finals",
+      "date": "2026-07-09",
+      "time_vnm": "20:00",
+      "stadium": "NRG Stadium (Houston)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 87",
+      "away_team": "Winner Match 88",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 95,
+      "stage": "Knockout Stage",
+      "round": "Quarter-finals",
+      "date": "2026-07-09",
+      "time_vnm": "23:00",
+      "stadium": "MetLife Stadium (New York)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 89",
+      "away_team": "Winner Match 90",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 96,
+      "stage": "Knockout Stage",
+      "round": "Quarter-finals",
+      "date": "2026-07-10",
+      "time_vnm": "02:00",
+      "stadium": "SoFi Stadium (Los Angeles)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 91",
+      "away_team": "Winner Match 92",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 97,
+      "stage": "Knockout Stage",
+      "round": "Semi-finals",
+      "date": "2026-07-15",
+      "time_vnm": "20:00",
+      "stadium": "MetLife Stadium (New York)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 93",
+      "away_team": "Winner Match 94",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 98,
+      "stage": "Knockout Stage",
+      "round": "Semi-finals",
+      "date": "2026-07-16",
+      "time_vnm": "20:00",
+      "stadium": "AT&T Stadium (Arlington)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 95",
+      "away_team": "Winner Match 96",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 99,
+      "stage": "Knockout Stage",
+      "round": "Third Place Play-off",
+      "date": "2026-07-18",
+      "time_vnm": "20:00",
+      "stadium": "SoFi Stadium (Los Angeles)",
+      "status": "UPCOMING",
+      "home_team": "Loser Match 97",
+      "away_team": "Loser Match 98",
+      "score": {
+        "home": null,
+        "away": null
+      }
+    },
+    {
+      "match_no": 100,
+      "stage": "Knockout Stage",
+      "round": "Final",
+      "date": "2026-07-20",
+      "time_vnm": "20:00",
+      "stadium": "MetLife Stadium (New York)",
+      "status": "UPCOMING",
+      "home_team": "Winner Match 97",
+      "away_team": "Winner Match 98",
+      "score": {
+        "home": null,
+        "away": null
+      }
     }
-  }
+  ]
 }
