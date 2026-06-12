@@ -107,7 +107,8 @@
             errorScreen.classList.add("hidden");
 
             const cacheBuster = "?t=" + new Date().getTime();
-            const GITHUB_URL = "../data/wc2026.json" + cacheBuster;
+            // ĐƯỜNG DẪN TUYỆT ĐỐI ĐẾN FILE JSON TRÊN GITHUB
+            const GITHUB_URL = "https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/wc2026.json" + cacheBuster;
 
             try {
                 const response = await fetch(GITHUB_URL);
@@ -126,7 +127,7 @@
                 renderAdminConsole();
             } catch (error) {
                 console.error("Lỗi:", error.message);
-                document.getElementById("error-message-text").innerText = `⚠️ ${error.message}`;
+                document.getElementById("error-message-text").innerText = `⚠️ ${error.message}. Đang thử lại...`;
                 errorScreen.classList.remove("hidden");
                 statusBadge.className = "bg-rose-950 text-rose-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-rose-800";
                 statusBadge.innerHTML = `❌ Lỗi`;
