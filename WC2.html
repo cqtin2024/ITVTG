@@ -1,0 +1,473 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Cup 2026 - Live Data Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+
+    <nav class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-rose-500 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> FIFA 2026
+                    </span>
+                    <span id="data-status" class="bg-yellow-950 text-yellow-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-yellow-800 tracking-widest flex items-center gap-1">
+                        <i class="fa-solid fa-spinner animate-spin"></i> Đang kết nối...
+                    </span>
+                </div>
+                <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
+                    <button onclick="switchTab('live')" id="nav-live" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-indigo-600 text-white transition-all">
+                        <i class="fa-solid fa-fire"></i> Kết Quả
+                    </button>
+                    <button onclick="switchTab('rounds')" id="nav-rounds" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-calendar"></i> Lịch Thi Đấu
+                    </button>
+                    <button onclick="switchTab('groups')" id="nav-groups" class="tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-table"></i> Bảng Xếp Hạng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full relative">
+        
+        <div id="error-screen" class="hidden absolute inset-0 bg-slate-950/95 z-40 flex flex-col items-center justify-center text-center p-6 min-h-[500px]">
+            <div class="w-20 h-20 bg-rose-950/50 border border-rose-800 rounded-full flex items-center justify-center text-rose-500 text-3xl mb-4 animate-bounce">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-xl font-black text-white">Không thể kết nối dữ liệu</h3>
+            <p class="text-slate-400 text-sm max-w-md mt-2 mb-6" id="error-message-text">Đang tải dữ liệu từ GitHub...</p>
+            <button onclick="loadOnlineData()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95">
+                <i class="fa-solid fa-arrow-rotate-right"></i> Tải Lại
+            </button>
+        </div>
+
+        <!-- TAB: KẾT QUẢ MỚI NHẤT -->
+        <section id="tab-live" class="tab-content block">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-fire text-rose-500"></i> Kết Quả Trận Vừa Diễn Ra
+                </h2>
+                <p class="text-slate-400 text-xs mt-1">Các trận đã hoàn thành được ưu tiên hiển thị ở đầu</p>
+            </div>
+            <div id="completed-matches-container" class="mb-8">
+                <div id="completed-matches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+            
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6 mt-8">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-indigo-400"></i> Trận Đấu Sắp Tới
+                </h2>
+            </div>
+            <div id="upcoming-matches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- TAB: LỊCH THI ĐẤU THEO VÒNG -->
+        <section id="tab-rounds" class="tab-content hidden">
+            <div class="mb-6 bg-slate-900 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <span class="font-bold text-sm"><i class="fa-regular fa-calendar mr-1"></i> Chọn Vòng Đấu</span>
+                <select id="round-select-filter" onchange="renderRoundView()" class="bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none w-full sm:w-auto">
+                    <option value="Matchday 1">Vòng Bảng - Lượt 1</option>
+                    <option value="Matchday 2">Vòng Bảng - Lượt 2</option>
+                    <option value="Matchday 3">Vòng Bảng - Lượt 3</option>
+                </select>
+            </div>
+            <div id="round-matches-list" class="grid grid-cols-1 gap-3"></div>
+            <div id="knockout-notice" class="hidden mt-8 p-6 bg-gradient-to-r from-purple-950/30 to-indigo-950/30 border border-purple-800 rounded-xl text-center">
+                <p class="text-sm text-slate-300"><i class="fa-solid fa-circle-check mr-2 text-emerald-400"></i> Vòng bảng đã hoàn thành! Vòng loại trực tiếp sẽ sớm diễn ra.</p>
+            </div>
+        </section>
+
+        <!-- TAB: BẢNG XẾP HẠNG -->
+        <section id="tab-groups" class="tab-content hidden">
+            <div class="mb-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <p class="text-xs text-slate-400"><i class="fa-solid fa-info-circle mr-1"></i> Xếp hạng đ��ợc cập nhật tự động từ kết quả trận đấu. Top 2 đội mỗi bảng sẽ vượt vòng</p>
+            </div>
+            <div id="groups-container-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-8"></div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 border-t border-slate-800 text-center py-4 text-xs text-slate-500">
+        &copy; 2026 FIFA World Cup Live Dashboard | Updated: <span id="last-update">--:--</span>
+    </footer>
+
+    <script>
+        let worldCupData = null;
+
+        // Hàm tải dữ liệu từ GitHub
+        async function loadOnlineData() {
+            const statusBadge = document.getElementById("data-status");
+            const errorScreen = document.getElementById("error-screen");
+            
+            statusBadge.className = "bg-yellow-950 text-yellow-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-yellow-800 tracking-widest flex items-center gap-1";
+            statusBadge.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang nạp...`;
+            errorScreen.classList.add("hidden");
+
+            const cacheBuster = "?t=" + new Date().getTime();
+            const GITHUB_URL = (window.WC2026_API_URL || "https://raw.githubusercontent.com/cqtin2024/ITVTG/main/data/wc2026.json") + cacheBuster;
+
+            try {
+                const response = await fetch(GITHUB_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                worldCupData = await response.json();
+                
+                if (!worldCupData || !worldCupData.teams || !worldCupData.fixtures) {
+                    throw new Error("Cấu trúc JSON không hợp lệ!");
+                }
+                
+                statusBadge.className = "bg-emerald-950 text-emerald-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-emerald-800 tracking-widest flex items-center gap-1";
+                statusBadge.innerHTML = `<i class="fa-solid fa-cloud-arrow-down"></i> Đã Kết Nối`;
+                document.getElementById("last-update").textContent = new Date().toLocaleTimeString('vi-VN');
+                
+                renderAdminConsole();
+            } catch (error) {
+                console.error("Lỗi:", error.message);
+                document.getElementById("error-message-text").innerText = `⚠️ ${error.message}. Đang thử lại...`;
+                errorScreen.classList.remove("hidden");
+                statusBadge.className = "bg-rose-950 text-rose-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-rose-800";
+                statusBadge.innerHTML = `❌ Lỗi`;
+            }
+        }
+
+        // Kiểm tra vòng bảng có hoàn thành không
+        function isGroupStageComplete() {
+            if (!worldCupData) return false;
+            const groupMatches = worldCupData.fixtures.filter(f => f.stage === "Group Stage");
+            const completedMatches = groupMatches.filter(f => f.score.home !== null && f.score.away !== null);
+            return completedMatches.length === groupMatches.length && groupMatches.length > 0;
+        }
+
+        // Chuyển đổi tab
+        function switchTab(tabId) {
+            if (!worldCupData) return;
+
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add("hidden"));
+            document.getElementById(`tab-${tabId}`).classList.remove("hidden");
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-white transition-all";
+            });
+            document.getElementById(`nav-${tabId}`).className = "tab-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-indigo-600 text-white transition-all";
+
+            if (tabId === 'live') renderAdminConsole();
+            if (tabId === 'rounds') renderRoundView();
+            if (tabId === 'groups') renderGroupsView();
+        }
+
+        // Tìm thông tin đội
+        function findTeam(teamId) {
+            return worldCupData.teams.find(t => t.id === teamId) || { 
+                id: teamId, 
+                name: teamId, 
+                flag: "🏳️",
+                group: "?"
+            };
+        }
+
+        // Tạo card trận đấu
+        function createMatchCard(match, isCompleted = false) {
+            const home = findTeam(match.home_team);
+            const away = findTeam(match.away_team);
+            
+            const card = document.createElement('div');
+            card.className = `bg-slate-900 border rounded-xl p-4 flex flex-col gap-3 transition-all ${
+                isCompleted 
+                    ? 'border-emerald-700 bg-gradient-to-br from-slate-900 to-emerald-950/20 shadow-lg shadow-emerald-500/10' 
+                    : 'border-slate-800'
+            }`;
+            
+            const scoreDisplay = isCompleted 
+                ? `<span class="text-2xl font-black text-amber-400">${match.score.home} - ${match.score.away}</span>`
+                : `<span class="text-lg text-slate-400 font-semibold">vs</span>`;
+
+            card.innerHTML = `
+                <div class="flex justify-between items-start gap-2 text-[10px] font-bold text-slate-500">
+                    <span>${isCompleted ? '✅ FT' : '⏳ ' + (match.time_vnm || '--:--')}</span>
+                    <span class="bg-slate-950 px-2 py-0.5 rounded border border-slate-700">${match.group}</span>
+                </div>
+                
+                <div class="flex items-center justify-between gap-3 bg-slate-950/50 p-3 rounded-lg border border-slate-800">
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <span class="text-2xl">${home.flag}</span>
+                        <span class="font-semibold text-sm text-slate-200 truncate">${home.name}</span>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center text-center">
+                    ${scoreDisplay}
+                </div>
+                
+                <div class="flex items-center justify-between gap-3 bg-slate-950/50 p-3 rounded-lg border border-slate-800">
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <span class="text-2xl">${away.flag}</span>
+                        <span class="font-semibold text-sm text-slate-200 truncate">${away.name}</span>
+                    </div>
+                </div>
+                
+                <div class="text-xs text-slate-500 border-t border-slate-800/50 pt-2 flex justify-between">
+                    <span><i class="fa-solid fa-map-pin mr-1"></i>${match.stadium || 'TBD'}</span>
+                    <span>${match.date}</span>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Hiển thị tab KẾT QUẢ
+        function renderAdminConsole() {
+            const completedContainer = document.getElementById('completed-matches-grid');
+            const upcomingContainer = document.getElementById('upcoming-matches-grid');
+            
+            if (!completedContainer || !upcomingContainer || !worldCupData) return;
+            
+            completedContainer.innerHTML = '';
+            upcomingContainer.innerHTML = '';
+
+            const completed = worldCupData.fixtures.filter(f => f.score.home !== null && f.score.away !== null);
+            const upcoming = worldCupData.fixtures.filter(f => f.score.home === null || f.score.away === null);
+
+            // Sắp xếp: gần nhất trước
+            completed.sort((a, b) => new Date(`${b.date}T${b.time_vnm || '00:00'}`) - new Date(`${a.date}T${a.time_vnm || '00:00'}`));
+            upcoming.sort((a, b) => new Date(`${a.date}T${a.time_vnm || '00:00'}`) - new Date(`${b.date}T${b.time_vnm || '00:00'}`));
+
+            completed.forEach(match => {
+                completedContainer.appendChild(createMatchCard(match, true));
+            });
+
+            upcoming.forEach(match => {
+                upcomingContainer.appendChild(createMatchCard(match, false));
+            });
+
+            if (completed.length === 0) {
+                completedContainer.innerHTML = '<p class="col-span-full text-center text-slate-400 py-8 text-sm">Chưa có trận nào hoàn thành</p>';
+            }
+
+            if (upcoming.length === 0) {
+                upcomingContainer.innerHTML = '<p class="col-span-full text-center text-slate-400 py-8 text-sm">Tất cả trận đấu đã hoàn thành</p>';
+            }
+        }
+
+        // Hiển thị tab LỊCH THI ĐẤU
+        function renderRoundView() {
+            const roundSelect = document.getElementById('round-select-filter');
+            const container = document.getElementById('round-matches-list');
+            const knockoutNotice = document.getElementById('knockout-notice');
+            
+            container.innerHTML = '';
+            
+            // Nếu vòng bảng hoàn thành, ẩn selector vòng bảng và hiển thị thông báo
+            const isGroupComplete = isGroupStageComplete();
+            if (isGroupComplete) {
+                roundSelect.parentElement.style.display = 'none';
+                knockoutNotice.classList.remove('hidden');
+                container.innerHTML = '<p class="col-span-full text-center text-slate-400 py-8">Vòng loại trực tiếp chưa diễn ra</p>';
+                return;
+            } else {
+                roundSelect.parentElement.style.display = 'flex';
+                knockoutNotice.classList.add('hidden');
+            }
+
+            const roundSelected = roundSelect.value;
+            const filtered = worldCupData.fixtures.filter(f => f.round === roundSelected);
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<p class="col-span-full text-center text-slate-400 py-8">Không có trận đấu nào</p>';
+                return;
+            }
+
+            // Sắp xếp theo ngày giờ
+            filtered.sort((a, b) => {
+                const dateA = new Date(`${a.date}T${a.time_vnm || '00:00'}`);
+                const dateB = new Date(`${b.date}T${b.time_vnm || '00:00'}`);
+                return dateA - dateB;
+            });
+
+            filtered.forEach(match => {
+                const home = findTeam(match.home_team);
+                const away = findTeam(match.away_team);
+                const hasScore = match.score.home !== null && match.score.away !== null;
+
+                const card = document.createElement('div');
+                card.className = `bg-slate-900 border border-slate-800 rounded-lg p-3 flex items-center justify-between gap-2 hover:border-slate-700 transition-all ${
+                    hasScore ? 'bg-emerald-950/20 border-emerald-800' : ''
+                }`;
+                
+                card.innerHTML = `
+                    <div class="text-left text-xs text-slate-400 min-w-fit">
+                        <div class="font-bold text-indigo-400">BẢNG ${match.group}</div>
+                        <div class="font-mono text-[10px] mt-1">${match.date} • ${match.time_vnm || '--:--'}</div>
+                    </div>
+                    
+                    <div class="flex-1 flex items-center justify-between gap-2">
+                        <div class="text-right flex items-center gap-1">
+                            <span class="text-xs font-semibold truncate text-slate-300 max-w-[80px]">${home.name}</span>
+                            <span class="text-lg">${home.flag}</span>
+                        </div>
+                        
+                        <div class="px-2 py-1 bg-slate-950 border border-slate-700 rounded text-center font-mono font-black text-amber-400 text-sm min-w-[50px]">
+                            ${hasScore ? `${match.score.home}-${match.score.away}` : 'vs'}
+                        </div>
+                        
+                        <div class="text-left flex items-center gap-1">
+                            <span class="text-lg">${away.flag}</span>
+                            <span class="text-xs font-semibold truncate text-slate-300 max-w-[80px]">${away.name}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-right text-[10px] text-slate-500 min-w-fit">
+                        <span class="px-2 py-0.5 rounded-full bg-slate-950 border border-slate-700">${hasScore ? '✅ FT' : '⏳'}</span>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Tính toán xếp hạng bảng đối
+        function computeLiveStandings() {
+            let standings = {};
+            
+            // Khởi tạo điểm cho tất cả đội
+            worldCupData.teams.forEach(team => {
+                standings[team.id] = {
+                    id: team.id, 
+                    name: team.name, 
+                    flag: team.flag, 
+                    group: team.group,
+                    p: 0, w: 0, d: 0, l: 0, 
+                    gf: 0, ga: 0, gd: 0, pts: 0
+                };
+            });
+
+            // Cập nhật từ các trận đã có kết quả
+            worldCupData.fixtures.forEach(match => {
+                if (match.score.home !== null && match.score.away !== null) {
+                    const h = standings[match.home_team];
+                    const a = standings[match.away_team];
+                    
+                    if (h && a) {
+                        h.p++; 
+                        a.p++;
+                        
+                        h.gf += match.score.home; 
+                        h.ga += match.score.away;
+                        a.gf += match.score.away; 
+                        a.ga += match.score.home;
+
+                        if (match.score.home > match.score.away) {
+                            h.w++; 
+                            h.pts += 3; 
+                            a.l++;
+                        } else if (match.score.home < match.score.away) {
+                            a.w++; 
+                            a.pts += 3; 
+                            h.l++;
+                        } else {
+                            h.d++; 
+                            a.d++; 
+                            h.pts += 1; 
+                            a.pts += 1;
+                        }
+                        
+                        h.gd = h.gf - h.ga; 
+                        a.gd = a.gf - a.ga;
+                    }
+                }
+            });
+            
+            return standings;
+        }
+
+        // Hiển thị tab BẢNG XẾP HẠNG
+        function renderGroupsView() {
+            const container = document.getElementById('groups-container-grid');
+            container.innerHTML = '';
+            const standings = computeLiveStandings();
+
+            // Nhóm đội theo bảng
+            let groupedTeams = {};
+            Object.values(standings).forEach(team => {
+                if (!groupedTeams[team.group]) groupedTeams[team.group] = [];
+                groupedTeams[team.group].push(team);
+            });
+
+            // Sắp xếp từng bảng
+            Object.keys(groupedTeams).sort().forEach(groupName => {
+                let teams = groupedTeams[groupName];
+                teams.sort((a, b) => {
+                    if (b.pts !== a.pts) return b.pts - a.pts;
+                    if (b.gd !== a.gd) return b.gd - a.gd;
+                    return b.gf - a.gf;
+                });
+
+                const tableBox = document.createElement('div');
+                tableBox.className = "bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden";
+                
+                let rowsHTML = '';
+                teams.forEach((team, idx) => {
+                    const isQualified = idx < 2;
+                    rowsHTML += `
+                        <tr class="border-b border-slate-800 text-xs font-medium ${
+                            isQualified 
+                                ? 'bg-emerald-950/20 text-emerald-200' 
+                                : 'text-slate-300 hover:bg-slate-800/30'
+                        }">
+                            <td class="p-3 text-center font-bold text-slate-500">${idx + 1}</td>
+                            <td class="p-3 flex items-center gap-2 font-bold truncate">
+                                <span>${team.flag}</span>
+                                <span>${team.name}</span>
+                                ${isQualified ? '<span class="text-[10px] bg-emerald-600 px-2 py-0.5 rounded ml-auto">QUA VÒNG</span>' : ''}
+                            </td>
+                            <td class="p-3 text-center font-mono">${team.p}</td>
+                            <td class="p-3 text-center font-mono text-emerald-400">${team.w}</td>
+                            <td class="p-3 text-center font-mono text-slate-400">${team.d}</td>
+                            <td class="p-3 text-center font-mono text-rose-400">${team.l}</td>
+                            <td class="p-3 text-center font-mono text-slate-400">${team.gf}:${team.ga}</td>
+                            <td class="p-3 text-center font-mono font-bold ${team.gd >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${team.gd > 0 ? '+' : ''}${team.gd}</td>
+                            <td class="p-3 text-center font-mono font-black text-amber-400">${team.pts}</td>
+                        </tr>
+                    `;
+                });
+
+                tableBox.innerHTML = `
+                    <div class="bg-slate-800/60 border-b border-slate-700 px-4 py-3">
+                        <span class="font-black text-indigo-300 text-sm">BẢNG ${groupName}</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-slate-950/60 text-[10px] text-slate-400 font-bold border-b border-slate-800">
+                                    <th class="p-3 text-center w-8">#</th>
+                                    <th class="p-3">Đội</th>
+                                    <th class="p-3 text-center">T</th>
+                                    <th class="p-3 text-center">Th</th>
+                                    <th class="p-3 text-center">H</th>
+                                    <th class="p-3 text-center">T</th>
+                                    <th class="p-3 text-center">BT</th>
+                                    <th class="p-3 text-center">HC</th>
+                                    <th class="p-3 text-center">Đ</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHTML}</tbody>
+                        </table>
+                    </div>
+                `;
+                container.appendChild(tableBox);
+            });
+        }
+
+        // Tải dữ liệu khi trang load
+        window.addEventListener('load', loadOnlineData);
+        
+        // Tải lại tự động mỗi 30 giây
+        setInterval(loadOnlineData, 30000);
+    </script>
+</body>
+</html>
