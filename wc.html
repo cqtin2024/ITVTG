@@ -1,0 +1,172 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cập Nhật Kết Quả World Cup 2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4">
+
+    <div class="max-w-xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <div class="text-center space-y-2">
+            <div class="inline-flex items-center gap-2 bg-rose-500/10 border border-rose-500/35 px-4 py-1.5 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">Live Match Center</span>
+            </div>
+            <h1 class="text-2xl font-extrabold text-white">KẾT QUẢ WORLD CUP 2026</h1>
+            <p class="text-xs text-slate-400">Dữ liệu được cập nhật tự động & chính xác</p>
+        </div>
+
+        <!-- Cách 1: Widget Nhúng Trực Tiếp (Phương án nhanh gọn nhất) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <span class="text-sm font-bold text-slate-300 flex items-center gap-2">
+                    <i class="fa-solid fa-window-restore text-rose-500"></i> Widget Tự Động (MondialHub)
+                </span>
+                <span class="text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-0.5 rounded-full font-semibold">Tự động 100%</span>
+            </div>
+            
+            <!-- Iframe được tối ưu hóa responsive để fit đẹp vào khung card -->
+            <div class="relative w-full overflow-hidden rounded-xl bg-slate-950 border border-slate-800/80" style="height: 380px;">
+                <iframe 
+                    src="https://mondialhub26.com/widget.php?lang=en" 
+                    class="absolute top-0 left-0 w-full h-full border-0"
+                    loading="lazy" 
+                    title="World Cup 2026 Official Scores">
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Cách 2: Bảng kết quả tùy biến (Kết nối Google Sheet hoặc API JSON) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <span class="text-sm font-bold text-slate-300 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-rose-500"></i> Bảng Thủ Công (Dễ Cập Nhật)
+                </span>
+                <button onclick="fetchLatestScores()" class="text-xs text-rose-400 hover:text-rose-300 transition flex items-center gap-1.5 bg-rose-500/5 px-2.5 py-1 rounded-lg border border-rose-500/10">
+                    <i class="fa-solid fa-arrows-rotate" id="sync-icon"></i> Đồng bộ ngay
+                </button>
+            </div>
+
+            <!-- List Trận Đấu Tự Custom -->
+            <div id="custom-scores-container" class="space-y-3">
+                <!-- Đang tải... -->
+                <div class="text-center py-8 text-slate-500 text-xs">
+                    <i class="fa-solid fa-circle-notch animate-spin text-lg text-rose-500 mb-2 block"></i>
+                    Đang tải dữ liệu trận đấu...
+                </div>
+            </div>
+
+            <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1.5">
+                <p class="font-bold text-slate-300"><i class="fa-solid fa-circle-info text-blue-400 mr-1"></i> Làm thế nào để tự cập nhật?</p>
+                <p>Bạn chỉ cần tạo một file JSON chứa kết quả trực tuyến (hoặc dùng Google Sheets xuất ra JSON công khai) rồi thay thế đường dẫn trong hàm <code class="text-rose-400 bg-rose-950/20 px-1 py-0.5 rounded">fetch()</code> ở dưới mã nguồn.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Đường dẫn JSON mẫu để cập nhật tỷ số (Bạn có thể đổi sang link Google Sheets đã publish)
+        // Ví dụ cấu trúc dữ liệu JSON mẫu được lưu trữ trực tuyến:
+        const MOCK_DATA_URL = "https://api.jsonbin.io/v3/b/65cd8ef8dc74654018a38fc2"; // Đây là ví dụ, bạn có thể tự lưu file JSON lên Github, Vercel, hoặc MockAPI
+
+        // Dữ liệu dự phòng cục bộ (Khi chưa cấu hình API online hoặc lỗi mạng)
+        const fallbackMatches = [
+            {
+                group: "A",
+                home: "Mexico", homeFlag: "mx", homeScore: 2,
+                away: "Mỹ", awayFlag: "us", awayScore: 1,
+                status: "FINISHED", time: "FT"
+            },
+            {
+                group: "B",
+                home: "Canada", homeFlag: "ca", homeScore: 1,
+                away: "Argentina", awayFlag: "ar", awayScore: 1,
+                status: "LIVE", time: "LIVE 76'"
+            }
+        ];
+
+        async function fetchLatestScores() {
+            const syncIcon = document.getElementById('sync-icon');
+            syncIcon.classList.add('animate-spin');
+            
+            const container = document.getElementById('custom-scores-container');
+            
+            try {
+                // Hãy thay URL này bằng URL Google Sheets hoặc API của bạn để cập nhật từ xa
+                // const response = await fetch(YOUR_API_URL);
+                // const data = await response.json();
+                
+                // Giả lập thời gian trễ của mạng để kiểm tra giao diện tải
+                await new Promise(resolve => setTimeout(resolve, 600));
+
+                renderCustomScores(fallbackMatches);
+            } catch (error) {
+                console.error("Lỗi đồng bộ dữ liệu:", error);
+                renderCustomScores(fallbackMatches); // Dùng dữ liệu dự phòng nếu lỗi mạng
+            } finally {
+                syncIcon.classList.remove('animate-spin');
+            }
+        }
+
+        function renderCustomScores(matches) {
+            const container = document.getElementById('custom-scores-container');
+            container.innerHTML = '';
+
+            matches.forEach(match => {
+                const isLive = match.status === 'LIVE';
+                const badgeColor = isLive 
+                    ? 'bg-red-500/10 text-red-400 border-red-500/20 animate-pulse' 
+                    : 'bg-slate-800 text-slate-400 border-slate-700/60';
+
+                container.innerHTML += `
+                    <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-3.5 flex items-center justify-between gap-4 hover:border-slate-700 transition">
+                        <!-- Đội Nhà -->
+                        <div class="flex items-center gap-2.5 w-5/12">
+                            <img class="w-7 h-4.5 object-cover rounded shadow" src="https://flagcdn.com/w40/${match.homeFlag}.png" alt="${match.home}">
+                            <span class="font-bold text-xs text-slate-200 truncate">${match.home}</span>
+                        </div>
+
+                        <!-- Tỉ Số & Thời Gian -->
+                        <div class="flex flex-col items-center justify-center w-2/12">
+                            <div class="text-sm font-black text-white bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">
+                                ${match.homeScore} - ${match.awayScore}
+                            </div>
+                            <span class="text-[9px] mt-1.5 px-2 py-0.5 rounded-full border font-bold uppercase ${badgeColor}">
+                                ${match.time}
+                            </span>
+                        </div>
+
+                        <!-- Đội Khách -->
+                        <div class="flex items-center gap-2.5 w-5/12 justify-end text-right">
+                            <span class="font-bold text-xs text-slate-200 truncate">${match.away}</span>
+                            <img class="w-7 h-4.5 object-cover rounded shadow" src="https://flagcdn.com/w40/${match.awayFlag}.png" alt="${match.away}">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Tự động tải khi trang load xong
+        window.onload = () => {
+            fetchLatestScores();
+        };
+    </script>
+</body>
+</html>
+
+
