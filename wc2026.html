@@ -13,14 +13,14 @@
 
     <header class="bg-gradient-to-r from-blue-700 to-indigo-950 text-white py-8 px-4 text-center shadow-lg mb-8">
         <h1 class="text-3xl md:text-5xl font-extrabold uppercase tracking-wider mb-2">🏆 World Cup 2026</h1>
-        <p class="text-blue-200 text-sm md:text-base">Hệ thống cập nhật lịch thi đấu và kết quả tự động</p>
+        <p class="text-blue-200 text-sm md:text-base">Hệ thống cập nhật lịch thi đấu từ kho lưu trữ nội bộ</p>
     </header>
 
     <main class="max-w-6xl mx-auto px-4">
         
         <div id="status-container" class="text-center py-12">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-indigo-600 mb-4"></div>
-            <p id="status-text" class="text-lg font-medium text-gray-600">Đang tải lịch thi đấu trực tiếp...</p>
+            <p id="status-text" class="text-lg font-medium text-gray-600">Đang đọc dữ liệu trận đấu...</p>
         </div>
 
         <div id="filter-container" class="hidden mb-6 flex flex-wrap gap-2 justify-center">
@@ -33,46 +33,57 @@
     </main>
 
     <script>
-        // Gọi TRỰC TIẾP tới API của OpenFootball (Không cần qua Proxy CORS vì cùng chạy trên HTTPS)
+        // Đường dẫn tương đối chuẩn xác
         const DATA_URL = './data/wc2026.json';
         
+        // Biến toàn cục lưu trữ dữ liệu gốc ổn định
         let worldCupData = null;
 
         async function initApp() {
             try {
-                // Thêm cấu hình chống lấy dữ liệu cũ từ bộ nhớ đệm (cache) của trình duyệt
+                // Tải file JSON, cấu hình no-store để cập nhật trực tiếp không qua cache trình duyệt
                 const response = await fetch(DATA_URL, { cache: "no-store" });
                 
-                if (!response.ok) throw new Error('Không thể kết nối đến kho dữ liệu OpenFootball.');
+                if (!response.ok) {
+                    throw new Error(`Không tìm thấy file dữ liệu tại đường dẫn tương đối: ${DATA_URL}. Hãy chắc chắn bạn đã tạo thư mục "data" chứa file "wc2026.json".`);
+                }
                 
                 worldCupData = await response.json();
                 
-                if (!worldCupData || !worldCupData.rounds || worldCupData.rounds.length === 0) {
-                    throw new Error('Dữ liệu giải đấu hiện tại chưa được cập nhật.');
+                // Kiểm tra cấu trúc dữ liệu bắt buộc của OpenFootball
+                if (!worldCupData || !worldCupData.rounds || !Array.isArray(worldCupData.rounds)) {
+                    throw new Error('Định dạng file JSON không khớp với cấu trúc chuẩn của OpenFootball (Thiếu mảng "rounds").');
                 }
 
-                // Hiển thị ứng dụng
+                // Ẩn loading, hiển thị ứng dụng
                 document.getElementById('status-container').classList.add('hidden');
                 document.getElementById('filter-container').classList.remove('hidden');
 
                 renderFilters(worldCupData.rounds);
-                renderMatches(worldCupData.rounds);
+                renderMatches(worldCupData.rounds); // Mặc định hiển thị tất cả các vòng công khai
 
             } catch (error) {
                 console.error(error);
                 document.getElementById('status-container').innerHTML = `
                     <div class="bg-red-100 text-red-700 p-6 rounded-xl inline-block max-w-lg shadow-md text-left">
-                        <p class="font-bold text-lg mb-1">⚠️ Lỗi tải dữ liệu</p>
-                        <p class="text-sm">${error.message}</p>
+                        <p class="font-bold text-lg mb-1">⚠️ Cảnh báo vận hành</p>
+                        <p class="text-sm mb-3">${error.message}</p>
+                        <div class="text-xs text-gray-500 border-t pt-2 border-red-200">
+                            <strong>Lưu ý bảo mật trình duyệt:</strong> Nếu bạn click đúp mở trực tiếp file HTML này trên máy tính (đường dẫn dạng <code>file:///...</code>), trình duyệt sẽ chặn Fetch vì lý do an toàn. Lỗi này sẽ <strong>biến mất hoàn toàn</strong> khi bạn đẩy code lên GitHub Pages hoặc chạy qua một Local Server (như Live Server trên VS Code).
+                        </div>
                     </div>
                 `;
             }
         }
 
+        // Tạo các nút bấm bộ lọc
         function renderFilters(rounds) {
             const filterContainer = document.getElementById('filter-container');
+            
             rounds.forEach((round, index) => {
-                if(!round.matches || round.matches.length === 0) return;
+                // Bỏ qua nếu vòng đấu đó trống không có trận nào
+                if (!round.matches || round.matches.length === 0) return;
+                
                 const btn = document.createElement('button');
                 btn.id = `btn-${index}`;
                 btn.className = "filter-btn px-4 py-2 bg-white text-gray-700 rounded-full text-sm font-semibold shadow hover:bg-gray-200 transition-all duration-200 cursor-pointer";
@@ -82,6 +93,7 @@
             });
         }
 
+        // Xử lý bộ lọc thông minh (Sửa lỗi logic mảng cắt)
         function filterRound(roundIndex) {
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('bg-indigo-600', 'text-white');
@@ -93,10 +105,12 @@
                 renderMatches(worldCupData.rounds);
             } else {
                 document.getElementById(`btn-${roundIndex}`).classList.add('bg-indigo-600', 'text-white');
+                // Truyền một mảng chứa duy nhất vòng đấu được chọn dựa trên bản gốc ổn định
                 renderMatches([worldCupData.rounds[roundIndex]]);
             }
         }
 
+        // Kết xuất dữ liệu ra giao diện (Sửa lỗi crash do dữ liệu Null/Khuyết thiếu)
         function renderMatches(rounds) {
             const container = document.getElementById('rounds-container');
             container.innerHTML = ''; 
@@ -120,24 +134,34 @@
                     const matchCard = document.createElement('div');
                     matchCard.className = "border border-gray-100 rounded-lg p-4 bg-gray-50 hover:shadow-md transition-shadow flex flex-col justify-between";
 
-                    const matchDate = match.date || 'Chưa rõ';
+                    // Sửa lỗi hiển thị ngày/giờ/sân vận động nếu bị trả về Null
+                    const matchDate = match.date || 'Chưa rõ ngày';
                     const matchTime = match.time ? ` - ${match.time}` : '';
+                    const stadiumName = (match.stadium && match.stadium.name) ? match.stadium.name : 'Địa điểm trung lập';
+
+                    // Sửa lỗi logic hiển thị tỷ số 0 (Dùng toán tử ?? thay vì ||)
                     const score1 = (match.score1 !== undefined && match.score1 !== null) ? match.score1 : '-';
                     const score2 = (match.score2 !== undefined && match.score2 !== null) ? match.score2 : '-';
                     
-                    const isFinished = match.score1 !== undefined && match.score1 !== null;
-                    const team1Class = (isFinished && match.score1 > match.score2) ? "font-bold text-gray-900" : "text-gray-600";
-                    const team2Class = (isFinished && match.score2 > match.score1) ? "font-bold text-gray-900" : "text-gray-600";
+                    const isFinished = (match.score1 !== undefined && match.score1 !== null) && (match.score2 !== undefined && match.score2 !== null);
+                    
+                    // Xác định highlight đội thắng cuộc
+                    let team1Class = "text-gray-600 font-medium";
+                    let team2Class = "text-gray-600 font-medium";
+                    if (isFinished) {
+                        if (match.score1 > match.score2) team1Class = "font-bold text-gray-950";
+                        else if (match.score2 > match.score1) team2Class = "font-bold text-gray-950";
+                    }
 
                     matchCard.innerHTML = `
                         <div class="flex justify-between text-xs text-gray-400 mb-3 uppercase tracking-wider font-semibold">
-                            <span class="truncate max-w-[180px]">🏟️ ${match.stadium ? match.stadium.name : 'Địa điểm trung lập'}</span>
+                            <span class="truncate max-w-[180px]" title="${stadiumName}">🏟️ ${stadiumName}</span>
                             <span>${matchDate}${matchTime}</span>
                         </div>
                         <div class="flex items-center justify-between my-2">
-                            <div class="w-2/5 text-right pr-2 ${team1Class} font-medium truncate text-sm md:text-base">${match.team1}</div>
+                            <div class="w-2/5 text-right pr-2 ${team1Class} truncate text-sm md:text-base">${match.team1}</div>
                             <div class="w-1/5 bg-indigo-50 text-indigo-900 rounded px-2 py-1 text-center font-mono font-bold text-base shadow-sm border border-indigo-100">${score1} : ${score2}</div>
-                            <div class="w-2/5 text-left pl-2 ${team2Class} font-medium truncate text-sm md:text-base">${match.team2}</div>
+                            <div class="w-2/5 text-left pl-2 ${team2Class} truncate text-sm md:text-base">${match.team2}</div>
                         </div>
                         <div class="text-center mt-3 pt-2 border-t border-gray-100 text-xs text-indigo-500 font-semibold uppercase tracking-wide">
                             ${match.group ? match.group : 'Vòng đấu loại trực tiếp'}
