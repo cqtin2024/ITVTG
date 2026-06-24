@@ -13,14 +13,14 @@
 
     <header class="bg-gradient-to-r from-blue-700 to-indigo-950 text-white py-8 px-4 text-center shadow-lg mb-8">
         <h1 class="text-3xl md:text-5xl font-extrabold uppercase tracking-wider mb-2">🏆 World Cup 2026</h1>
-        <p class="text-blue-200 text-sm md:text-base">Cập nhật lịch thi đấu và kết quả từ OpenFootball</p>
+        <p class="text-blue-200 text-sm md:text-base">Hệ thống cập nhật lịch thi đấu và kết quả tự động</p>
     </header>
 
     <main class="max-w-6xl mx-auto px-4">
         
         <div id="status-container" class="text-center py-12">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-indigo-600 mb-4"></div>
-            <p id="status-text" class="text-lg font-medium text-gray-600">Đang tải dữ liệu từ hệ thống...</p>
+            <p id="status-text" class="text-lg font-medium text-gray-600">Đang tải lịch thi đấu trực tiếp...</p>
         </div>
 
         <div id="filter-container" class="hidden mb-6 flex flex-wrap gap-2 justify-center">
@@ -33,45 +33,25 @@
     </main>
 
     <script>
-        // Sử dụng một proxy CORS miễn phí để tránh bị trình duyệt chặn khi chạy file local
-        const PRIMARY_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.json');
-        
-        // URL dự phòng trực tiếp
-        const BACKUP_URL = 'https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.json';
+        // Gọi TRỰC TIẾP tới API của OpenFootball (Không cần qua Proxy CORS vì cùng chạy trên HTTPS)
+        const DATA_URL = 'https://raw.githubusercontent.com/openfootball/worldcup.json/refs/heads/master/2026/worldcup.json';
         
         let worldCupData = null;
 
-        async function fetchWithTimeout(resource, options = {}) {
-            const { timeout = 8000 } = options;
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), timeout);
-            const response = await fetch(resource, { ...options, signal: controller.signal });
-            clearTimeout(id);
-            return response;
-        }
-
         async function initApp() {
-            const statusText = document.getElementById('status-text');
             try {
-                let response;
-                try {
-                    // Thử tải qua Proxy trước để tránh lỗi CORS
-                    response = await fetchWithTimeout(PRIMARY_URL);
-                } catch (e) {
-                    console.log("Proxy lỗi, thử tải trực tiếp...");
-                    // Nếu proxy lỗi, thử tải trực tiếp từ github
-                    response = await fetchWithTimeout(BACKUP_URL);
-                }
-
-                if (!response.ok) throw new Error('Không thể kết nối tới máy chủ dữ liệu.');
+                // Thêm cấu hình chống lấy dữ liệu cũ từ bộ nhớ đệm (cache) của trình duyệt
+                const response = await fetch(DATA_URL, { cache: "no-store" });
+                
+                if (!response.ok) throw new Error('Không thể kết nối đến kho dữ liệu OpenFootball.');
                 
                 worldCupData = await response.json();
                 
                 if (!worldCupData || !worldCupData.rounds || worldCupData.rounds.length === 0) {
-                    throw new Error('Dữ liệu World Cup hiện tại trống hoặc chưa được cập nhật trên OpenFootball.');
+                    throw new Error('Dữ liệu giải đấu hiện tại chưa được cập nhật.');
                 }
 
-                // Ẩn Loading
+                // Hiển thị ứng dụng
                 document.getElementById('status-container').classList.add('hidden');
                 document.getElementById('filter-container').classList.remove('hidden');
 
@@ -82,11 +62,8 @@
                 console.error(error);
                 document.getElementById('status-container').innerHTML = `
                     <div class="bg-red-100 text-red-700 p-6 rounded-xl inline-block max-w-lg shadow-md text-left">
-                        <p class="font-bold text-lg mb-2">⚠️ Không thể hiển thị dữ liệu</p>
-                        <p class="text-sm mb-4">Lý do: ${error.message}</p>
-                        <div class="text-xs bg-white p-3 rounded border border-red-200 text-gray-600">
-                            <strong>Mẹo:</strong> File JSON trên kho lưu trữ OpenFootball có thể đang trống hoặc cấu trúc thay đổi do giải đấu đang diễn ra. Bạn cũng có thể nhấn F12 (Console) để xem chi tiết lỗi.
-                        </div>
+                        <p class="font-bold text-lg mb-1">⚠️ Lỗi tải dữ liệu</p>
+                        <p class="text-sm">${error.message}</p>
                     </div>
                 `;
             }
@@ -95,7 +72,7 @@
         function renderFilters(rounds) {
             const filterContainer = document.getElementById('filter-container');
             rounds.forEach((round, index) => {
-                if(!round.matches || round.matches.length === 0) return; // Bỏ qua vòng không có trận
+                if(!round.matches || round.matches.length === 0) return;
                 const btn = document.createElement('button');
                 btn.id = `btn-${index}`;
                 btn.className = "filter-btn px-4 py-2 bg-white text-gray-700 rounded-full text-sm font-semibold shadow hover:bg-gray-200 transition-all duration-200 cursor-pointer";
@@ -128,7 +105,7 @@
                 if (!round.matches || round.matches.length === 0) return;
 
                 const roundSection = document.createElement('section');
-                roundSection.className = "bg-white rounded-xl shadow-md p-6 border border-gray-200 animate-fade-in";
+                roundSection.className = "bg-white rounded-xl shadow-md p-6 border border-gray-200";
 
                 roundSection.innerHTML = `
                     <h2 class="text-xl font-bold text-indigo-900 border-b-2 border-indigo-100 pb-3 mb-6 flex items-center gap-2">
@@ -143,7 +120,7 @@
                     const matchCard = document.createElement('div');
                     matchCard.className = "border border-gray-100 rounded-lg p-4 bg-gray-50 hover:shadow-md transition-shadow flex flex-col justify-between";
 
-                    const matchDate = match.date || 'Chưa rõ ngày';
+                    const matchDate = match.date || 'Chưa rõ';
                     const matchTime = match.time ? ` - ${match.time}` : '';
                     const score1 = (match.score1 !== undefined && match.score1 !== null) ? match.score1 : '-';
                     const score2 = (match.score2 !== undefined && match.score2 !== null) ? match.score2 : '-';
@@ -154,7 +131,7 @@
 
                     matchCard.innerHTML = `
                         <div class="flex justify-between text-xs text-gray-400 mb-3 uppercase tracking-wider font-semibold">
-                            <span class="truncate max-w-[180px]">🏟️ ${match.stadium ? match.stadium.name : 'Mỹ / HQ / NB'}</span>
+                            <span class="truncate max-w-[180px]">🏟️ ${match.stadium ? match.stadium.name : 'Địa điểm trung lập'}</span>
                             <span>${matchDate}${matchTime}</span>
                         </div>
                         <div class="flex items-center justify-between my-2">
@@ -163,7 +140,7 @@
                             <div class="w-2/5 text-left pl-2 ${team2Class} font-medium truncate text-sm md:text-base">${match.team2}</div>
                         </div>
                         <div class="text-center mt-3 pt-2 border-t border-gray-100 text-xs text-indigo-500 font-semibold uppercase tracking-wide">
-                            ${match.group ? match.group : 'Vòng đấu loại'}
+                            ${match.group ? match.group : 'Vòng đấu loại trực tiếp'}
                         </div>
                     `;
                     matchesGrid.appendChild(matchCard);
