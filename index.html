@@ -6,15 +6,15 @@
 <title>WC 2026</title>
 
 <style>
-body {
+body{
   margin:0;
-  font-family: "Segoe UI", Arial;
-  background: linear-gradient(135deg,#0f172a,#020617);
+  font-family:Segoe UI;
+  background:linear-gradient(135deg,#020617,#0f172a);
   color:white;
 }
 
 /* HEADER */
-header {
+header{
   text-align:center;
   padding:15px;
   font-size:22px;
@@ -22,84 +22,76 @@ header {
   color:#38bdf8;
 }
 
-/* CONTAINER */
-.container {
-  padding:15px;
-  max-width:900px;
-  margin:auto;
-}
-
-/* SEARCH */
-.search input {
-  width:100%;
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  margin-bottom:10px;
-  font-size:14px;
-}
-
-/* GROUP BUTTON */
-.filters {
+/* TAB */
+.tabs{
   display:flex;
-  flex-wrap:wrap;
-  gap:5px;
+  justify-content:center;
+  gap:10px;
   margin-bottom:10px;
 }
 
-.filters button {
+.tabs button{
+  padding:8px 12px;
   border:none;
-  padding:6px 10px;
   border-radius:8px;
   background:#1e293b;
   color:white;
   cursor:pointer;
 }
 
-.filters button.active {
+.tabs .active{
   background:#38bdf8;
 }
 
-/* MATCH CARD */
-.match {
-  background:rgba(30,41,59,0.7);
+/* CONTAINER */
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:15px;
+}
+
+/* MATCH */
+.match{
+  background:rgba(30,41,59,0.6);
   backdrop-filter:blur(6px);
   padding:12px;
   border-radius:12px;
   margin-bottom:10px;
-  transition:0.3s;
+  transition:.2s;
 }
 
-.match:hover {
+.match:hover{
   transform:scale(1.02);
   background:#334155;
 }
 
-.teams {
-  font-weight:bold;
-  font-size:16px;
+.today{
+  border-left:4px solid #22c55e;
 }
 
-.meta {
+.teams{
+  font-weight:bold;
+}
+
+.meta{
   font-size:13px;
   color:#94a3b8;
 }
 
-.group {
-  color:#facc15;
-}
-
-/* TODAY */
-.today {
-  border-left:4px solid #22c55e;
+/* INPUT */
+input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin-bottom:10px;
 }
 
 /* LOADING */
-.loading {
+.loading{
   text-align:center;
   color:#94a3b8;
 }
-
 </style>
 </head>
 
@@ -107,13 +99,15 @@ header {
 
 <header>⚽ World Cup 2026</header>
 
-<div class="container">
-
-<div class="search">
-<input id="search" placeholder="🔍 Tìm đội...">
+<div class="tabs">
+<button onclick="setTab('all')" class="active">Tất cả</button>
+<button onclick="setTab('today')">Hôm nay</button>
+<button onclick="setTab('search')">Tìm kiếm</button>
 </div>
 
-<div class="filters" id="filters"></div>
+<div class="container">
+
+<input id="search" placeholder="🔍 Nhập tên đội..." style="display:none">
 
 <div id="app" class="loading">Loading...</div>
 
@@ -124,109 +118,96 @@ header {
 const WORKER = "https://raspy-sun-012e.cqtin-2024.workers.dev/?url=";
 const API = "https://wheniskickoff.com/data/v1/matches.json";
 
-let allMatches = [];
-let currentGroup = "all";
+let matches = [];
+let currentTab = "all";
 
 // ===== LOAD DATA =====
-async function loadData() {
-  try {
+async function loadData(){
+  try{
     const res = await fetch(WORKER + encodeURIComponent(API));
     const text = await res.text();
 
-    if (text.startsWith("<")) throw new Error("API bị block");
+    if(text.startsWith("<")) throw "API bị block";
 
     const json = JSON.parse(text);
-    allMatches = json.data;
+    matches = json.data;
 
-    renderFilters();
-    render(allMatches);
+    render();
 
-  } catch (err) {
-    document.getElementById("app").innerHTML = "❌ Lỗi: " + err;
+  }catch(e){
+    document.getElementById("app").innerHTML = "❌ Lỗi tải dữ liệu<br>"+e;
   }
 }
 
 // ===== FORMAT TIME =====
-function formatTime(date, time) {
-  const d = new Date(date + "T" + time + "Z");
+function formatTime(date,time){
+  const d = new Date(date+"T"+time+"Z");
   return d.toLocaleString("vi-VN");
 }
 
-// ===== CHECK TODAY =====
-function isToday(date) {
-  const today = new Date().toISOString().slice(0,10);
-  return today === date;
+// ===== TODAY =====
+function isToday(date){
+  return new Date().toISOString().slice(0,10) === date;
+}
+
+// ===== TAB SWITCH =====
+function setTab(tab){
+  currentTab = tab;
+
+  document.querySelectorAll(".tabs button")
+    .forEach(b=>b.classList.remove("active"));
+
+  event.target.classList.add("active");
+
+  document.getElementById("search").style.display =
+    tab==="search" ? "block" : "none";
+
+  render();
 }
 
 // ===== RENDER =====
-function render(matches) {
-  if (!matches.length) {
-    document.getElementById("app").innerHTML = "Không có dữ liệu";
+function render(){
+
+  let data = matches;
+
+  if(currentTab==="today"){
+    data = data.filter(m=>isToday(m.date));
+  }
+
+  if(currentTab==="search"){
+    const k = document.getElementById("search").value.toLowerCase();
+
+    data = data.filter(m =>
+      m.home_name.toLowerCase().includes(k) ||
+      m.away_name.toLowerCase().includes(k)
+    );
+  }
+
+  if(!data.length){
+    document.getElementById("app").innerHTML="Không có dữ liệu";
     return;
   }
 
   document.getElementById("app").innerHTML =
-    matches.map(m => `
+    data.map(m=>`
       <div class="match ${isToday(m.date) ? 'today' : ''}">
         <div class="teams">
           ${m.home_name} 🇻🇸 ${m.away_name}
         </div>
 
         <div class="meta">
-          📅 ${formatTime(m.date, m.time_utc)}
+          📅 ${formatTime(m.date,m.time_utc)}
         </div>
 
-        <div class="meta group">
+        <div class="meta">
           🏆 Bảng ${m.group}
         </div>
       </div>
     `).join("");
 }
 
-// ===== FILTER BUTTON =====
-function renderFilters() {
-  const groups = [...new Set(allMatches.map(m => m.group))];
-
-  document.getElementById("filters").innerHTML =
-    `<button onclick="filterGroup('all')" class="active">All</button>` +
-    groups.map(g =>
-      `<button onclick="filterGroup('${g}')">${g}</button>`
-    ).join("");
-}
-
-// ===== FILTER LOGIC =====
-function filterGroup(group) {
-  currentGroup = group;
-
-  document.querySelectorAll(".filters button")
-    .forEach(btn => btn.classList.remove("active"));
-
-  event.target.classList.add("active");
-
-  applyFilter();
-}
-
 // ===== SEARCH =====
-document.getElementById("search").addEventListener("input", applyFilter);
-
-function applyFilter() {
-  const keyword = document.getElementById("search").value.toLowerCase();
-
-  let data = allMatches;
-
-  if (currentGroup !== "all") {
-    data = data.filter(m => m.group === currentGroup);
-  }
-
-  if (keyword) {
-    data = data.filter(m =>
-      m.home_name.toLowerCase().includes(keyword) ||
-      m.away_name.toLowerCase().includes(keyword)
-    );
-  }
-
-  render(data);
-}
+document.getElementById("search").addEventListener("input", render);
 
 // ===== INIT =====
 loadData();
