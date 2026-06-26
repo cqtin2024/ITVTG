@@ -1,65 +1,68 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WC 2026 FINAL</title>
+<title>WC 2026 Bracket</title>
 
 <style>
 body{
   margin:0;
-  font-family:Arial;
+  font-family:Segoe UI;
   background:#020617;
   color:white;
 }
 
-header{
+/* HEADER */
+h1{
   text-align:center;
-  padding:12px;
-  font-size:20px;
+  padding:10px;
   color:#38bdf8;
 }
 
-.tabs{
+/* BRACKET */
+.bracket{
   display:flex;
-}
-.tabs button{
-  flex:1;
+  overflow-x:auto;
   padding:10px;
-  border:none;
-  background:#1e293b;
-  color:white;
-}
-.tabs .active{
-  background:#38bdf8;
 }
 
+/* ROUND */
+.round{
+  min-width:220px;
+  margin-right:10px;
+}
+
+/* MATCH */
 .match{
   background:#1e293b;
-  margin:10px;
-  padding:10px;
+  margin-bottom:12px;
+  padding:8px;
   border-radius:8px;
 }
 
-.live{ border-left:4px solid red; }
-.finished{ border-left:4px solid #22c55e; }
-
-.teams{
+/* TEAM */
+.team{
   display:flex;
   justify-content:space-between;
+  align-items:center;
+  padding:3px 0;
+}
+
+.team img{
+  width:18px;
+  margin-right:5px;
+}
+
+/* WINNER */
+.win{
+  color:#22c55e;
   font-weight:bold;
 }
 
-.score{
+.title{
   text-align:center;
-  font-size:18px;
-  margin:5px 0;
-}
-
-.meta{
-  font-size:12px;
-  color:#94a3b8;
-  text-align:center;
+  margin-bottom:6px;
 }
 
 </style>
@@ -67,120 +70,108 @@ header{
 
 <body>
 
-<header>⚽ WC 2026 LIVE FINAL</header>
+<h1>⚽ WC 2026 Bracket</h1>
 
-<div class="tabs">
-<button onclick="setTab('live')" class="active">🔴 LIVE</button>
-<button onclick="setTab('all')">📅 ALL</button>
-</div>
-
-<div id="app">Loading...</div>
+<div id="bracket" class="bracket"></div>
 
 <script>
 
-// ===== API =====
-const API = "https://sportscore.com/api/widget/matches/?sport=football&limit=50";
+let data;
 
-let matches = [];
-let tab = "live";
-
-// ===== LOAD DATA =====
-async function load(){
-  try{
-    const res = await fetch(API);
-    const json = await res.json();
-
-    console.log("DATA:", json);
-
-    matches = json.matches || [];
-
-    render();
-
-  }catch(err){
-    document.getElementById("app").innerHTML =
-      "❌ Error loading data";
-  }
+// ===== FLAG =====
+function flag(name){
+  const map={
+    "USA":"us","Japan":"jp","Mexico":"mx","Canada":"ca",
+    "Brazil":"br","France":"fr","Germany":"de","Spain":"es"
+  };
+  return `https://flagcdn.com/w40/${map[name]?.toLowerCase()}.png`;
 }
 
-// ===== STATUS CLASS =====
-function getClass(m){
-  if(m.status === "LIVE") return "live";
-  if(m.status === "FT") return "finished";
-  return "";
-}
-
-// ===== SAFE GET TEAM =====
-function getHome(m){
-  return m.teams?.home?.name || "Unknown";
-}
-function getAway(m){
-  return m.teams?.away?.name || "Unknown";
-}
-
-// ===== SAFE SCORE =====
-function getScore(m){
-  return (m.home_score ?? 0) + " - " + (m.away_score ?? 0);
-}
-
-// ===== TIME FORMAT =====
-function getTime(m){
-  return m.minute ? m.minute + "'" : "";
-}
-
-// ===== RENDER =====
-function render(){
-
-  let list = matches;
-
-  if(tab === "live"){
-    list = matches.filter(m => m.status === "LIVE");
-  }
-
-  if(!list.length){
-    document.getElementById("app").innerHTML =
-      "Không có trận";
-    return;
-  }
-
-  document.getElementById("app").innerHTML =
-    list.map(m => `
-      <div class="match ${getClass(m)}">
-
-        <div class="teams">
-          <div>${getHome(m)}</div>
-          <div>${getAway(m)}</div>
-        </div>
-
-        <div class="score">
-          ${getScore(m)}
-        </div>
-
-        <div class="meta">
-          ${m.status} 
-          ${getTime(m)}
-        </div>
-
-      </div>
-    `).join("");
-}
-
-// ===== TAB =====
-function setTab(t){
-  tab = t;
-
-  document.querySelectorAll(".tabs button")
-    .forEach(b => b.classList.remove("active"));
-
-  event.target.classList.add("active");
+// ===== LOAD =====
+async function init(){
+  const res = await fetch("./data.json");
+  data = await res.json();
 
   render();
 }
 
-// ===== AUTO REFRESH =====
-setInterval(load, 30000);
+// ===== BUILD RANK =====
+function buildRank(){
+  let groups = {};
 
-// ===== INIT =====
-load();
+  for(let g in data.groups){
+
+    let table={};
+
+    data.groups[g].forEach(t=>table[t]={pts:0});
+
+    data.matches
+      .filter(m=>m.group===g && m.home_score!=null)
+      .forEach(m=>{
+        if(m.home_score>m.away_score) table[m.home].pts+=3;
+        else if(m.home_score<m.away_score) table[m.away].pts+=3;
+        else{
+          table[m.home].pts++;
+          table[m.away].pts++;
+        }
+      });
+
+    groups[g]=Object.entries(table)
+      .sort((a,b)=>b[1].pts-a[1].pts)
+      .map(x=>x[0]);
+  }
+
+  return groups;
+}
+
+// ===== RESOLVE TEAM =====
+function resolve(k, rank){
+  if(k[0]==="1") return rank[k[1]][0];
+  if(k[0]==="2") return rank[k[1]][1];
+  return k;
+}
+
+// ===== RENDER ROUND =====
+function renderRound(title, matches, rank){
+  return `
+    <div class="round">
+      <div class="title">${title}</div>
+      ${matches.map(m=>{
+        const h = resolve(m.home, rank);
+        const a = resolve(m.away, rank);
+
+        return `
+          <div class="match">
+            <div class="team">
+              <span>${flag(h)}${h}</span>
+              <span>-</span>
+            </div>
+            <div class="team">
+              <span>${flag(a)}${a}</span>
+              <span>-</span>
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+// ===== MAIN RENDER =====
+function render(){
+
+  const rank = buildRank();
+
+  const bracketHTML = 
+    renderRound("Round 16", data.knockout.R16, rank) +
+    renderRound("Quarter", data.knockout.QF || [], rank) +
+    renderRound("Semi", data.knockout.SF || [], rank) +
+    renderRound("Final", data.knockout.FINAL || [], rank);
+
+  document.getElementById("bracket").innerHTML = bracketHTML;
+}
+
+init();
 
 </script>
 
