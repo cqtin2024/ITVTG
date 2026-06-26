@@ -7,19 +7,19 @@
 
 <style>
 body {
-  margin:0;
-  font-family: Arial, sans-serif;
+  margin: 0;
+  font-family: Arial;
   background: #0f172a;
-  color: #fff;
+  color: white;
 }
 
 header {
-  background: #020617;
   padding: 15px;
+  background: #020617;
   text-align: center;
-  font-size: 22px;
-  font-weight: bold;
   color: #38bdf8;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .container {
@@ -28,129 +28,70 @@ header {
 
 .match {
   background: #1e293b;
-  padding: 12px;
-  border-radius: 10px;
+  padding: 10px;
+  border-radius: 8px;
   margin-bottom: 10px;
-  transition: 0.2s;
-}
-
-.match:hover {
-  background: #334155;
 }
 
 .teams {
-  font-size: 16px;
   font-weight: bold;
 }
 
 .meta {
+  color: #94a3b8;
   font-size: 13px;
-  color: #94a3b8;
-  margin-top: 5px;
 }
-
-.group {
-  color: #facc15;
-  font-weight: bold;
-}
-
-.search {
-  margin-bottom: 15px;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-}
-
-.loading {
-  text-align: center;
-  color: #94a3b8;
-}
-
 </style>
 </head>
 
 <body>
 
-<header>
-⚽ World Cup 2026 Schedule
-</header>
+<header>⚽ World Cup 2026</header>
 
-<div class="container">
-
-<div class="search">
-<input type="text" id="search" placeholder="🔍 Tìm đội bóng...">
-</div>
-
-<div id="app" class="loading">Loading data...</div>
-
+<div class="container" id="app">
+Loading...
 </div>
 
 <script>
 
-// ===== CONFIG =====
-const WORKER = "https://wc.cqtin-2024.workers.dev/?url=";
+const WORKER = "https://raspy-sun-012e.cqtin-2024.workers.dev/?url=";
 const API = "https://wheniskickoff.com/data/v1/matches.json";
-
-// ===== LOAD DATA =====
-let allMatches = [];
 
 async function loadData() {
   try {
     const res = await fetch(WORKER + encodeURIComponent(API));
-    const json = await res.json();
 
-    allMatches = json.data || json;
+    const text = await res.text();
 
-    render(allMatches);
+    // ✅ fix lỗi HTML (nếu bị block)
+    if (text.startsWith("<")) {
+      throw new Error("API trả HTML (bị block)");
+    }
+
+    const json = JSON.parse(text);
+    const matches = json.data;
+
+    document.getElementById("app").innerHTML =
+      matches.map(m => `
+        <div class="match">
+          <div class="teams">${m.home_name} vs ${m.away_name}</div>
+          <div class="meta">
+            📅 ${m.date} | ⏰ ${m.time_utc}
+          </div>
+          <div class="meta">
+            🏆 Group ${m.group}
+          </div>
+        </div>
+      `).join("");
 
   } catch (err) {
-    document.getElementById("app").innerHTML = "❌ Không tải được dữ liệu";
     console.error(err);
+
+    document.getElementById("app").innerHTML =
+      "❌ Lỗi tải dữ liệu<br><br>" + err;
   }
 }
 
-// ===== RENDER =====
-function render(matches) {
-  if (!matches.length) {
-    document.getElementById("app").innerHTML = "Không có dữ liệu";
-    return;
-  }
-
-  document.getElementById("app").innerHTML = matches.map(m => `
-    <div class="match">
-      <div class="teams">
-        ${m.home_name} 🇻🇸 ${m.away_name}
-      </div>
-
-      <div class="meta">
-        📅 ${m.date} - 🕒 ${m.time_utc}
-      </div>
-
-      <div class="meta group">
-        🏆 Bảng ${m.group} | ${m.phase}
-      </div>
-    </div>
-  `).join("");
-}
-
-// ===== SEARCH =====
-document.getElementById("search").addEventListener("input", function() {
-  const keyword = this.value.toLowerCase();
-
-  const filtered = allMatches.filter(m =>
-    m.home_name.toLowerCase().includes(keyword) ||
-    m.away_name.toLowerCase().includes(keyword)
-  );
-
-  render(filtered);
-});
-
-// ===== INIT =====
 loadData();
 
 </script>
