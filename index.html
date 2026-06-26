@@ -3,44 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Cup 2026</title>
+<title>WC 2026</title>
 
 <style>
 body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
+  margin:0;
+  font-family: "Segoe UI", Arial;
+  background: linear-gradient(135deg,#0f172a,#020617);
+  color:white;
 }
 
+/* HEADER */
 header {
-  padding: 15px;
-  background: #020617;
-  text-align: center;
-  color: #38bdf8;
-  font-size: 20px;
-  font-weight: bold;
+  text-align:center;
+  padding:15px;
+  font-size:22px;
+  font-weight:bold;
+  color:#38bdf8;
 }
 
+/* CONTAINER */
 .container {
-  padding: 15px;
+  padding:15px;
+  max-width:900px;
+  margin:auto;
 }
 
+/* SEARCH */
+.search input {
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  margin-bottom:10px;
+  font-size:14px;
+}
+
+/* GROUP BUTTON */
+.filters {
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  margin-bottom:10px;
+}
+
+.filters button {
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+  background:#1e293b;
+  color:white;
+  cursor:pointer;
+}
+
+.filters button.active {
+  background:#38bdf8;
+}
+
+/* MATCH CARD */
 .match {
-  background: #1e293b;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  background:rgba(30,41,59,0.7);
+  backdrop-filter:blur(6px);
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
+  transition:0.3s;
+}
+
+.match:hover {
+  transform:scale(1.02);
+  background:#334155;
 }
 
 .teams {
-  font-weight: bold;
+  font-weight:bold;
+  font-size:16px;
 }
 
 .meta {
-  color: #94a3b8;
-  font-size: 13px;
+  font-size:13px;
+  color:#94a3b8;
 }
+
+.group {
+  color:#facc15;
+}
+
+/* TODAY */
+.today {
+  border-left:4px solid #22c55e;
+}
+
+/* LOADING */
+.loading {
+  text-align:center;
+  color:#94a3b8;
+}
+
 </style>
 </head>
 
@@ -48,8 +107,16 @@ header {
 
 <header>⚽ World Cup 2026</header>
 
-<div class="container" id="app">
-Loading...
+<div class="container">
+
+<div class="search">
+<input id="search" placeholder="🔍 Tìm đội...">
+</div>
+
+<div class="filters" id="filters"></div>
+
+<div id="app" class="loading">Loading...</div>
+
 </div>
 
 <script>
@@ -57,41 +124,111 @@ Loading...
 const WORKER = "https://raspy-sun-012e.cqtin-2024.workers.dev/?url=";
 const API = "https://wheniskickoff.com/data/v1/matches.json";
 
+let allMatches = [];
+let currentGroup = "all";
+
+// ===== LOAD DATA =====
 async function loadData() {
   try {
     const res = await fetch(WORKER + encodeURIComponent(API));
-
     const text = await res.text();
 
-    // ✅ fix lỗi HTML (nếu bị block)
-    if (text.startsWith("<")) {
-      throw new Error("API trả HTML (bị block)");
-    }
+    if (text.startsWith("<")) throw new Error("API bị block");
 
     const json = JSON.parse(text);
-    const matches = json.data;
+    allMatches = json.data;
 
-    document.getElementById("app").innerHTML =
-      matches.map(m => `
-        <div class="match">
-          <div class="teams">${m.home_name} vs ${m.away_name}</div>
-          <div class="meta">
-            📅 ${m.date} | ⏰ ${m.time_utc}
-          </div>
-          <div class="meta">
-            🏆 Group ${m.group}
-          </div>
-        </div>
-      `).join("");
+    renderFilters();
+    render(allMatches);
 
   } catch (err) {
-    console.error(err);
-
-    document.getElementById("app").innerHTML =
-      "❌ Lỗi tải dữ liệu<br><br>" + err;
+    document.getElementById("app").innerHTML = "❌ Lỗi: " + err;
   }
 }
 
+// ===== FORMAT TIME =====
+function formatTime(date, time) {
+  const d = new Date(date + "T" + time + "Z");
+  return d.toLocaleString("vi-VN");
+}
+
+// ===== CHECK TODAY =====
+function isToday(date) {
+  const today = new Date().toISOString().slice(0,10);
+  return today === date;
+}
+
+// ===== RENDER =====
+function render(matches) {
+  if (!matches.length) {
+    document.getElementById("app").innerHTML = "Không có dữ liệu";
+    return;
+  }
+
+  document.getElementById("app").innerHTML =
+    matches.map(m => `
+      <div class="match ${isToday(m.date) ? 'today' : ''}">
+        <div class="teams">
+          ${m.home_name} 🇻🇸 ${m.away_name}
+        </div>
+
+        <div class="meta">
+          📅 ${formatTime(m.date, m.time_utc)}
+        </div>
+
+        <div class="meta group">
+          🏆 Bảng ${m.group}
+        </div>
+      </div>
+    `).join("");
+}
+
+// ===== FILTER BUTTON =====
+function renderFilters() {
+  const groups = [...new Set(allMatches.map(m => m.group))];
+
+  document.getElementById("filters").innerHTML =
+    `<button onclick="filterGroup('all')" class="active">All</button>` +
+    groups.map(g =>
+      `<button onclick="filterGroup('${g}')">${g}</button>`
+    ).join("");
+}
+
+// ===== FILTER LOGIC =====
+function filterGroup(group) {
+  currentGroup = group;
+
+  document.querySelectorAll(".filters button")
+    .forEach(btn => btn.classList.remove("active"));
+
+  event.target.classList.add("active");
+
+  applyFilter();
+}
+
+// ===== SEARCH =====
+document.getElementById("search").addEventListener("input", applyFilter);
+
+function applyFilter() {
+  const keyword = document.getElementById("search").value.toLowerCase();
+
+  let data = allMatches;
+
+  if (currentGroup !== "all") {
+    data = data.filter(m => m.group === currentGroup);
+  }
+
+  if (keyword) {
+    data = data.filter(m =>
+      m.home_name.toLowerCase().includes(keyword) ||
+      m.away_name.toLowerCase().includes(keyword)
+    );
+  }
+
+  render(data);
+}
+
+// ===== INIT =====
 loadData();
 
 </script>
