@@ -1,178 +1,407 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WC 2026 Bracket</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>World Cup 2026</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Segoe UI;
-  background:#020617;
-  color:white;
+:root{
+  --bg:#0d0f14;
+  --card:#151822;
+  --text:#fff;
+  --muted:#aaa;
+  --accent:#00e0ff;
+  --live:#ff3b3b;
 }
 
-/* HEADER */
-h1{
+body{
+  margin:0;
+  font-family:system-ui,Segoe UI,Roboto;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* TOP NAV */
+.tabs{
+  display:flex;
+  position:sticky;
+  top:0;
+  background:#111;
+  z-index:10;
+}
+.tabs button{
+  flex:1;
+  padding:12px;
+  background:none;
+  border:none;
+  color:#aaa;
+  font-weight:600;
+}
+.tabs button.active{
+  color:#fff;
+  border-bottom:2px solid var(--accent);
+}
+
+/* SECTIONS */
+.section{
+  display:none;
+  padding:12px;
+}
+.section.active{display:block}
+
+/* CARD */
+.match{
+  background:var(--card);
+  margin:8px 0;
+  padding:12px;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.3);
+}
+
+.live{
+  border:1px solid var(--live);
+  box-shadow:0 0 8px var(--live);
+}
+
+.ft{opacity:.6}
+
+/* TEAMS */
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.team{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.team img{
+  width:20px;
+  height:14px;
+}
+
+.score{
+  font-size:18px;
+  font-weight:bold;
+}
+
+/* GROUP TABLE */
+.table{
+  width:100%;
+  font-size:12px;
+  margin-top:8px;
+}
+
+.table th,.table td{
+  padding:6px;
   text-align:center;
-  padding:10px;
-  color:#38bdf8;
 }
 
 /* BRACKET */
 .bracket{
   display:flex;
   overflow-x:auto;
-  padding:10px;
+  gap:12px;
 }
 
-/* ROUND */
 .round{
-  min-width:220px;
-  margin-right:10px;
+  min-width:160px;
 }
 
-/* MATCH */
-.match{
-  background:#1e293b;
-  margin-bottom:12px;
+.match-mini{
+  background:#1b1f2c;
   padding:8px;
+  margin:8px;
   border-radius:8px;
+  font-size:12px;
 }
 
-/* TEAM */
-.team{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:3px 0;
-}
+.win{color:var(--accent)}
 
-.team img{
-  width:18px;
-  margin-right:5px;
-}
-
-/* WINNER */
-.win{
-  color:#22c55e;
+button.update{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  background:var(--accent);
+  color:#000;
+  border:none;
+  border-radius:8px;
   font-weight:bold;
 }
 
-.title{
+.error{
+  color:red;
   text-align:center;
-  margin-bottom:6px;
 }
-
 </style>
 </head>
 
 <body>
 
-<h1>⚽ WC 2026 Bracket</h1>
+<div class="tabs">
+  <button class="active" data-tab="schedule">Schedule</button>
+  <button data-tab="live">Live</button>
+  <button data-tab="groups">Groups</button>
+  <button data-tab="knockout">Knockout</button>
+</div>
 
-<div id="bracket" class="bracket"></div>
+<div id="schedule" class="section active"></div>
+<div id="live" class="section"></div>
+<div id="groups" class="section"></div>
+<div id="knockout" class="section"></div>
+
+<button class="update" onclick="updateData()">Update Data</button>
 
 <script>
+const GROUP_URL="https://raw.githubusercontent.com/cqtin2024/ITVTG/refs/heads/main/data/group-stage.json";
+const KO_URL="https://raw.githubusercontent.com/cqtin2024/ITVTG/refs/heads/main/data/knockout.json";
+const API="https://raspy-sun-012e.cqtin-2024.workers.dev";
 
-let data;
+/* FLAG MAP */
+const flags={
+USA:"us",Japan:"jp",Brazil:"br",Germany:"de",France:"fr",England:"gb",
+Spain:"es",Argentina:"ar",Portugal:"pt",Italy:"it",Netherlands:"nl",
+Mexico:"mx",Canada:"ca"
+};
 
-// ===== FLAG =====
-function flag(name){
-  const map={
-    "USA":"us","Japan":"jp","Mexico":"mx","Canada":"ca",
-    "Brazil":"br","France":"fr","Germany":"de","Spain":"es"
-  };
-  return `https://flagcdn.com/w40/${map[name]?.toLowerCase()}.png`;
+/* UTIL */
+function flag(t){
+  const c=flags[t]||"un";
+  return `https://flagcdn.com/w40/${c}.png`;
 }
 
-// ===== LOAD =====
-async function init(){
-  const res = await fetch("./data.json");
-  data = await res.json();
-
-  render();
+function localTime(date,time){
+  return new Date(`${date}T${time}`).toLocaleString();
 }
 
-// ===== BUILD RANK =====
-function buildRank(){
-  let groups = {};
+/* LOAD DATA */
+async function load(){
+  try{
+    const cache=localStorage.getItem("wc-data");
+    if(cache) return JSON.parse(cache);
 
-  for(let g in data.groups){
+    const [g,k]=await Promise.all([
+      fetch(GROUP_URL).then(r=>r.json()),
+      fetch(KO_URL).then(r=>r.json())
+    ]);
 
-    let table={};
+    const data={group:g.matches,ko:k.matches};
+    localStorage.setItem("wc-data",JSON.stringify(data));
+    return data;
 
-    data.groups[g].forEach(t=>table[t]={pts:0});
+  }catch(e){
+    showError();
+    return {group:[],ko:[]};
+  }
+}
 
-    data.matches
-      .filter(m=>m.group===g && m.home_score!=null)
-      .forEach(m=>{
-        if(m.home_score>m.away_score) table[m.home].pts+=3;
-        else if(m.home_score<m.away_score) table[m.away].pts+=3;
-        else{
-          table[m.home].pts++;
-          table[m.away].pts++;
-        }
-      });
+/* RENDER MATCH */
+function matchCard(m){
+  const cls=[
+    "match",
+    m.status==="LIVE"?"live":"",
+    m.status==="FT"?"ft":""
+  ].join(" ");
 
-    groups[g]=Object.entries(table)
-      .sort((a,b)=>b[1].pts-a[1].pts)
-      .map(x=>x[0]);
+  return `
+  <div class="${cls}">
+    <div class="row">
+      <div class="team">
+        <img src="${flag(m      ${m.home}
+      </div>
+      <div class="score">
+        ${m.home_score??""} - ${m.away_score??""}
+      </div>
+      <div class="team">
+        ${m.away}
+        <img src="${flag(m    </div>
+    </div>
+    <div style="margin-top:6px;font-size:12px;color:#aaa">
+      ${m.status} • ${localTime(m.date,m.time)} <br>
+      ${m.stadium}, ${m.city}
+    </div>
+  </div>`;
+}
+
+/* SCHEDULE */
+function renderSchedule(list){
+  const div=document.getElementById("schedule");
+
+  const grouped={};
+  list.forEach(m=>{
+    grouped[m.date]=grouped[m.date]||[];
+    grouped[m.date].push(m);
+  });
+
+  div.innerHTML=Object.keys(grouped).map(d=>`
+    <h4>${d}</h4>
+    ${grouped[d].map(matchCard).join("")}
+  `).join("");
+}
+
+/* LIVE */
+function renderLive(list){
+  const div=document.getElementById("live");
+  let live=list.filter(m=>m.status==="LIVE");
+
+  if(!live.length){
+    const today=new Date().toISOString().split("T")[0];
+    live=list.filter(m=>m.date===today);
   }
 
-  return groups;
+  if(!live.length){
+    live=list.filter(m=>m.status==="FT").slice(-5);
+  }
+
+  div.innerHTML=live.map(matchCard).join("");
 }
 
-// ===== RESOLVE TEAM =====
-function resolve(k, rank){
-  if(k[0]==="1") return rank[k[1]][0];
-  if(k[0]==="2") return rank[k[1]][1];
-  return k;
+/* GROUP STANDINGS */
+function getStandings(matches){
+  const table={};
+
+  matches.forEach(m=>{
+    if(m.status!=="FT") return;
+
+    [m.home,m.away].forEach(t=>{
+      if(!table[t]) table[t]={team:t,p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0};
+    });
+
+    const h=table[m.home],a=table[m.away];
+
+    h.p++;a.p++;
+    h.gf+=m.home_score;a.gf+=m.away_score;
+    h.ga+=m.away_score;a.ga+=m.home_score;
+
+    if(m.home_score>m.away_score){
+      h.w++;h.pts+=3;a.l++;
+    }else if(m.home_score<m.away_score){
+      a.w++;a.pts+=3;h.l++;
+    }else{
+      h.d++;a.d++;h.pts++;a.pts++;
+    }
+  });
+
+  return Object.values(table).sort((a,b)=>
+    b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga) || b.gf-a.gf
+  );
 }
 
-// ===== RENDER ROUND =====
-function renderRound(title, matches, rank){
-  return `
+function renderGroups(matches){
+  const div=document.getElementById("groups");
+
+  const groups={};
+  matches.forEach(m=>{
+    groups[m.group]=groups[m.group]||[];
+    groups[m.group].push(m);
+  });
+
+  div.innerHTML=Object.keys(groups).sort().map(g=>{
+    const st=getStandings(groups[g]);
+    return `
+      <h3>Group ${g}</h3>
+      <table class="table">
+      <tr><th>Team</th><th>P</th><th>GD</th><th>Pts</th></tr>
+      ${st.map(t=>`
+        <tr>
+          <td>${t.team}</td>
+          <td>${t.p}</td>
+          <td>${t.gf-t.ga}</td>
+          <td>${t.pts}</td>
+        </tr>
+      `).join("")}
+      </table>
+    `;
+  }).join("");
+}
+
+/* KNOCKOUT */
+function renderKO(list){
+  const div=document.getElementById("knockout");
+
+  const rounds=["R32","R16","QF","SF","FINAL"];
+  const grouped={};
+
+  list.forEach(m=>{
+    grouped[m.round]=grouped[m.round]||[];
+    grouped[m.round].push(m);
+  });
+
+  div.innerHTML=`
+  <div class="bracket">
+  ${rounds.map(r=>`
     <div class="round">
-      <div class="title">${title}</div>
-      ${matches.map(m=>{
-        const h = resolve(m.home, rank);
-        const a = resolve(m.away, rank);
-
+      <h4>${r}</h4>
+      ${(grouped[r]||[]).map(m=>{
+        let win="";
+        if(m.home_score!=null){
+          win = m.home_score>m.away_score ? "home" : "away";
+        }
         return `
-          <div class="match">
-            <div class="team">
-              <span>${flag(h)}${h}</span>
-              <span>-</span>
-            </div>
-            <div class="team">
-              <span>${flag(a)}${a}</span>
-              <span>-</span>
-            </div>
-          </div>
-        `;
+        <div class="match-mini">
+          <div class="${win==="home"?"win":""}">${m.home}</div>
+          <div class="${win==="away"?"win":""}">${m.away}</div>
+        </div>`;
       }).join("")}
     </div>
-  `;
+  `).join("")}
+  </div>`;
 }
 
-// ===== MAIN RENDER =====
-function render(){
+/* UPDATE API */
+async function updateData(){
+  try{
+    const res=await fetch(API+"/update").then(r=>r.json());
+    const data=JSON.parse(localStorage.getItem("wc-data"));
 
-  const rank = buildRank();
+    res.matches.forEach(u=>{
+      const m=[...data.group,...data.ko].find(x=>x.id===u.id);
+      if(m){
+        m.home_score=u.home_score;
+        m.away_score=u.away_score;
+        m.status=u.status;
+        m.time=u.time;
+      }
+    });
 
-  const bracketHTML = 
-    renderRound("Round 16", data.knockout.R16, rank) +
-    renderRound("Quarter", data.knockout.QF || [], rank) +
-    renderRound("Semi", data.knockout.SF || [], rank) +
-    renderRound("Final", data.knockout.FINAL || [], rank);
+    localStorage.setItem("wc-data",JSON.stringify(data));
+    init();
 
-  document.getElementById("bracket").innerHTML = bracketHTML;
+  }catch(e){
+    alert("Update failed");
+  }
 }
+
+/* ERROR */
+function showError(){
+  document.body.innerHTML=`<div class="error">Failed to load data</div>`;
+}
+
+/* INIT */
+async function init(){
+  const data=await load();
+  renderSchedule(data.group);
+  renderLive(data.group);
+  renderGroups(data.group);
+  renderKO(data.ko);
+}
+
+/* TAB SWITCH */
+document.querySelectorAll(".tabs button").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+    document.getElementById(btn.dataset.tab).classList.add("active");
+  };
+});
 
 init();
-
 </script>
 
 </body>
