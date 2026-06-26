@@ -1,0 +1,94 @@
+{
+  "type": "knockout",
+
+  "matches": [
+
+    /* ===== ROUND OF 32 ===== */
+
+    {
+      "id": 101,
+      "round": "R32",
+      "home": "1A",
+      "away": "3B",
+      "date": "2026-06-28",
+      "time": "18:00",
+      "stadium": "SoFi Stadium",
+      "city": "Los Angeles",
+      "country": "USA",
+      "status": "SCHEDULED"
+    },
+
+    {
+      "id": 102,
+      "round": "R32",
+      "home": "2A",
+      "away": "2B",
+      "date": "2026-06-28",
+      "time": "21:00",
+      "stadium": "MetLife Stadium",
+      "city": "New York",
+      "country": "USA",
+      "status": "SCHEDULED"
+    },
+
+    /* ===== ROUND 16 ===== */
+
+    {
+      "id": 201,
+      "round": "R16",
+      "home": "W101",
+      "away": "W102",
+      "date": "2026-07-04",
+      "time": "20:00",
+      "stadium": "Mercedes-Benz Stadium",
+      "city": "Atlanta",
+      "country": "USA",
+      "status": "SCHEDULED"
+    },
+
+    /* ===== QUARTER ===== */
+
+    {
+      "id": 301,
+      "round": "QF",
+      "home": "W201",
+      "away": "W202",
+      "date": "2026-07-08",
+      "time": "20:00",
+      "stadium": "Levi's Stadium",
+      "city": "San Francisco",
+      "country": "USA",
+      "status": "SCHEDULED"
+    },
+
+    /* ===== SEMI ===== */
+
+    {
+      "id": 401,
+      "round": "SF",
+      "home": "W301",
+      "away": "W302",
+      "date": "2026-07-12",
+      "time": "20:00",
+      "stadium": "AT&T Stadium",
+      "city": "Dallas",
+      "country": "USA",
+      "status": "SCHEDULED"
+    },
+
+    /* ===== FINAL ===== */
+
+    {
+      "id": 500,
+      "round": "FINAL",
+      "home": "W401",
+      "away": "W402",
+      "date": "2026-07-19",
+      "time": "20:00",
+      "stadium": "MetLife Stadium",
+      "city": "New York",
+      "country": "USA",
+      "status": "SCHEDULED"
+    }
+  ]
+}
