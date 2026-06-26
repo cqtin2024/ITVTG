@@ -2,44 +2,27 @@
 <html>
 <head>
   <meta charset="utf-8"/>
-  <title>World Cup 2026</title>
+  <title>WC 2026</title>
 
   <style>
-    body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      padding: 20px;
-    }
-    h1 {
-      color: #38bdf8;
-    }
-    .match {
-      background: #1e293b;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-    }
-    .teams {
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .time {
-      color: #94a3b8;
-    }
+    body { font-family: Arial; background:#0f172a; color:white; padding:20px; }
+    .match { background:#1e293b; padding:10px; margin-bottom:10px; border-radius:8px; }
+    .teams { font-weight:bold; }
+    .time { color:#94a3b8; }
   </style>
 </head>
 <body>
 
 <h1>⚽ World Cup 2026</h1>
-
 <div id="app">Loading...</div>
 
 <script>
 async function loadData() {
   try {
-    // ✅ API public (không bị CORS)
-    const res = await fetch("https://wheniskickoff.com/data/v1/matches.json");
+    const proxy = "https://api.allorigins.win/raw?url=";
+    const url = "https://wheniskickoff.com/data/v1/matches.json";
+
+    const res = await fetch(proxy + encodeURIComponent(url));
     const json = await res.json();
 
     const matches = json.data.slice(0, 20);
@@ -48,11 +31,11 @@ async function loadData() {
       matches.map(m => `
         <div class="match">
           <div class="teams">${m.home_name} vs ${m.away_name}</div>
-          <div class="time">${m.date} ${m.time_utc} - Group ${m.group}</div>
+          <div class="time">${m.date} ${m.time_utc}</div>
         </div>
       `).join("");
 
-  } catch (err) {
+  } catch (e) {
     document.getElementById("app").innerHTML = "❌ Cannot load data";
   }
 }
